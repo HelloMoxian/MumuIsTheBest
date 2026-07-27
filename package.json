@@ -1,0 +1,15 @@
+{
+  "name": "mumu-is-the-best",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --stream --filter @mumu/web --filter @mumu/server dev",
+    "build": "pnpm --filter @mumu/web build && pnpm --filter @mumu/server build",
+    "start": "pnpm --filter @mumu/server start",
+    "typecheck": "pnpm --filter @mumu/web typecheck && pnpm --filter @mumu/server typecheck"
+  }
+}

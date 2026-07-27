@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build and framework output
+dist/
+build/
+coverage/
+.next/
+.nuxt/
+.output/
+.turbo/
+.vite/
+.cache/
+
+# Runtime personal data (never commit)
+var/
+runtime-data/
+
+# Backups and exports (never commit)
+backups/
+exports/
+*.backup
+*.backup.*
+*.bak
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and process files
+*.log
+logs/
+*.pid
+*.pid.lock
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test and tool artifacts
+playwright-report/
+test-results/
+.nyc_output/
+*.tsbuildinfo
+
+# Editors and operating systems
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Temporary files
+tmp/
+*.tmp
+*~
