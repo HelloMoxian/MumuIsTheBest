@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { chmod, mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
+import { dirname, resolve } from "node:path";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import fastifyWebsocket from "@fastify/websocket";
@@ -13,17 +14,29 @@ const defaultEndpoint =
 const port = Number(process.env.PORT ?? 8787);
 const host = process.env.HOST ?? "127.0.0.1";
 const app = Fastify({ logger: false });
+const asrMaxSessionMs = 2 * 60 * 1000;
+const projectRoot = resolve(import.meta.dirname, "../../..");
+const appDataDir = resolve(process.env.APP_DATA_DIR ?? resolve(projectRoot, "var"));
+const asrConfigPath = resolve(appDataDir, "config", "asr-settings.json");
+const legacyAsrConfigPath = resolve(projectRoot, "apps", "server", "var", "config", "asr-settings.json");
 
 const startMessage = z.object({
   type: z.literal("start"),
-  apiKey: z.string().trim().min(12).max(512).optional(),
-  endpoint: z.string().trim().min(1).max(512).optional(),
 });
 
-const commandMessage = z.discriminatedUnion("type", [
-  startMessage,
-  z.object({ type: z.literal("stop") }),
-]);
+const asrConfigInput = z.object({
+  apiKey: z.string().trim().min(12).max(512).optional(),
+  endpoint: z.string().trim().min(1).max(512),
+});
+
+const storedAsrConfig = z.object({
+  schemaVersion: z.literal(1),
+  updatedAt: z.string().datetime(),
+  endpoint: z.string().trim().min(1).max(512),
+  apiKey: z.string().trim().min(12).max(512),
+});
+
+type StoredAsrConfig = z.infer<typeof storedAsrConfig>;
 
 type ClientSocket = WebSocket;
 type UpstreamSocket = WebSocket;
@@ -50,6 +63,38 @@ function isAllowedAliyunEndpoint(value: string): boolean {
   } catch {
     return false;
   }
+}
+
+async function readAsrConfigAt(path: string): Promise<StoredAsrConfig | undefined> {
+  try {
+    const contents = await readFile(path, "utf8");
+    const parsed = storedAsrConfig.safeParse(JSON.parse(contents));
+    return parsed.success && isAllowedAliyunEndpoint(parsed.data.endpoint) ? parsed.data : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function readAsrConfig(): Promise<StoredAsrConfig | undefined> {
+  const currentConfig = await readAsrConfigAt(asrConfigPath);
+  if (currentConfig) return currentConfig;
+
+  const legacyConfig = await readAsrConfigAt(legacyAsrConfigPath);
+  if (!legacyConfig) return undefined;
+
+  await saveAsrConfig(legacyConfig);
+  await unlink(legacyAsrConfigPath).catch(() => undefined);
+  return legacyConfig;
+}
+
+async function saveAsrConfig(config: StoredAsrConfig): Promise<void> {
+  const configDirectory = dirname(asrConfigPath);
+  await mkdir(configDirectory, { recursive: true, mode: 0o700 });
+  const temporaryPath = `${asrConfigPath}.${randomUUID()}.tmp`;
+
+  await writeFile(temporaryPath, `${JSON.stringify(config, null, 2)}\n`, { mode: 0o600 });
+  await rename(temporaryPath, asrConfigPath);
+  await chmod(asrConfigPath, 0o600);
 }
 
 function parseText(raw: RawData): string {
@@ -86,33 +131,75 @@ function finishTaskMessage(taskId: string) {
 async function registerAsrProxy() {
   await app.register(fastifyWebsocket);
 
+  app.get("/api/asr/config", async () => {
+    const config = await readAsrConfig();
+    const hasEnvironmentKey = Boolean(process.env.DASHSCOPE_API_KEY?.startsWith("sk-"));
+    return {
+      endpoint: config?.endpoint ?? defaultEndpoint,
+      isConfigured: Boolean(config?.apiKey) || hasEnvironmentKey,
+      storage: config ? "local-file" : hasEnvironmentKey ? "environment" : "none",
+    };
+  });
+
+  app.put("/api/asr/config", async (request, reply) => {
+    const input = asrConfigInput.safeParse(request.body);
+    if (!input.success || !isAllowedAliyunEndpoint(input.data.endpoint)) {
+      return reply.code(400).send({
+        code: "INVALID_ENDPOINT",
+        message: "请使用阿里云百炼业务空间的安全 WebSocket 地址。",
+      });
+    }
+
+    const existing = await readAsrConfig();
+    const apiKey = input.data.apiKey || existing?.apiKey;
+    if (!apiKey?.startsWith("sk-")) {
+      return reply.code(400).send({
+        code: "API_KEY_REQUIRED",
+        message: "首次保存需要粘贴有效的阿里云 API Key。",
+      });
+    }
+
+    await saveAsrConfig({
+      schemaVersion: 1,
+      updatedAt: new Date().toISOString(),
+      endpoint: input.data.endpoint,
+      apiKey,
+    });
+
+    return { endpoint: input.data.endpoint, isConfigured: true, storage: "local-file" };
+  });
+
   app.get("/api/asr/stream", { websocket: true }, (client) => {
     let upstream: UpstreamSocket | undefined;
     let taskId: string | undefined;
     let upstreamReady = false;
     let closing = false;
     let connectTimeout: NodeJS.Timeout | undefined;
+    let sessionLimitTimeout: NodeJS.Timeout | undefined;
 
     const teardown = () => {
       if (connectTimeout) clearTimeout(connectTimeout);
+      if (sessionLimitTimeout) clearTimeout(sessionLimitTimeout);
       if (upstream && upstream.readyState < WebSocket.CLOSING) upstream.close();
       upstream = undefined;
       taskId = undefined;
       upstreamReady = false;
     };
 
-    const finish = () => {
+    const finish = (label = "正在整理最后一句…") => {
       if (!upstream || !taskId || closing) return;
       closing = true;
-      send(client, { type: "status", status: "finishing", label: "正在整理最后一句…" });
+      if (sessionLimitTimeout) clearTimeout(sessionLimitTimeout);
+      send(client, { type: "status", status: "finishing", label });
       upstream.send(JSON.stringify(finishTaskMessage(taskId)));
     };
 
-    const start = (input: z.infer<typeof startMessage>) => {
+    const start = async () => {
       teardown();
       closing = false;
 
-      const endpoint = input.endpoint || defaultEndpoint;
+      const config = await readAsrConfig();
+      const endpoint = config?.endpoint || defaultEndpoint;
       if (!isAllowedAliyunEndpoint(endpoint)) {
         publicError(
           client,
@@ -122,7 +209,7 @@ async function registerAsrProxy() {
         return;
       }
 
-      let apiKey = input.apiKey || process.env.DASHSCOPE_API_KEY || "";
+      let apiKey = config?.apiKey || process.env.DASHSCOPE_API_KEY || "";
       if (!apiKey.startsWith("sk-")) {
         publicError(client, "API_KEY_REQUIRED", "请粘贴有效的阿里云 API Key 后再开始识别。");
         return;
@@ -178,7 +265,12 @@ async function registerAsrProxy() {
         if (kind === "task-started") {
           upstreamReady = true;
           if (connectTimeout) clearTimeout(connectTimeout);
-          send(client, { type: "ready", label: "识别引擎已就绪，可以开始说话。" });
+          send(client, { type: "ready", label: "识别引擎已就绪，可以开始说话。单次最多 2 分钟。" });
+          sessionLimitTimeout = setTimeout(() => {
+            if (!upstreamReady || closing) return;
+            send(client, { type: "limit", label: "已达到单次 2 分钟上限，正在停止识别。" });
+            finish("已达到单次 2 分钟上限，正在整理最后一句…");
+          }, asrMaxSessionMs);
           return;
         }
 
@@ -213,10 +305,13 @@ async function registerAsrProxy() {
 
       upstream.on("error", () => {
         publicError(client, "ASR_CONNECTION_FAILED", "无法连接识别服务，请检查 API Key、地址和网络。");
+        teardown();
       });
 
       upstream.on("close", () => {
-        if (!closing && upstreamReady) {
+        const unexpectedlyClosed = !closing && upstreamReady;
+        teardown();
+        if (unexpectedlyClosed) {
           send(client, { type: "status", status: "closed", label: "识别连接已关闭。" });
         }
       });
@@ -233,9 +328,27 @@ async function registerAsrProxy() {
       }
 
       try {
-        const message = commandMessage.parse(JSON.parse(parseText(raw)));
-        if (message.type === "start") start(message);
-        if (message.type === "stop") finish();
+        const message: unknown = JSON.parse(parseText(raw));
+        if (typeof message !== "object" || message === null || !("type" in message)) {
+          throw new Error("Missing command type");
+        }
+
+        if (message.type === "start") {
+          const parsed = startMessage.safeParse(message);
+          if (!parsed.success) {
+            publicError(client, "API_KEY_REQUIRED", "请粘贴有效的阿里云 API Key 后再开始识别。");
+            return;
+          }
+          void start();
+          return;
+        }
+
+        if (message.type === "stop") {
+          finish();
+          return;
+        }
+
+        throw new Error("Unknown command type");
       } catch {
         publicError(client, "INVALID_COMMAND", "语音测试页面发送了无效请求。请刷新页面后重试。");
       }

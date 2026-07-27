@@ -4,10 +4,12 @@
 
 ## 当前状态
 
-项目目前已完成工程规则和正式视觉系统，还没有创建正式应用代码。
+项目已采用 React + Vite + Fastify，并已创建第一项正式能力：阿里云 Fun-ASR 实时语音识别测试。
 
-- 技术方案候选：[`docs/TECH_STACK_OPTIONS.md`](docs/TECH_STACK_OPTIONS.md)
+- 技术方案（已选定 A）：[`docs/TECH_STACK_OPTIONS.md`](docs/TECH_STACK_OPTIONS.md)
 - 正式设计系统（已选定星际探索舱）：[`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
+- 实时语音识别与密钥安全：[`docs/ASR_REALTIME.md`](docs/ASR_REALTIME.md)
+- 当前规则、能力进展与后续顺序总览：[`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md)
 - Codex/工程协作规则：[`AGENTS.md`](AGENTS.md)
 - 视觉选型原型存档：[`temp/style-02-galaxy.html`](temp/style-02-galaxy.html)
 
@@ -20,9 +22,10 @@
 - 运行时数据默认存放在 Git 忽略的 `var/`，并可通过 `APP_DATA_DIR` 放到仓库外。
 - 备份默认存放在 Git 忽略的 `backups/`，以后提供显式导入/导出和恢复机制。
 - 美术风格固定为“星际探索舱”：深空玻璃面板、紫/青/粉光效、大字号圆润组件和克制动效。
-- 正式技术栈仍需要由项目所有者选择，再开始业务开发。
+- API Key 永不写入仓库；语音测试页会将其仅保存到本机 Git 忽略的 `var/config/asr-settings.json`，重新打开页面可直接使用但不会显示明文。
+- 每一次实时 ASR 识别强制最多 2 分钟；该规则会自动继承到后续算术、游戏与知识模块。
 
 ## 下一步
 
-1. 在 `docs/TECH_STACK_OPTIONS.md` 中选择 A、B 或 C 技术方案。
-2. 初始化正式 Node.js 应用，并将 `docs/DESIGN_SYSTEM.md` 落地为可复用组件系统。
+1. 在工程根目录执行 `./init_and_start.sh`。它会检查环境、安装锁定的 npm 依赖、释放本项目的端口、启动服务并自动打开网页；如只想在终端环境启动而不打开浏览器，可执行 `MUMU_NO_OPEN=1 ./init_and_start.sh`。
+2. 后续为算术和游戏模块复用同一个语音输入入口与设计系统组件。

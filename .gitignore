@@ -28,6 +28,9 @@ exports/
 .env
 .env.*
 !.env.example
+*.key
+*.pem
+secrets/
 
 # Logs and process files
 *.log
