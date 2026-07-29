@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "pnpm --parallel --stream --filter @mumu/web --filter @mumu/server dev",
     "build": "pnpm --filter @mumu/web build && pnpm --filter @mumu/server build",
+    "content:validate": "node scripts/validate-common-characters.mjs",
     "start": "pnpm --filter @mumu/server start",
     "typecheck": "pnpm --filter @mumu/web typecheck && pnpm --filter @mumu/server typecheck"
   }

@@ -8,6 +8,7 @@ import fastifyWebsocket from "@fastify/websocket";
 import WebSocket, { type RawData } from "ws";
 import { z } from "zod";
 import { registerArithmeticBattleHistoryApi } from "./arithmetic-battle-history.js";
+import { registerCommonCharacterProgressApi } from "./common-character-progress.js";
 import { registerMultiplicationHistoryApi } from "./multiplication-history.js";
 
 const defaultEndpoint =
@@ -522,6 +523,7 @@ async function main() {
   registerMathPracticeApi();
   registerArithmeticBattleHistoryApi(app, appDataDir);
   registerMultiplicationHistoryApi(app, appDataDir);
+  registerCommonCharacterProgressApi(app, appDataDir);
 
   app.get("/api/health", async () => ({ status: "ok", service: "mumu-asr" }));
 

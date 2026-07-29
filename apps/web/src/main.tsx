@@ -14,6 +14,11 @@ const FindNumberGame = lazy(async () => {
   return { default: module.FindNumberGame };
 });
 
+const CommonCharactersGame = lazy(async () => {
+  const module = await import("./features/chinese-characters/CommonCharactersGame");
+  return { default: module.CommonCharactersGame };
+});
+
 const DEFAULT_ENDPOINT =
   "wss://llm-v5rvizd868hi5qxb.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference";
 const MAX_ASR_SECONDS = 120;
@@ -160,10 +165,11 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     icon: "chinese",
     games: [
       { title: "拼音", mark: "拼", description: "把声音拼起来", shape: "compact" },
-      { title: "常用500字", mark: "500", description: "每天认识一点", shape: "wide" },
-      { title: "常用1000字", mark: "1000", description: "收集文字星星", shape: "compact" },
-      { title: "常用1500字", mark: "1500", description: "读懂更多故事", shape: "compact" },
-      { title: "常用2500字", mark: "2500", description: "知识小宇宙", shape: "wide" },
+      { title: "常用500字", mark: "500", description: "每天认识一点", shape: "wide", href: "/chinese/common-characters/500" },
+      { title: "常用1000字", mark: "1000", description: "收集文字星星", shape: "compact", href: "/chinese/common-characters/1000" },
+      { title: "常用1500字", mark: "1500", description: "读懂更多故事", shape: "compact", href: "/chinese/common-characters/1500" },
+      { title: "常用2000字", mark: "2000", description: "探索更大字海", shape: "compact", href: "/chinese/common-characters/2000" },
+      { title: "常用2500字", mark: "2500", description: "知识小宇宙", shape: "wide", href: "/chinese/common-characters/2500" },
     ],
   },
   {
@@ -756,6 +762,22 @@ function CurrentPage() {
   if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
   if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
   if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
+  if (/^\/chinese\/common-characters\/(500|1000|1500|2000|2500)$/.test(window.location.pathname)) {
+    return (
+      <Suspense
+        fallback={(
+          <div className="app-shell" aria-live="polite">
+            <div className="star-field" aria-hidden="true" />
+            <main className="asr-lab">
+              <section className="safety-note"><span aria-hidden="true">文</span><p><strong>正在铺开木木的文字星图…</strong></p></section>
+            </main>
+          </div>
+        )}
+      >
+        <CommonCharactersGame />
+      </Suspense>
+    );
+  }
   return <App />;
 }
 
