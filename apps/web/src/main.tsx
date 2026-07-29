@@ -4,6 +4,7 @@ import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
 import { ConservationGame } from "./features/conservation/ConservationGame";
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
+import { MysteryFunctionGame } from "./features/mystery-function/MysteryFunctionGame";
 import { PeriodicTablePage } from "./features/periodic-table/PeriodicTablePage";
 import { ReactionFurnacePage } from "./features/reaction-furnace/ReactionFurnacePage";
 import "./styles.css";
@@ -100,7 +101,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         shape: "tall",
         href: "/math/multiplication",
       },
-      { title: "神秘函数", mark: "ƒ", description: "找找数字规律", shape: "compact" },
+      {
+        title: "神秘函数",
+        mark: "ƒ",
+        description: "拨动参数，看曲线变身",
+        shape: "compact",
+        href: "/math/mystery-function",
+      },
     ],
   },
   {
@@ -717,6 +724,7 @@ function CurrentPage() {
   if (window.location.pathname === "/math/add-subtract") return <AddSubtractGame />;
   if (window.location.pathname === "/math/arithmetic-battle") return <ArithmeticBattleGame />;
   if (window.location.pathname === "/math/multiplication") return <MultiplicationGame />;
+  if (window.location.pathname === "/math/mystery-function") return <MysteryFunctionGame />;
   if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
   if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
   if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
