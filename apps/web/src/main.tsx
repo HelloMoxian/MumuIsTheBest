@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
+import { PeriodicTablePage } from "./features/periodic-table/PeriodicTablePage";
+import { ReactionFurnacePage } from "./features/reaction-furnace/ReactionFurnacePage";
 import "./styles.css";
 
 const DEFAULT_ENDPOINT =
@@ -106,8 +108,20 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "把小小粒子变成大大发现",
     icon: "chemistry",
     games: [
-      { title: "元素周期表", mark: "He", description: "认识元素朋友", shape: "wide" },
-      { title: "反应熔炉", mark: "⚗", description: "看看会发生什么", shape: "compact" },
+      {
+        title: "元素周期表",
+        mark: "He",
+        description: "认识 118 位元素朋友",
+        shape: "wide",
+        href: "/chemistry/periodic-table",
+      },
+      {
+        title: "反应熔炉",
+        mark: "⚗",
+        description: "把原子组装成奇妙物质",
+        shape: "compact",
+        href: "/chemistry/reaction-furnace",
+      },
       { title: "实验大师", mark: "✦", description: "做好奇小实验", shape: "compact" },
       { title: "物质虚拟世界", mark: "◎", description: "走进微观世界", shape: "wide" },
       { title: "物质守恒", mark: "↻", description: "发现不变的秘密", shape: "compact" },
@@ -696,6 +710,8 @@ function CurrentPage() {
   if (window.location.pathname === "/math/add-subtract") return <AddSubtractGame />;
   if (window.location.pathname === "/math/arithmetic-battle") return <ArithmeticBattleGame />;
   if (window.location.pathname === "/math/multiplication") return <MultiplicationGame />;
+  if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
+  if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
   return <App />;
 }
 
