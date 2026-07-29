@@ -21,9 +21,19 @@ import {
   type SolvedBattleQuestion,
   type StoredBattleSession,
 } from "./logic";
+import {
+  aggregateMultiplicationHistory,
+  generateMultiplicationQuestions,
+  multiplicationDifficultyLabel,
+  type MultiplicationDifficulty,
+  type StoredMultiplicationSession,
+} from "../multiplication/logic";
 import "./arithmetic-battle.css";
 
 type BattlePhase = "ready" | "playing" | "finished" | "expired";
+type GameVariant = "arithmetic-battle" | "multiplication";
+type ParallelDifficulty = BattleDifficulty | MultiplicationDifficulty;
+type ParallelStoredSession = StoredBattleSession | StoredMultiplicationSession;
 type ResultBubble = { answer: number; message: string } | null;
 type RecognitionDisplayState =
   | RecognitionState
@@ -89,9 +99,41 @@ function recognitionLabel(state: RecognitionDisplayState) {
   return labels[state];
 }
 
-export function ArithmeticBattleGame() {
+function parallelDifficultyLabel(difficulty: ParallelDifficulty) {
+  if (difficulty === "facts" || difficulty === "reverse" || difficulty === "advanced") {
+    return multiplicationDifficultyLabel(difficulty);
+  }
+  return difficultyLabel(difficulty);
+}
+
+export function ArithmeticBattleGame({
+  variant = "arithmetic-battle",
+}: {
+  variant?: GameVariant;
+} = {}) {
+  const isMultiplication = variant === "multiplication";
+  const gameTitle = isMultiplication ? "乘法小能手" : "算数大战";
+  const historyEndpoint = isMultiplication
+    ? "/api/math/multiplication/history"
+    : "/api/math/arithmetic-battle/history";
+  const difficultyOptions: ReadonlyArray<{
+    value: ParallelDifficulty;
+    label: string;
+  }> = isMultiplication
+    ? [
+        { value: "facts", label: "0—10 乘法" },
+        { value: "reverse", label: "逆向除法" },
+        { value: "advanced", label: "进阶乘除" },
+      ]
+    : [
+        { value: "easy", label: "简单" },
+        { value: "medium", label: "中等" },
+        { value: "hard", label: "超难" },
+      ];
   const [questionCount, setQuestionCount] = useState<BattleQuestionCount>(5);
-  const [difficulty, setDifficulty] = useState<BattleDifficulty>("easy");
+  const [difficulty, setDifficulty] = useState<ParallelDifficulty>(
+    isMultiplication ? "facts" : "easy",
+  );
   const [phase, setPhase] = useState<BattlePhase>("ready");
   const [questions, setQuestions] = useState<BattleQuestion[]>([]);
   const [solvedQuestions, setSolvedQuestions] = useState<SolvedBattleQuestion[]>([]);
@@ -108,7 +150,7 @@ export function ArithmeticBattleGame() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState("");
-  const [historySessions, setHistorySessions] = useState<StoredBattleSession[]>([]);
+  const [historySessions, setHistorySessions] = useState<ParallelStoredSession[]>([]);
 
   const recognitionRef = useRef<AsrRecognitionSession | null>(null);
   const questionsRef = useRef<BattleQuestion[]>([]);
@@ -125,7 +167,9 @@ export function ArithmeticBattleGame() {
   const announcedCandidatesRef = useRef(new Set<string>());
 
   const locked = phase === "playing";
-  const historyGroups = aggregateBattleHistory(historySessions);
+  const historyGroups = isMultiplication
+    ? aggregateMultiplicationHistory(historySessions as StoredMultiplicationSession[])
+    : aggregateBattleHistory(historySessions as StoredBattleSession[]);
 
   const clearPendingCandidate = useCallback(() => {
     const pending = pendingCandidateRef.current;
@@ -176,7 +220,7 @@ export function ArithmeticBattleGame() {
       setRecognitionDetail("全部答案星已经点亮，说“再来一局”可以再次挑战");
       await stopRecognition();
       try {
-        const response = await fetch("/api/math/arithmetic-battle/history", {
+        const response = await fetch(historyEndpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -194,18 +238,18 @@ export function ArithmeticBattleGame() {
           }),
         });
         const result = (await response.json()) as {
-          session?: StoredBattleSession;
+          session?: ParallelStoredSession;
           message?: string;
         };
         if (!response.ok || !result.session) {
           throw new Error(result.message ?? "本局历史记录暂时没有保存成功。");
         }
-        setHistorySessions((sessions) => [...sessions, result.session as StoredBattleSession]);
+        setHistorySessions((sessions) => [...sessions, result.session as ParallelStoredSession]);
       } catch (error) {
         setSaveWarning(error instanceof Error ? error.message : "本局历史记录暂时没有保存成功。");
       }
     },
-    [difficulty, questionCount, stopRecognition],
+    [difficulty, historyEndpoint, questionCount, stopRecognition],
   );
 
   const solveQuestion = useCallback(
@@ -334,7 +378,12 @@ export function ArithmeticBattleGame() {
   const beginRound = useCallback(async () => {
     await stopRecognition();
     if (bubbleHideTimerRef.current !== null) window.clearTimeout(bubbleHideTimerRef.current);
-    const generated = generateBattleQuestions(questionCount, difficulty);
+    const generated = isMultiplication
+      ? generateMultiplicationQuestions(
+          questionCount,
+          difficulty as MultiplicationDifficulty,
+        )
+      : generateBattleQuestions(questionCount, difficulty as BattleDifficulty);
     const now = Date.now();
     questionsRef.current = generated;
     solvedByIdRef.current = new Map();
@@ -351,7 +400,7 @@ export function ArithmeticBattleGame() {
     setResultBubble(null);
     setSaveWarning("");
     setPhase("playing");
-  }, [difficulty, questionCount, stopRecognition]);
+  }, [difficulty, isMultiplication, questionCount, stopRecognition]);
 
   const continueRecognition = () => {
     if (asrSegmentCountRef.current >= MAX_ASR_SEGMENTS) return;
@@ -436,9 +485,9 @@ export function ArithmeticBattleGame() {
     setHistoryLoading(true);
     setHistoryError("");
     try {
-      const response = await fetch("/api/math/arithmetic-battle/history");
+      const response = await fetch(historyEndpoint);
       const result = (await response.json()) as {
-        sessions?: StoredBattleSession[];
+        sessions?: ParallelStoredSession[];
         message?: string;
       };
       if (!response.ok || !result.sessions) throw new Error(result.message ?? "历史记录暂时无法读取。");
@@ -455,7 +504,7 @@ export function ArithmeticBattleGame() {
       <div className="battle-stars" aria-hidden="true" />
       <header className="battle-topbar">
         <a className="battle-brand" href="/"><span aria-hidden="true">←</span>木木学习岛</a>
-        <span className="battle-mission">数学任务 · 算数大战</span>
+        <span className="battle-mission">数学任务 · {gameTitle}</span>
         <button className="battle-history-button" type="button" onClick={() => void loadHistory()}>
           <span aria-hidden="true">◷</span> 历史记录
         </button>
@@ -476,11 +525,7 @@ export function ArithmeticBattleGame() {
           <Segment
             label="挑战难度"
             value={difficulty}
-            options={[
-              { value: "easy", label: "简单" },
-              { value: "medium", label: "中等" },
-              { value: "hard", label: "超难" },
-            ]}
+            options={difficultyOptions}
             disabled={locked}
             onChange={setDifficulty}
           />
@@ -503,8 +548,12 @@ export function ArithmeticBattleGame() {
           {phase === "ready" && (
             <div className="battle-ready">
               <span className="battle-eyebrow">答案唯一 · 自由选择解题顺序</span>
-              <h1 id="battle-title">算数大战<br /><em>点亮所有答案星</em></h1>
-              <p>所有题目会同时出现。说“等于 + 答案”，每个结果只会命中一颗题目星。</p>
+              <h1 id="battle-title">{gameTitle}<br /><em>点亮所有答案星</em></h1>
+              <p>
+                {isMultiplication
+                  ? "乘法和整除题会同时出现。说“等于 + 答案”，每个结果只会命中一颗题目星。"
+                  : "所有题目会同时出现。说“等于 + 答案”，每个结果只会命中一颗题目星。"}
+              </p>
               <button className="battle-start-button" type="button" onClick={() => void beginRound()}>
                 <span aria-hidden="true">⚡</span> 开始挑战
               </button>
@@ -571,7 +620,12 @@ export function ArithmeticBattleGame() {
           {phase === "finished" && (
             <div className="battle-finish">
               <span className="battle-eyebrow">全部点亮 · 100 分</span>
-              <h1>木木完成了<br />{difficultyLabel(difficulty)}算数大战！</h1>
+              <h1>
+                木木完成了<br />
+                {isMultiplication
+                  ? `${parallelDifficultyLabel(difficulty)}挑战！`
+                  : `${parallelDifficultyLabel(difficulty)}${gameTitle}！`}
+              </h1>
               <p>每一颗答案星都靠认真计算点亮，正确率 100%。</p>
               <div className="battle-result-list">
                 {[...solvedQuestions]
@@ -621,7 +675,7 @@ export function ArithmeticBattleGame() {
             onMouseDown={(event) => event.stopPropagation()}
           >
             <header>
-              <div><span className="battle-eyebrow">家长查看区</span><h2 id="battle-history-title">算数大战历史</h2></div>
+              <div><span className="battle-eyebrow">家长查看区</span><h2 id="battle-history-title">{gameTitle}历史</h2></div>
               <button type="button" aria-label="关闭历史记录" onClick={() => setHistoryOpen(false)}>×</button>
             </header>
             {historyLoading && <div className="battle-history-state">正在整理挑战星图…</div>}
@@ -635,7 +689,7 @@ export function ArithmeticBattleGame() {
             <div className="battle-history-groups">
               {historyGroups.map((group) => (
                 <article key={group.key}>
-                  <div><strong>{group.questionCount} 题 · {difficultyLabel(group.difficulty)}</strong><span>{group.sessions} 局</span></div>
+                  <div><strong>{group.questionCount} 题 · {parallelDifficultyLabel(group.difficulty)}</strong><span>{group.sessions} 局</span></div>
                   <dl>
                     <div><dt>平均总耗时</dt><dd>{formatDuration(group.averageTotalDurationMs)}</dd></div>
                     <div><dt>单题平均耗时</dt><dd>{formatDuration(group.averageQuestionDurationMs)}</dd></div>
