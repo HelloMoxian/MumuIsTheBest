@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
@@ -8,6 +8,11 @@ import { MysteryFunctionGame } from "./features/mystery-function/MysteryFunction
 import { PeriodicTablePage } from "./features/periodic-table/PeriodicTablePage";
 import { ReactionFurnacePage } from "./features/reaction-furnace/ReactionFurnacePage";
 import "./styles.css";
+
+const FindNumberGame = lazy(async () => {
+  const module = await import("./features/find-number/FindNumberGame");
+  return { default: module.FindNumberGame };
+});
 
 const DEFAULT_ENDPOINT =
   "wss://llm-v5rvizd868hi5qxb.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference";
@@ -107,6 +112,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "拨动参数，看曲线变身",
         shape: "compact",
         href: "/math/mystery-function",
+      },
+      {
+        title: "找数字",
+        mark: "⌕",
+        description: "问问大小，缩小数字范围",
+        shape: "wide",
+        href: "/math/find-number",
       },
     ],
   },
@@ -725,6 +737,22 @@ function CurrentPage() {
   if (window.location.pathname === "/math/arithmetic-battle") return <ArithmeticBattleGame />;
   if (window.location.pathname === "/math/multiplication") return <MultiplicationGame />;
   if (window.location.pathname === "/math/mystery-function") return <MysteryFunctionGame />;
+  if (window.location.pathname === "/math/find-number") {
+    return (
+      <Suspense
+        fallback={(
+          <div className="app-shell" aria-live="polite">
+            <div className="star-field" aria-hidden="true" />
+            <main className="asr-lab">
+              <section className="safety-note"><span aria-hidden="true">⌕</span><p><strong>正在打开数字雷达舱…</strong></p></section>
+            </main>
+          </div>
+        )}
+      >
+        <FindNumberGame />
+      </Suspense>
+    );
+  }
   if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
   if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
   if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
