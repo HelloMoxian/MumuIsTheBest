@@ -55,6 +55,11 @@ describe("spoken number parsing", () => {
     ["零十二", 12],
     ["二十", 20],
     ["两", 2],
+    ["一百", 100],
+    ["一百零三", 103],
+    ["一百二十三", 123],
+    ["二百一十", 210],
+    ["三百", 300],
   ] as const) {
     it(`parses ${input}`, () => {
       assert.equal(parseSpokenNumber(input), expected);

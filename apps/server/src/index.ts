@@ -7,6 +7,7 @@ import fastifyStatic from "@fastify/static";
 import fastifyWebsocket from "@fastify/websocket";
 import WebSocket, { type RawData } from "ws";
 import { z } from "zod";
+import { registerArithmeticBattleHistoryApi } from "./arithmetic-battle-history.js";
 
 const defaultEndpoint =
   process.env.ASR_WEBSOCKET_URL ??
@@ -518,6 +519,7 @@ async function registerAsrProxy() {
 async function main() {
   await registerAsrProxy();
   registerMathPracticeApi();
+  registerArithmeticBattleHistoryApi(app, appDataDir);
 
   app.get("/api/health", async () => ({ status: "ok", service: "mumu-asr" }));
 

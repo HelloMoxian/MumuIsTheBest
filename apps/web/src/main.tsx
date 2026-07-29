@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
+import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
 import "./styles.css";
 
 const DEFAULT_ENDPOINT =
@@ -81,7 +82,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     icon: "math",
     games: [
       { title: "加减练习", mark: "＋−", description: "0—20 快速计算", shape: "wide", href: "/math/add-subtract" },
-      { title: "算数大战", mark: "⚔", description: "勇敢挑战数字", shape: "compact" },
+      {
+        title: "算数大战",
+        mark: "⚔",
+        description: "同时解开多颗答案星",
+        shape: "compact",
+        href: "/math/arithmetic-battle",
+      },
       { title: "乘法小能手", mark: "×", description: "发现乘法小秘密", shape: "tall" },
       { title: "神秘函数", mark: "ƒ", description: "找找数字规律", shape: "compact" },
     ],
@@ -678,6 +685,10 @@ function App() {
   );
 }
 
-createRoot(document.getElementById("root")!).render(
-  window.location.pathname === "/math/add-subtract" ? <AddSubtractGame /> : <App />,
-);
+function CurrentPage() {
+  if (window.location.pathname === "/math/add-subtract") return <AddSubtractGame />;
+  if (window.location.pathname === "/math/arithmetic-battle") return <ArithmeticBattleGame />;
+  return <App />;
+}
+
+createRoot(document.getElementById("root")!).render(<CurrentPage />);

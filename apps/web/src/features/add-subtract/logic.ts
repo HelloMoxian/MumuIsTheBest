@@ -119,28 +119,38 @@ function normalizeFullWidthDigits(value: string) {
   return value.replace(/[０-９]/g, (digit) => String(digit.charCodeAt(0) - 0xff10));
 }
 
-export function parseSpokenNumber(raw: string): number | null {
-  const token = normalizeFullWidthDigits(raw)
-    .trim()
-    .replace(/[，。,.!?！？]/g, "");
+function parseChineseBelowHundred(raw: string): number | null {
+  const value = raw.replace(/^[零〇]+/, "");
+  if (!value) return 0;
+  if (!value.includes("十")) return chineseDigitValues[value] ?? null;
 
-  if (/^\d+$/.test(token)) return Number.parseInt(token, 10);
-  if (!token || !/^[零〇一二两三四五六七八九十]+$/.test(token)) return null;
-  if (/^[零〇]+$/.test(token)) return 0;
-
-  const withoutLeadingZero = token.replace(/^[零〇]+/, "");
-  if (!withoutLeadingZero) return 0;
-  if (!withoutLeadingZero.includes("十")) {
-    return chineseDigitValues[withoutLeadingZero] ?? null;
-  }
-
-  const [tensText, onesText, extra] = withoutLeadingZero.split("十");
+  const [tensText, onesText, extra] = value.split("十");
   if (extra !== undefined) return null;
   const tens = tensText === "" || tensText === "一" ? 1 : chineseDigitValues[tensText];
   if (tens === undefined || tens === 0) return null;
   const ones = onesText === "" ? 0 : chineseDigitValues[onesText];
   if (ones === undefined) return null;
   return tens * 10 + ones;
+}
+
+export function parseSpokenNumber(raw: string): number | null {
+  const token = normalizeFullWidthDigits(raw)
+    .trim()
+    .replace(/[，。,.!?！？]/g, "");
+
+  if (/^\d+$/.test(token)) return Number.parseInt(token, 10);
+  if (!token || !/^[零〇一二两三四五六七八九十百]+$/.test(token)) return null;
+  if (/^[零〇]+$/.test(token)) return 0;
+
+  const withoutLeadingZero = token.replace(/^[零〇]+/, "");
+  if (!withoutLeadingZero.includes("百")) return parseChineseBelowHundred(withoutLeadingZero);
+
+  const [hundredsText, restText, extra] = withoutLeadingZero.split("百");
+  if (extra !== undefined) return null;
+  const hundreds = chineseDigitValues[hundredsText];
+  if (hundreds === undefined || hundreds === 0) return null;
+  const remainder = parseChineseBelowHundred(restText ?? "");
+  return remainder === null ? null : hundreds * 100 + remainder;
 }
 
 export function extractAnswerCandidates(transcript: string): number[] {
@@ -152,7 +162,7 @@ export function extractAnswerCandidates(transcript: string): number[] {
   for (const marker of markers) {
     const start = (marker.index ?? 0) + marker[0].length;
     const tail = normalized.slice(start);
-    const token = tail.match(/^\s*([0-9零〇一二两三四五六七八九十]{1,8})/)?.[1];
+    const token = tail.match(/^\s*([0-9零〇一二两三四五六七八九十百]{1,12})/)?.[1];
     if (!token) continue;
     const value = parseSpokenNumber(token);
     if (value !== null) answers.push(value);
