@@ -15,6 +15,7 @@
 - `temp/` 中的内容只用于比较视觉风格，不是正式产品代码。
 - 正式 Node.js 技术栈已选定方案 A：React + Vite + Fastify；选型记录见 `docs/TECH_STACK_OPTIONS.md`。
 - 正式视觉已选定为“星际探索舱”，基线原型为 `temp/style-02-galaxy.html`。
+- 首个正式数学玩法“加减练习”已实现；题目边界、语音答案协议、正确率和历史数据语义见 `docs/ADD_SUBTRACT_PRACTICE.md`，后续修改必须保持兼容或同步升级该规范。
 - `docs/DESIGN_SYSTEM.md` 是正式美术样式、组件状态和儿童交互原则的唯一规范；任何前端设计或实现前必须先阅读并遵循它。
 - `apps/web` 和 `apps/server` 是正式产品代码；不要把 `temp/` 样稿迁入产品目录或作为运行时依赖。
 

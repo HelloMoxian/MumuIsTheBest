@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import "./styles.css";
 
 const DEFAULT_ENDPOINT =
@@ -62,6 +63,7 @@ type GamePlaceholder = {
   description: string;
   shape?: "wide" | "tall" | "compact";
   comingSoon?: boolean;
+  href?: string;
 };
 type SubjectBoard = {
   id: string;
@@ -78,7 +80,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "让数字变成好玩的闯关伙伴",
     icon: "math",
     games: [
-      { title: "加减练习", mark: "＋−", description: "数一数，算一算", shape: "wide" },
+      { title: "加减练习", mark: "＋−", description: "0—20 快速计算", shape: "wide", href: "/math/add-subtract" },
       { title: "算数大战", mark: "⚔", description: "勇敢挑战数字", shape: "compact" },
       { title: "乘法小能手", mark: "×", description: "发现乘法小秘密", shape: "tall" },
       { title: "神秘函数", mark: "ƒ", description: "找找数字规律", shape: "compact" },
@@ -536,19 +538,26 @@ function App() {
                   <span className="subject-spark" aria-hidden="true">✦</span>
                 </div>
                 <div className="game-cluster" aria-label={`${subject.title}小游戏`}>
-                  {subject.games.map((game) => (
-                    <article
-                      className={`game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""}`}
-                      key={game.title}
-                    >
-                      <span className="game-mark" aria-hidden="true">{game.mark}</span>
-                      <div>
-                        <h4>{game.title}</h4>
-                        <p>{game.description}</p>
-                      </div>
-                      <span className="game-status">{game.comingSoon ? "正在准备" : "即将开放"}</span>
-                    </article>
-                  ))}
+                  {subject.games.map((game) => {
+                    const content = (
+                      <>
+                        <span className="game-mark" aria-hidden="true">{game.mark}</span>
+                        <div>
+                          <h4>{game.title}</h4>
+                          <p>{game.description}</p>
+                        </div>
+                        <span className="game-status">
+                          {game.href ? "开始练习 →" : game.comingSoon ? "正在准备" : "即将开放"}
+                        </span>
+                      </>
+                    );
+                    const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""}`;
+                    return game.href ? (
+                      <a className={className} href={game.href} key={game.title}>{content}</a>
+                    ) : (
+                      <article className={className} key={game.title}>{content}</article>
+                    );
+                  })}
                 </div>
               </section>
             ))}
@@ -669,4 +678,6 @@ function App() {
   );
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(
+  window.location.pathname === "/math/add-subtract" ? <AddSubtractGame /> : <App />,
+);

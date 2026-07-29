@@ -19,6 +19,7 @@ const projectRoot = resolve(import.meta.dirname, "../../..");
 const appDataDir = resolve(process.env.APP_DATA_DIR ?? resolve(projectRoot, "var"));
 const asrConfigPath = resolve(appDataDir, "config", "asr-settings.json");
 const legacyAsrConfigPath = resolve(projectRoot, "apps", "server", "var", "config", "asr-settings.json");
+const addSubtractHistoryPath = resolve(appDataDir, "learning", "math", "add-subtract-history.json");
 
 const startMessage = z.object({
   type: z.literal("start"),
@@ -36,7 +37,78 @@ const storedAsrConfig = z.object({
   apiKey: z.string().trim().min(12).max(512),
 });
 
+const operationTypeSchema = z.enum(["addition", "subtraction", "mixed"]);
+const completedQuestionSchema = z.object({
+  id: z.string().trim().min(1).max(80),
+  left: z.number().int().min(0).max(20),
+  right: z.number().int().min(0).max(20),
+  operator: z.enum(["+", "-"]),
+  answer: z.number().int().min(0).max(20),
+  firstAttemptCorrect: z.boolean(),
+  calculationDurationMs: z.number().int().min(0).max(30 * 60 * 1000),
+  wrongAnswers: z.array(z.number().int().min(0).max(100_000)).max(100),
+}).superRefine((question, context) => {
+  const expected = question.operator === "+" ? question.left + question.right : question.left - question.right;
+  if (expected !== question.answer || expected < 0 || expected > 20) {
+    context.addIssue({ code: "custom", message: "题目不符合 0 至 20 的加减练习规则。" });
+  }
+  if (question.firstAttemptCorrect !== (question.wrongAnswers.length === 0)) {
+    context.addIssue({ code: "custom", message: "本题首次正确标记与错误答案记录不一致。" });
+  }
+});
+
+const practiceSessionInputSchema = z.object({
+  startedAt: z.string().datetime(),
+  questionCount: z.union([z.literal(5), z.literal(10), z.literal(20)]),
+  operationType: operationTypeSchema,
+  speechType: z.enum(["none", "zh", "en"]),
+  childAge: z.number().min(0).max(18),
+  totalDurationMs: z.number().int().min(0).max(2 * 60 * 60 * 1000),
+  calculationDurationMs: z.number().int().min(0).max(2 * 60 * 60 * 1000),
+  questions: z.array(completedQuestionSchema).min(5).max(20),
+}).superRefine((session, context) => {
+  if (session.questions.length !== session.questionCount) {
+    context.addIssue({ code: "custom", message: "已完成题目数量与本局配置不一致。" });
+  }
+  if (session.calculationDurationMs > session.totalDurationMs) {
+    context.addIssue({ code: "custom", message: "计算时间不能超过总耗时。" });
+  }
+  const operators = new Set(session.questions.map((question) => question.operator));
+  if (
+    (session.operationType === "addition" && (operators.size !== 1 || !operators.has("+"))) ||
+    (session.operationType === "subtraction" && (operators.size !== 1 || !operators.has("-"))) ||
+    (session.operationType === "mixed" && (!operators.has("+") || !operators.has("-")))
+  ) {
+    context.addIssue({ code: "custom", message: "本局题目与所选题目类型不一致。" });
+  }
+  if (new Set(session.questions.map((question) => question.id)).size !== session.questions.length) {
+    context.addIssue({ code: "custom", message: "本局不能包含重复题目 ID。" });
+  }
+  const expressions = session.questions.map(
+    (question) => `${question.left}:${question.operator}:${question.right}`,
+  );
+  if (new Set(expressions).size !== expressions.length) {
+    context.addIssue({ code: "custom", message: "同一局不能重复出现相同算式。" });
+  }
+});
+
+const storedPracticeSessionSchema = practiceSessionInputSchema.extend({
+  id: z.string().uuid(),
+  completedAt: z.string().datetime(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  correctCount: z.number().int().min(0).max(20),
+  accuracy: z.number().min(0).max(1),
+});
+
+const addSubtractHistorySchema = z.object({
+  schemaVersion: z.literal(1),
+  updatedAt: z.string().datetime(),
+  sessions: z.array(storedPracticeSessionSchema),
+});
+
 type StoredAsrConfig = z.infer<typeof storedAsrConfig>;
+type AddSubtractHistory = z.infer<typeof addSubtractHistorySchema>;
 
 type ClientSocket = WebSocket;
 type UpstreamSocket = WebSocket;
@@ -95,6 +167,90 @@ async function saveAsrConfig(config: StoredAsrConfig): Promise<void> {
   await writeFile(temporaryPath, `${JSON.stringify(config, null, 2)}\n`, { mode: 0o600 });
   await rename(temporaryPath, asrConfigPath);
   await chmod(asrConfigPath, 0o600);
+}
+
+function emptyAddSubtractHistory(): AddSubtractHistory {
+  return { schemaVersion: 1, updatedAt: new Date(0).toISOString(), sessions: [] };
+}
+
+async function readAddSubtractHistory(): Promise<AddSubtractHistory> {
+  try {
+    const contents = await readFile(addSubtractHistoryPath, "utf8");
+    return addSubtractHistorySchema.parse(JSON.parse(contents));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return emptyAddSubtractHistory();
+    throw error;
+  }
+}
+
+async function saveAddSubtractHistory(history: AddSubtractHistory): Promise<void> {
+  const historyDirectory = dirname(addSubtractHistoryPath);
+  await mkdir(historyDirectory, { recursive: true, mode: 0o700 });
+  const temporaryPath = `${addSubtractHistoryPath}.${randomUUID()}.tmp`;
+  await writeFile(temporaryPath, `${JSON.stringify(history, null, 2)}\n`, { mode: 0o600 });
+  await rename(temporaryPath, addSubtractHistoryPath);
+  await chmod(addSubtractHistoryPath, 0o600);
+}
+
+let historyWriteQueue: Promise<void> = Promise.resolve();
+
+function appendPracticeSession(input: z.infer<typeof practiceSessionInputSchema>) {
+  const operation = historyWriteQueue.then(async () => {
+    const history = await readAddSubtractHistory();
+    const now = new Date().toISOString();
+    const correctCount = input.questions.filter((question) => question.firstAttemptCorrect).length;
+    const session = storedPracticeSessionSchema.parse({
+      ...input,
+      id: randomUUID(),
+      completedAt: now,
+      createdAt: now,
+      updatedAt: now,
+      correctCount,
+      accuracy: correctCount / input.questionCount,
+    });
+    await saveAddSubtractHistory({
+      schemaVersion: 1,
+      updatedAt: now,
+      sessions: [...history.sessions, session],
+    });
+    return session;
+  });
+
+  historyWriteQueue = operation.then(() => undefined, () => undefined);
+  return operation;
+}
+
+function registerMathPracticeApi() {
+  app.get("/api/math/add-subtract/history", async (_request, reply) => {
+    try {
+      return await readAddSubtractHistory();
+    } catch {
+      return reply.code(500).send({
+        code: "HISTORY_READ_FAILED",
+        message: "历史记录暂时无法读取，请检查本机数据文件。",
+      });
+    }
+  });
+
+  app.post("/api/math/add-subtract/history", async (request, reply) => {
+    const parsed = practiceSessionInputSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        code: "INVALID_PRACTICE_SESSION",
+        message: "本局数据不完整或不符合加减练习规则，因此没有写入历史记录。",
+      });
+    }
+
+    try {
+      const session = await appendPracticeSession(parsed.data);
+      return reply.code(201).send({ session });
+    } catch {
+      return reply.code(500).send({
+        code: "HISTORY_WRITE_FAILED",
+        message: "本局已经完成，但历史记录暂时无法保存。请让家长检查数据目录。",
+      });
+    }
+  });
 }
 
 function parseText(raw: RawData): string {
@@ -361,6 +517,7 @@ async function registerAsrProxy() {
 
 async function main() {
   await registerAsrProxy();
+  registerMathPracticeApi();
 
   app.get("/api/health", async () => ({ status: "ok", service: "mumu-asr" }));
 
