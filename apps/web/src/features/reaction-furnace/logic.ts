@@ -97,7 +97,7 @@ function parseGroup(
 
 export function parseFormula(formula: string): Record<string, number> | null {
   const normalized = normalizeFormula(formula);
-  if (!normalized || /[nₙ]/u.test(normalized)) return null;
+  if (!normalized) return null;
 
   const total: Record<string, number> = {};
   for (const rawSegment of normalized.split(/[·.]/u)) {

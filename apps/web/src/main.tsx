@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
+import { ConservationGame } from "./features/conservation/ConservationGame";
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
 import { PeriodicTablePage } from "./features/periodic-table/PeriodicTablePage";
 import { ReactionFurnacePage } from "./features/reaction-furnace/ReactionFurnacePage";
@@ -124,7 +125,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
       },
       { title: "实验大师", mark: "✦", description: "做好奇小实验", shape: "compact" },
       { title: "物质虚拟世界", mark: "◎", description: "走进微观世界", shape: "wide" },
-      { title: "物质守恒", mark: "↻", description: "发现不变的秘密", shape: "compact" },
+      {
+        title: "物质守恒",
+        mark: "↻",
+        description: "配平反应，让原子一样多",
+        shape: "compact",
+        href: "/chemistry/conservation",
+      },
     ],
   },
   {
@@ -712,6 +719,7 @@ function CurrentPage() {
   if (window.location.pathname === "/math/multiplication") return <MultiplicationGame />;
   if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
   if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
+  if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
   return <App />;
 }
 

@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-项目已采用 React + Vite + Fastify，并已创建阿里云 Fun-ASR 实时语音识别、三个正式数学玩法，以及“元素周期表”“反应熔炉”两个化学模块。
+项目已采用 React + Vite + Fastify，并已创建阿里云 Fun-ASR 实时语音识别、三个正式数学玩法，以及“元素周期表”“反应熔炉”“物质守恒”三个化学模块。
 
 - 技术方案（已选定 A）：[`docs/TECH_STACK_OPTIONS.md`](docs/TECH_STACK_OPTIONS.md)
 - 正式设计系统（已选定星际探索舱）：[`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
@@ -14,6 +14,7 @@
 - 数学乘法小能手规则与数据语义：[`docs/MULTIPLICATION_PRACTICE.md`](docs/MULTIPLICATION_PRACTICE.md)
 - 化学元素周期表数据、布局与语音交互：[`docs/PERIODIC_TABLE.md`](docs/PERIODIC_TABLE.md)
 - 化学反应熔炉资料库、组成规则与实时渲染：[`docs/REACTION_FURNACE.md`](docs/REACTION_FURNACE.md)
+- 化学物质守恒资料库、配平语义与玩法：[`docs/CONSERVATION_GAME.md`](docs/CONSERVATION_GAME.md)
 - 当前规则、能力进展与后续顺序总览：[`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md)
 - Codex/工程协作规则：[`AGENTS.md`](AGENTS.md)
 - 视觉选型原型存档：[`temp/style-02-galaxy.html`](temp/style-02-galaxy.html)
@@ -36,3 +37,4 @@
 2. 首页进入“数学 → 加减练习 / 算数大战 / 乘法小能手”，可使用按钮或语音“开始 / start”开启一局；回答请说“等于 + 答案”。
 3. 首页进入“化学 → 元素周期表”，可浏览 1—118 号元素，通过点击、方向键或语音“上 / 下 / 左 / 右 / 详细信息 / 返回”探索元素档案。
 4. 首页进入“化学 → 反应熔炉”，从右侧原子仓投放原子，观察它们运动、聚合并组成每批随机出现的 20 种物质。
+5. 首页进入“化学 → 物质守恒”，选择题数和难度，通过数字控制台调整化学式前的系数，让箭头两边每一种原子都一样多。
