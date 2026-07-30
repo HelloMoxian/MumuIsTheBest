@@ -438,7 +438,10 @@ export function ConservationGame() {
               <div className="balance-rows">
                 {rows.map((row) => (
                   <article className={row.balanced ? "is-balanced" : ""} key={row.symbol}>
-                    <div className="element-identity"><strong>{row.symbol}</strong><small>{ELEMENT_NAME.get(row.symbol) ?? row.symbol}</small></div>
+                    <div className="balance-element-identity">
+                      <strong>{row.symbol}</strong>
+                      <small>{ELEMENT_NAME.get(row.symbol) ?? row.symbol}</small>
+                    </div>
                     <div className="balance-beam">
                       <span>左 {row.left}</span>
                       <i style={{ transform: row.balanced ? "rotate(0deg)" : `rotate(${Math.max(-6, Math.min(6, row.difference * -2))}deg)` }} />

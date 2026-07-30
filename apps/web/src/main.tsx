@@ -19,6 +19,26 @@ const CommonCharactersGame = lazy(async () => {
   return { default: module.CommonCharactersGame };
 });
 
+const MissionLabRoute = lazy(async () => {
+  const module = await import("./features/mission-lab/MissionLabRoute");
+  return { default: module.MissionLabRoute };
+});
+
+const MISSION_LAB_ROUTES = new Set([
+  "/math/pattern-detective",
+  "/chemistry/experiment-master",
+  "/chemistry/matter-world",
+  "/chinese/pinyin",
+  "/english/word-orbit",
+  "/physics/unit-magic",
+  "/physics/force-lab",
+  "/physics/light-shadow",
+  "/universe/solar-system",
+  "/biology/body-station",
+  "/biology/cell-universe",
+  "/game/number-war",
+]);
+
 const DEFAULT_ENDPOINT =
   "wss://llm-v5rvizd868hi5qxb.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference";
 const MAX_ASR_SECONDS = 120;
@@ -72,7 +92,7 @@ type AsrConfiguration = {
   isConfigured: boolean;
   storage: "local-file" | "environment" | "none";
 };
-type SubjectIconKind = "math" | "chemistry" | "chinese" | "english" | "physics" | "universe" | "game";
+type SubjectIconKind = "math" | "chemistry" | "chinese" | "english" | "physics" | "universe" | "biology" | "game";
 type GamePlaceholder = {
   title: string;
   mark: string;
@@ -125,6 +145,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         shape: "wide",
         href: "/math/find-number",
       },
+      {
+        title: "规律侦探",
+        mark: "◇",
+        description: "追踪重复、递增和交替",
+        shape: "compact",
+        href: "/math/pattern-detective",
+      },
     ],
   },
   {
@@ -147,8 +174,20 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         shape: "compact",
         href: "/chemistry/reaction-furnace",
       },
-      { title: "实验大师", mark: "✦", description: "做好奇小实验", shape: "compact" },
-      { title: "物质虚拟世界", mark: "◎", description: "走进微观世界", shape: "wide" },
+      {
+        title: "实验大师",
+        mark: "⌁",
+        description: "先预测，再解释实验现象",
+        shape: "compact",
+        href: "/chemistry/experiment-master",
+      },
+      {
+        title: "物质虚拟世界",
+        mark: "∴",
+        description: "钻进固液气的粒子世界",
+        shape: "wide",
+        href: "/chemistry/matter-world",
+      },
       {
         title: "物质守恒",
         mark: "↻",
@@ -164,7 +203,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "读一读、认一认，文字会发光",
     icon: "chinese",
     games: [
-      { title: "拼音", mark: "拼", description: "把声音拼起来", shape: "compact" },
+      { title: "拼音星桥", mark: "ā", description: "把声母、韵母和声调连起来", shape: "compact", href: "/chinese/pinyin" },
       { title: "常用500字", mark: "500", description: "每天认识一点", shape: "wide", href: "/chinese/common-characters/500" },
       { title: "常用1000字", mark: "1000", description: "收集文字星星", shape: "compact", href: "/chinese/common-characters/1000" },
       { title: "常用1500字", mark: "1500", description: "读懂更多故事", shape: "compact", href: "/chinese/common-characters/1500" },
@@ -178,7 +217,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "跟着声音和字母去旅行",
     icon: "english",
     games: [
-      { title: "新的英语小游戏", mark: "Aa", description: "正在准备，敬请期待", shape: "wide", comingSoon: true },
+      { title: "单词轨道", mark: "Aa", description: "连接英文声音、拼写和意思", shape: "wide", href: "/english/word-orbit" },
     ],
   },
   {
@@ -187,8 +226,9 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "观察运动、力量和奇妙规律",
     icon: "physics",
     games: [
-      { title: "单位魔法", mark: "cm", description: "让长度和重量说话", shape: "wide" },
-      { title: "新的物理小游戏", mark: "↗", description: "正在准备，敬请期待", shape: "compact", comingSoon: true },
+      { title: "单位魔法", mark: "cm", description: "给长度、质量和时间选单位", shape: "wide", href: "/physics/unit-magic" },
+      { title: "力的实验舱", mark: "→", description: "推拉之间观察运动变化", shape: "compact", href: "/physics/force-lab" },
+      { title: "光影追踪", mark: "◐", description: "移动光束，追踪影子方向", shape: "compact", href: "/physics/light-shadow" },
     ],
   },
   {
@@ -197,7 +237,17 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "抬头看看，星星也在等木木",
     icon: "universe",
     games: [
-      { title: "新的宇宙小游戏", mark: "✦", description: "正在准备，敬请期待", shape: "wide", comingSoon: true },
+      { title: "太阳系航线", mark: "◎", description: "沿轨道认识八大行星", shape: "wide", href: "/universe/solar-system" },
+    ],
+  },
+  {
+    id: "biology",
+    title: "生命",
+    caption: "从身体到细胞，生命处处在合作",
+    icon: "biology",
+    games: [
+      { title: "人体探索站", mark: "♥", description: "认识身体里的工作伙伴", shape: "wide", href: "/biology/body-station" },
+      { title: "细胞小宇宙", mark: "◉", description: "走进生命的微小结构", shape: "compact", href: "/biology/cell-universe" },
     ],
   },
   {
@@ -206,7 +256,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "好玩的挑战，也能练出大本领",
     icon: "game",
     games: [
-      { title: "数字战争", mark: "⚡", description: "数字对战即将开始", shape: "wide" },
+      { title: "数字战争", mark: "⚡", description: "比较与组合数字飞船能量", shape: "wide", href: "/game/number-war" },
     ],
   },
 ];
@@ -229,6 +279,9 @@ function SubjectGlyph({ kind }: { kind: SubjectIconKind }) {
   }
   if (kind === "universe") {
     return <span className="subject-glyph glyph-universe" aria-hidden="true"><i /><b /></span>;
+  }
+  if (kind === "biology") {
+    return <span className="subject-glyph glyph-biology" aria-hidden="true"><i /><i /><b /></span>;
   }
   return <span className="subject-glyph glyph-game" aria-hidden="true"><i /><i /><i /></span>;
 }
@@ -762,6 +815,22 @@ function CurrentPage() {
   if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
   if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
   if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
+  if (MISSION_LAB_ROUTES.has(window.location.pathname)) {
+    return (
+      <Suspense
+        fallback={(
+          <div className="app-shell" aria-live="polite">
+            <div className="star-field" aria-hidden="true" />
+            <main className="asr-lab">
+              <section className="safety-note"><span aria-hidden="true">✦</span><p><strong>正在连接木木的探索任务舱…</strong></p></section>
+            </main>
+          </div>
+        )}
+      >
+        <MissionLabRoute />
+      </Suspense>
+    );
+  }
   if (/^\/chinese\/common-characters\/(500|1000|1500|2000|2500)$/.test(window.location.pathname)) {
     return (
       <Suspense
