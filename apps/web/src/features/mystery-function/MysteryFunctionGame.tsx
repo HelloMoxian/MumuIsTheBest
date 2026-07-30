@@ -1,7 +1,10 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CURVE_COLORS, FunctionGraphCanvas } from "./FunctionGraphCanvas";
 import {
   FUNCTION_DEFINITIONS,
+  MAX_GRAPH_SPAN,
+  MIN_GRAPH_SPAN,
+  PARAMETER_ABSOLUTE_LIMIT,
   canAddCurve,
   createFunctionCurve,
   curveEquation,
@@ -9,6 +12,8 @@ import {
   evaluateCurve,
   formatNumber,
   getDefinition,
+  nextGraphSpan,
+  normalizeGraphSpan,
   setCurveParameter,
   type FunctionCurve,
   type FunctionKind,
@@ -25,6 +30,63 @@ function freeColorIndex(curves: readonly FunctionCurve[]) {
 
 function curveLabel(curve: FunctionCurve) {
   return getDefinition(curve.definitionId).name;
+}
+
+type NumericCommitInputProps = {
+  value: number;
+  step: number;
+  minimum?: number;
+  maximum?: number;
+  label: string;
+  className?: string;
+  onCommit: (value: number) => number;
+};
+
+function NumericCommitInput({
+  value,
+  step,
+  minimum,
+  maximum,
+  label,
+  className,
+  onCommit,
+}: NumericCommitInputProps) {
+  const [draft, setDraft] = useState(formatNumber(value));
+
+  useEffect(() => {
+    setDraft(formatNumber(value));
+  }, [value]);
+
+  const commit = () => {
+    const parsed = Number(draft);
+    if (!draft.trim() || !Number.isFinite(parsed)) {
+      setDraft(formatNumber(value));
+      return;
+    }
+    setDraft(formatNumber(onCommit(parsed)));
+  };
+
+  return (
+    <input
+      type="number"
+      className={className}
+      inputMode="decimal"
+      step={step}
+      min={minimum}
+      max={maximum}
+      value={draft}
+      onChange={(event) => setDraft(event.target.value)}
+      onBlur={commit}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") event.currentTarget.blur();
+        if (event.key === "Escape") {
+          setDraft(formatNumber(value));
+          event.currentTarget.blur();
+        }
+      }}
+      aria-label={label}
+    />
+  );
 }
 
 export function MysteryFunctionGame() {
@@ -100,15 +162,18 @@ export function MysteryFunctionGame() {
   };
 
   const updateParameter = (parameterKey: string, value: number) => {
-    if (!selectedCurve) return;
+    if (!selectedCurve) return value;
+    const nextCurve = setCurveParameter(selectedCurve, parameterKey, value);
+    const committedValue = nextCurve.parameters[parameterKey] ?? value;
+    if (committedValue === selectedCurve.parameters[parameterKey]) return committedValue;
     setCurves((current) => current.map((curve) => (
       curve.id === selectedCurve.id
-        ? setCurveParameter(curve, parameterKey, value)
+        ? nextCurve
         : curve
     )));
     setAdjustmentCount((count) => count + 1);
-    setAnimationKey((key) => key + 1);
     setNotice({ kind: "info", text: "看，公式里的数字和图像一起变化了！" });
+    return committedValue;
   };
 
   const selectCurve = (id: string) => {
@@ -139,15 +204,16 @@ export function MysteryFunctionGame() {
     setAnimationKey((key) => key + 1);
   };
 
-  const zoom = (direction: "in" | "out") => {
-    const options = [6, 10, 20];
-    const currentIndex = options.indexOf(span);
-    const nextIndex = direction === "in"
-      ? Math.max(0, currentIndex - 1)
-      : Math.min(options.length - 1, currentIndex + 1);
-    setSpan(options[nextIndex]!);
+  const updateSpan = (requestedSpan: number) => {
+    const nextSpan = normalizeGraphSpan(requestedSpan) ?? span;
+    if (nextSpan === span) return span;
+    setSpan(nextSpan);
     setProbeX(null);
-    setAnimationKey((key) => key + 1);
+    return nextSpan;
+  };
+
+  const zoom = (direction: "in" | "out") => {
+    updateSpan(nextGraphSpan(span, direction));
   };
 
   if (phase === "intro") {
@@ -259,9 +325,19 @@ export function MysteryFunctionGame() {
               <p>{selectedCurve ? describeCurve(selectedCurve) : "从右边的公式库点亮第一条曲线。"}</p>
             </div>
             <div className="graph-tools" aria-label="坐标图工具">
-              <button type="button" onClick={() => zoom("in")} disabled={span === 6} aria-label="放大坐标图">＋</button>
-              <span>−{span} 到 {span}</span>
-              <button type="button" onClick={() => zoom("out")} disabled={span === 20} aria-label="缩小坐标图">−</button>
+              <button type="button" onClick={() => zoom("in")} disabled={span <= MIN_GRAPH_SPAN} aria-label="放大坐标图">＋</button>
+              <label className="graph-range-input">
+                <span>显示 ±</span>
+                <NumericCommitInput
+                  value={span}
+                  step={0.5}
+                  minimum={MIN_GRAPH_SPAN}
+                  maximum={MAX_GRAPH_SPAN}
+                  label="坐标图显示范围"
+                  onCommit={updateSpan}
+                />
+              </label>
+              <button type="button" onClick={() => zoom("out")} disabled={span >= MAX_GRAPH_SPAN} aria-label="缩小坐标图">−</button>
               <button type="button" className="probe-clear" disabled={probeX === null} onClick={() => setProbeX(null)}>清除探针</button>
             </div>
           </div>
@@ -349,28 +425,27 @@ export function MysteryFunctionGame() {
                       <div className="parameter-row" key={parameter.key}>
                         <div className="parameter-copy">
                           <span><b>{parameter.symbol}</b>{parameter.label}</span>
-                          <output>{formatNumber(value)}</output>
+                          <small>每次 ±{formatNumber(parameter.step)}，也可输入</small>
                         </div>
                         <div className="parameter-input">
                           <button
                             type="button"
-                            disabled={value <= parameter.min}
+                            disabled={value <= (parameter.minimum ?? -PARAMETER_ABSOLUTE_LIMIT)}
                             onClick={() => updateParameter(parameter.key, value - parameter.step)}
                             aria-label={`减小${parameter.label}`}
                           >−</button>
-                          <input
-                            type="range"
-                            min={parameter.min}
-                            max={parameter.max}
+                          <NumericCommitInput
+                            className="parameter-number-input"
                             step={parameter.step}
                             value={value}
-                            onChange={(event) => updateParameter(parameter.key, Number(event.target.value))}
-                            aria-label={`${selectedDefinition.name}${parameter.label}`}
-                            style={{ accentColor: CURVE_COLORS[selectedCurve.colorIndex] }}
+                            minimum={parameter.minimum ?? -PARAMETER_ABSOLUTE_LIMIT}
+                            maximum={PARAMETER_ABSOLUTE_LIMIT}
+                            onCommit={(nextValue) => updateParameter(parameter.key, nextValue)}
+                            label={`${selectedDefinition.name}${parameter.label}`}
                           />
                           <button
                             type="button"
-                            disabled={value >= parameter.max}
+                            disabled={value >= PARAMETER_ABSOLUTE_LIMIT}
                             onClick={() => updateParameter(parameter.key, value + parameter.step)}
                             aria-label={`增大${parameter.label}`}
                           >＋</button>

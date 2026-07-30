@@ -13,10 +13,9 @@ export type FunctionParameter = {
   key: string;
   symbol: string;
   label: string;
-  min: number;
-  max: number;
   step: number;
   initial: number;
+  minimum?: number;
   meaning: string;
 };
 
@@ -46,6 +45,11 @@ export type FunctionPoint = {
 
 const EPSILON = 1e-8;
 
+export const PARAMETER_STEP = 0.5;
+export const PARAMETER_ABSOLUTE_LIMIT = 1_000_000;
+export const MIN_GRAPH_SPAN = 0.5;
+export const MAX_GRAPH_SPAN = 1_000_000;
+
 function finite(value: number) {
   return Number.isFinite(value) && Math.abs(value) < 1_000_000 ? value : null;
 }
@@ -73,8 +77,8 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = ax + b",
     shape: "像一束笔直的光，a 决定方向，b 推着它上下移动。",
     parameters: [
-      { key: "a", symbol: "a", label: "斜率", min: -4, max: 4, step: 0.25, initial: 1, meaning: "控制直线向上还是向下" },
-      { key: "b", symbol: "b", label: "高度", min: -6, max: 6, step: 0.5, initial: 1, meaning: "推动整条直线上下移动" },
+      { key: "a", symbol: "a", label: "斜率", step: PARAMETER_STEP, initial: 1, meaning: "控制直线向上还是向下" },
+      { key: "b", symbol: "b", label: "高度", step: PARAMETER_STEP, initial: 1, meaning: "推动整条直线上下移动" },
     ],
     evaluate: (x, p) => finite(p.a * x + p.b),
     equation: (p) => `y = ${firstTerm(p.a, "x")}${signed(p.b)}`,
@@ -86,9 +90,9 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = ax² + bx + c",
     shape: "像一只碗或一座小山，a 的正负会让开口翻转。",
     parameters: [
-      { key: "a", symbol: "a", label: "开口", min: -2, max: 2, step: 0.25, initial: 0.5, meaning: "控制开口方向和宽窄" },
-      { key: "b", symbol: "b", label: "偏移", min: -4, max: 4, step: 0.5, initial: 0, meaning: "改变弯曲中心的位置" },
-      { key: "c", symbol: "c", label: "高度", min: -6, max: 6, step: 0.5, initial: -1, meaning: "推动图像上下移动" },
+      { key: "a", symbol: "a", label: "开口", step: PARAMETER_STEP, initial: 0.5, meaning: "控制开口方向和宽窄" },
+      { key: "b", symbol: "b", label: "偏移", step: PARAMETER_STEP, initial: 0, meaning: "改变弯曲中心的位置" },
+      { key: "c", symbol: "c", label: "高度", step: PARAMETER_STEP, initial: -1, meaning: "推动图像上下移动" },
     ],
     evaluate: (x, p) => finite(p.a * x * x + p.b * x + p.c),
     equation: (p) => `y = ${firstTerm(p.a, "x²")}${signed(p.b, "x")}${signed(p.c)}`,
@@ -100,10 +104,10 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = ax³ + bx² + cx + d",
     shape: "常常像一条穿过星空的 S 形航线，会有更多转弯。",
     parameters: [
-      { key: "a", symbol: "a", label: "主弯曲", min: -1, max: 1, step: 0.1, initial: 0.15, meaning: "控制远处向上还是向下" },
-      { key: "b", symbol: "b", label: "第二弯", min: -2, max: 2, step: 0.25, initial: 0, meaning: "改变中间的弯曲形状" },
-      { key: "c", symbol: "c", label: "斜方向", min: -4, max: 4, step: 0.25, initial: -1, meaning: "拉动图像中间的方向" },
-      { key: "d", symbol: "d", label: "高度", min: -5, max: 5, step: 0.5, initial: 0, meaning: "推动整条曲线上下移动" },
+      { key: "a", symbol: "a", label: "主弯曲", step: PARAMETER_STEP, initial: 0.5, meaning: "控制远处向上还是向下" },
+      { key: "b", symbol: "b", label: "第二弯", step: PARAMETER_STEP, initial: 0, meaning: "改变中间的弯曲形状" },
+      { key: "c", symbol: "c", label: "斜方向", step: PARAMETER_STEP, initial: -1, meaning: "拉动图像中间的方向" },
+      { key: "d", symbol: "d", label: "高度", step: PARAMETER_STEP, initial: 0, meaning: "推动整条曲线上下移动" },
     ],
     evaluate: (x, p) => finite(p.a * x ** 3 + p.b * x ** 2 + p.c * x + p.d),
     equation: (p) => `y = ${firstTerm(p.a, "x³")}${signed(p.b, "x²")}${signed(p.c, "x")}${signed(p.d)}`,
@@ -115,10 +119,10 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = A·sin(Bx + C) + D",
     shape: "像有节奏的海浪，一直重复着升起和落下。",
     parameters: [
-      { key: "A", symbol: "A", label: "浪高", min: -5, max: 5, step: 0.25, initial: 2, meaning: "控制波浪有多高" },
-      { key: "B", symbol: "B", label: "密度", min: 0.25, max: 3, step: 0.25, initial: 1, meaning: "控制波浪挤得多紧" },
-      { key: "C", symbol: "C", label: "左右移动", min: -3, max: 3, step: 0.25, initial: 0, meaning: "推动波浪左右移动" },
-      { key: "D", symbol: "D", label: "上下移动", min: -5, max: 5, step: 0.5, initial: 0, meaning: "推动波浪整体上下移动" },
+      { key: "A", symbol: "A", label: "浪高", step: PARAMETER_STEP, initial: 2, meaning: "控制波浪有多高" },
+      { key: "B", symbol: "B", label: "密度", step: PARAMETER_STEP, initial: 1, meaning: "控制波浪挤得多紧" },
+      { key: "C", symbol: "C", label: "左右移动", step: PARAMETER_STEP, initial: 0, meaning: "推动波浪左右移动" },
+      { key: "D", symbol: "D", label: "上下移动", step: PARAMETER_STEP, initial: 0, meaning: "推动波浪整体上下移动" },
     ],
     evaluate: (x, p) => finite(p.A * Math.sin(p.B * x + p.C) + p.D),
     equation: (p) => `y = ${firstTerm(p.A)}·sin(${firstTerm(p.B, "x")}${signed(p.C)})${signed(p.D)}`,
@@ -130,10 +134,10 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = A·cos(Bx + C) + D",
     shape: "也是波浪，但它从波峰附近出发，和正弦像一对伙伴。",
     parameters: [
-      { key: "A", symbol: "A", label: "浪高", min: -5, max: 5, step: 0.25, initial: 2, meaning: "控制波浪有多高" },
-      { key: "B", symbol: "B", label: "密度", min: 0.25, max: 3, step: 0.25, initial: 1, meaning: "控制波浪挤得多紧" },
-      { key: "C", symbol: "C", label: "左右移动", min: -3, max: 3, step: 0.25, initial: 0, meaning: "推动波浪左右移动" },
-      { key: "D", symbol: "D", label: "上下移动", min: -5, max: 5, step: 0.5, initial: 0, meaning: "推动波浪整体上下移动" },
+      { key: "A", symbol: "A", label: "浪高", step: PARAMETER_STEP, initial: 2, meaning: "控制波浪有多高" },
+      { key: "B", symbol: "B", label: "密度", step: PARAMETER_STEP, initial: 1, meaning: "控制波浪挤得多紧" },
+      { key: "C", symbol: "C", label: "左右移动", step: PARAMETER_STEP, initial: 0, meaning: "推动波浪左右移动" },
+      { key: "D", symbol: "D", label: "上下移动", step: PARAMETER_STEP, initial: 0, meaning: "推动波浪整体上下移动" },
     ],
     evaluate: (x, p) => finite(p.A * Math.cos(p.B * x + p.C) + p.D),
     equation: (p) => `y = ${firstTerm(p.A)}·cos(${firstTerm(p.B, "x")}${signed(p.C)})${signed(p.D)}`,
@@ -145,9 +149,9 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = A|x − H| + K",
     shape: "像一个会移动、会翻转的 V 字形山谷。",
     parameters: [
-      { key: "A", symbol: "A", label: "开口", min: -4, max: 4, step: 0.25, initial: 1, meaning: "控制 V 字的方向和宽窄" },
-      { key: "H", symbol: "H", label: "左右移动", min: -5, max: 5, step: 0.5, initial: 0, meaning: "推动尖角左右移动" },
-      { key: "K", symbol: "K", label: "上下移动", min: -5, max: 5, step: 0.5, initial: 0, meaning: "推动尖角上下移动" },
+      { key: "A", symbol: "A", label: "开口", step: PARAMETER_STEP, initial: 1, meaning: "控制 V 字的方向和宽窄" },
+      { key: "H", symbol: "H", label: "左右移动", step: PARAMETER_STEP, initial: 0, meaning: "推动尖角左右移动" },
+      { key: "K", symbol: "K", label: "上下移动", step: PARAMETER_STEP, initial: 0, meaning: "推动尖角上下移动" },
     ],
     evaluate: (x, p) => finite(p.A * Math.abs(x - p.H) + p.K),
     equation: (p) => `y = ${firstTerm(p.A)}|x${signed(-p.H)}|${signed(p.K)}`,
@@ -159,9 +163,9 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = A√(x − H) + K",
     shape: "从一个起点出发，只向右边慢慢延伸。",
     parameters: [
-      { key: "A", symbol: "A", label: "方向", min: -4, max: 4, step: 0.25, initial: 1.5, meaning: "控制曲线向上或向下伸展" },
-      { key: "H", symbol: "H", label: "起点左右", min: -5, max: 5, step: 0.5, initial: 0, meaning: "决定曲线从哪个 x 开始" },
-      { key: "K", symbol: "K", label: "起点高度", min: -5, max: 5, step: 0.5, initial: 0, meaning: "决定曲线从哪个高度开始" },
+      { key: "A", symbol: "A", label: "方向", step: PARAMETER_STEP, initial: 1.5, meaning: "控制曲线向上或向下伸展" },
+      { key: "H", symbol: "H", label: "起点左右", step: PARAMETER_STEP, initial: 0, meaning: "决定曲线从哪个 x 开始" },
+      { key: "K", symbol: "K", label: "起点高度", step: PARAMETER_STEP, initial: 0, meaning: "决定曲线从哪个高度开始" },
     ],
     evaluate: (x, p) => x < p.H ? null : finite(p.A * Math.sqrt(x - p.H) + p.K),
     equation: (p) => `y = ${firstTerm(p.A)}√(x${signed(-p.H)})${signed(p.K)}`,
@@ -173,9 +177,9 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = A/(x − H) + K",
     shape: "像两艘互相靠近却不碰到坐标线的飞船。",
     parameters: [
-      { key: "A", symbol: "A", label: "方向", min: -8, max: 8, step: 0.5, initial: 4, meaning: "控制两支曲线所在的方向" },
-      { key: "H", symbol: "H", label: "分界线", min: -4, max: 4, step: 0.5, initial: 0, meaning: "移动曲线碰不到的竖线" },
-      { key: "K", symbol: "K", label: "中心高度", min: -4, max: 4, step: 0.5, initial: 0, meaning: "移动曲线碰不到的横线" },
+      { key: "A", symbol: "A", label: "方向", step: PARAMETER_STEP, initial: 4, meaning: "控制两支曲线所在的方向" },
+      { key: "H", symbol: "H", label: "分界线", step: PARAMETER_STEP, initial: 0, meaning: "移动曲线碰不到的竖线" },
+      { key: "K", symbol: "K", label: "中心高度", step: PARAMETER_STEP, initial: 0, meaning: "移动曲线碰不到的横线" },
     ],
     evaluate: (x, p) => Math.abs(x - p.H) < EPSILON ? null : finite(p.A / (x - p.H) + p.K),
     equation: (p) => `y = ${firstTerm(p.A)}/(x${signed(-p.H)})${signed(p.K)}`,
@@ -187,9 +191,9 @@ export const FUNCTION_DEFINITIONS: readonly FunctionDefinition[] = [
     baseFormula: "y = A·Bˣ + K",
     shape: "有时慢慢出发、突然长高，像知识越积越多。",
     parameters: [
-      { key: "A", symbol: "A", label: "方向", min: -4, max: 4, step: 0.25, initial: 1, meaning: "控制曲线在上方还是下方" },
-      { key: "B", symbol: "B", label: "成长速度", min: 0.25, max: 3, step: 0.25, initial: 1.5, meaning: "大于 1 会越长越快" },
-      { key: "K", symbol: "K", label: "高度", min: -5, max: 5, step: 0.5, initial: 0, meaning: "推动整条曲线上下移动" },
+      { key: "A", symbol: "A", label: "方向", step: PARAMETER_STEP, initial: 1, meaning: "控制曲线在上方还是下方" },
+      { key: "B", symbol: "B", label: "成长速度", step: PARAMETER_STEP, initial: 1.5, minimum: PARAMETER_STEP, meaning: "大于 1 会越长越快；底数必须大于 0" },
+      { key: "K", symbol: "K", label: "高度", step: PARAMETER_STEP, initial: 0, meaning: "推动整条曲线上下移动" },
     ],
     evaluate: (x, p) => finite(p.A * p.B ** x + p.K),
     equation: (p) => `y = ${firstTerm(p.A)}·${formatNumber(p.B)}ˣ${signed(p.K)}`,
@@ -228,18 +232,43 @@ export function setCurveParameter(
 ): FunctionCurve {
   const definition = getDefinition(curve.definitionId);
   const parameter = definition.parameters.find((candidate) => candidate.key === parameterKey);
-  if (!parameter) return curve;
-  const clamped = Math.min(parameter.max, Math.max(parameter.min, requestedValue));
-  const steps = Math.round((clamped - parameter.min) / parameter.step);
-  const snapped = parameter.min + steps * parameter.step;
+  if (!parameter || !Number.isFinite(requestedValue)) return curve;
+  const lowerBound = parameter.minimum ?? -PARAMETER_ABSOLUTE_LIMIT;
+  const bounded = Math.min(PARAMETER_ABSOLUTE_LIMIT, Math.max(lowerBound, requestedValue));
+  const snapped = Math.round(bounded / parameter.step) * parameter.step;
   const precision = Math.max(0, (String(parameter.step).split(".")[1] ?? "").length);
+  const normalized = Math.max(lowerBound, Number(snapped.toFixed(precision)));
   return {
     ...curve,
     parameters: {
       ...curve.parameters,
-      [parameterKey]: Number(snapped.toFixed(precision)),
+      [parameterKey]: normalized,
     },
   };
+}
+
+export function normalizeGraphSpan(requestedSpan: number) {
+  if (!Number.isFinite(requestedSpan)) return null;
+  const bounded = Math.min(MAX_GRAPH_SPAN, Math.max(MIN_GRAPH_SPAN, requestedSpan));
+  return Math.round(bounded * 2) / 2;
+}
+
+export function nextGraphSpan(currentSpan: number, direction: "in" | "out") {
+  const span = normalizeGraphSpan(currentSpan) ?? 10;
+  const exponent = Math.floor(Math.log10(span));
+  const magnitude = 10 ** exponent;
+  const normalized = span / magnitude;
+  const candidates = [1, 2, 5, 10];
+
+  if (direction === "out") {
+    const next = candidates.find((candidate) => candidate > normalized + EPSILON);
+    return normalizeGraphSpan((next ?? 20) * magnitude) ?? span;
+  }
+
+  const previous = [...candidates]
+    .reverse()
+    .find((candidate) => candidate < normalized - EPSILON);
+  return normalizeGraphSpan((previous ?? 5) * (previous ? magnitude : magnitude / 10)) ?? span;
 }
 
 export function evaluateCurve(curve: FunctionCurve, x: number) {

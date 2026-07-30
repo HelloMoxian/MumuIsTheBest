@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { browserTts } from "../../shared/speech";
 import { AsrRecognitionSession, readAsrConfiguration, type RecognitionState } from "./asr-client";
 import {
   aggregateHistory,
@@ -68,27 +69,6 @@ function Segment<T extends string | number>({
       </div>
     </fieldset>
   );
-}
-
-function speak(text: string, language: SpeechType): Promise<void> {
-  if (!text || language === "none" || !("speechSynthesis" in window)) return Promise.resolve();
-  return new Promise((resolve) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = language === "zh" ? "zh-CN" : "en-US";
-    utterance.rate = language === "zh" ? 0.9 : 0.82;
-    utterance.pitch = 1.08;
-    const timeout = window.setTimeout(resolve, 8_000);
-    utterance.onend = () => {
-      window.clearTimeout(timeout);
-      resolve();
-    };
-    utterance.onerror = () => {
-      window.clearTimeout(timeout);
-      resolve();
-    };
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
-  });
 }
 
 function playSuccessChime() {
@@ -318,7 +298,13 @@ export function AddSubtractGame() {
       if (resetAttempt && speechType !== "none") {
         setRecognitionState("reading");
         setRecognitionDetail(speechType === "zh" ? "正在用中文朗读题目" : "Reading the question");
-        await speak(speechQuestion(question, speechType), speechType);
+        const result = await browserTts.speak({
+          text: speechQuestion(question, speechType),
+          lang: speechType === "zh" ? "zh-CN" : "en-US",
+          rate: speechType === "zh" ? 0.9 : 0.82,
+          pitch: 1.08,
+        });
+        if (result.status === "cancelled") return;
       }
       if (resetAttempt) {
         attemptRef.current = {
@@ -445,12 +431,10 @@ export function AddSubtractGame() {
 
   useEffect(() => {
     if (phase !== "playing" || !currentQuestion) return;
-    let cancelled = false;
     void listenForCurrentQuestion(currentQuestion, true);
     return () => {
-      cancelled = true;
-      if (cancelled) void stopRecognition();
-      window.speechSynthesis?.cancel();
+      void stopRecognition();
+      browserTts.stop();
     };
   }, [currentIndex, currentQuestion, listenForCurrentQuestion, phase, stopRecognition]);
 
@@ -470,7 +454,7 @@ export function AddSubtractGame() {
     () => () => {
       if (feedbackTimerRef.current !== null) window.clearTimeout(feedbackTimerRef.current);
       clearAnswerChecking();
-      window.speechSynthesis?.cancel();
+      browserTts.stop();
       void stopRecognition();
     },
     [clearAnswerChecking, stopRecognition],

@@ -7,6 +7,10 @@ export type CandidateRange = {
   maximum: number;
 };
 
+export type NumberLineViewport = CandidateRange & {
+  zoomed: boolean;
+};
+
 export type GuessQuery = {
   kind: GuessKind;
   value: number;
@@ -164,9 +168,36 @@ export function rangeMidpoint(range: CandidateRange) {
   return Math.floor((range.minimum + range.maximum) / 2);
 }
 
-export function approximateQuestionsRemaining(range: CandidateRange) {
-  const candidates = rangeSize(range);
-  return candidates <= 1 ? 0 : Math.ceil(Math.log2(candidates + 1));
+export function getNumberLineViewport(
+  maximum: NumberRangeMaximum,
+  candidates: CandidateRange,
+): NumberLineViewport {
+  const fullViewport = { minimum: 0, maximum, zoomed: false };
+  const candidateSpan = Math.max(0, candidates.maximum - candidates.minimum);
+  if (maximum <= 0 || candidateSpan > maximum * 0.18) return fullViewport;
+
+  const viewportSpan = Math.min(
+    maximum,
+    Math.max(12, Math.ceil(rangeSize(candidates) * 1.8)),
+  );
+  const center = (candidates.minimum + candidates.maximum) / 2;
+  let minimum = Math.floor(center - viewportSpan / 2);
+  let viewportMaximum = minimum + viewportSpan;
+
+  if (minimum < 0) {
+    viewportMaximum -= minimum;
+    minimum = 0;
+  }
+  if (viewportMaximum > maximum) {
+    minimum -= viewportMaximum - maximum;
+    viewportMaximum = maximum;
+  }
+
+  return {
+    minimum: Math.max(0, minimum),
+    maximum: Math.min(maximum, viewportMaximum),
+    zoomed: true,
+  };
 }
 
 export function generateSecret(

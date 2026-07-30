@@ -1,4 +1,10 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { ELEMENTS } from "../periodic-table/elements.generated";
 import {
   COMPOUND_KIND_LABELS,
@@ -8,22 +14,26 @@ import {
   FurnaceCanvas,
   type FurnaceCanvasHandle,
 } from "./FurnaceCanvas";
+import { MoleculeStructurePreview } from "./MoleculeStructurePreview";
+import { getReactionElementTheme } from "./element-colors";
 import {
   buildAtomBundles,
   consumeAtomCounts,
   findCompletableCompound,
-  selectRandomCompounds,
+  REACTION_FURNACE_ATOM_BUDGET,
+  REACTION_FURNACE_MIN_CARBON_FREE_COUNT,
+  REACTION_FURNACE_TARGET_COUNT,
+  selectReactionRound,
   type AtomBundle,
   type AtomCounts,
   type ReactionCompound,
 } from "./logic";
 import "./reaction-furnace.css";
 
-const TARGET_COUNT = 20;
 const ELEMENT_BY_SYMBOL = new Map(ELEMENTS.map((element) => [element.symbol, element]));
 
 function freshTargets() {
-  return selectRandomCompounds(REACTION_COMPOUNDS, TARGET_COUNT);
+  return selectReactionRound(REACTION_COMPOUNDS);
 }
 
 function addToPool(pool: AtomCounts, bundle: AtomBundle) {
@@ -76,7 +86,8 @@ export function ReactionFurnacePage() {
     );
     if (!target) return;
 
-    const started = canvasRef.current?.assemble(target) ?? false;
+    const slotIndex = targets.findIndex((compound) => compound.id === target.id);
+    const started = canvasRef.current?.assemble(target, slotIndex) ?? false;
     if (!started) {
       window.setTimeout(() => tryAssemblyRef.current(), 80);
       return;
@@ -131,7 +142,7 @@ export function ReactionFurnacePage() {
           <div><strong>反应熔炉</strong><small>木木的微观组装舱</small></div>
         </div>
         <button type="button" className="new-batch-button" onClick={resetBatch}>
-          <span aria-hidden="true">↻</span> 换一批 20 种
+          <span aria-hidden="true">↻</span> 换一批 10 种
         </button>
       </header>
 
@@ -142,7 +153,7 @@ export function ReactionFurnacePage() {
             <h1>把原子投入熔炉，<em>看它们组成物质。</em></h1>
           </div>
           <div className="furnace-summary" aria-label="当前进度">
-            <span><strong>{completedIds.size}</strong><small>/ {TARGET_COUNT} 已稳定</small></span>
+            <span><strong>{completedIds.size}</strong><small>/ {REACTION_FURNACE_TARGET_COUNT} 已稳定</small></span>
             <span><strong>{atomsInFurnace}</strong><small>游离原子</small></span>
             <span><strong>{atomsRemaining}</strong><small>仓内原子</small></span>
           </div>
@@ -161,7 +172,11 @@ export function ReactionFurnacePage() {
               <span className="virtual-only">虚拟组成演示，不是实验步骤</span>
             </header>
             <div className="canvas-shell">
-              <FurnaceCanvas ref={canvasRef} onAssemblyComplete={handleAssemblyComplete} />
+              <FurnaceCanvas
+                ref={canvasRef}
+                targetCount={targets.length}
+                onAssemblyComplete={handleAssemblyComplete}
+              />
               {!atomsInFurnace && completedIds.size === 0 && !assemblingId && (
                 <div className="reactor-empty">
                   <span aria-hidden="true">✦</span>
@@ -201,9 +216,17 @@ export function ReactionFurnacePage() {
             <div className="atom-group-list">
               {inventoryGroups.map(([symbol, symbolBundles]) => {
                 const element = ELEMENT_BY_SYMBOL.get(symbol);
+                const elementTheme = getReactionElementTheme(symbol);
                 const remaining = symbolBundles.reduce((total, bundle) => total + bundle.count, 0);
                 return (
-                  <section className={`atom-group category-${element?.category ?? "unknown"}`} key={symbol}>
+                  <section
+                    className={`atom-group category-${element?.category ?? "unknown"}`}
+                    key={symbol}
+                    style={{
+                      "--category-color": elementTheme.color,
+                      "--category-rgb": elementTheme.rgb,
+                    } as CSSProperties}
+                  >
                     <div className="atom-group-heading">
                       <span><strong>{symbol}</strong><small>{element?.chineseName ?? symbol}</small></span>
                       <em>剩余 {remaining}</em>
@@ -239,9 +262,13 @@ export function ReactionFurnacePage() {
           <header>
             <div>
               <p>本批随机目标</p>
-              <h2 id="target-deck-title">20 张物质星图</h2>
+              <h2 id="target-deck-title">10 张物质星图</h2>
             </div>
-            <span>达到配方后自动组合 · 完成 {completedIds.size}/{TARGET_COUNT}</span>
+            <span>
+              至少 {REACTION_FURNACE_MIN_CARBON_FREE_COUNT} 种不含碳 · 总原子不超过{" "}
+              {REACTION_FURNACE_ATOM_BUDGET} 个 · 完成{" "}
+              {completedIds.size}/{REACTION_FURNACE_TARGET_COUNT}
+            </span>
           </header>
           <div className="target-grid">
             {targets.map((compound, index) => {
@@ -257,6 +284,18 @@ export function ReactionFurnacePage() {
                     <strong>{compound.formula}</strong>
                     <h3>{compound.name}</h3>
                     <p>{compound.feature}</p>
+                  </div>
+                  <div
+                    className={`target-structure ${completed ? "is-ready" : ""} ${assembling ? "is-building" : ""}`}
+                  >
+                    {completed ? (
+                      <MoleculeStructurePreview compound={compound} />
+                    ) : (
+                      <>
+                        <span aria-hidden="true"><i /><i /><i /></span>
+                        <small>{assembling ? "球棍结构正在形成" : "组合成功后显示球棍结构"}</small>
+                      </>
+                    )}
                   </div>
                   <span className="target-kind">
                     {assembling ? "正在聚合" : completed ? "结构稳定" : COMPOUND_KIND_LABELS[compound.kind]}

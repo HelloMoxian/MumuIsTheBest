@@ -7,6 +7,30 @@ export type CompoundKind =
   | "hydrate"
   | "intermetallic";
 
+export type MolecularAtom = {
+  symbol: string;
+  x: number;
+  y: number;
+};
+
+export type MolecularBond = {
+  from: number;
+  to: number;
+  order: 1 | 2 | 3;
+};
+
+export type MolecularStructure = {
+  cid: number;
+  atoms: readonly MolecularAtom[];
+  bonds: readonly MolecularBond[];
+  source: {
+    name: "PubChem";
+    url: string;
+    wikidataId?: string;
+    wikipediaTitle?: string;
+  };
+};
+
 export type ReactionCompound = {
   id: string;
   formula: string;
@@ -15,6 +39,7 @@ export type ReactionCompound = {
   kind: CompoundKind;
   atomCounts: AtomCounts;
   totalAtoms: number;
+  structure: MolecularStructure;
 };
 
 export type AtomBundle = {
@@ -22,6 +47,10 @@ export type AtomBundle = {
   symbol: string;
   count: number;
 };
+
+export const REACTION_FURNACE_TARGET_COUNT = 10;
+export const REACTION_FURNACE_ATOM_BUDGET = 160;
+export const REACTION_FURNACE_MIN_CARBON_FREE_COUNT = 5;
 
 const SUBSCRIPT_DIGITS: Readonly<Record<string, string>> = {
   "₀": "0",
@@ -127,6 +156,101 @@ export function selectRandomCompounds<T>(
     [pool[index], pool[swapIndex]] = [pool[swapIndex]!, pool[index]!];
   }
   return pool.slice(0, Math.min(count, pool.length));
+}
+
+export function isCarbonFreeCompound(compound: ReactionCompound) {
+  return (compound.atomCounts.C ?? 0) === 0;
+}
+
+function minimumCompletionAtomCount(
+  candidates: readonly ReactionCompound[],
+  slotCount: number,
+  minimumCarbonFreeCount: number,
+) {
+  if (slotCount < minimumCarbonFreeCount || candidates.length < slotCount) {
+    return Number.POSITIVE_INFINITY;
+  }
+  const carbonFree = candidates
+    .filter(isCarbonFreeCompound)
+    .sort((first, second) => first.totalAtoms - second.totalAtoms);
+  if (carbonFree.length < minimumCarbonFreeCount) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  const requiredCarbonFree = carbonFree.slice(0, minimumCarbonFreeCount);
+  const requiredSet = new Set(requiredCarbonFree);
+  const remaining = candidates
+    .filter((compound) => !requiredSet.has(compound))
+    .sort((first, second) => first.totalAtoms - second.totalAtoms)
+    .slice(0, slotCount - minimumCarbonFreeCount);
+  if (remaining.length !== slotCount - minimumCarbonFreeCount) {
+    return Number.POSITIVE_INFINITY;
+  }
+  return [...requiredCarbonFree, ...remaining]
+    .reduce((total, compound) => total + compound.totalAtoms, 0);
+}
+
+export function selectReactionRound(
+  library: readonly ReactionCompound[],
+  count = REACTION_FURNACE_TARGET_COUNT,
+  atomBudget = REACTION_FURNACE_ATOM_BUDGET,
+  random: () => number = Math.random,
+  minimumCarbonFreeCount = REACTION_FURNACE_MIN_CARBON_FREE_COUNT,
+) {
+  const targetCount = Math.min(Math.max(0, Math.floor(count)), library.length);
+  if (targetCount === 0) return [];
+  const requiredCarbonFreeCount = Math.max(0, Math.floor(minimumCarbonFreeCount));
+  if (requiredCarbonFreeCount > targetCount) {
+    throw new RangeError(`无碳结构下限 ${requiredCarbonFreeCount} 超过了本批目标数 ${targetCount}`);
+  }
+
+  const shuffled = selectRandomCompounds(library, library.length, random);
+  const minimumPossibleAtoms = minimumCompletionAtomCount(
+    library,
+    targetCount,
+    requiredCarbonFreeCount,
+  );
+  if (!Number.isFinite(minimumPossibleAtoms)) {
+    throw new RangeError(`资料库无法提供 ${requiredCarbonFreeCount} 种不含碳的目标物质`);
+  }
+  if (minimumPossibleAtoms > atomBudget) {
+    throw new RangeError(`原子总量上限 ${atomBudget} 无法容纳 ${targetCount} 种物质`);
+  }
+
+  const selected: ReactionCompound[] = [];
+  let selectedAtomCount = 0;
+  let selectedCarbonFreeCount = 0;
+  for (let index = 0; index < shuffled.length && selected.length < targetCount; index += 1) {
+    const candidate = shuffled[index]!;
+    const remainingSlots = targetCount - selected.length - 1;
+    const nextCarbonFreeCount = selectedCarbonFreeCount
+      + (isCarbonFreeCompound(candidate) ? 1 : 0);
+    const remainingCarbonFreeNeeded = Math.max(
+      0,
+      requiredCarbonFreeCount - nextCarbonFreeCount,
+    );
+    const minimumFutureAtoms = minimumCompletionAtomCount(
+      shuffled.slice(index + 1),
+      remainingSlots,
+      remainingCarbonFreeNeeded,
+    );
+    if (
+      Number.isFinite(minimumFutureAtoms)
+      && selectedAtomCount + candidate.totalAtoms + minimumFutureAtoms <= atomBudget
+    ) {
+      selected.push(candidate);
+      selectedAtomCount += candidate.totalAtoms;
+      selectedCarbonFreeCount = nextCarbonFreeCount;
+    }
+  }
+
+  if (
+    selected.length !== targetCount
+    || selectedCarbonFreeCount < requiredCarbonFreeCount
+  ) {
+    throw new Error(`无法为反应熔炉选出 ${targetCount} 种目标物质`);
+  }
+  return selected;
 }
 
 export function buildAtomBundles(compounds: readonly ReactionCompound[]) {

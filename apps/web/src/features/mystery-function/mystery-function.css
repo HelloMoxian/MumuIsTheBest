@@ -497,8 +497,8 @@
 }
 
 .graph-tools button {
-  min-width: 42px;
-  min-height: 42px;
+  min-width: 48px;
+  min-height: 48px;
   padding: 0 11px;
   border: 0;
   border-radius: 11px;
@@ -517,16 +517,41 @@
   opacity: .36;
 }
 
-.graph-tools > span {
-  min-width: 86px;
+.graph-range-input {
+  display: flex;
+  min-width: 126px;
+  min-height: 48px;
+  align-items: center;
+  gap: 5px;
+  padding: 0 7px 0 10px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .045);
   color: var(--ink-secondary);
   font-size: 11px;
   font-weight: 850;
+  white-space: nowrap;
+}
+
+.graph-range-input input {
+  width: 74px;
+  min-width: 0;
+  padding: 7px 5px;
+  border: 1px solid rgba(89, 231, 255, .18);
+  border-radius: 8px;
+  outline: none;
+  color: var(--ink-primary);
+  background: rgba(7, 8, 35, .72);
+  font: 900 12px var(--font-display);
   text-align: center;
 }
 
+.graph-range-input input:focus-visible {
+  border-color: var(--cyan-300);
+  box-shadow: 0 0 0 3px rgba(89, 231, 255, .16);
+}
+
 .graph-tools .probe-clear {
-  min-width: 84px;
+  min-width: 88px;
   color: #c8c6e8;
   font-size: 11px;
 }
@@ -969,16 +994,10 @@
   font-size: 11px;
 }
 
-.parameter-copy output {
-  min-width: 43px;
-  padding: 3px 7px;
-  border-radius: 8px;
-  color: var(--warning-300);
-  background: rgba(255, 209, 102, .08);
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 950;
-  text-align: center;
+.parameter-copy small {
+  color: #8584a7;
+  font-size: 9px;
+  font-weight: 750;
 }
 
 .parameter-input {
@@ -988,8 +1007,8 @@
 
 .parameter-input button {
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 48px;
+  height: 48px;
   flex: 0 0 auto;
   place-items: center;
   border: 1px solid var(--line-glow);
@@ -1010,15 +1029,34 @@
   opacity: .28;
 }
 
-.parameter-input input {
+.parameter-input .parameter-number-input {
   width: 100%;
   min-width: 0;
-  height: 34px;
-  cursor: ew-resize;
+  height: 48px;
+  padding: 0 12px;
+  border: 1px solid rgba(89, 231, 255, .2);
+  border-radius: 11px;
+  outline: none;
+  color: var(--warning-300);
+  background: rgba(6, 7, 31, .76);
+  font: 950 17px var(--font-display);
+  text-align: center;
+  appearance: textfield;
+}
+
+.parameter-input .parameter-number-input::-webkit-inner-spin-button,
+.parameter-input .parameter-number-input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.parameter-input .parameter-number-input:focus-visible {
+  border-color: var(--cyan-300);
+  box-shadow: 0 0 0 3px rgba(89, 231, 255, .16);
 }
 
 .parameter-row > p {
-  margin: 2px 0 0 40px;
+  margin: 5px 0 0;
   color: #8584a7;
   font-size: 9px;
   font-weight: 700;
@@ -1440,7 +1478,7 @@
     margin-top: 10px;
   }
 
-  .graph-tools > span {
+  .graph-range-input {
     flex: 1;
   }
 

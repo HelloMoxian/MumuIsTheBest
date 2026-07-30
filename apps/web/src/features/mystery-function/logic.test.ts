@@ -2,11 +2,17 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   FUNCTION_DEFINITIONS,
+  MAX_GRAPH_SPAN,
+  MIN_GRAPH_SPAN,
+  PARAMETER_ABSOLUTE_LIMIT,
+  PARAMETER_STEP,
   canAddCurve,
   createFunctionCurve,
   curveEquation,
   describeCurve,
   evaluateCurve,
+  nextGraphSpan,
+  normalizeGraphSpan,
   sampleCurve,
   setCurveParameter,
 } from "./logic";
@@ -30,6 +36,7 @@ describe("mystery function definitions", () => {
     for (const definition of FUNCTION_DEFINITIONS) {
       assert.ok(definition.parameters.length >= 2);
       assert.ok(definition.shape.length >= 10);
+      assert.ok(definition.parameters.every((parameter) => parameter.step === PARAMETER_STEP));
     }
   });
 
@@ -53,13 +60,35 @@ describe("mystery function definitions", () => {
 });
 
 describe("curve editing and sampling", () => {
-  it("clamps and snaps parameter edits to the template rules", () => {
+  it("supports large parameter edits and snaps them to half steps", () => {
     const curve = createFunctionCurve("linear", "line", 0);
-    const aboveMaximum = setCurveParameter(curve, "a", 99);
+    const largeValue = setCurveParameter(curve, "a", 99);
     const snapped = setCurveParameter(curve, "a", 1.13);
-    assert.equal(aboveMaximum.parameters.a, 4);
-    assert.equal(snapped.parameters.a, 1.25);
+    const safetyLimited = setCurveParameter(curve, "a", PARAMETER_ABSOLUTE_LIMIT * 2);
+    assert.equal(largeValue.parameters.a, 99);
+    assert.equal(snapped.parameters.a, 1);
+    assert.equal(safetyLimited.parameters.a, PARAMETER_ABSOLUTE_LIMIT);
+    assert.deepEqual(setCurveParameter(curve, "a", Number.NaN), curve);
     assert.deepEqual(setCurveParameter(curve, "missing", 3), curve);
+  });
+
+  it("keeps only the mathematical lower bound required by an exponential base", () => {
+    const curve = createFunctionCurve("exponential", "growth", 0);
+    assert.equal(setCurveParameter(curve, "B", -12).parameters.B, PARAMETER_STEP);
+    assert.equal(setCurveParameter(curve, "B", 125).parameters.B, 125);
+  });
+
+  it("zooms through a wide 1-2-5 scale and accepts direct ranges", () => {
+    assert.equal(nextGraphSpan(10, "in"), 5);
+    assert.equal(nextGraphSpan(10, "out"), 20);
+    assert.equal(normalizeGraphSpan(0.1), MIN_GRAPH_SPAN);
+    assert.equal(normalizeGraphSpan(MAX_GRAPH_SPAN * 2), MAX_GRAPH_SPAN);
+    assert.equal(normalizeGraphSpan(123.24), 123);
+    assert.equal(normalizeGraphSpan(123.26), 123.5);
+
+    let span = 10;
+    for (let index = 0; index < 8; index += 1) span = nextGraphSpan(span, "out");
+    assert.ok(span >= 5_000);
   });
 
   it("splits reciprocal branches rather than connecting across the asymptote", () => {
@@ -81,13 +110,17 @@ describe("curve editing and sampling", () => {
     }
   });
 
-  it("keeps every parameter extreme and sampled point finite or intentionally absent", () => {
+  it("keeps large parameter values and sampled points finite or intentionally absent", () => {
     for (const definition of FUNCTION_DEFINITIONS) {
       let minimumCurve = createFunctionCurve(definition.id, `${definition.id}-min`, 0);
       let maximumCurve = createFunctionCurve(definition.id, `${definition.id}-max`, 1);
       for (const parameter of definition.parameters) {
-        minimumCurve = setCurveParameter(minimumCurve, parameter.key, parameter.min);
-        maximumCurve = setCurveParameter(maximumCurve, parameter.key, parameter.max);
+        minimumCurve = setCurveParameter(
+          minimumCurve,
+          parameter.key,
+          parameter.minimum ?? -100,
+        );
+        maximumCurve = setCurveParameter(maximumCurve, parameter.key, 100);
       }
       for (const curve of [minimumCurve, maximumCurve]) {
         for (let x = -20; x <= 20; x += 0.25) {

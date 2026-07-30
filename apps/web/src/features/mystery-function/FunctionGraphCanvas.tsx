@@ -1,5 +1,5 @@
 import { useEffect, useRef, type PointerEvent as ReactPointerEvent } from "react";
-import { evaluateCurve, sampleCurve, type FunctionCurve } from "./logic";
+import { evaluateCurve, formatNumber, sampleCurve, type FunctionCurve } from "./logic";
 
 type FunctionGraphCanvasProps = {
   curves: readonly FunctionCurve[];
@@ -11,11 +11,14 @@ type FunctionGraphCanvasProps = {
 };
 
 const CURVE_COLORS = ["#59e7ff", "#ff67c7", "#ffd166", "#4ce0a3"] as const;
+const DRAW_ANIMATION_MS = 280;
 
 function gridStep(span: number) {
-  if (span <= 6) return 1;
-  if (span <= 10) return 2;
-  return 5;
+  const roughStep = span / 5;
+  const magnitude = 10 ** Math.floor(Math.log10(roughStep));
+  const normalized = roughStep / magnitude;
+  const niceStep = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+  return niceStep * magnitude;
 }
 
 function crispLine(value: number) {
@@ -43,8 +46,10 @@ export function FunctionGraphCanvas({
     const shouldAnimate = lastAnimationKeyRef.current !== animationKey;
     lastAnimationKeyRef.current = animationKey;
     let frame = 0;
-    let startedAt = performance.now() - (reducedMotion || !shouldAnimate ? 820 : 0);
+    let startedAt = performance.now() - (reducedMotion || !shouldAnimate ? DRAW_ANIMATION_MS : 0);
     let settled = reducedMotion || !shouldAnimate;
+    let cachedPlotWidth = -1;
+    let cachedSegments = new Map<string, ReturnType<typeof sampleCurve>>();
 
     const draw = (now: number) => {
       const rect = canvas.getBoundingClientRect();
@@ -68,6 +73,16 @@ export function FunctionGraphCanvas({
       const plotHeight = height - plot.top - plot.bottom;
       const xToPixel = (x: number) => plot.left + ((x + span) / (span * 2)) * plotWidth;
       const yToPixel = (y: number) => plot.top + ((span - y) / (span * 2)) * plotHeight;
+      const roundedPlotWidth = Math.round(plotWidth);
+
+      if (cachedPlotWidth !== roundedPlotWidth) {
+        const sampleCount = Math.min(900, Math.max(280, Math.round(plotWidth / 1.4)));
+        cachedSegments = new Map(curves.map((curve) => [
+          curve.id,
+          sampleCurve(curve, -span, span, sampleCount, span),
+        ]));
+        cachedPlotWidth = roundedPlotWidth;
+      }
 
       const background = context.createRadialGradient(
         width * 0.52,
@@ -122,7 +137,7 @@ export function FunctionGraphCanvas({
         context.stroke();
       }
 
-      const progress = reducedMotion ? 1 : Math.min(1, Math.max(0, (now - startedAt) / 820));
+      const progress = reducedMotion ? 1 : Math.min(1, Math.max(0, (now - startedAt) / DRAW_ANIMATION_MS));
       const orderedCurves = [...curves].sort((left, right) => (
         left.id === selectedId ? 1 : right.id === selectedId ? -1 : 0
       ));
@@ -133,7 +148,7 @@ export function FunctionGraphCanvas({
         const selected = curve.id === selectedId;
         const reveal = selected ? progress : 1;
         const revealX = -span + span * 2 * reveal;
-        const segments = sampleCurve(curve, -span, span, Math.max(260, Math.round(plotWidth / 1.5)), span);
+        const segments = cachedSegments.get(curve.id) ?? [];
 
         context.save();
         context.lineCap = "round";
@@ -220,13 +235,13 @@ export function FunctionGraphCanvas({
       context.textBaseline = "top";
       for (let value = -span; value <= span + 0.001; value += step) {
         if (Math.abs(value) < 0.001) continue;
-        context.fillText(String(value), xToPixel(value), yToPixel(0) + 7);
+        context.fillText(formatNumber(value), xToPixel(value), yToPixel(0) + 7);
       }
       context.textAlign = "right";
       context.textBaseline = "middle";
       for (let value = -span; value <= span + 0.001; value += step) {
         if (Math.abs(value) < 0.001) continue;
-        context.fillText(String(value), xToPixel(0) - 8, yToPixel(value));
+        context.fillText(formatNumber(value), xToPixel(0) - 8, yToPixel(value));
       }
       context.fillStyle = "rgba(89, 231, 255, .88)";
       context.font = "900 15px ui-rounded, system-ui";
@@ -250,7 +265,7 @@ export function FunctionGraphCanvas({
     frame = requestAnimationFrame(draw);
     const resizeObserver = new ResizeObserver(() => {
       if (settled) {
-        startedAt = performance.now() - 820;
+        startedAt = performance.now() - DRAW_ANIMATION_MS;
         frame = requestAnimationFrame(draw);
       }
     });

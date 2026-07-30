@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   applyGuess,
-  approximateQuestionsRemaining,
   detectVoiceGameCommand,
   generateSecret,
+  getNumberLineViewport,
   parseGuessQuery,
   parseLargeSpokenNumber,
   queryLabel,
@@ -207,15 +207,39 @@ describe("candidate range narrowing", () => {
 });
 
 describe("range helpers", () => {
-  it("includes both endpoints in size, midpoint and guidance", () => {
+  it("includes both endpoints in size and midpoint", () => {
     assert.equal(rangeSize({ minimum: 0, maximum: 100 }), 101);
     assert.equal(rangeMidpoint({ minimum: 0, maximum: 100 }), 50);
-    assert.equal(approximateQuestionsRemaining({ minimum: 0, maximum: 100 }), 7);
-    assert.equal(approximateQuestionsRemaining({ minimum: 42, maximum: 42 }), 0);
   });
 
   it("generates both inclusive random boundaries", () => {
     assert.equal(generateSecret(100, () => 0), 0);
     assert.equal(generateSecret(100, () => 1), 100);
+  });
+
+  it("zooms into small candidate ranges without crowding their endpoints", () => {
+    assert.deepEqual(
+      getNumberLineViewport(1_000, { minimum: 801, maximum: 819 }),
+      { minimum: 792, maximum: 827, zoomed: true },
+    );
+    assert.deepEqual(
+      getNumberLineViewport(1_000, { minimum: 812, maximum: 812 }),
+      { minimum: 806, maximum: 818, zoomed: true },
+    );
+  });
+
+  it("keeps broad ranges full-width and clamps local views at both ends", () => {
+    assert.deepEqual(
+      getNumberLineViewport(1_000, { minimum: 0, maximum: 1_000 }),
+      { minimum: 0, maximum: 1_000, zoomed: false },
+    );
+    assert.deepEqual(
+      getNumberLineViewport(1_000, { minimum: 0, maximum: 0 }),
+      { minimum: 0, maximum: 12, zoomed: true },
+    );
+    assert.deepEqual(
+      getNumberLineViewport(1_000, { minimum: 1_000, maximum: 1_000 }),
+      { minimum: 988, maximum: 1_000, zoomed: true },
+    );
   });
 });

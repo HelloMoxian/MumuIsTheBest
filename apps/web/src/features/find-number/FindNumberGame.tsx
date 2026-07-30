@@ -6,6 +6,7 @@ import {
   useState,
   type FormEvent,
 } from "react";
+import { flushSync } from "react-dom";
 import {
   AsrRecognitionSession,
   readAsrConfiguration,
@@ -14,13 +15,12 @@ import {
 import { NumberLineCanvas } from "./NumberLineCanvas";
 import {
   applyGuess,
-  approximateQuestionsRemaining,
   detectVoiceGameCommand,
   formatInteger,
   generateSecret,
+  getNumberLineViewport,
   parseGuessQuery,
   queryLabel,
-  rangeMidpoint,
   rangeSize,
   type CandidateRange,
   type GuessKind,
@@ -30,8 +30,12 @@ import {
 } from "./logic";
 import "./find-number.css";
 
-type GamePhase = "setup" | "playing" | "completed" | "ended";
+type GamePhase = "setup" | "playing" | "celebrating" | "completed" | "ended";
 type VoiceDisplayState = RecognitionState | "idle" | "unconfigured";
+
+type ViewTransitionCapableDocument = Document & {
+  startViewTransition?: (update: () => void) => unknown;
+};
 
 type GuessAttempt = GuessOutcome & {
   id: string;
@@ -88,7 +92,7 @@ export function FindNumberGame() {
   const [attempts, setAttempts] = useState<GuessAttempt[]>([]);
   const [lastOutcome, setLastOutcome] = useState<GuessOutcome | null>(null);
   const [manualKind, setManualKind] = useState<GuessKind>("exact");
-  const [manualValue, setManualValue] = useState(50);
+  const [manualValue, setManualValue] = useState("");
   const [pulseKey, setPulseKey] = useState(0);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [finalDurationMs, setFinalDurationMs] = useState(0);
@@ -105,11 +109,17 @@ export function FindNumberGame() {
   const attemptsRef = useRef<GuessAttempt[]>([]);
   const roundStartedAtRef = useRef(0);
   const recognitionRef = useRef<AsrRecognitionSession | null>(null);
+  const celebrationTimerRef = useRef<number | null>(null);
 
-  const midpoint = rangeMidpoint(candidates);
   const remainingCount = rangeSize(candidates);
   const excludedCount = rangeMaximum + 1 - remainingCount;
-  const suggestedQuestions = approximateQuestionsRemaining(candidates);
+
+  const clearCelebrationTimer = useCallback(() => {
+    if (celebrationTimerRef.current !== null) {
+      window.clearTimeout(celebrationTimerRef.current);
+      celebrationTimerRef.current = null;
+    }
+  }, []);
 
   const stopRecognition = useCallback(async () => {
     const current = recognitionRef.current;
@@ -118,6 +128,7 @@ export function FindNumberGame() {
   }, []);
 
   const startRound = useCallback(async () => {
+    clearCelebrationTimer();
     await stopRecognition();
     const maximum = rangeMaximumRef.current;
     const nextSecret = generateSecret(maximum);
@@ -133,7 +144,7 @@ export function FindNumberGame() {
     setAttempts([]);
     setLastOutcome(null);
     setManualKind("exact");
-    setManualValue(rangeMidpoint(nextRange));
+    setManualValue("");
     setElapsedMs(0);
     setFinalDurationMs(0);
     setTranscript("");
@@ -141,10 +152,11 @@ export function FindNumberGame() {
     setPhase("playing");
     setVoiceDetail("开始提问吧，例如“是五十吗”或“小于八十吗”");
     setRecognitionToken((token) => token + 1);
-  }, [stopRecognition]);
+  }, [clearCelebrationTimer, stopRecognition]);
 
   const finishRoundEarly = useCallback(async () => {
     if (phaseRef.current !== "playing") return;
+    clearCelebrationTimer();
     const duration = Math.max(0, Date.now() - roundStartedAtRef.current);
     phaseRef.current = "ended";
     setFinalDurationMs(duration);
@@ -152,7 +164,7 @@ export function FindNumberGame() {
     setVoiceDetail("这一局已经结束，说“下一局”可以继续");
     setPulseKey((key) => key + 1);
     await stopRecognition();
-  }, [stopRecognition]);
+  }, [clearCelebrationTimer, stopRecognition]);
 
   const handleGuess = useCallback((query: GuessQuery, heardText = "") => {
     if (phaseRef.current !== "playing") return;
@@ -171,17 +183,31 @@ export function FindNumberGame() {
     setAttempts(nextAttempts);
     setCandidates(outcome.after);
     setLastOutcome(outcome);
-    setManualValue(rangeMidpoint(outcome.after));
     setPulseKey((key) => key + 1);
     if (outcome.solved) {
       const duration = Math.max(0, Date.now() - roundStartedAtRef.current);
-      phaseRef.current = "completed";
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      phaseRef.current = "celebrating";
       setFinalDurationMs(duration);
-      setPhase("completed");
+      setPhase("celebrating");
       setVoiceDetail("通关啦！说“下一局”可以再找一个");
       void stopRecognition();
+      clearCelebrationTimer();
+      celebrationTimerRef.current = window.setTimeout(() => {
+        celebrationTimerRef.current = null;
+        const showResult = () => {
+          phaseRef.current = "completed";
+          flushSync(() => setPhase("completed"));
+        };
+        const transitionDocument = document as ViewTransitionCapableDocument;
+        if (!reducedMotion && typeof transitionDocument.startViewTransition === "function") {
+          transitionDocument.startViewTransition(showResult);
+        } else {
+          showResult();
+        }
+      }, reducedMotion ? 30 : 1_250);
     }
-  }, [stopRecognition]);
+  }, [clearCelebrationTimer, stopRecognition]);
 
   const processVoiceText = useCallback((text: string, isFinal: boolean) => {
     setTranscript(text);
@@ -206,7 +232,7 @@ export function FindNumberGame() {
     if (query) {
       handleGuess(query, text);
     } else {
-      setVoiceDetail("我听到了声音，但还没找到数字。试试说“是五百吗”。");
+      setVoiceDetail("我听到了声音，请把比较关系和数字一起再说一次。");
     }
   }, [finishRoundEarly, handleGuess, startRound]);
 
@@ -251,7 +277,7 @@ export function FindNumberGame() {
   }, []);
 
   useEffect(() => {
-    if (asrConfigured !== true) return;
+    if (asrConfigured !== true || phase === "celebrating") return;
     void openRecognition();
     return () => {
       void stopRecognition();
@@ -268,9 +294,10 @@ export function FindNumberGame() {
 
   useEffect(
     () => () => {
+      clearCelebrationTimer();
       void stopRecognition();
     },
-    [stopRecognition],
+    [clearCelebrationTimer, stopRecognition],
   );
 
   const selectRange = (maximum: NumberRangeMaximum) => {
@@ -278,12 +305,15 @@ export function FindNumberGame() {
     rangeMaximumRef.current = maximum;
     setRangeMaximum(maximum);
     setCandidates({ minimum: 0, maximum });
-    setManualValue(Math.floor(maximum / 2));
+    setManualValue("");
   };
 
   const submitManualGuess = (event: FormEvent) => {
     event.preventDefault();
-    const value = Math.min(rangeMaximum, Math.max(0, Math.round(manualValue)));
+    if (!manualValue.trim()) return;
+    const parsedValue = Number(manualValue);
+    if (!Number.isFinite(parsedValue)) return;
+    const value = Math.min(rangeMaximum, Math.max(0, Math.round(parsedValue)));
     handleGuess({ kind: manualKind, value, rawText: queryLabel({ kind: manualKind, value }) });
   };
 
@@ -302,6 +332,7 @@ export function FindNumberGame() {
   };
 
   const returnToSetup = async () => {
+    clearCelebrationTimer();
     await stopRecognition();
     phaseRef.current = "setup";
     setPhase("setup");
@@ -339,7 +370,7 @@ export function FindNumberGame() {
             <h1>问一问大小，<em>把神秘数字找出来。</em></h1>
             <p className="find-number-lead">
               每次比较都会冻住一大片不可能的数字。
-              试着从中间问起，数字藏身的范围会缩得特别快。
+              观察每次留下的范围，自己决定下一次怎样问。
             </p>
             <div className="voice-example">
               <span aria-hidden="true">🎙</span>
@@ -408,7 +439,7 @@ export function FindNumberGame() {
             <p className="result-message">
               {solved
                 ? `木木用了 ${attempts.length} 次提问，让 ${formatInteger(rangeMaximum + 1)} 个候选数字一步步缩成了唯一答案。`
-                : `已经完成了 ${attempts.length} 次观察，下次可以试试每次都从剩余范围的中间问起。`}
+                : `已经完成了 ${attempts.length} 次观察，神秘数字也已经揭晓。`}
             </p>
           </section>
 
@@ -438,7 +469,7 @@ export function FindNumberGame() {
               <small>按提问顺序排列</small>
             </div>
             {attempts.length === 0 ? (
-              <div className="result-empty"><strong>这一局还没有提问记录</strong><p>下一局从中间数开始试试吧。</p></div>
+              <div className="result-empty"><strong>这一局还没有提问记录</strong><p>下一局可以先观察范围，再提出你的第一个问题。</p></div>
             ) : (
               <div className="result-attempts">
                 {attempts.map((attempt, index) => (
@@ -464,8 +495,16 @@ export function FindNumberGame() {
     );
   }
 
+  const celebrating = phase === "celebrating";
+  const launchRange = lastOutcome?.before ?? candidates;
+  const launchViewport = getNumberLineViewport(rangeMaximum, launchRange);
+  const launchPercent = (
+    (secret - launchViewport.minimum)
+    / Math.max(1, launchViewport.maximum - launchViewport.minimum)
+  ) * 100;
+
   return (
-    <div className="find-number-page find-number-playing">
+    <div className={`find-number-page find-number-playing ${celebrating ? "is-celebrating" : ""}`}>
       <div className="find-number-stars" aria-hidden="true" />
       <header className="find-number-topbar play-topbar">
         <a href="/" className="find-number-back">← 学习大厅</a>
@@ -475,13 +514,13 @@ export function FindNumberGame() {
             type="button"
             className={`find-number-voice voice-${voiceState}`}
             onClick={() => void toggleRecognition()}
-            disabled={asrConfigured !== true}
+            disabled={asrConfigured !== true || celebrating}
             aria-label={`${voiceLabel(voiceState)}。${voiceDetail}`}
           >
             <i aria-hidden="true" />
             <span><strong>{voiceLabel(voiceState)}</strong><small>{voiceState === "limited" ? "点击继续" : `上限 2 分钟`}</small></span>
           </button>
-          <button type="button" className="end-round-button" onClick={() => void finishRoundEarly()}>结束一局</button>
+          <button type="button" className="end-round-button" disabled={celebrating} onClick={() => void finishRoundEarly()}>结束一局</button>
         </div>
       </header>
 
@@ -492,15 +531,17 @@ export function FindNumberGame() {
               <span>神秘范围 · 0—{formatInteger(rangeMaximum)}</span>
               <h1>{lastOutcome ? lastOutcome.responseText : "一个神秘数字已经藏好了"}</h1>
               <p>
-                {lastOutcome
+                {celebrating
+                  ? "神秘数字已经从刚才的位置亮起来了！"
+                  : lastOutcome
                   ? lastOutcome.eliminatedCount > 0
                     ? `这次新排除了 ${formatInteger(lastOutcome.eliminatedCount)} 个数字。`
-                    : "这个问题没有带来新的排除，换一个靠近当前范围的问题吧。"
-                  : "说“是中间数吗”，或者问它大于、小于某个数字。"}
+                    : "这个问题没有带来新的排除，你可以换一种问法。"
+                  : "你可以问它是不是某个数，或者比某个数大、小。"}
               </p>
             </div>
-            <div className="mystery-number-orb" aria-label="神秘数字尚未揭晓">
-              <i /><i /><i /><strong>?</strong><span>目标数字</span>
+            <div className="mystery-number-orb" aria-label={celebrating ? `神秘数字是 ${secret}` : "神秘数字尚未揭晓"}>
+              <i /><i /><i /><strong>{celebrating ? "✓" : "?"}</strong><span>{celebrating ? "数字锁定" : "目标数字"}</span>
             </div>
           </div>
 
@@ -510,8 +551,25 @@ export function FindNumberGame() {
               candidates={candidates}
               lastEliminated={lastOutcome?.eliminated ?? null}
               pulseKey={pulseKey}
-              revealedSecret={null}
+              revealedSecret={celebrating ? secret : null}
+              celebrating={celebrating}
             />
+            {celebrating && (
+              <>
+                <div className="secret-launch-track" aria-hidden="true">
+                  <strong
+                    className="secret-launch-number"
+                    style={{ left: `${Math.min(100, Math.max(0, launchPercent))}%` }}
+                  >
+                    {formatInteger(secret)}
+                  </strong>
+                </div>
+                <div className="victory-bridge" role="status" aria-live="assertive">
+                  <strong>找到了！</strong>
+                  <span>神秘数字从数轴里跳出来啦</span>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="range-summary" aria-live="polite">
@@ -521,24 +579,7 @@ export function FindNumberGame() {
             <article><span>本局用时</span><strong>{formatDuration(elapsedMs)}</strong></article>
           </div>
 
-          <div className="midpoint-guide">
-            <span className="midpoint-mark" aria-hidden="true">½</span>
-            <div>
-              <strong>二分小提示：试试中间数 {formatInteger(midpoint)}</strong>
-              <p>
-                从中间问，通常一次能排除接近一半。
-                现在最多大约再问 {suggestedQuestions} 次就能找到。
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleGuess({ kind: "exact", value: midpoint, rawText: `是${midpoint}吗` }, `点击了中间数 ${midpoint}`)}
-            >
-              是 {formatInteger(midpoint)} 吗？
-            </button>
-          </div>
-
-          <form className="manual-question" onSubmit={submitManualGuess}>
+          <form className={`manual-question ${celebrating ? "is-locked" : ""}`} onSubmit={submitManualGuess}>
             <div className="manual-heading">
               <div><span>也可以点着问</span><strong>选择关系，再放入一个数字</strong></div>
               {transcript && <p className="heard-speech">刚刚听到：{transcript}</p>}
@@ -551,6 +592,7 @@ export function FindNumberGame() {
                   className={manualKind === relation.kind ? "is-selected" : ""}
                   onClick={() => setManualKind(relation.kind)}
                   aria-pressed={manualKind === relation.kind}
+                  disabled={celebrating}
                 >
                   <span>{relation.symbol}</span>{relation.label}
                 </button>
@@ -564,10 +606,12 @@ export function FindNumberGame() {
                 max={rangeMaximum}
                 step={1}
                 value={manualValue}
-                onChange={(event) => setManualValue(Number(event.target.value))}
+                placeholder="输入一个数字"
+                onChange={(event) => setManualValue(event.target.value)}
+                disabled={celebrating}
               />
             </label>
-            <button type="submit" className="ask-button">问一问 →</button>
+            <button type="submit" className="ask-button" disabled={celebrating || !manualValue.trim()}>问一问 →</button>
           </form>
         </section>
 
@@ -580,7 +624,7 @@ export function FindNumberGame() {
             <div className="guess-log-empty">
               <span aria-hidden="true">⌁</span>
               <strong>第一条线索正在等你</strong>
-              <p>试试问“是 {formatInteger(midpoint)} 吗？”</p>
+              <p>你提出的第一个问题会出现在这里。</p>
             </div>
           ) : (
             <ol className="guess-log-list">
