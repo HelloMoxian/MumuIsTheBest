@@ -19,6 +19,11 @@ const CommonCharactersGame = lazy(async () => {
   return { default: module.CommonCharactersGame };
 });
 
+const PinyinBridgePage = lazy(async () => {
+  const module = await import("./features/pinyin-bridge/PinyinBridgePage");
+  return { default: module.PinyinBridgePage };
+});
+
 const MissionLabRoute = lazy(async () => {
   const module = await import("./features/mission-lab/MissionLabRoute");
   return { default: module.MissionLabRoute };
@@ -28,7 +33,6 @@ const MISSION_LAB_ROUTES = new Set([
   "/math/pattern-detective",
   "/chemistry/experiment-master",
   "/chemistry/matter-world",
-  "/chinese/pinyin",
   "/english/word-orbit",
   "/physics/unit-magic",
   "/physics/force-lab",
@@ -203,7 +207,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "读一读、认一认，文字会发光",
     icon: "chinese",
     games: [
-      { title: "拼音星桥", mark: "ā", description: "把声母、韵母和声调连起来", shape: "compact", href: "/chinese/pinyin" },
+      { title: "拼音星桥", mark: "ā", description: "浏览全部拼音和相关汉字", shape: "compact", href: "/chinese/pinyin" },
       { title: "常用500字", mark: "500", description: "每天认识一点", shape: "wide", href: "/chinese/common-characters/500" },
       { title: "常用1000字", mark: "1000", description: "收集文字星星", shape: "compact", href: "/chinese/common-characters/1000" },
       { title: "常用1500字", mark: "1500", description: "读懂更多故事", shape: "compact", href: "/chinese/common-characters/1500" },
@@ -815,6 +819,22 @@ function CurrentPage() {
   if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
   if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
   if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
+  if (window.location.pathname === "/chinese/pinyin") {
+    return (
+      <Suspense
+        fallback={(
+          <div className="app-shell" aria-live="polite">
+            <div className="star-field" aria-hidden="true" />
+            <main className="asr-lab">
+              <section className="safety-note"><span aria-hidden="true">ā</span><p><strong>正在铺开拼音星桥…</strong></p></section>
+            </main>
+          </div>
+        )}
+      >
+        <PinyinBridgePage />
+      </Suspense>
+    );
+  }
   if (MISSION_LAB_ROUTES.has(window.location.pathname)) {
     return (
       <Suspense

@@ -3,7 +3,6 @@ import { parseSpokenNumber } from "../add-subtract/logic";
 export type MissionGameId =
   | "experiment-master"
   | "matter-world"
-  | "pinyin-bridge"
   | "word-orbit"
   | "unit-magic"
   | "force-lab"

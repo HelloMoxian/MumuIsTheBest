@@ -185,31 +185,6 @@ const matterWorld: MissionGameDefinition = {
   ],
 };
 
-const pinyinBridge: MissionGameDefinition = {
-  id: "pinyin-bridge",
-  route: "/chinese/pinyin",
-  subject: "语文",
-  title: "拼音星桥",
-  mark: "ā",
-  subtitle: "让声母、韵母和声调牵起手",
-  introduction: "看大大的音节，听清声音，再找到它的声母、韵母和声调。这里不需要打字，用眼睛、耳朵和声音就能完成。",
-  accent: "pink",
-  speechLanguage: "zh-CN",
-  goals: ["分清声母和韵母", "认识四个声调", "拼出完整音节"],
-  missions: [
-    choice({ id: "ba-initial", prompt: "“八 bā”的声母是哪一个？", hint: "听音节最前面的短声音。", conclusion: "bā 的声母是 b", explanation: "b 是声母，ā 是带第一声的韵母 a。它们拼在一起读 bā。", choices: [["b", "b"], ["a", "a"], ["m", "m"]], answer: "b", visual: visual("letters", "拆分音节", "bā", "b", "ā") }),
-    choice({ id: "hao-final", prompt: "“好 hǎo”的韵母是哪一个？", hint: "声母 h 后面的部分就是韵母。", conclusion: "hǎo 的韵母是 ao", explanation: "h 是声母，ǎo 是带第三声的复韵母 ao；读第三声时声音先降后升。", choices: [["h", "h"], ["ao", "ao", undefined, ["奥"]], ["o", "o"]], answer: "ao", visual: visual("letters", "拆分音节", "hǎo", "h", "ǎo") }),
-    choice({ id: "ma-one", prompt: "“妈妈”的“妈 mā”戴的是第几声声调帽？", hint: "第一声像一条平平的线。", conclusion: "mā 是第一声", explanation: "第一声又高又平，声调符号是 ˉ；mā 的声调帽戴在 a 上。", choices: [["one", "第一声"], ["two", "第二声"], ["three", "第三声"], ["four", "第四声"]], answer: "one", visual: visual("letters", "声调观察", "mā", "ˉ", "第一声") }),
-    choice({ id: "ma-two", prompt: "“麻 má”戴的是第几声声调帽？", hint: "声音向上扬，像在问“啊？”", conclusion: "má 是第二声", explanation: "第二声从较低处向上升，声调符号是 ˊ；má 和 mā 的声调不同，意思也不同。", choices: [["one", "第一声"], ["two", "第二声"], ["three", "第三声"], ["four", "第四声"]], answer: "two", visual: visual("letters", "声调观察", "má", "ˊ", "第二声") }),
-    choice({ id: "ma-three", prompt: "“马 mǎ”戴的是第几声声调帽？", hint: "声音先降下来，再向上转。", conclusion: "mǎ 是第三声", explanation: "第三声的符号是 ˇ，完整读法有先降后升的转折；在连续说话中实际声音会随语境变化。", choices: [["four", "第四声"], ["three", "第三声"], ["two", "第二声"], ["one", "第一声"]], answer: "three", visual: visual("letters", "声调观察", "mǎ", "ˇ", "第三声") }),
-    choice({ id: "ma-four", prompt: "“骂 mà”戴的是第几声声调帽？", hint: "声音从高处快速落下来。", conclusion: "mà 是第四声", explanation: "第四声的符号是 ˋ，声音清楚地向下降；声调能帮助我们分辨汉字含义。", choices: [["four", "第四声"], ["one", "第一声"], ["two", "第二声"], ["three", "第三声"]], answer: "four", visual: visual("letters", "声调观察", "mà", "ˋ", "第四声") }),
-    choice({ id: "nv-final", prompt: "“女 nǚ”的韵母是哪一个？", hint: "注意 u 上面有两个小点。", conclusion: "nǚ 的韵母是 ü", explanation: "ü 发音时嘴唇拢圆，舌位接近 i。它和 u 是两个不同的韵母。", choices: [["u", "u"], ["vowel-u", "ü", undefined, ["鱼", "迂"]], ["i", "i"]], answer: "vowel-u", visual: visual("letters", "韵母观察", "nǚ", "n", "ǚ") }),
-    choice({ id: "zhi-whole", prompt: "“知 zhī”里的 zhi 属于哪一类？", hint: "它作为一个整体来认读，不把 i 单独按普通 i 来拼。", conclusion: "zhi 是整体认读音节", explanation: "zhi、chi、shi、ri 等按整体认读音节学习，后面的 i 只帮助记录音节，不按普通韵母 i 单独发音。", choices: [["whole", "整体认读音节"], ["final", "只有韵母"], ["tone", "只有声调"]], answer: "whole", visual: visual("letters", "整体认读", "zhī", "zhi", "第一声") }),
-    choice({ id: "hua-tone", prompt: "“花 huā”是第几声？", hint: "看 a 上面的声调线。", conclusion: "huā 是第一声", explanation: "huā 的声调符号标在 a 上。复韵母标调要按规则寻找最合适的元音字母。", choices: [["one", "第一声"], ["two", "第二声"], ["three", "第三声"], ["four", "第四声"]], answer: "one", visual: visual("letters", "声调观察", "huā", "h", "uā") }),
-    sequence({ id: "ba-build", prompt: "按“声母 → 韵母 → 声调”的顺序拼出“八 bā”。", hint: "先找到开头的 b，再找到 a，最后戴上平平的第一声。", conclusion: "b、a 和第一声组合成 bā", explanation: "拼音可以拆成声母、韵母和声调来观察；按顺序找到三部分，再把它们连起来读。", choices: [["tone", "第一声 ˉ"], ["final", "韵母 a"], ["initial", "声母 b"]], answer: ["initial", "final", "tone"], visual: visual("sequence", "音节组装", "b + a + ˉ", "b", "a", "ˉ") }),
-  ],
-};
-
 const wordOrbit: MissionGameDefinition = {
   id: "word-orbit",
   route: "/english/word-orbit",
@@ -438,7 +413,6 @@ const cellUniverse: MissionGameDefinition = {
 export const MISSION_GAME_DEFINITIONS: readonly MissionGameDefinition[] = [
   experimentMaster,
   matterWorld,
-  pinyinBridge,
   wordOrbit,
   unitMagic,
   forceLab,

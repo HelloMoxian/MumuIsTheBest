@@ -13,14 +13,14 @@ import {
   validateMissionGameDefinition,
 } from "./logic";
 
-test("十二个玩法都包含十个结构完整且答案合法的任务", () => {
-  assert.equal(MISSION_GAME_DEFINITIONS.length, 12);
+test("十一个玩法都包含十个结构完整且答案合法的任务", () => {
+  assert.equal(MISSION_GAME_DEFINITIONS.length, 11);
   assert.equal(
     MISSION_GAME_DEFINITIONS.reduce(
       (total, definition) => total + definition.missions.length,
       0,
     ),
-    120,
+    110,
   );
   assert.equal(
     new Set(MISSION_GAME_DEFINITIONS.map((definition) => definition.id)).size,
@@ -70,11 +70,6 @@ test("语音可以按序号或候选项文字选择", () => {
   assert.equal(parseVoiceChoice("答案是厘米", mission.choices), "cm");
   assert.equal(parseVoiceChoice("应该是千米 km", mission.choices), "km");
   assert.equal(parseVoiceChoice("我还在想", mission.choices), null);
-
-  const toneMission = MISSION_GAME_BY_ROUTE
-    .get("/chinese/pinyin")!
-    .missions.find((item) => item.id === "ma-three")!;
-  assert.equal(parseVoiceChoice("答案是第三声", toneMission.choices), "three");
 
   const numberMission = MISSION_GAME_BY_ROUTE
     .get("/game/number-war")!
