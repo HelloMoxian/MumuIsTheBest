@@ -229,7 +229,7 @@ export function ChemistryTreasureBoxPage() {
               {discoveries.length === 0 ? (
                 <div className="treasure-shelf-empty">
                   <span aria-hidden="true">↓</span>
-                  <p>生成物会从反应区落到这里。可以先试试两个氧原子。</p>
+                  <p>生成物会从反应区落到这里。可以先试试氧元素。</p>
                 </div>
               ) : (
                 <div className="treasure-card-list">
