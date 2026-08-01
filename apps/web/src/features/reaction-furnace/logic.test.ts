@@ -36,28 +36,52 @@ test("拒绝变量聚合物和无法解析的名称缩写", () => {
 });
 
 test("反应资料库覆盖前八十号元素且结构表示规则明确", () => {
-  assert.equal(REACTION_COMPOUNDS.length, 367);
+  assert.equal(REACTION_COMPOUNDS.length, 518);
   assert.ok(REACTION_COMPOUNDS.every((compound) => (
     compound.totalAtoms === compound.structure.atoms.length
     && compound.structure.source.url.startsWith("https://")
-    && (compound.structure.representation === "authoritative-topology"
+    && (compound.structure.representation !== "composition-schematic"
       ? compound.structure.bonds.length >= compound.totalAtoms - 1
-      : compound.kind === "formula-unit" && compound.structure.bonds.length === 0)
+      : compound.structure.bonds.length === 0
+        || (compound.structure.bonds.length === compound.totalAtoms - 1
+          && compound.structure.bonds.every((bond) => bond.style === "dashed")))
   )));
   assert.equal(new Set(REACTION_COMPOUNDS.map((compound) => compound.id)).size, REACTION_COMPOUNDS.length);
   const coveredElements = new Set(REACTION_COMPOUNDS.flatMap(compoundElementSymbols));
   for (const element of ELEMENTS.slice(0, 80)) {
     assert.ok(coveredElements.has(element.symbol), `资料库缺少 ${element.symbol} 的化合物`);
   }
-  assert.equal(REACTION_COMPOUNDS.filter(isOrganicCompound).length, 267);
-  assert.equal(REACTION_COMPOUNDS.filter((compound) => !isOrganicCompound(compound)).length, 100);
+  assert.equal(REACTION_COMPOUNDS.filter(isOrganicCompound).length, 268);
+  assert.equal(REACTION_COMPOUNDS.filter((compound) => !isOrganicCompound(compound)).length, 250);
   assert.ok(REACTION_COMPOUNDS.some((compound) => compound.formula === "C₆₀"));
   assert.ok(REACTION_COMPOUNDS.some((compound) => compound.formula === "CO₂"));
   assert.ok(REACTION_COMPOUNDS.some((compound) => compound.formula === "NaCl"));
   assert.ok(REACTION_COMPOUNDS.some((compound) => compound.formula === "HArF"));
   assert.ok(!REACTION_COMPOUNDS.some((compound) => compound.name === "巴拉松"));
+  assert.ok(!REACTION_COMPOUNDS.some((compound) => compound.name === "毒芹碱"));
   assert.equal(REACTION_COMPOUNDS.find((compound) => compound.name === "氨")?.formula, "NH₃");
   assert.equal(REACTION_COMPOUNDS.find((compound) => compound.name === "硫酸")?.formula, "H₂SO₄");
+});
+
+test("教材常见物质与四种碳结构都进入随机池", () => {
+  for (const name of [
+    "三氧化二铁", "四氧化三铁", "五水硫酸铜", "高锰酸钾",
+    "碳酸氢钠（小苏打）", "碳酸钠（苏打）", "氢氧化钠", "氢氧化钙",
+  ]) {
+    assert.ok(REACTION_COMPOUNDS.some((compound) => compound.name === name), `缺少 ${name}`);
+  }
+  const carbonStructures = new Map([
+    ["金刚石", { atoms: 10, bonds: 9 }],
+    ["碳六十（C₆₀）", { atoms: 60, bonds: 90 }],
+    ["碳纳米管", { atoms: 48, bonds: 66 }],
+    ["石墨烯", { atoms: 22, bonds: 27 }],
+  ]);
+  for (const [name, expectation] of carbonStructures) {
+    const compound = REACTION_COMPOUNDS.find((item) => item.name === name)!;
+    assert.equal(compound.structure.atoms.length, expectation.atoms);
+    assert.equal(compound.structure.bonds.length, expectation.bonds);
+    assert.ok(compound.structure.bonds.every((bond) => bond.style !== "dashed"));
+  }
 });
 
 test("乙炔严格使用 H—C≡C—H 的 PubChem 拓扑", () => {
@@ -182,6 +206,8 @@ test("只在原子齐全时命中未完成配方并正确消耗", () => {
     feature: "测试",
     kind: "molecule",
     family: "inorganic",
+    category: "oxide",
+    curriculumPriority: 2,
     atomCounts: { C: 1, O: 2 },
     totalAtoms: 3,
     structure: {

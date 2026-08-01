@@ -278,13 +278,19 @@ export function ReactionFurnacePage() {
             本批先抽取的 {REACTION_FURNACE_PRIORITY_ELEMENT_COUNT} 种优先元素：{" "}
             <strong>{round.targetElements.join(" · ")}</strong>
           </p>
+          <div className="structure-legend" aria-label="结构线条说明">
+            <span><i className="is-solid" aria-hidden="true" />实线：有资料支持的化学键或晶格连接</span>
+            <span><i className="is-dashed" aria-hidden="true" />虚线：配方单元组成示意，不代表共价键</span>
+          </div>
           <div className="target-grid">
             {targets.map((compound, index) => {
               const completed = completedIds.has(compound.id);
               const assembling = assemblingId === compound.id;
               const structureLabel = compound.structure.representation === "composition-schematic"
-                ? "组成结构示意"
-                : "球棍结构";
+                ? "虚线组成示意"
+                : compound.structure.representation === "representative-lattice"
+                  ? "典型结构片段"
+                  : "球棍结构";
               return (
                 <article
                   className={`target-card ${completed ? "is-completed" : ""} ${assembling ? "is-assembling" : ""}`}

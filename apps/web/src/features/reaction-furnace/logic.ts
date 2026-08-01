@@ -11,18 +11,30 @@ export type CompoundFamily = "organic" | "inorganic";
 
 export type StructureRepresentation =
   | "authoritative-topology"
-  | "composition-schematic";
+  | "composition-schematic"
+  | "representative-lattice";
+
+export type CompoundCategory =
+  | "acid"
+  | "base"
+  | "salt"
+  | "oxide"
+  | "allotrope"
+  | "simple-substance"
+  | "other";
 
 export type MolecularAtom = {
   symbol: string;
   x: number;
   y: number;
+  z?: number;
 };
 
 export type MolecularBond = {
   from: number;
   to: number;
   order: 1 | 2 | 3;
+  style?: "solid" | "dashed";
 };
 
 export type MolecularStructure = {
@@ -45,6 +57,8 @@ export type ReactionCompound = {
   feature: string;
   kind: CompoundKind;
   family: CompoundFamily;
+  category: CompoundCategory;
+  curriculumPriority: 0 | 1 | 2;
   atomCounts: AtomCounts;
   totalAtoms: number;
   structure: MolecularStructure;
@@ -228,6 +242,7 @@ function chooseDiverseCompounds(
   const coveredPreferred = new Set(
     [...coveredElements].filter((symbol) => preferredElements.has(symbol)),
   );
+  const coveredCategories = new Set(alreadySelected.map((compound) => compound.category));
   let usedAtoms = alreadySelected.reduce((total, compound) => total + compound.totalAtoms, 0);
 
   while (selected.length < count) {
@@ -255,9 +270,15 @@ function chooseDiverseCompounds(
         ).length;
         const diversityGain = symbols.filter((symbol) => !coveredElements.has(symbol)).length;
         const preferredRelation = symbols.some((symbol) => preferredElements.has(symbol)) ? 1 : 0;
+        const categoryGain = coveredCategories.has(candidate.category) ? 0 : 1;
         return {
           candidate,
-          score: preferredGain * 100 + diversityGain * 12 + preferredRelation * 3,
+          score:
+            preferredGain * 100
+            + diversityGain * 12
+            + categoryGain * 7
+            + candidate.curriculumPriority * 4
+            + preferredRelation * 3,
         };
       })
       .sort((first, second) => second.score - first.score);
@@ -270,6 +291,7 @@ function chooseDiverseCompounds(
       coveredElements.add(symbol);
       if (preferredElements.has(symbol)) coveredPreferred.add(symbol);
     }
+    coveredCategories.add(chosen.category);
   }
   return selected;
 }
