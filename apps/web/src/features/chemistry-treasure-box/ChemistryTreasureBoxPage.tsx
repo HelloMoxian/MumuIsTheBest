@@ -161,51 +161,86 @@ export function ChemistryTreasureBoxPage() {
 
       <main className="treasure-main">
         <section className="treasure-workspace">
-          <article className="treasure-reactor">
-            <header>
-              <div>
-                <span className={assemblingId ? "reactor-status is-assembling" : "reactor-status"}>
-                  <i aria-hidden="true" />
-                  {assemblingId ? "正在组成新物质" : freeAtomCount ? "游离原子布朗运动中" : "反应区等待原子"}
-                </span>
-                <p aria-live="polite">{statusText}</p>
-              </div>
-              <span className="virtual-only">虚拟组成演示，不是实验步骤</span>
-            </header>
-            <div className="treasure-canvas-shell">
-              <FurnaceCanvas
-                ref={canvasRef}
-                mode="eject"
-                targetCount={1}
-                onAssemblyComplete={handleAssemblyComplete}
-              />
-              {freeAtomCount === 0 && !assemblingId && (
-                <div className="treasure-empty">
-                  <span aria-hidden="true">✦</span>
-                  <strong>从右侧点一个元素</strong>
-                  <p>连续点击可以投入多个原子，配方满足后会自动组成物质。</p>
+          <div className="treasure-reactor-column">
+            <article className="treasure-reactor">
+              <header>
+                <div>
+                  <span className={assemblingId ? "reactor-status is-assembling" : "reactor-status"}>
+                    <i aria-hidden="true" />
+                    {assemblingId ? "正在组成新物质" : freeAtomCount ? "游离原子布朗运动中" : "反应区等待原子"}
+                  </span>
+                  <p aria-live="polite">{statusText}</p>
                 </div>
-              )}
-              {poolEntries.length > 0 && (
-                <div className="treasure-pool-readout" aria-label="反应区游离原子">
-                  {poolEntries.map(([symbol, count]) => (
-                    <span key={symbol}><strong>{symbol}</strong> ×{count}</span>
+                <span className="virtual-only">虚拟组成演示，不是实验步骤</span>
+              </header>
+              <div className="treasure-canvas-shell">
+                <FurnaceCanvas
+                  ref={canvasRef}
+                  mode="eject"
+                  targetCount={1}
+                  onAssemblyComplete={handleAssemblyComplete}
+                />
+                {freeAtomCount === 0 && !assemblingId && (
+                  <div className="treasure-empty">
+                    <span aria-hidden="true">✦</span>
+                    <strong>从右侧点一个元素</strong>
+                    <p>连续点击可以投入多个原子，配方满足后会自动组成物质。</p>
+                  </div>
+                )}
+                {poolEntries.length > 0 && (
+                  <div className="treasure-pool-readout" aria-label="反应区游离原子">
+                    {poolEntries.map(([symbol, count]) => (
+                      <span key={symbol}><strong>{symbol}</strong> ×{count}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </article>
+
+            <section className="treasure-shelf" aria-labelledby="treasure-shelf-title">
+              <header>
+                <div>
+                  <p>TREASURE SHELF</p>
+                  <h2 id="treasure-shelf-title">反应生成物</h2>
+                </div>
+                <span>已收集 {completedIds.size} 种 · 生成后落到这里</span>
+              </header>
+              {discoveries.length === 0 ? (
+                <div className="treasure-shelf-empty">
+                  <span aria-hidden="true">↓</span>
+                  <p>生成物会从反应区落到这里。可以先试试两个氧原子。</p>
+                </div>
+              ) : (
+                <div className="treasure-card-row">
+                  {discoveries.map((compound, index) => (
+                    <article className="treasure-card" key={compound.id}>
+                      <span className="treasure-order">#{String(index + 1).padStart(2, "0")}</span>
+                      <div className="treasure-card-structure">
+                        <MoleculeStructurePreview compound={compound} />
+                      </div>
+                      <div>
+                        <strong>{compound.formula}</strong>
+                        <h3>{compound.name}</h3>
+                        <p>{compound.feature}</p>
+                        <small>✓ {COMPOUND_KIND_LABELS[compound.kind]} · 已收藏</small>
+                      </div>
+                    </article>
                   ))}
                 </div>
               )}
-            </div>
-          </article>
+            </section>
+          </div>
 
           <aside className="treasure-periodic" aria-labelledby="treasure-periodic-title">
             <header>
               <div>
                 <p>ELEMENT PICKER</p>
-                <h2 id="treasure-periodic-title">前 90 号元素</h2>
+                <h2 id="treasure-periodic-title">元素选择表</h2>
               </div>
-              <span>{TREASURE_COMPOUNDS.length} 种可发现配方</span>
+              <span>1—90</span>
             </header>
             <p className="treasure-periodic-help">
-              点击元素格，每次投入 1 个原子。单原子单质不会自动生成。
+              按原子序数紧凑排列，每次点击投入 1 个原子。
             </p>
             <div className="treasure-periodic-scroll">
               <div className="treasure-periodic-grid">
@@ -217,8 +252,6 @@ export function ChemistryTreasureBoxPage() {
                       key={element.atomicNumber}
                       className={`category-${element.category}`}
                       style={{
-                        gridColumn: element.displayColumn,
-                        gridRow: element.displayRow,
                         "--element-color": theme.color,
                         "--element-rgb": theme.rgb,
                       } as CSSProperties}
@@ -235,44 +268,7 @@ export function ChemistryTreasureBoxPage() {
                 })}
               </div>
             </div>
-            <div className="treasure-periodic-note">
-              <span>每种物质只收集一次</span>
-              <span>O₂ 与 O₃ 可以分别发现</span>
-            </div>
           </aside>
-        </section>
-
-        <section className="treasure-shelf" aria-labelledby="treasure-shelf-title">
-          <header>
-            <div>
-              <p>TREASURE SHELF</p>
-              <h2 id="treasure-shelf-title">我的化学百宝架</h2>
-            </div>
-            <span>已收集 {completedIds.size} 种 · 新物质会从反应区底部飘到这里</span>
-          </header>
-          {discoveries.length === 0 ? (
-            <div className="treasure-shelf-empty">
-              <span aria-hidden="true">◇</span>
-              <p>百宝架还是空的。可以先试试投入两个氧原子。</p>
-            </div>
-          ) : (
-            <div className="treasure-card-row">
-              {discoveries.map((compound, index) => (
-                <article className="treasure-card" key={compound.id}>
-                  <span className="treasure-order">#{String(index + 1).padStart(2, "0")}</span>
-                  <div className="treasure-card-structure">
-                    <MoleculeStructurePreview compound={compound} />
-                  </div>
-                  <div>
-                    <strong>{compound.formula}</strong>
-                    <h3>{compound.name}</h3>
-                    <p>{compound.feature}</p>
-                    <small>✓ {COMPOUND_KIND_LABELS[compound.kind]} · 已收藏</small>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
         </section>
       </main>
     </div>
