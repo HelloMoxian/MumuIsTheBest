@@ -16,6 +16,7 @@ import {
   addTreasureAtom,
   buildTreasureBoxLibrary,
   findTreasureBoxMatch,
+  indexTreasureDiscoveries,
   TREASURE_BOX_ELEMENT_LIMIT,
   TREASURE_BOX_FREE_ATOM_LIMIT,
   treasureAtomTotal,
@@ -35,6 +36,7 @@ export function ChemistryTreasureBoxPage() {
   const [pool, setPool] = useState<AtomCounts>({});
   const [completedIds, setCompletedIds] = useState<ReadonlySet<string>>(new Set());
   const [discoveries, setDiscoveries] = useState<readonly ReactionCompound[]>([]);
+  const [selectedSymbol, setSelectedSymbol] = useState(TREASURE_ELEMENTS[0].symbol);
   const [assemblingId, setAssemblingId] = useState<string | null>(null);
   const [statusText, setStatusText] = useState("点击右侧元素，把第一个原子送进反应区。");
 
@@ -46,6 +48,14 @@ export function ChemistryTreasureBoxPage() {
   const tryAssemblyRef = useRef<() => void>(() => undefined);
 
   const freeAtomCount = treasureAtomTotal(pool);
+  const discoveriesByElement = useMemo(
+    () => indexTreasureDiscoveries(discoveries),
+    [discoveries],
+  );
+  const selectedElement = TREASURE_ELEMENTS.find(
+    (element) => element.symbol === selectedSymbol,
+  ) ?? TREASURE_ELEMENTS[0];
+  const selectedDiscoveries = discoveriesByElement[selectedElement.symbol] ?? [];
   const poolEntries = useMemo(
     () => Object.entries(pool)
       .filter(([, count]) => count > 0)
@@ -101,6 +111,7 @@ export function ChemistryTreasureBoxPage() {
   }, [scheduleMatch]);
 
   const addElement = (symbol: string, chineseName: string) => {
+    setSelectedSymbol(symbol);
     if (treasureAtomTotal(poolRef.current) >= TREASURE_BOX_FREE_ATOM_LIMIT) {
       setStatusText("反应区已经很热闹啦，先等原子组成物质，或清空游离原子。");
       return;
@@ -110,6 +121,14 @@ export function ChemistryTreasureBoxPage() {
     canvasRef.current?.addAtoms(symbol, 1);
     setStatusText(`${chineseName}原子已进入反应区，稍等一下看看它会遇见谁。`);
     scheduleMatch();
+  };
+
+  const removeDiscovery = (compound: ReactionCompound) => {
+    completedIdsRef.current.delete(compound.id);
+    setCompletedIds(new Set(completedIdsRef.current));
+    setDiscoveries((current) => current.filter((item) => item.id !== compound.id));
+    setStatusText(`${compound.formula} ${compound.name}已从百宝架移除，现在可以重新合成。`);
+    scheduleMatch(120);
   };
 
   const clearFreeAtoms = () => {
@@ -248,27 +267,71 @@ export function ChemistryTreasureBoxPage() {
               <div className="treasure-periodic-grid">
                 {TREASURE_ELEMENTS.map((element) => {
                   const theme = getReactionElementTheme(element.symbol);
+                  const discoveryCount = discoveriesByElement[element.symbol]?.length ?? 0;
+                  const freeCount = pool[element.symbol] ?? 0;
+                  const isSelected = selectedSymbol === element.symbol;
                   return (
                     <button
                       type="button"
                       key={element.atomicNumber}
-                      className={`category-${element.category}`}
+                      className={`category-${element.category}${isSelected ? " is-selected" : ""}`}
                       style={{
                         "--element-color": theme.color,
                         "--element-rgb": theme.rgb,
                       } as CSSProperties}
                       onClick={() => addElement(element.symbol, element.chineseName)}
-                      disabled={freeAtomCount >= TREASURE_BOX_FREE_ATOM_LIMIT}
-                      aria-label={`投入1个${element.chineseName}原子，元素符号${element.symbol}，原子序数${element.atomicNumber}`}
-                      title={`${element.atomicNumber} · ${element.chineseName} · ${element.symbol}`}
+                      aria-pressed={isSelected}
+                      aria-label={`投入1个${element.chineseName}原子并查看合成物，元素符号${element.symbol}，原子序数${element.atomicNumber}，已收集${discoveryCount}种，当前游离${freeCount}个`}
+                      title={`${element.atomicNumber} · ${element.chineseName} · ${element.symbol} · 物 ${discoveryCount} · 原 ${freeCount}`}
                     >
-                      <small>{element.atomicNumber}</small>
-                      <strong>{element.symbol}</strong>
-                      <span>{element.chineseName}</span>
+                      <small className="treasure-element-number">{element.atomicNumber}</small>
+                      <strong className="treasure-element-symbol">{element.symbol}</strong>
+                      <span className="treasure-element-name">{element.chineseName}</span>
+                      <span className="treasure-element-metrics" aria-hidden="true">
+                        <span>物 {discoveryCount}</span>
+                        <span>原 {freeCount}</span>
+                      </span>
                     </button>
                   );
                 })}
               </div>
+              <section
+                className="treasure-element-discoveries"
+                aria-labelledby="treasure-element-discoveries-title"
+              >
+                <header>
+                  <div>
+                    <small>{selectedElement.symbol}</small>
+                    <h3 id="treasure-element-discoveries-title">
+                      {selectedElement.chineseName}的已合成物
+                    </h3>
+                  </div>
+                  <span>{selectedDiscoveries.length} 种</span>
+                </header>
+                {selectedDiscoveries.length === 0 ? (
+                  <p className="treasure-element-discoveries-empty">
+                    还没有收集含{selectedElement.chineseName}的物质。
+                  </p>
+                ) : (
+                  <ul>
+                    {selectedDiscoveries.map((compound) => (
+                      <li key={compound.id}>
+                        <div>
+                          <strong>{compound.formula}</strong>
+                          <span>{compound.name}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeDiscovery(compound)}
+                          aria-label={`移除${compound.formula}${compound.name}，允许重新合成`}
+                        >
+                          <span aria-hidden="true">×</span> 移除
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
             </div>
           </aside>
         </section>

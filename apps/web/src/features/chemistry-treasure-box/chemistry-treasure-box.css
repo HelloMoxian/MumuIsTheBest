@@ -128,7 +128,7 @@
 
 .treasure-workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 382px;
+  grid-template-columns: minmax(0, 1fr) 440px;
   gap: 14px;
   align-items: start;
 }
@@ -309,7 +309,7 @@
   display: grid;
   width: 100%;
   min-width: 0;
-  grid-template-columns: repeat(6, minmax(48px, 1fr));
+  grid-template-columns: repeat(8, minmax(48px, 1fr));
   grid-auto-rows: 54px;
   gap: 4px;
   align-content: start;
@@ -340,7 +340,7 @@
     background 150ms ease;
 }
 
-.treasure-periodic-grid button small {
+.treasure-periodic-grid .treasure-element-number {
   position: absolute;
   top: 3px;
   left: 4px;
@@ -349,18 +349,39 @@
   font-weight: 800;
 }
 
-.treasure-periodic-grid button strong {
-  margin-top: 7px;
+.treasure-periodic-grid .treasure-element-symbol {
+  margin-top: 3px;
   color: var(--element-color);
-  font-size: 12px;
+  font-size: 10px;
   line-height: 1;
   text-shadow: 0 0 12px rgba(var(--element-rgb), 0.48);
 }
 
-.treasure-periodic-grid button span {
-  font-size: 17px;
+.treasure-periodic-grid .treasure-element-name {
+  font-size: 15px;
   font-weight: 900;
   line-height: 1;
+}
+
+.treasure-periodic-grid .treasure-element-metrics {
+  display: flex;
+  max-width: 100%;
+  justify-content: center;
+  gap: 3px;
+  color: rgba(206, 210, 238, 0.52);
+  font-size: 7px;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.treasure-periodic-grid button.is-selected {
+  border-width: 2px;
+  border-color: white;
+  background: rgba(var(--element-rgb), 0.26);
+  box-shadow:
+    inset 0 0 0 1px rgba(90, 233, 255, 0.45),
+    0 0 14px rgba(var(--element-rgb), 0.3);
 }
 
 .treasure-periodic-grid button:hover,
@@ -381,6 +402,134 @@
   cursor: not-allowed;
   filter: grayscale(0.6);
   opacity: 0.4;
+}
+
+.treasure-element-discoveries {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(151, 148, 232, 0.18);
+}
+
+.treasure-element-discoveries > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px 8px;
+}
+
+.treasure-element-discoveries > header > div {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.treasure-element-discoveries > header small {
+  color: var(--furnace-cyan);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.treasure-element-discoveries h3 {
+  margin: 0;
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treasure-element-discoveries > header > span {
+  color: var(--furnace-muted);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.treasure-element-discoveries ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.treasure-element-discoveries li {
+  display: grid;
+  min-height: 58px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 6px 5px 10px;
+  border: 1px solid rgba(90, 233, 255, 0.14);
+  border-radius: 13px;
+  background: rgba(7, 10, 45, 0.62);
+}
+
+.treasure-element-discoveries li > div {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.treasure-element-discoveries li strong {
+  color: var(--furnace-cyan);
+  font-size: 16px;
+}
+
+.treasure-element-discoveries li > div span {
+  overflow: hidden;
+  color: var(--furnace-ink);
+  font-size: 13px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treasure-element-discoveries li button {
+  min-width: 64px;
+  min-height: 48px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 117, 150, 0.32);
+  border-radius: 11px;
+  color: #ffd9e3;
+  background: rgba(255, 117, 150, 0.08);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.treasure-element-discoveries li button span {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.treasure-element-discoveries li button:hover,
+.treasure-element-discoveries li button:focus-visible {
+  border-color: #ff9bb2;
+  outline: 2px solid var(--furnace-cyan);
+  outline-offset: 1px;
+  background: rgba(255, 117, 150, 0.16);
+}
+
+.treasure-element-discoveries li button:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.treasure-element-discoveries-empty {
+  display: grid;
+  min-height: 70px;
+  margin: 0;
+  padding: 10px;
+  place-items: center;
+  border: 1px dashed rgba(90, 233, 255, 0.17);
+  border-radius: 13px;
+  color: var(--furnace-muted);
+  font-size: 13px;
+  text-align: center;
+  background: rgba(8, 10, 43, 0.38);
 }
 
 .treasure-shelf {
@@ -550,6 +699,14 @@
 
   .treasure-periodic {
     min-height: 600px;
+  }
+
+  .treasure-periodic-scroll {
+    overflow-x: auto;
+  }
+
+  .treasure-periodic-grid {
+    min-width: 412px;
   }
 }
 

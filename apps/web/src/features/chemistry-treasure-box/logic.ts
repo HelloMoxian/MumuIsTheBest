@@ -62,6 +62,18 @@ export function treasureAtomTotal(pool: AtomCounts) {
   return Object.values(pool).reduce((total, count) => total + count, 0);
 }
 
+export function indexTreasureDiscoveries(
+  discoveries: readonly ReactionCompound[],
+) {
+  const byElement: Record<string, ReactionCompound[]> = {};
+  for (const compound of discoveries) {
+    for (const symbol of Object.keys(compound.atomCounts)) {
+      (byElement[symbol] ??= []).push(compound);
+    }
+  }
+  return byElement;
+}
+
 export function canFormTreasureCompound(
   pool: AtomCounts,
   compound: ReactionCompound,

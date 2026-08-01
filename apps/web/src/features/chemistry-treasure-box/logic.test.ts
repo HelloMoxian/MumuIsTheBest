@@ -8,6 +8,7 @@ import {
   atomCountsKey,
   buildTreasureBoxLibrary,
   findTreasureBoxMatch,
+  indexTreasureDiscoveries,
   TREASURE_BOX_ELEMENT_LIMIT,
 } from "./logic";
 
@@ -55,4 +56,23 @@ test("恰好投入水的原子时优先组成水，而不是先消耗氢气", ()
   pool = addTreasureAtom(pool, "H");
   pool = addTreasureAtom(pool, "O");
   assert.equal(findTreasureBoxMatch(pool, library, new Set())?.id, water.id);
+});
+
+test("已合成物质按所含元素建立索引，移除后可以重新生成", () => {
+  const oxygen = library.find((compound) => compound.formula === "O₂")!;
+  const ozone = library.find((compound) => compound.formula === "O₃")!;
+  const water = library.find((compound) => compound.formula === "H₂O")!;
+  const discoveries = [ozone, oxygen, water];
+  const discoveryIndex = indexTreasureDiscoveries(discoveries);
+
+  assert.deepEqual(discoveryIndex.O, discoveries);
+  assert.deepEqual(discoveryIndex.H, [water]);
+  assert.equal(discoveryIndex.C, undefined);
+
+  const completedIds = new Set(discoveries.map((compound) => compound.id));
+  completedIds.delete(oxygen.id);
+  assert.equal(
+    findTreasureBoxMatch({ O: 2 }, library, completedIds)?.id,
+    oxygen.id,
+  );
 });
