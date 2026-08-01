@@ -15,11 +15,12 @@ import { consumeAtomCounts, type AtomCounts, type ReactionCompound } from "../re
 import {
   addTreasureAtom,
   buildTreasureBoxLibrary,
+  canAddTreasureElementBatch,
   findTreasureBoxMatch,
   indexTreasureDiscoveries,
   TREASURE_BOX_ELEMENT_LIMIT,
-  TREASURE_BOX_FREE_ATOM_LIMIT,
   treasureAtomTotal,
+  treasureElementBatchSize,
 } from "./logic";
 import "../reaction-furnace/reaction-furnace.css";
 import "./chemistry-treasure-box.css";
@@ -112,13 +113,14 @@ export function ChemistryTreasureBoxPage() {
 
   const addElement = (symbol: string, chineseName: string) => {
     setSelectedSymbol(symbol);
-    if (treasureAtomTotal(poolRef.current) >= TREASURE_BOX_FREE_ATOM_LIMIT) {
+    const batchSize = treasureElementBatchSize(symbol);
+    if (!canAddTreasureElementBatch(poolRef.current, symbol)) {
       setStatusText("反应区已经很热闹啦，先等原子组成物质，或清空游离原子。");
       return;
     }
-    poolRef.current = addTreasureAtom(poolRef.current, symbol);
+    poolRef.current = addTreasureAtom(poolRef.current, symbol, batchSize);
     setPool(poolRef.current);
-    canvasRef.current?.addAtoms(symbol, 1);
+    canvasRef.current?.addAtoms(symbol, batchSize);
     setStatusText(`${chineseName}原子已进入反应区，稍等一下看看它会遇见谁。`);
     scheduleMatch();
   };
@@ -270,6 +272,7 @@ export function ChemistryTreasureBoxPage() {
                   const discoveryCount = discoveriesByElement[element.symbol]?.length ?? 0;
                   const freeCount = pool[element.symbol] ?? 0;
                   const isSelected = selectedSymbol === element.symbol;
+                  const batchSize = treasureElementBatchSize(element.symbol);
                   return (
                     <button
                       type="button"
@@ -281,7 +284,7 @@ export function ChemistryTreasureBoxPage() {
                       } as CSSProperties}
                       onClick={() => addElement(element.symbol, element.chineseName)}
                       aria-pressed={isSelected}
-                      aria-label={`投入1个${element.chineseName}原子并查看合成物，元素符号${element.symbol}，原子序数${element.atomicNumber}，已收集${discoveryCount}种，当前游离${freeCount}个`}
+                      aria-label={`投入${batchSize}个${element.chineseName}原子并查看合成物，元素符号${element.symbol}，原子序数${element.atomicNumber}，已收集${discoveryCount}种，当前游离${freeCount}个`}
                       title={`${element.atomicNumber} · ${element.chineseName} · ${element.symbol} · 物 ${discoveryCount} · 原 ${freeCount}`}
                     >
                       <small className="treasure-element-number">{element.atomicNumber}</small>

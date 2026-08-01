@@ -7,9 +7,13 @@ import {
   addTreasureAtom,
   atomCountsKey,
   buildTreasureBoxLibrary,
+  canAddTreasureElementBatch,
   findTreasureBoxMatch,
   indexTreasureDiscoveries,
   TREASURE_BOX_ELEMENT_LIMIT,
+  TREASURE_BOX_FREE_ATOM_LIMIT,
+  treasureAtomTotal,
+  treasureElementBatchSize,
 } from "./logic";
 
 const allowedSymbols = new Set(
@@ -73,6 +77,39 @@ test("已合成物质按所含元素建立索引，移除后可以重新生成",
   completedIds.delete(oxygen.id);
   assert.equal(
     findTreasureBoxMatch({ O: 2 }, library, completedIds)?.id,
+    oxygen.id,
+  );
+});
+
+test("氢和碳每次投五个，氧每次投三个，其他元素仍投一个", () => {
+  assert.equal(treasureElementBatchSize("H"), 5);
+  assert.equal(treasureElementBatchSize("C"), 5);
+  assert.equal(treasureElementBatchSize("O"), 3);
+  assert.equal(treasureElementBatchSize("Na"), 1);
+
+  let pool = addTreasureAtom({}, "H", treasureElementBatchSize("H"));
+  pool = addTreasureAtom(pool, "C", treasureElementBatchSize("C"));
+  pool = addTreasureAtom(pool, "O", treasureElementBatchSize("O"));
+  pool = addTreasureAtom(pool, "Na", treasureElementBatchSize("Na"));
+  assert.deepEqual(pool, { H: 5, C: 5, O: 3, Na: 1 });
+  assert.equal(treasureAtomTotal(pool), 14);
+  assert.equal(TREASURE_BOX_FREE_ATOM_LIMIT, 240);
+
+  assert.equal(canAddTreasureElementBatch({ He: 235 }, "H"), true);
+  assert.equal(canAddTreasureElementBatch({ He: 236 }, "H"), false);
+  assert.equal(canAddTreasureElementBatch({ He: 237 }, "O"), true);
+  assert.equal(canAddTreasureElementBatch({ He: 238 }, "O"), false);
+  assert.equal(canAddTreasureElementBatch({ He: 239 }, "Na"), true);
+  assert.equal(canAddTreasureElementBatch({ He: 240 }, "Na"), false);
+
+  const ozone = library.find((compound) => compound.formula === "O₃")!;
+  const oxygen = library.find((compound) => compound.formula === "O₂")!;
+  let oxygenPool = addTreasureAtom({}, "O", treasureElementBatchSize("O"));
+  assert.equal(findTreasureBoxMatch(oxygenPool, library, new Set())?.id, ozone.id);
+  oxygenPool = consumeAtomCounts(oxygenPool, ozone.atomCounts);
+  oxygenPool = addTreasureAtom(oxygenPool, "O", treasureElementBatchSize("O"));
+  assert.equal(
+    findTreasureBoxMatch(oxygenPool, library, new Set([ozone.id]))?.id,
     oxygen.id,
   );
 });

@@ -3,6 +3,26 @@ import type { AtomCounts, ReactionCompound } from "../reaction-furnace/logic";
 export const TREASURE_BOX_ELEMENT_LIMIT = 90;
 export const TREASURE_BOX_FREE_ATOM_LIMIT = 240;
 
+const TREASURE_ELEMENT_BATCH_SIZES: Readonly<Record<string, number>> = {
+  H: 5,
+  C: 5,
+  O: 3,
+};
+
+export function treasureElementBatchSize(symbol: string) {
+  return TREASURE_ELEMENT_BATCH_SIZES[symbol] ?? 1;
+}
+
+export function canAddTreasureElementBatch(
+  pool: AtomCounts,
+  symbol: string,
+) {
+  return (
+    treasureAtomTotal(pool) + treasureElementBatchSize(symbol)
+    <= TREASURE_BOX_FREE_ATOM_LIMIT
+  );
+}
+
 export function atomCountsKey(counts: AtomCounts) {
   return Object.entries(counts)
     .sort(([first], [second]) => first.localeCompare(second))
@@ -51,10 +71,14 @@ export function buildTreasureBoxLibrary(
   return [...representativeByComposition.values()];
 }
 
-export function addTreasureAtom(pool: AtomCounts, symbol: string): AtomCounts {
+export function addTreasureAtom(
+  pool: AtomCounts,
+  symbol: string,
+  amount = 1,
+): AtomCounts {
   return {
     ...pool,
-    [symbol]: (pool[symbol] ?? 0) + 1,
+    [symbol]: (pool[symbol] ?? 0) + amount,
   };
 }
 
