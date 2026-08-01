@@ -1,0 +1,2675 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-01T08:14:00.384Z",
+  "count": 68,
+  "coverage": {
+    "atomicNumbers": "1-80",
+    "coveredElementCount": 80,
+    "representationRule": "分子使用可追溯拓扑；离子晶体和固体只展示不虚构化学键的配方单元组成示意。"
+  },
+  "sources": [
+    {
+      "name": "PubChem PUG REST",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest",
+      "role": "核验化合物 CID 与分子式"
+    },
+    {
+      "name": "Nature Chemistry",
+      "url": "https://doi.org/10.1038/nchem.2716",
+      "role": "二钠氦化物高压结构来源"
+    },
+    {
+      "name": "Nature",
+      "url": "https://doi.org/10.1038/35022551",
+      "role": "氟氢化氩结构来源"
+    },
+    {
+      "name": "Angewandte Chemie International Edition",
+      "url": "https://doi.org/10.1002/anie.201205072",
+      "role": "氖—金—氟配合物来源"
+    }
+  ],
+  "records": [
+    {
+      "id": "element-compound-na2he",
+      "formula": "Na2He",
+      "name": "二钠氦化物",
+      "nameEnglish": "disodium helide",
+      "feature": "只在极高压力下稳定的含氦晶体，用配方单元示意组成。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Na",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "Na",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "He",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "Nature Chemistry",
+        "url": "https://doi.org/10.1038/nchem.2716"
+      }
+    },
+    {
+      "id": "element-compound-lif",
+      "cid": 224478,
+      "formula": "LiF",
+      "name": "氟化锂",
+      "nameEnglish": "lithium fluoride",
+      "feature": "由锂和氟组成的离子晶体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Li",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "F",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/224478"
+      }
+    },
+    {
+      "id": "element-compound-bef2",
+      "cid": 24589,
+      "formula": "BeF2",
+      "name": "氟化铍",
+      "nameEnglish": "beryllium fluoride",
+      "feature": "由铍和氟组成，页面只展示配方单元。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Be",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "F",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "F",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/24589"
+      }
+    },
+    {
+      "id": "element-compound-neauf",
+      "formula": "NeAuF",
+      "name": "氖—金—氟配合物",
+      "nameEnglish": "neon gold fluoride complex",
+      "feature": "在低温基质中被光谱表征的稀有氖配合物，用组成结构示意。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ne",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "Au",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "F",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "Angewandte Chemie International Edition",
+        "url": "https://doi.org/10.1002/anie.201205072"
+      }
+    },
+    {
+      "id": "element-compound-nacl",
+      "cid": 5234,
+      "formula": "NaCl",
+      "name": "氯化钠",
+      "nameEnglish": "sodium chloride",
+      "feature": "食盐的主要成分，是典型离子晶体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Na",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "Cl",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5234"
+      }
+    },
+    {
+      "id": "element-compound-mgo",
+      "cid": 14792,
+      "formula": "MgO",
+      "name": "氧化镁",
+      "nameEnglish": "magnesium oxide",
+      "feature": "由镁和氧组成的离子晶体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Mg",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14792"
+      }
+    },
+    {
+      "id": "element-compound-al2o3",
+      "cid": 9989226,
+      "formula": "Al2O3",
+      "name": "氧化铝",
+      "nameEnglish": "aluminium oxide",
+      "feature": "刚玉和许多陶瓷材料的重要成分。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Al",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Al",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/9989226"
+      }
+    },
+    {
+      "id": "element-compound-harf",
+      "formula": "HArF",
+      "name": "氟氢化氩",
+      "nameEnglish": "argon fluorohydride",
+      "feature": "在极低温固态氩中发现的稀有氩化合物。",
+      "family": "inorganic",
+      "kind": "molecule",
+      "representation": "authoritative-topology",
+      "atoms": [
+        {
+          "symbol": "H",
+          "x": -1,
+          "y": 0
+        },
+        {
+          "symbol": "Ar",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "symbol": "F",
+          "x": 1,
+          "y": 0
+        }
+      ],
+      "bonds": [
+        {
+          "from": 0,
+          "to": 1,
+          "order": 1
+        },
+        {
+          "from": 1,
+          "to": 2,
+          "order": 1
+        }
+      ],
+      "source": {
+        "name": "Nature",
+        "url": "https://doi.org/10.1038/35022551"
+      }
+    },
+    {
+      "id": "element-compound-kcl",
+      "cid": 4873,
+      "formula": "KCl",
+      "name": "氯化钾",
+      "nameEnglish": "potassium chloride",
+      "feature": "由钾离子和氯离子组成的晶体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "K",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "Cl",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/4873"
+      }
+    },
+    {
+      "id": "element-compound-cao",
+      "cid": 14778,
+      "formula": "CaO",
+      "name": "氧化钙",
+      "nameEnglish": "calcium oxide",
+      "feature": "常见无机材料，也叫生石灰。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ca",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14778"
+      }
+    },
+    {
+      "id": "element-compound-scf3",
+      "cid": 83678,
+      "formula": "ScF3",
+      "name": "氟化钪",
+      "nameEnglish": "scandium fluoride",
+      "feature": "含钪和氟的无机配方单元。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Sc",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "F",
+          "x": 1.08,
+          "y": 0
+        },
+        {
+          "symbol": "F",
+          "x": 0,
+          "y": 1.08
+        },
+        {
+          "symbol": "F",
+          "x": -1.08,
+          "y": 0
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/83678"
+      }
+    },
+    {
+      "id": "element-compound-tio2",
+      "cid": 26042,
+      "formula": "TiO2",
+      "name": "二氧化钛",
+      "nameEnglish": "titanium dioxide",
+      "feature": "常见白色材料，可用于颜料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ti",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/26042"
+      }
+    },
+    {
+      "id": "element-compound-v2o5",
+      "cid": 14814,
+      "formula": "V2O5",
+      "name": "五氧化二钒",
+      "nameEnglish": "vanadium pentoxide",
+      "feature": "含钒的氧化物，仅作虚拟认识。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "V",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "V",
+          "x": 0.8444,
+          "y": -0.6734
+        },
+        {
+          "symbol": "O",
+          "x": 1.0529,
+          "y": 0.2403
+        },
+        {
+          "symbol": "O",
+          "x": 0.4686,
+          "y": 0.973
+        },
+        {
+          "symbol": "O",
+          "x": -0.4686,
+          "y": 0.973
+        },
+        {
+          "symbol": "O",
+          "x": -1.0529,
+          "y": 0.2403
+        },
+        {
+          "symbol": "O",
+          "x": -0.8444,
+          "y": -0.6734
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14814"
+      }
+    },
+    {
+      "id": "element-compound-cr2o3",
+      "cid": 517277,
+      "formula": "Cr2O3",
+      "name": "三氧化二铬",
+      "nameEnglish": "chromium(III) oxide",
+      "feature": "稳定的绿色铬氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Cr",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Cr",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/517277"
+      }
+    },
+    {
+      "id": "element-compound-mno2",
+      "cid": 14801,
+      "formula": "MnO2",
+      "name": "二氧化锰",
+      "nameEnglish": "manganese dioxide",
+      "feature": "电池材料中常见的锰氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Mn",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14801"
+      }
+    },
+    {
+      "id": "element-compound-fe2o3",
+      "cid": 518696,
+      "formula": "Fe2O3",
+      "name": "三氧化二铁",
+      "nameEnglish": "iron(III) oxide",
+      "feature": "铁锈和赤铁矿中的常见成分。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Fe",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Fe",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/518696"
+      }
+    },
+    {
+      "id": "element-compound-coo",
+      "cid": 14786,
+      "formula": "CoO",
+      "name": "氧化钴",
+      "nameEnglish": "cobalt(II) oxide",
+      "feature": "含钴和氧的无机固体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Co",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14786"
+      }
+    },
+    {
+      "id": "element-compound-nio",
+      "cid": 179931,
+      "formula": "NiO",
+      "name": "氧化镍",
+      "nameEnglish": "nickel(II) oxide",
+      "feature": "含镍和氧的无机固体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ni",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/179931"
+      }
+    },
+    {
+      "id": "element-compound-cuo",
+      "cid": 164827,
+      "formula": "CuO",
+      "name": "氧化铜",
+      "nameEnglish": "copper(II) oxide",
+      "feature": "常见的黑色铜氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Cu",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/164827"
+      }
+    },
+    {
+      "id": "element-compound-zno",
+      "cid": 3007857,
+      "formula": "ZnO",
+      "name": "氧化锌",
+      "nameEnglish": "zinc oxide",
+      "feature": "可用于陶瓷和防晒材料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Zn",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/3007857"
+      }
+    },
+    {
+      "id": "element-compound-ga2o3",
+      "cid": 158605,
+      "formula": "Ga2O3",
+      "name": "三氧化二镓",
+      "nameEnglish": "gallium(III) oxide",
+      "feature": "用于研究功率电子器件的宽禁带材料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ga",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Ga",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/158605"
+      }
+    },
+    {
+      "id": "element-compound-geo2",
+      "cid": 90478414,
+      "formula": "GeO2",
+      "name": "二氧化锗",
+      "nameEnglish": "germanium dioxide",
+      "feature": "含锗的氧化物，可用于特种玻璃。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ge",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/90478414"
+      }
+    },
+    {
+      "id": "element-compound-as2o3",
+      "cid": 14888,
+      "formula": "As2O3",
+      "name": "三氧化二砷",
+      "nameEnglish": "arsenic trioxide",
+      "feature": "有毒的砷氧化物，只作虚拟认识。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "As",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "As",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14888"
+      }
+    },
+    {
+      "id": "element-compound-seo2",
+      "cid": 24007,
+      "formula": "SeO2",
+      "name": "二氧化硒",
+      "nameEnglish": "selenium dioxide",
+      "feature": "含硒和氧的无机化合物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Se",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/24007"
+      }
+    },
+    {
+      "id": "element-compound-krf2",
+      "cid": 83721,
+      "formula": "KrF2",
+      "name": "二氟化氪",
+      "nameEnglish": "krypton difluoride",
+      "feature": "少数已知的氪化合物之一。",
+      "family": "inorganic",
+      "kind": "molecule",
+      "representation": "authoritative-topology",
+      "atoms": [
+        {
+          "symbol": "Kr",
+          "x": 0,
+          "y": 0.3333
+        },
+        {
+          "symbol": "F",
+          "x": 0.866,
+          "y": -0.1667
+        },
+        {
+          "symbol": "F",
+          "x": -0.866,
+          "y": -0.1667
+        }
+      ],
+      "bonds": [
+        {
+          "from": 0,
+          "to": 1,
+          "order": 1
+        },
+        {
+          "from": 0,
+          "to": 2,
+          "order": 1
+        }
+      ],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/83721"
+      }
+    },
+    {
+      "id": "element-compound-rbcl",
+      "cid": 62683,
+      "formula": "RbCl",
+      "name": "氯化铷",
+      "nameEnglish": "rubidium chloride",
+      "feature": "由铷和氯组成的离子晶体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Rb",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "Cl",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/62683"
+      }
+    },
+    {
+      "id": "element-compound-sro",
+      "cid": 73975,
+      "formula": "SrO",
+      "name": "氧化锶",
+      "nameEnglish": "strontium oxide",
+      "feature": "由锶和氧组成的无机固体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Sr",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/73975"
+      }
+    },
+    {
+      "id": "element-compound-y2o3",
+      "cid": 159374,
+      "formula": "Y2O3",
+      "name": "氧化钇",
+      "nameEnglish": "yttrium oxide",
+      "feature": "可用于发光材料和陶瓷。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Y",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Y",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159374"
+      }
+    },
+    {
+      "id": "element-compound-zro2",
+      "cid": 62395,
+      "formula": "ZrO2",
+      "name": "二氧化锆",
+      "nameEnglish": "zirconium dioxide",
+      "feature": "坚固耐热的陶瓷材料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Zr",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/62395"
+      }
+    },
+    {
+      "id": "element-compound-nb2o5",
+      "cid": 9903420,
+      "formula": "Nb2O5",
+      "name": "五氧化二铌",
+      "nameEnglish": "niobium pentoxide",
+      "feature": "含铌的稳定氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Nb",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Nb",
+          "x": 0.8444,
+          "y": -0.6734
+        },
+        {
+          "symbol": "O",
+          "x": 1.0529,
+          "y": 0.2403
+        },
+        {
+          "symbol": "O",
+          "x": 0.4686,
+          "y": 0.973
+        },
+        {
+          "symbol": "O",
+          "x": -0.4686,
+          "y": 0.973
+        },
+        {
+          "symbol": "O",
+          "x": -1.0529,
+          "y": 0.2403
+        },
+        {
+          "symbol": "O",
+          "x": -0.8444,
+          "y": -0.6734
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/9903420"
+      }
+    },
+    {
+      "id": "element-compound-moo3",
+      "cid": 14802,
+      "formula": "MoO3",
+      "name": "三氧化钼",
+      "nameEnglish": "molybdenum trioxide",
+      "feature": "含钼的氧化物，可用于材料研究。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Mo",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "O",
+          "x": 1.08,
+          "y": 0
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 1.08
+        },
+        {
+          "symbol": "O",
+          "x": -1.08,
+          "y": 0
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14802"
+      }
+    },
+    {
+      "id": "element-compound-tc2o7",
+      "cid": 22227441,
+      "formula": "Tc2O7",
+      "name": "七氧化二锝",
+      "nameEnglish": "technetium(VII) oxide",
+      "feature": "含放射性锝的氧化物，仅作虚拟认识。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Tc",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Tc",
+          "x": 0.6942,
+          "y": -0.8273
+        },
+        {
+          "symbol": "O",
+          "x": 1.0636,
+          "y": -0.1875
+        },
+        {
+          "symbol": "O",
+          "x": 0.9353,
+          "y": 0.54
+        },
+        {
+          "symbol": "O",
+          "x": 0.3694,
+          "y": 1.0149
+        },
+        {
+          "symbol": "O",
+          "x": -0.3694,
+          "y": 1.0149
+        },
+        {
+          "symbol": "O",
+          "x": -0.9353,
+          "y": 0.54
+        },
+        {
+          "symbol": "O",
+          "x": -1.0636,
+          "y": -0.1875
+        },
+        {
+          "symbol": "O",
+          "x": -0.6942,
+          "y": -0.8273
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/22227441"
+      }
+    },
+    {
+      "id": "element-compound-ruo4",
+      "cid": 119079,
+      "formula": "RuO4",
+      "name": "四氧化钌",
+      "nameEnglish": "ruthenium tetroxide",
+      "feature": "挥发性且危险的钌氧化物，只作虚拟认识。",
+      "family": "inorganic",
+      "kind": "molecule",
+      "representation": "authoritative-topology",
+      "atoms": [
+        {
+          "symbol": "Ru",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "symbol": "O",
+          "x": 0.7071,
+          "y": -0.7071
+        },
+        {
+          "symbol": "O",
+          "x": -0.7071,
+          "y": 0.7071
+        },
+        {
+          "symbol": "O",
+          "x": -0.7071,
+          "y": -0.7071
+        },
+        {
+          "symbol": "O",
+          "x": 0.7071,
+          "y": 0.7071
+        }
+      ],
+      "bonds": [
+        {
+          "from": 0,
+          "to": 1,
+          "order": 2
+        },
+        {
+          "from": 0,
+          "to": 2,
+          "order": 2
+        },
+        {
+          "from": 0,
+          "to": 3,
+          "order": 2
+        },
+        {
+          "from": 0,
+          "to": 4,
+          "order": 2
+        }
+      ],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/119079"
+      }
+    },
+    {
+      "id": "element-compound-rh2o3",
+      "cid": 159409,
+      "formula": "Rh2O3",
+      "name": "三氧化二铑",
+      "nameEnglish": "rhodium(III) oxide",
+      "feature": "含铑和氧的无机固体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Rh",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Rh",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159409"
+      }
+    },
+    {
+      "id": "element-compound-pdcl2",
+      "cid": 24290,
+      "formula": "PdCl2",
+      "name": "氯化钯",
+      "nameEnglish": "palladium(II) chloride",
+      "feature": "常见的含钯无机配方单元。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Pd",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "Cl",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "Cl",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/24290"
+      }
+    },
+    {
+      "id": "element-compound-agcl",
+      "cid": 24561,
+      "formula": "AgCl",
+      "name": "氯化银",
+      "nameEnglish": "silver chloride",
+      "feature": "遇光会发生变化的银盐。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ag",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "Cl",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/24561"
+      }
+    },
+    {
+      "id": "element-compound-cds",
+      "cid": 14783,
+      "formula": "CdS",
+      "name": "硫化镉",
+      "nameEnglish": "cadmium sulfide",
+      "feature": "有毒的黄色半导体材料，只作虚拟认识。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Cd",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "S",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14783"
+      }
+    },
+    {
+      "id": "element-compound-in2o3",
+      "cid": 150905,
+      "formula": "In2O3",
+      "name": "三氧化二铟",
+      "nameEnglish": "indium(III) oxide",
+      "feature": "透明导电材料中的常见氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "In",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "In",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/150905"
+      }
+    },
+    {
+      "id": "element-compound-sno2",
+      "cid": 16747781,
+      "formula": "SnO2",
+      "name": "二氧化锡",
+      "nameEnglish": "tin(IV) oxide",
+      "feature": "常用于陶瓷和传感材料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Sn",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/16747781"
+      }
+    },
+    {
+      "id": "element-compound-sb2o3",
+      "cid": 14794,
+      "formula": "Sb2O3",
+      "name": "三氧化二锑",
+      "nameEnglish": "antimony(III) oxide",
+      "feature": "含锑的无机氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Sb",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Sb",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14794"
+      }
+    },
+    {
+      "id": "element-compound-teo2",
+      "cid": 62638,
+      "formula": "TeO2",
+      "name": "二氧化碲",
+      "nameEnglish": "tellurium dioxide",
+      "feature": "可用于特种玻璃的含碲氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Te",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/62638"
+      }
+    },
+    {
+      "id": "element-compound-xef2",
+      "cid": 83674,
+      "formula": "XeF2",
+      "name": "二氟化氙",
+      "nameEnglish": "xenon difluoride",
+      "feature": "具有线形结构的稀有气体化合物。",
+      "family": "inorganic",
+      "kind": "molecule",
+      "representation": "authoritative-topology",
+      "atoms": [
+        {
+          "symbol": "Xe",
+          "x": 0,
+          "y": 0.3333
+        },
+        {
+          "symbol": "F",
+          "x": 0.866,
+          "y": -0.1667
+        },
+        {
+          "symbol": "F",
+          "x": -0.866,
+          "y": -0.1667
+        }
+      ],
+      "bonds": [
+        {
+          "from": 0,
+          "to": 1,
+          "order": 1
+        },
+        {
+          "from": 0,
+          "to": 2,
+          "order": 1
+        }
+      ],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/83674"
+      }
+    },
+    {
+      "id": "element-compound-cscl",
+      "cid": 24293,
+      "formula": "CsCl",
+      "name": "氯化铯",
+      "nameEnglish": "cesium chloride",
+      "feature": "由铯和氯组成的离子晶体。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Cs",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "Cl",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/24293"
+      }
+    },
+    {
+      "id": "element-compound-baso4",
+      "cid": 24414,
+      "formula": "BaSO4",
+      "name": "硫酸钡",
+      "nameEnglish": "barium sulfate",
+      "feature": "难溶的白色钡盐，可用于医学造影。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ba",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "S",
+          "x": 0.9353,
+          "y": -0.54
+        },
+        {
+          "symbol": "O",
+          "x": 0.9353,
+          "y": 0.54
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 1.08
+        },
+        {
+          "symbol": "O",
+          "x": -0.9353,
+          "y": 0.54
+        },
+        {
+          "symbol": "O",
+          "x": -0.9353,
+          "y": -0.54
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/24414"
+      }
+    },
+    {
+      "id": "element-compound-la2o3",
+      "cid": 150906,
+      "formula": "La2O3",
+      "name": "氧化镧",
+      "nameEnglish": "lanthanum oxide",
+      "feature": "稀土元素镧的常见氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "La",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "La",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/150906"
+      }
+    },
+    {
+      "id": "element-compound-ceo2",
+      "cid": 73963,
+      "formula": "CeO2",
+      "name": "二氧化铈",
+      "nameEnglish": "cerium dioxide",
+      "feature": "可用于抛光和催化材料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ce",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/73963"
+      }
+    },
+    {
+      "id": "element-compound-pr2o3",
+      "cid": 165911,
+      "formula": "Pr2O3",
+      "name": "三氧化二镨",
+      "nameEnglish": "praseodymium(III) oxide",
+      "feature": "稀土元素镨的氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Pr",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Pr",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/165911"
+      }
+    },
+    {
+      "id": "element-compound-nd2o3",
+      "cid": 159373,
+      "formula": "Nd2O3",
+      "name": "三氧化二钕",
+      "nameEnglish": "neodymium(III) oxide",
+      "feature": "可用于玻璃着色和磁性材料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Nd",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Nd",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159373"
+      }
+    },
+    {
+      "id": "element-compound-pmcl3",
+      "cid": 3014783,
+      "formula": "PmCl3",
+      "name": "氯化钷",
+      "nameEnglish": "promethium(III) chloride",
+      "feature": "含放射性钷的配方单元，仅作虚拟认识。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Pm",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Cl",
+          "x": 1.08,
+          "y": 0
+        },
+        {
+          "symbol": "Cl",
+          "x": 0,
+          "y": 1.08
+        },
+        {
+          "symbol": "Cl",
+          "x": -1.08,
+          "y": 0
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/3014783"
+      }
+    },
+    {
+      "id": "element-compound-sm2o3",
+      "cid": 159425,
+      "formula": "Sm2O3",
+      "name": "三氧化二钐",
+      "nameEnglish": "samarium(III) oxide",
+      "feature": "稀土元素钐的常见氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Sm",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Sm",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159425"
+      }
+    },
+    {
+      "id": "element-compound-eu2o3",
+      "cid": 159371,
+      "formula": "Eu2O3",
+      "name": "三氧化二铕",
+      "nameEnglish": "europium(III) oxide",
+      "feature": "发光材料中常见的含铕氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Eu",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Eu",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159371"
+      }
+    },
+    {
+      "id": "element-compound-gd2o3",
+      "cid": 159427,
+      "formula": "Gd2O3",
+      "name": "三氧化二钆",
+      "nameEnglish": "gadolinium(III) oxide",
+      "feature": "含钆的稀土氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Gd",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Gd",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159427"
+      }
+    },
+    {
+      "id": "element-compound-tb2o3",
+      "cid": 159410,
+      "formula": "Tb2O3",
+      "name": "三氧化二铽",
+      "nameEnglish": "terbium(III) oxide",
+      "feature": "稀土元素铽的氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Tb",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Tb",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159410"
+      }
+    },
+    {
+      "id": "element-compound-dy2o3",
+      "cid": 159370,
+      "formula": "Dy2O3",
+      "name": "三氧化二镝",
+      "nameEnglish": "dysprosium(III) oxide",
+      "feature": "稀土元素镝的氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Dy",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Dy",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159370"
+      }
+    },
+    {
+      "id": "element-compound-ho2o3",
+      "cid": 159423,
+      "formula": "Ho2O3",
+      "name": "三氧化二钬",
+      "nameEnglish": "holmium(III) oxide",
+      "feature": "稀土元素钬的氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ho",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Ho",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159423"
+      }
+    },
+    {
+      "id": "element-compound-er2o3",
+      "cid": 159426,
+      "formula": "Er2O3",
+      "name": "三氧化二铒",
+      "nameEnglish": "erbium(III) oxide",
+      "feature": "可用于玻璃和光学材料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Er",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Er",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159426"
+      }
+    },
+    {
+      "id": "element-compound-tm2o3",
+      "cid": 159411,
+      "formula": "Tm2O3",
+      "name": "三氧化二铥",
+      "nameEnglish": "thulium(III) oxide",
+      "feature": "稀土元素铥的氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Tm",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Tm",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159411"
+      }
+    },
+    {
+      "id": "element-compound-yb2o3",
+      "cid": 159375,
+      "formula": "Yb2O3",
+      "name": "三氧化二镱",
+      "nameEnglish": "ytterbium(III) oxide",
+      "feature": "稀土元素镱的常见氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Yb",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Yb",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/159375"
+      }
+    },
+    {
+      "id": "element-compound-lu2o3",
+      "cid": 4323797,
+      "formula": "Lu2O3",
+      "name": "三氧化二镥",
+      "nameEnglish": "lutetium(III) oxide",
+      "feature": "稀土元素镥的氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Lu",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Lu",
+          "x": 1.0271,
+          "y": -0.3337
+        },
+        {
+          "symbol": "O",
+          "x": 0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -0.6348,
+          "y": 0.8737
+        },
+        {
+          "symbol": "O",
+          "x": -1.0271,
+          "y": -0.3337
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/4323797"
+      }
+    },
+    {
+      "id": "element-compound-hfo2",
+      "cid": 292779,
+      "formula": "HfO2",
+      "name": "二氧化铪",
+      "nameEnglish": "hafnium dioxide",
+      "feature": "耐高温并可用于微电子材料。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Hf",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/292779"
+      }
+    },
+    {
+      "id": "element-compound-ta2o5",
+      "cid": 62157,
+      "formula": "Ta2O5",
+      "name": "五氧化二钽",
+      "nameEnglish": "tantalum pentoxide",
+      "feature": "电容器和光学材料中的含钽氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ta",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Ta",
+          "x": 0.8444,
+          "y": -0.6734
+        },
+        {
+          "symbol": "O",
+          "x": 1.0529,
+          "y": 0.2403
+        },
+        {
+          "symbol": "O",
+          "x": 0.4686,
+          "y": 0.973
+        },
+        {
+          "symbol": "O",
+          "x": -0.4686,
+          "y": 0.973
+        },
+        {
+          "symbol": "O",
+          "x": -1.0529,
+          "y": 0.2403
+        },
+        {
+          "symbol": "O",
+          "x": -0.8444,
+          "y": -0.6734
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/62157"
+      }
+    },
+    {
+      "id": "element-compound-wo3",
+      "cid": 14811,
+      "formula": "WO3",
+      "name": "三氧化钨",
+      "nameEnglish": "tungsten trioxide",
+      "feature": "可随电化学状态改变颜色的钨氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "W",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "O",
+          "x": 1.08,
+          "y": 0
+        },
+        {
+          "symbol": "O",
+          "x": 0,
+          "y": 1.08
+        },
+        {
+          "symbol": "O",
+          "x": -1.08,
+          "y": 0
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/14811"
+      }
+    },
+    {
+      "id": "element-compound-re2o7",
+      "cid": 123106,
+      "formula": "Re2O7",
+      "name": "七氧化二铼",
+      "nameEnglish": "rhenium(VII) oxide",
+      "feature": "含铼的高价氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Re",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Re",
+          "x": 0.6942,
+          "y": -0.8273
+        },
+        {
+          "symbol": "O",
+          "x": 1.0636,
+          "y": -0.1875
+        },
+        {
+          "symbol": "O",
+          "x": 0.9353,
+          "y": 0.54
+        },
+        {
+          "symbol": "O",
+          "x": 0.3694,
+          "y": 1.0149
+        },
+        {
+          "symbol": "O",
+          "x": -0.3694,
+          "y": 1.0149
+        },
+        {
+          "symbol": "O",
+          "x": -0.9353,
+          "y": 0.54
+        },
+        {
+          "symbol": "O",
+          "x": -1.0636,
+          "y": -0.1875
+        },
+        {
+          "symbol": "O",
+          "x": -0.6942,
+          "y": -0.8273
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/123106"
+      }
+    },
+    {
+      "id": "element-compound-oso4",
+      "cid": 30318,
+      "formula": "OsO4",
+      "name": "四氧化锇",
+      "nameEnglish": "osmium tetroxide",
+      "feature": "剧毒且挥发的锇化合物，只作虚拟认识。",
+      "family": "inorganic",
+      "kind": "molecule",
+      "representation": "authoritative-topology",
+      "atoms": [
+        {
+          "symbol": "Os",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "symbol": "O",
+          "x": -0.7071,
+          "y": 0.7071
+        },
+        {
+          "symbol": "O",
+          "x": 0.7071,
+          "y": 0.7071
+        },
+        {
+          "symbol": "O",
+          "x": 0.7071,
+          "y": -0.7071
+        },
+        {
+          "symbol": "O",
+          "x": -0.7071,
+          "y": -0.7071
+        }
+      ],
+      "bonds": [
+        {
+          "from": 0,
+          "to": 1,
+          "order": 2
+        },
+        {
+          "from": 0,
+          "to": 2,
+          "order": 2
+        },
+        {
+          "from": 0,
+          "to": 3,
+          "order": 2
+        },
+        {
+          "from": 0,
+          "to": 4,
+          "order": 2
+        }
+      ],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/30318"
+      }
+    },
+    {
+      "id": "element-compound-iro2",
+      "cid": 82821,
+      "formula": "IrO2",
+      "name": "二氧化铱",
+      "nameEnglish": "iridium(IV) oxide",
+      "feature": "导电的铱氧化物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Ir",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/82821"
+      }
+    },
+    {
+      "id": "element-compound-pto2",
+      "cid": 345198,
+      "formula": "PtO2",
+      "name": "二氧化铂",
+      "nameEnglish": "platinum dioxide",
+      "feature": "含铂和氧的无机化合物。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Pt",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "O",
+          "x": 0.7101,
+          "y": 0.41
+        },
+        {
+          "symbol": "O",
+          "x": -0.7101,
+          "y": 0.41
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/345198"
+      }
+    },
+    {
+      "id": "element-compound-aucl3",
+      "cid": 26030,
+      "formula": "AuCl3",
+      "name": "三氯化金",
+      "nameEnglish": "gold(III) chloride",
+      "feature": "含金和氯的无机配方单元。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Au",
+          "x": 0,
+          "y": -1.08
+        },
+        {
+          "symbol": "Cl",
+          "x": 1.08,
+          "y": 0
+        },
+        {
+          "symbol": "Cl",
+          "x": 0,
+          "y": 1.08
+        },
+        {
+          "symbol": "Cl",
+          "x": -1.08,
+          "y": 0
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/26030"
+      }
+    },
+    {
+      "id": "element-compound-hgs",
+      "cid": 62402,
+      "formula": "HgS",
+      "name": "硫化汞",
+      "nameEnglish": "mercury(II) sulfide",
+      "feature": "有毒的含汞矿物成分，只作虚拟认识。",
+      "family": "inorganic",
+      "kind": "formula-unit",
+      "representation": "composition-schematic",
+      "atoms": [
+        {
+          "symbol": "Hg",
+          "x": 0,
+          "y": -0.82
+        },
+        {
+          "symbol": "S",
+          "x": 0,
+          "y": 0.82
+        }
+      ],
+      "bonds": [],
+      "source": {
+        "name": "PubChem",
+        "url": "https://pubchem.ncbi.nlm.nih.gov/compound/62402"
+      }
+    }
+  ]
+}

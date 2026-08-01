@@ -21,9 +21,11 @@ import {
   consumeAtomCounts,
   findCompletableCompound,
   REACTION_FURNACE_ATOM_BUDGET,
-  REACTION_FURNACE_MIN_CARBON_FREE_COUNT,
+  REACTION_FURNACE_MIN_DISTINCT_ELEMENT_COUNT,
+  REACTION_FURNACE_ORGANIC_COUNT,
+  REACTION_FURNACE_PRIORITY_ELEMENT_COUNT,
   REACTION_FURNACE_TARGET_COUNT,
-  selectReactionRound,
+  selectReactionRoundPlan,
   type AtomBundle,
   type AtomCounts,
   type ReactionCompound,
@@ -32,8 +34,8 @@ import "./reaction-furnace.css";
 
 const ELEMENT_BY_SYMBOL = new Map(ELEMENTS.map((element) => [element.symbol, element]));
 
-function freshTargets() {
-  return selectReactionRound(REACTION_COMPOUNDS);
+function freshRound() {
+  return selectReactionRoundPlan(REACTION_COMPOUNDS);
 }
 
 function addToPool(pool: AtomCounts, bundle: AtomBundle) {
@@ -44,7 +46,8 @@ function addToPool(pool: AtomCounts, bundle: AtomBundle) {
 }
 
 export function ReactionFurnacePage() {
-  const [targets, setTargets] = useState<ReactionCompound[]>(freshTargets);
+  const [round, setRound] = useState(freshRound);
+  const targets = round.compounds;
   const [bundles, setBundles] = useState(() => buildAtomBundles(targets));
   const [usedBundleIds, setUsedBundleIds] = useState<ReadonlySet<string>>(new Set());
   const [pool, setPool] = useState<AtomCounts>({});
@@ -117,8 +120,9 @@ export function ReactionFurnacePage() {
   };
 
   const resetBatch = () => {
-    const nextTargets = freshTargets();
-    setTargets(nextTargets);
+    const nextRound = freshRound();
+    const nextTargets = nextRound.compounds;
+    setRound(nextRound);
     setBundles(buildAtomBundles(nextTargets));
     setUsedBundleIds(new Set());
     setPool({});
@@ -265,15 +269,22 @@ export function ReactionFurnacePage() {
               <h2 id="target-deck-title">10 张物质星图</h2>
             </div>
             <span>
-              至少 {REACTION_FURNACE_MIN_CARBON_FREE_COUNT} 种不含碳 · 总原子不超过{" "}
-              {REACTION_FURNACE_ATOM_BUDGET} 个 · 完成{" "}
-              {completedIds.size}/{REACTION_FURNACE_TARGET_COUNT}
+              {REACTION_FURNACE_ORGANIC_COUNT} 种有机物 · 至少{" "}
+              {REACTION_FURNACE_MIN_DISTINCT_ELEMENT_COUNT} 种元素 · 总原子不超过{" "}
+              {REACTION_FURNACE_ATOM_BUDGET} 个 · 完成 {completedIds.size}/{REACTION_FURNACE_TARGET_COUNT}
             </span>
           </header>
+          <p className="priority-element-list">
+            本批先抽取的 {REACTION_FURNACE_PRIORITY_ELEMENT_COUNT} 种优先元素：{" "}
+            <strong>{round.targetElements.join(" · ")}</strong>
+          </p>
           <div className="target-grid">
             {targets.map((compound, index) => {
               const completed = completedIds.has(compound.id);
               const assembling = assemblingId === compound.id;
+              const structureLabel = compound.structure.representation === "composition-schematic"
+                ? "组成结构示意"
+                : "球棍结构";
               return (
                 <article
                   className={`target-card ${completed ? "is-completed" : ""} ${assembling ? "is-assembling" : ""}`}
@@ -293,7 +304,9 @@ export function ReactionFurnacePage() {
                     ) : (
                       <>
                         <span aria-hidden="true"><i /><i /><i /></span>
-                        <small>{assembling ? "球棍结构正在形成" : "组合成功后显示球棍结构"}</small>
+                        <small>
+                          {assembling ? `${structureLabel}正在形成` : `组合成功后显示${structureLabel}`}
+                        </small>
                       </>
                     )}
                   </div>

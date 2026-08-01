@@ -9,9 +9,10 @@
   "scripts": {
     "dev": "pnpm --parallel --stream --filter @mumu/web --filter @mumu/server dev",
     "build": "pnpm --filter @mumu/web build && pnpm --filter @mumu/server build",
-    "content:validate": "node scripts/validate-common-characters.mjs && node scripts/validate-molecular-structures.mjs",
+    "content:validate": "node scripts/validate-common-characters.mjs && node scripts/validate-molecular-structures.mjs && node scripts/validate-element-compounds.mjs",
     "content:chemistry:generate": "node scripts/generate-molecular-structures.mjs",
-    "content:chemistry:validate": "node scripts/validate-molecular-structures.mjs",
+    "content:chemistry:elements:generate": "node scripts/generate-element-compounds.mjs",
+    "content:chemistry:validate": "node scripts/validate-molecular-structures.mjs && node scripts/validate-element-compounds.mjs",
     "start": "pnpm --filter @mumu/server start",
     "typecheck": "pnpm --filter @mumu/web typecheck && pnpm --filter @mumu/server typecheck"
   }

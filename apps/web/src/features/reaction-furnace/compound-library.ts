@@ -1,8 +1,11 @@
 import molecularStructureAsset from "../../../../../content/chemistry/molecular-structures.v1.json";
+import elementCompoundAsset from "../../../../../content/chemistry/element-compounds.v1.json";
 import type {
+  CompoundFamily,
   CompoundKind,
   MolecularStructure,
   ReactionCompound,
+  StructureRepresentation,
 } from "./logic";
 
 type AssetRecord = {
@@ -16,6 +19,33 @@ type AssetRecord = {
   bonds: MolecularStructure["bonds"];
   source: MolecularStructure["source"];
 };
+
+type ElementCompoundAssetRecord = {
+  id: string;
+  cid?: number;
+  formula: string;
+  name: string;
+  nameEnglish: string;
+  feature: string;
+  family: CompoundFamily;
+  kind: CompoundKind;
+  representation: StructureRepresentation;
+  atoms: MolecularStructure["atoms"];
+  bonds: MolecularStructure["bonds"];
+  source: MolecularStructure["source"];
+};
+
+// These entries come from the generator's explicitly curated inorganic whitelist.
+// Carbon alone is not a safe organic/inorganic classifier: CO, CO₂, H₂CO₃ and C₆₀
+// all contain carbon but are inorganic substances.
+const INORGANIC_COMPOUND_CIDS = new Set([
+  222, 260, 280, 281, 313, 402, 767, 783, 784, 807, 944, 947, 948, 962,
+  977, 1004, 1118, 1119, 7628, 14917, 23953, 24341, 24404, 24408, 24524,
+  24526, 24682, 24823, 24841, 3032552, 145068, 123591,
+]);
+const CHILD_UNSUITABLE_CIDS = new Set([
+  991, // 巴拉松（对硫磷），旧资料生成时使用别名绕过了农药名称过滤。
+]);
 
 const SUBSCRIPT_DIGITS: Readonly<Record<string, string>> = {
   "0": "₀",
@@ -60,13 +90,16 @@ function countAtoms(structure: MolecularStructure) {
   return counts;
 }
 
-const records = molecularStructureAsset.records as readonly AssetRecord[];
+const records = (molecularStructureAsset.records as readonly AssetRecord[])
+  .filter((record) => !CHILD_UNSUITABLE_CIDS.has(record.cid));
+const elementCompoundRecords = elementCompoundAsset.records as readonly ElementCompoundAssetRecord[];
 
-export const REACTION_COMPOUNDS: readonly ReactionCompound[] = records.map((record) => {
+const molecularCompounds: readonly ReactionCompound[] = records.map((record) => {
   const structure: MolecularStructure = {
     cid: record.cid,
     atoms: record.atoms,
     bonds: record.bonds,
+    representation: "authoritative-topology",
     source: record.source,
   };
   return {
@@ -75,11 +108,38 @@ export const REACTION_COMPOUNDS: readonly ReactionCompound[] = records.map((reco
     name: record.name,
     feature: record.feature,
     kind: "molecule",
+    family: INORGANIC_COMPOUND_CIDS.has(record.cid) ? "inorganic" : "organic",
     atomCounts: countAtoms(structure),
     totalAtoms: structure.atoms.length,
     structure,
   };
 });
+
+const elementCompounds: readonly ReactionCompound[] = elementCompoundRecords.map((record) => {
+  const structure: MolecularStructure = {
+    cid: record.cid,
+    atoms: record.atoms,
+    bonds: record.bonds,
+    representation: record.representation,
+    source: record.source,
+  };
+  return {
+    id: record.id,
+    formula: displayFormula(record.formula),
+    name: record.name,
+    feature: record.feature,
+    kind: record.kind,
+    family: record.family,
+    atomCounts: countAtoms(structure),
+    totalAtoms: structure.atoms.length,
+    structure,
+  };
+});
+
+export const REACTION_COMPOUNDS: readonly ReactionCompound[] = [
+  ...molecularCompounds,
+  ...elementCompounds,
+];
 
 export const COMPOUND_KIND_LABELS: Readonly<Record<CompoundKind, string>> = {
   molecule: "分子",

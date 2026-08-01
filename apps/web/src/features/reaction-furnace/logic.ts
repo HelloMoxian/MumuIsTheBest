@@ -7,6 +7,12 @@ export type CompoundKind =
   | "hydrate"
   | "intermetallic";
 
+export type CompoundFamily = "organic" | "inorganic";
+
+export type StructureRepresentation =
+  | "authoritative-topology"
+  | "composition-schematic";
+
 export type MolecularAtom = {
   symbol: string;
   x: number;
@@ -20,11 +26,12 @@ export type MolecularBond = {
 };
 
 export type MolecularStructure = {
-  cid: number;
+  cid?: number;
   atoms: readonly MolecularAtom[];
   bonds: readonly MolecularBond[];
+  representation: StructureRepresentation;
   source: {
-    name: "PubChem";
+    name: string;
     url: string;
     wikidataId?: string;
     wikipediaTitle?: string;
@@ -37,6 +44,7 @@ export type ReactionCompound = {
   name: string;
   feature: string;
   kind: CompoundKind;
+  family: CompoundFamily;
   atomCounts: AtomCounts;
   totalAtoms: number;
   structure: MolecularStructure;
@@ -50,7 +58,9 @@ export type AtomBundle = {
 
 export const REACTION_FURNACE_TARGET_COUNT = 10;
 export const REACTION_FURNACE_ATOM_BUDGET = 160;
-export const REACTION_FURNACE_MIN_CARBON_FREE_COUNT = 5;
+export const REACTION_FURNACE_ORGANIC_COUNT = 2;
+export const REACTION_FURNACE_PRIORITY_ELEMENT_COUNT = 10;
+export const REACTION_FURNACE_MIN_DISTINCT_ELEMENT_COUNT = 10;
 
 const SUBSCRIPT_DIGITS: Readonly<Record<string, string>> = {
   "₀": "0",
@@ -158,36 +168,197 @@ export function selectRandomCompounds<T>(
   return pool.slice(0, Math.min(count, pool.length));
 }
 
-export function isCarbonFreeCompound(compound: ReactionCompound) {
-  return (compound.atomCounts.C ?? 0) === 0;
+export function isOrganicCompound(compound: ReactionCompound) {
+  return compound.family === "organic";
 }
 
-function minimumCompletionAtomCount(
-  candidates: readonly ReactionCompound[],
-  slotCount: number,
-  minimumCarbonFreeCount: number,
+export function compoundElementSymbols(compound: ReactionCompound) {
+  return Object.keys(compound.atomCounts);
+}
+
+function distinctElementSymbols(compounds: readonly ReactionCompound[]) {
+  return new Set(compounds.flatMap(compoundElementSymbols));
+}
+
+function shuffled<T>(values: readonly T[], random: () => number) {
+  return selectRandomCompounds(values, values.length, random);
+}
+
+function selectPriorityElements(
+  inorganicPool: readonly ReactionCompound[],
+  count: number,
+  random: () => number,
 ) {
-  if (slotCount < minimumCarbonFreeCount || candidates.length < slotCount) {
-    return Number.POSITIVE_INFINITY;
+  const frequency = new Map<string, number>();
+  for (const compound of inorganicPool) {
+    for (const symbol of compoundElementSymbols(compound)) {
+      frequency.set(symbol, (frequency.get(symbol) ?? 0) + 1);
+    }
   }
-  const carbonFree = candidates
-    .filter(isCarbonFreeCompound)
-    .sort((first, second) => first.totalAtoms - second.totalAtoms);
-  if (carbonFree.length < minimumCarbonFreeCount) {
-    return Number.POSITIVE_INFINITY;
+  const byFrequency = [...frequency]
+    .sort((first, second) => second[1] - first[1])
+    .map(([symbol]) => symbol);
+  const bridgePool = byFrequency.slice(0, Math.min(6, byFrequency.length));
+  const bridgeCount = Math.min(2, count, bridgePool.length);
+  const bridges = shuffled(bridgePool, random).slice(0, bridgeCount);
+  const bridgeSet = new Set(bridges);
+  const lessFrequent = byFrequency.filter(
+    (symbol) => !bridgeSet.has(symbol) && !bridgePool.includes(symbol),
+  );
+  const remainingPool = [
+    ...shuffled(lessFrequent, random),
+    ...shuffled(
+      bridgePool.filter((symbol) => !bridgeSet.has(symbol)),
+      random,
+    ),
+  ];
+  return [...bridges, ...remainingPool.slice(0, count - bridges.length)];
+}
+
+function chooseDiverseCompounds(
+  candidates: readonly ReactionCompound[],
+  count: number,
+  preferredElements: ReadonlySet<string>,
+  alreadySelected: readonly ReactionCompound[],
+  atomBudget: number,
+  random: () => number,
+) {
+  const selected: ReactionCompound[] = [];
+  const coveredElements = distinctElementSymbols(alreadySelected);
+  const coveredPreferred = new Set(
+    [...coveredElements].filter((symbol) => preferredElements.has(symbol)),
+  );
+  let usedAtoms = alreadySelected.reduce((total, compound) => total + compound.totalAtoms, 0);
+
+  while (selected.length < count) {
+    const slotsAfterCandidate = count - selected.length - 1;
+    const usedIds = new Set([...alreadySelected, ...selected].map((compound) => compound.id));
+    const available = candidates.filter((candidate) => {
+      if (usedIds.has(candidate.id) || usedAtoms + candidate.totalAtoms > atomBudget) return false;
+      const remainingAtomCounts = candidates
+        .filter((compound) => compound.id !== candidate.id && !usedIds.has(compound.id))
+        .map((compound) => compound.totalAtoms)
+        .sort((first, second) => first - second)
+        .slice(0, slotsAfterCandidate);
+      if (remainingAtomCounts.length < slotsAfterCandidate) return false;
+      const remainingMinimum = remainingAtomCounts.reduce((total, atoms) => total + atoms, 0);
+      return slotsAfterCandidate === 0
+        || usedAtoms + candidate.totalAtoms + remainingMinimum <= atomBudget;
+    });
+    if (available.length === 0) return null;
+
+    const ranked = shuffled(available, random)
+      .map((candidate) => {
+        const symbols = compoundElementSymbols(candidate);
+        const preferredGain = symbols.filter(
+          (symbol) => preferredElements.has(symbol) && !coveredPreferred.has(symbol),
+        ).length;
+        const diversityGain = symbols.filter((symbol) => !coveredElements.has(symbol)).length;
+        const preferredRelation = symbols.some((symbol) => preferredElements.has(symbol)) ? 1 : 0;
+        return {
+          candidate,
+          score: preferredGain * 100 + diversityGain * 12 + preferredRelation * 3,
+        };
+      })
+      .sort((first, second) => second.score - first.score);
+    const bestScore = ranked[0]!.score;
+    const equallyUseful = ranked.filter((entry) => entry.score === bestScore);
+    const chosen = equallyUseful[Math.floor(random() * equallyUseful.length)]!.candidate;
+    selected.push(chosen);
+    usedAtoms += chosen.totalAtoms;
+    for (const symbol of compoundElementSymbols(chosen)) {
+      coveredElements.add(symbol);
+      if (preferredElements.has(symbol)) coveredPreferred.add(symbol);
+    }
+  }
+  return selected;
+}
+
+export type ReactionRoundSelection = {
+  targetElements: readonly string[];
+  compounds: readonly ReactionCompound[];
+};
+
+export function selectReactionRoundPlan(
+  library: readonly ReactionCompound[],
+  count = REACTION_FURNACE_TARGET_COUNT,
+  atomBudget = REACTION_FURNACE_ATOM_BUDGET,
+  random: () => number = Math.random,
+  organicCount = REACTION_FURNACE_ORGANIC_COUNT,
+  priorityElementCount = REACTION_FURNACE_PRIORITY_ELEMENT_COUNT,
+  minimumDistinctElementCount = REACTION_FURNACE_MIN_DISTINCT_ELEMENT_COUNT,
+): ReactionRoundSelection {
+  const targetCount = Math.min(Math.max(0, Math.floor(count)), library.length);
+  if (targetCount === 0) return { targetElements: [], compounds: [] };
+  const requiredOrganicCount = Math.max(0, Math.floor(organicCount));
+  const requiredInorganicCount = targetCount - requiredOrganicCount;
+  if (requiredOrganicCount > targetCount) {
+    throw new RangeError(`有机物数量 ${requiredOrganicCount} 超过了本批目标数 ${targetCount}`);
   }
 
-  const requiredCarbonFree = carbonFree.slice(0, minimumCarbonFreeCount);
-  const requiredSet = new Set(requiredCarbonFree);
-  const remaining = candidates
-    .filter((compound) => !requiredSet.has(compound))
-    .sort((first, second) => first.totalAtoms - second.totalAtoms)
-    .slice(0, slotCount - minimumCarbonFreeCount);
-  if (remaining.length !== slotCount - minimumCarbonFreeCount) {
-    return Number.POSITIVE_INFINITY;
+  const organicPool = library.filter(isOrganicCompound);
+  const inorganicPool = library.filter((compound) => !isOrganicCompound(compound));
+  if (organicPool.length < requiredOrganicCount) {
+    throw new RangeError(`资料库无法提供 ${requiredOrganicCount} 种有机物`);
   }
-  return [...requiredCarbonFree, ...remaining]
-    .reduce((total, compound) => total + compound.totalAtoms, 0);
+  if (inorganicPool.length < requiredInorganicCount) {
+    throw new RangeError(`资料库无法提供 ${requiredInorganicCount} 种无机物`);
+  }
+
+  const availableElements = [...distinctElementSymbols(inorganicPool)];
+  const selectedPriorityElementCount = Math.min(
+    Math.max(0, Math.floor(priorityElementCount)),
+    availableElements.length,
+  );
+  const requiredDistinctElementCount = Math.min(
+    Math.max(0, Math.floor(minimumDistinctElementCount)),
+    availableElements.length,
+  );
+
+  const smallestPossibleAtoms = [
+    ...inorganicPool.map((compound) => compound.totalAtoms).sort((a, b) => a - b).slice(0, requiredInorganicCount),
+    ...organicPool.map((compound) => compound.totalAtoms).sort((a, b) => a - b).slice(0, requiredOrganicCount),
+  ].reduce((total, atoms) => total + atoms, 0);
+  if (smallestPossibleAtoms > atomBudget) {
+    throw new RangeError(`原子总量上限 ${atomBudget} 无法容纳 ${targetCount} 种物质`);
+  }
+
+  for (let attempt = 0; attempt < 120; attempt += 1) {
+    const targetElements = selectPriorityElements(
+      inorganicPool,
+      selectedPriorityElementCount,
+      random,
+    );
+    const preferredElements = new Set(targetElements);
+    const selectedInorganic = chooseDiverseCompounds(
+      inorganicPool,
+      requiredInorganicCount,
+      preferredElements,
+      [],
+      atomBudget,
+      random,
+    );
+    if (!selectedInorganic) continue;
+    const selectedOrganic = chooseDiverseCompounds(
+      organicPool,
+      requiredOrganicCount,
+      preferredElements,
+      selectedInorganic,
+      atomBudget,
+      random,
+    );
+    if (!selectedOrganic) continue;
+
+    const compounds = shuffled([...selectedInorganic, ...selectedOrganic], random);
+    const selectedElements = distinctElementSymbols(compounds);
+    if (targetElements.some((symbol) => !selectedElements.has(symbol))) continue;
+    if (selectedElements.size < requiredDistinctElementCount) continue;
+    return { targetElements, compounds };
+  }
+
+  throw new Error(
+    `无法同时满足 ${requiredOrganicCount} 种有机物、${requiredDistinctElementCount} 种元素和原子总量限制`,
+  );
 }
 
 export function selectReactionRound(
@@ -195,62 +366,8 @@ export function selectReactionRound(
   count = REACTION_FURNACE_TARGET_COUNT,
   atomBudget = REACTION_FURNACE_ATOM_BUDGET,
   random: () => number = Math.random,
-  minimumCarbonFreeCount = REACTION_FURNACE_MIN_CARBON_FREE_COUNT,
 ) {
-  const targetCount = Math.min(Math.max(0, Math.floor(count)), library.length);
-  if (targetCount === 0) return [];
-  const requiredCarbonFreeCount = Math.max(0, Math.floor(minimumCarbonFreeCount));
-  if (requiredCarbonFreeCount > targetCount) {
-    throw new RangeError(`无碳结构下限 ${requiredCarbonFreeCount} 超过了本批目标数 ${targetCount}`);
-  }
-
-  const shuffled = selectRandomCompounds(library, library.length, random);
-  const minimumPossibleAtoms = minimumCompletionAtomCount(
-    library,
-    targetCount,
-    requiredCarbonFreeCount,
-  );
-  if (!Number.isFinite(minimumPossibleAtoms)) {
-    throw new RangeError(`资料库无法提供 ${requiredCarbonFreeCount} 种不含碳的目标物质`);
-  }
-  if (minimumPossibleAtoms > atomBudget) {
-    throw new RangeError(`原子总量上限 ${atomBudget} 无法容纳 ${targetCount} 种物质`);
-  }
-
-  const selected: ReactionCompound[] = [];
-  let selectedAtomCount = 0;
-  let selectedCarbonFreeCount = 0;
-  for (let index = 0; index < shuffled.length && selected.length < targetCount; index += 1) {
-    const candidate = shuffled[index]!;
-    const remainingSlots = targetCount - selected.length - 1;
-    const nextCarbonFreeCount = selectedCarbonFreeCount
-      + (isCarbonFreeCompound(candidate) ? 1 : 0);
-    const remainingCarbonFreeNeeded = Math.max(
-      0,
-      requiredCarbonFreeCount - nextCarbonFreeCount,
-    );
-    const minimumFutureAtoms = minimumCompletionAtomCount(
-      shuffled.slice(index + 1),
-      remainingSlots,
-      remainingCarbonFreeNeeded,
-    );
-    if (
-      Number.isFinite(minimumFutureAtoms)
-      && selectedAtomCount + candidate.totalAtoms + minimumFutureAtoms <= atomBudget
-    ) {
-      selected.push(candidate);
-      selectedAtomCount += candidate.totalAtoms;
-      selectedCarbonFreeCount = nextCarbonFreeCount;
-    }
-  }
-
-  if (
-    selected.length !== targetCount
-    || selectedCarbonFreeCount < requiredCarbonFreeCount
-  ) {
-    throw new Error(`无法为反应熔炉选出 ${targetCount} 种目标物质`);
-  }
-  return selected;
+  return selectReactionRoundPlan(library, count, atomBudget, random).compounds;
 }
 
 export function buildAtomBundles(compounds: readonly ReactionCompound[]) {

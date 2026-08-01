@@ -112,6 +112,9 @@ export function MoleculeStructurePreview({
   compound: ReactionCompound;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const structureLabel = compound.structure.representation === "composition-schematic"
+    ? "组成结构示意"
+    : "球棍结构";
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -140,9 +143,9 @@ export function MoleculeStructurePreview({
       ref={canvasRef}
       className="molecule-structure-preview"
       role="img"
-      aria-label={`${compound.name}（${compound.formula}）的球棍结构`}
+      aria-label={`${compound.name}（${compound.formula}）的${structureLabel}`}
     >
-      {compound.name}的球棍结构
+      {compound.name}的{structureLabel}
     </canvas>
   );
 }

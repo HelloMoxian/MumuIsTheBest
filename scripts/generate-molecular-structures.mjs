@@ -32,7 +32,7 @@ const ELEMENT_BY_ATOMIC_NUMBER = new Map([
   [54, "Xe"],
 ]);
 
-const CHILD_UNSUITABLE_NAME = /沙林|塔崩|黑索金|艾氏剂|安[殺杀]番|氯丹|狄氏剂|敌敌畏|毒死蜱|对硫磷|甲拌磷|久效磷|克百威|枯草隆|灭多威|百治磷|草[脫脱]净|残杀威|福美[雙双]/u;
+const CHILD_UNSUITABLE_NAME = /沙林|塔崩|黑索金|艾氏剂|安[殺杀]番|氯丹|狄氏剂|敌敌畏|毒死蜱|对硫磷|巴拉松|甲拌磷|久效磷|克百威|枯草隆|灭多威|百治磷|草[脫脱]净|残杀威|福美[雙双]/u;
 
 const ESSENTIAL_MOLECULES = [
   ["molecular hydrogen", "氢气", "最轻的双原子分子，可作为燃料和化工原料。"],
