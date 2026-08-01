@@ -93,7 +93,7 @@ export function ChemistryTreasureBoxPage() {
   const handleAssemblyComplete = useCallback((compound: ReactionCompound) => {
     completedIdsRef.current.add(compound.id);
     setCompletedIds(new Set(completedIdsRef.current));
-    setDiscoveries((current) => [...current, compound]);
+    setDiscoveries((current) => [compound, ...current]);
     assemblingIdRef.current = null;
     setAssemblingId(null);
     setStatusText(`${compound.formula} ${compound.name}已经飘入百宝架，本次不会重复生成。`);
@@ -203,7 +203,7 @@ export function ChemistryTreasureBoxPage() {
                   <p>TREASURE SHELF</p>
                   <h2 id="treasure-shelf-title">反应生成物</h2>
                 </div>
-                <span>已收集 {completedIds.size} 种 · 生成后落到这里</span>
+                <span>已收集 {completedIds.size} 种 · 最新生成的排在最上面</span>
               </header>
               {discoveries.length === 0 ? (
                 <div className="treasure-shelf-empty">
@@ -211,10 +211,12 @@ export function ChemistryTreasureBoxPage() {
                   <p>生成物会从反应区落到这里。可以先试试两个氧原子。</p>
                 </div>
               ) : (
-                <div className="treasure-card-row">
+                <div className="treasure-card-list">
                   {discoveries.map((compound, index) => (
                     <article className="treasure-card" key={compound.id}>
-                      <span className="treasure-order">#{String(index + 1).padStart(2, "0")}</span>
+                      <span className="treasure-order">
+                        #{String(discoveries.length - index).padStart(2, "0")}
+                      </span>
                       <div className="treasure-card-structure">
                         <MoleculeStructurePreview compound={compound} />
                       </div>

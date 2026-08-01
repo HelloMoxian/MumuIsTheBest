@@ -177,8 +177,8 @@
 
 .treasure-canvas-shell {
   position: relative;
-  height: clamp(420px, calc(100vh - 300px), 720px);
-  min-height: 420px;
+  height: clamp(336px, calc(80vh - 240px), 576px);
+  min-height: 336px;
   isolation: isolate;
   background: #090a35;
 }
@@ -350,16 +350,17 @@
 }
 
 .treasure-periodic-grid button strong {
-  margin-top: 5px;
+  margin-top: 7px;
   color: var(--element-color);
-  font-size: 18px;
+  font-size: 12px;
   line-height: 1;
   text-shadow: 0 0 12px rgba(var(--element-rgb), 0.48);
 }
 
 .treasure-periodic-grid button span {
-  font-size: 10px;
-  font-weight: 850;
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .treasure-periodic-grid button:hover,
@@ -410,30 +411,26 @@
   font-size: 15px;
 }
 
-.treasure-card-row {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding: 5px 14px 5px;
-  scroll-snap-type: x proximity;
-  scrollbar-color: rgba(88, 242, 186, 0.35) transparent;
+.treasure-card-list {
+  display: grid;
+  gap: 8px;
+  padding: 5px 14px;
 }
 
 .treasure-card {
   position: relative;
   display: grid;
-  width: 310px;
-  min-width: 310px;
-  min-height: 148px;
-  grid-template-columns: 112px 1fr;
-  gap: 11px;
-  padding: 13px;
+  width: 100%;
+  min-width: 0;
+  min-height: 112px;
+  grid-template-columns: 104px 1fr;
+  gap: 13px;
+  padding: 10px 13px;
   border: 1px solid rgba(88, 242, 186, 0.28);
   border-radius: 18px;
   background:
     radial-gradient(circle at 0 50%, rgba(90, 233, 255, 0.1), transparent 48%),
     rgba(10, 33, 54, 0.58);
-  scroll-snap-align: start;
   animation: treasure-card-arrive 360ms ease-out both;
 }
 
@@ -448,7 +445,7 @@
 }
 
 .treasure-card-structure {
-  height: 120px;
+  height: 96px;
   overflow: hidden;
   border: 1px solid rgba(90, 233, 255, 0.15);
   border-radius: 14px;
@@ -461,12 +458,12 @@
 
 .treasure-card > div > strong {
   color: var(--furnace-cyan);
-  font-size: 24px;
+  font-size: 26px;
 }
 
 .treasure-card h3 {
-  margin: 3px 0 4px;
-  font-size: 15px;
+  margin: 2px 0 3px;
+  font-size: 18px;
 }
 
 .treasure-card p {
@@ -474,17 +471,17 @@
   margin: 0;
   overflow: hidden;
   color: var(--furnace-muted);
-  font-size: 11px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.4;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
 
 .treasure-card small {
   display: block;
-  margin-top: 7px;
+  margin-top: 4px;
   color: var(--furnace-mint);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 850;
 }
 
@@ -541,7 +538,8 @@
   }
 
   .treasure-canvas-shell {
-    height: 520px;
+    height: 416px;
+    min-height: 416px;
   }
 
   .treasure-periodic > header,
