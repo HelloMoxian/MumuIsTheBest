@@ -1,0 +1,566 @@
+.treasure-page {
+  min-height: 100vh;
+}
+
+.treasure-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: grid;
+  min-height: 62px;
+  grid-template-columns: auto auto 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 6px clamp(14px, 2vw, 34px);
+  border-bottom: 1px solid var(--furnace-line);
+  background: rgba(7, 8, 41, 0.9);
+  backdrop-filter: blur(22px);
+}
+
+.treasure-back,
+.treasure-actions button {
+  min-height: 48px;
+  border: 1px solid rgba(153, 151, 225, 0.32);
+  border-radius: 15px;
+  color: var(--furnace-ink);
+  background: rgba(23, 25, 76, 0.72);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.treasure-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 15px;
+  text-decoration: none;
+}
+
+.treasure-back:hover,
+.treasure-back:focus-visible,
+.treasure-actions button:hover:not(:disabled),
+.treasure-actions button:focus-visible {
+  border-color: var(--furnace-cyan);
+  outline: none;
+  background: rgba(45, 50, 113, 0.84);
+  transform: translateY(-1px);
+}
+
+.treasure-back:active,
+.treasure-actions button:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+}
+
+.treasure-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+}
+
+.treasure-title > span {
+  color: var(--furnace-cyan);
+  font-size: 22px;
+}
+
+.treasure-title strong {
+  font-size: 19px;
+}
+
+.treasure-title small {
+  color: var(--furnace-muted);
+  font-size: 12px;
+}
+
+.treasure-top-stats {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.treasure-top-stats span {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 1px solid rgba(90, 233, 255, 0.15);
+  border-radius: 999px;
+  color: var(--furnace-muted);
+  background: rgba(90, 233, 255, 0.05);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.treasure-top-stats strong {
+  color: var(--furnace-mint);
+  font-size: 16px;
+}
+
+.treasure-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.treasure-actions button {
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.treasure-actions button:last-child {
+  border-color: rgba(255, 112, 200, 0.36);
+  background: linear-gradient(135deg, rgba(105, 80, 220, 0.72), rgba(190, 61, 151, 0.68));
+}
+
+.treasure-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.treasure-main {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 2040px);
+  margin: 0 auto;
+  padding: 14px clamp(12px, 1.5vw, 28px) 52px;
+}
+
+.treasure-workspace {
+  display: grid;
+  grid-template-columns: minmax(540px, 1fr) minmax(620px, 780px);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.treasure-reactor,
+.treasure-periodic,
+.treasure-shelf {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--furnace-line);
+  border-radius: 26px;
+  background:
+    linear-gradient(145deg, rgba(28, 29, 83, 0.78), rgba(9, 11, 47, 0.86));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 22px 72px rgba(1, 2, 25, 0.26);
+  backdrop-filter: blur(16px);
+}
+
+.treasure-reactor > header {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(151, 148, 232, 0.18);
+}
+
+.treasure-reactor > header > div {
+  display: grid;
+  gap: 4px;
+}
+
+.treasure-reactor > header p {
+  margin: 0;
+  color: var(--furnace-muted);
+  font-size: 12px;
+}
+
+.treasure-canvas-shell {
+  position: relative;
+  height: clamp(520px, 64vh, 720px);
+  min-height: 520px;
+  isolation: isolate;
+  background: #090a35;
+}
+
+.treasure-empty {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: min(420px, calc(100% - 36px));
+  padding: 25px;
+  place-items: center;
+  border: 1px solid rgba(126, 219, 255, 0.25);
+  border-radius: 25px;
+  text-align: center;
+  background: rgba(10, 12, 51, 0.7);
+  backdrop-filter: blur(14px);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.treasure-empty > span {
+  color: var(--furnace-cyan);
+  font-size: 46px;
+  text-shadow: 0 0 30px rgba(90, 233, 255, 0.5);
+}
+
+.treasure-empty strong {
+  margin-top: 8px;
+  font-size: 24px;
+}
+
+.treasure-empty p {
+  margin: 7px 0 0;
+  color: var(--furnace-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.treasure-pool-readout {
+  position: absolute;
+  z-index: 3;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  max-width: calc(100% - 28px);
+  flex-wrap: wrap;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.treasure-pool-readout span {
+  padding: 6px 9px;
+  border: 1px solid rgba(90, 233, 255, 0.17);
+  border-radius: 999px;
+  color: #c9c8e4;
+  background: rgba(7, 9, 42, 0.78);
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.treasure-pool-readout strong {
+  color: var(--furnace-cyan);
+  font-size: 14px;
+}
+
+.treasure-periodic {
+  display: flex;
+  min-height: 590px;
+  flex-direction: column;
+}
+
+.treasure-periodic > header,
+.treasure-shelf > header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 15px 17px 8px;
+}
+
+.treasure-periodic > header p,
+.treasure-shelf > header p {
+  margin: 0 0 3px;
+  color: var(--furnace-cyan);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.treasure-periodic > header h2,
+.treasure-shelf > header h2 {
+  margin: 0;
+  font-size: 23px;
+}
+
+.treasure-periodic > header > span,
+.treasure-shelf > header > span {
+  color: var(--furnace-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.treasure-periodic-help {
+  margin: 0 17px 10px;
+  color: #b9b8d5;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.treasure-periodic-scroll {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+  overflow: auto;
+  padding: 4px 12px 10px;
+  overscroll-behavior: contain;
+  scrollbar-color: rgba(90, 233, 255, 0.38) transparent;
+}
+
+.treasure-periodic-grid {
+  display: grid;
+  width: 932px;
+  min-width: 932px;
+  grid-template-columns: repeat(18, 48px);
+  grid-template-rows: repeat(9, 54px);
+  gap: 4px;
+  align-content: start;
+}
+
+.treasure-periodic-grid button {
+  --element-color: #8da1ff;
+  --element-rgb: 141, 161, 255;
+  position: relative;
+  display: grid;
+  width: 48px;
+  height: 54px;
+  padding: 3px 2px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(var(--element-rgb), 0.5);
+  border-radius: 9px;
+  color: white;
+  background:
+    radial-gradient(circle at 50% 0, rgba(var(--element-rgb), 0.21), transparent 62%),
+    rgba(12, 15, 57, 0.92);
+  box-shadow: inset 0 0 12px rgba(var(--element-rgb), 0.08);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.treasure-periodic-grid button small {
+  position: absolute;
+  top: 3px;
+  left: 4px;
+  color: #aeadca;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.treasure-periodic-grid button strong {
+  margin-top: 5px;
+  color: var(--element-color);
+  font-size: 18px;
+  line-height: 1;
+  text-shadow: 0 0 12px rgba(var(--element-rgb), 0.48);
+}
+
+.treasure-periodic-grid button span {
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.treasure-periodic-grid button:hover,
+.treasure-periodic-grid button:focus-visible {
+  z-index: 3;
+  border-color: white;
+  outline: 2px solid var(--furnace-cyan);
+  outline-offset: 1px;
+  background: rgba(var(--element-rgb), 0.23);
+  transform: translateY(-2px) scale(1.08);
+}
+
+.treasure-periodic-grid button:active {
+  transform: scale(0.92);
+}
+
+.treasure-periodic-grid button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+  opacity: 0.4;
+}
+
+.treasure-periodic-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 14px 12px;
+}
+
+.treasure-periodic-note span {
+  padding: 6px 9px;
+  border-radius: 999px;
+  color: #c9c8e4;
+  background: rgba(117, 102, 205, 0.1);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.treasure-shelf {
+  margin-top: 14px;
+  padding-bottom: 14px;
+}
+
+.treasure-shelf-empty {
+  display: flex;
+  min-height: 118px;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 4px 14px 0;
+  border: 1px dashed rgba(90, 233, 255, 0.2);
+  border-radius: 18px;
+  color: var(--furnace-muted);
+  background: rgba(8, 10, 43, 0.45);
+}
+
+.treasure-shelf-empty span {
+  color: var(--furnace-cyan);
+  font-size: 28px;
+}
+
+.treasure-shelf-empty p {
+  margin: 0;
+  font-size: 15px;
+}
+
+.treasure-card-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 5px 14px 5px;
+  scroll-snap-type: x proximity;
+  scrollbar-color: rgba(88, 242, 186, 0.35) transparent;
+}
+
+.treasure-card {
+  position: relative;
+  display: grid;
+  width: 310px;
+  min-width: 310px;
+  min-height: 148px;
+  grid-template-columns: 112px 1fr;
+  gap: 11px;
+  padding: 13px;
+  border: 1px solid rgba(88, 242, 186, 0.28);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 0 50%, rgba(90, 233, 255, 0.1), transparent 48%),
+    rgba(10, 33, 54, 0.58);
+  scroll-snap-align: start;
+  animation: treasure-card-arrive 360ms ease-out both;
+}
+
+.treasure-order {
+  position: absolute;
+  top: 7px;
+  left: 8px;
+  z-index: 2;
+  color: var(--furnace-muted);
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.treasure-card-structure {
+  height: 120px;
+  overflow: hidden;
+  border: 1px solid rgba(90, 233, 255, 0.15);
+  border-radius: 14px;
+  background: rgba(6, 9, 39, 0.55);
+}
+
+.treasure-card > div:last-child {
+  min-width: 0;
+}
+
+.treasure-card > div > strong {
+  color: var(--furnace-cyan);
+  font-size: 24px;
+}
+
+.treasure-card h3 {
+  margin: 3px 0 4px;
+  font-size: 15px;
+}
+
+.treasure-card p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--furnace-muted);
+  font-size: 11px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.treasure-card small {
+  display: block;
+  margin-top: 7px;
+  color: var(--furnace-mint);
+  font-size: 10px;
+  font-weight: 850;
+}
+
+@keyframes treasure-card-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 1190px) {
+  .treasure-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .treasure-periodic {
+    min-height: 620px;
+  }
+}
+
+@media (max-width: 760px) {
+  .treasure-topbar {
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+  }
+
+  .treasure-title small,
+  .treasure-top-stats {
+    display: none;
+  }
+
+  .treasure-actions button:first-child {
+    display: none;
+  }
+
+  .treasure-actions button {
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .treasure-main {
+    padding-inline: 8px;
+  }
+
+  .treasure-reactor > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .treasure-canvas-shell {
+    height: 520px;
+  }
+
+  .treasure-periodic > header,
+  .treasure-shelf > header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .treasure-periodic {
+    min-height: 600px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .treasure-page *,
+  .treasure-page *::before,
+  .treasure-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

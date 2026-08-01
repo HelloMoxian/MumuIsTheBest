@@ -53,6 +53,8 @@ type Molecule = {
   sprite?: MoleculeSprite;
 };
 
+export type FurnaceCanvasMode = "dock" | "eject";
+
 type MoleculeSprite = {
   canvas: HTMLCanvasElement;
   width: number;
@@ -327,9 +329,11 @@ function FurnaceCanvasInner(
   {
     onAssemblyComplete,
     targetCount,
+    mode = "dock",
   }: {
     onAssemblyComplete: (compound: ReactionCompound) => void;
     targetCount: number;
+    mode?: FurnaceCanvasMode;
   },
   ref: Ref<FurnaceCanvasHandle>,
 ) {
@@ -342,9 +346,11 @@ function FurnaceCanvasInner(
   const sizeRef = useRef({ width: 900, height: 650, dpr: 1 });
   const reducedMotionRef = useRef(false);
   const targetCountRef = useRef(targetCount);
+  const modeRef = useRef(mode);
   const onCompleteRef = useRef(onAssemblyComplete);
   onCompleteRef.current = onAssemblyComplete;
   targetCountRef.current = targetCount;
+  modeRef.current = mode;
 
   useImperativeHandle(ref, () => ({
     addAtoms(symbol, count) {
@@ -549,40 +555,61 @@ function FurnaceCanvasInner(
           .filter((molecule) => Boolean(molecule.stableAt))
           .map((molecule) => molecule.slotIndex),
       );
-      drawStructureSlots(
-        context,
-        targetCountRef.current,
-        width,
-        height,
-        occupiedSlots,
-      );
+      if (modeRef.current === "dock") {
+        drawStructureSlots(
+          context,
+          targetCountRef.current,
+          width,
+          height,
+          occupiedSlots,
+        );
+      }
+      const deliveredMoleculeIds = new Set<number>();
       for (const molecule of moleculesRef.current) {
         const elapsed = now - molecule.startedAt;
-        const assemblyDuration = reducedMotionRef.current ? 360 : 2050;
+        const assemblyDuration = reducedMotionRef.current
+          ? 360
+          : modeRef.current === "eject"
+            ? 1350
+            : 2050;
         if (!molecule.stableAt && elapsed >= assemblyDuration) {
           molecule.stableAt = now;
           for (const particleId of molecule.particleIds) {
             const particle = particleById.get(particleId);
             if (particle) particle.state = "bound";
           }
-          if (!molecule.notified) {
+          if (modeRef.current === "dock" && !molecule.notified) {
             molecule.notified = true;
             onCompleteRef.current(molecule.compound);
           }
         }
         if (molecule.stableAt) {
-          const slot = getStableStructureSlot(
-            molecule.slotIndex,
-            targetCountRef.current,
-            { width, height },
-          );
-          advanceStableStructureMotion(
-            molecule,
-            slot,
-            now,
-            delta,
-            reducedMotionRef.current,
-          );
+          if (modeRef.current === "eject") {
+            const deliveryProgress = Math.min(1, (now - molecule.stableAt) / 920);
+            molecule.centerX += Math.sin(now * 0.006 + molecule.diffusionSeed) * 0.34 * delta;
+            molecule.centerY += Math.max(
+              reducedMotionRef.current ? 5 : 2.8,
+              (height + molecule.radius - molecule.centerY) * 0.038,
+            ) * delta;
+            if (deliveryProgress >= 1 && !molecule.notified) {
+              molecule.notified = true;
+              deliveredMoleculeIds.add(molecule.id);
+              onCompleteRef.current(molecule.compound);
+            }
+          } else {
+            const slot = getStableStructureSlot(
+              molecule.slotIndex,
+              targetCountRef.current,
+              { width, height },
+            );
+            advanceStableStructureMotion(
+              molecule,
+              slot,
+              now,
+              delta,
+              reducedMotionRef.current,
+            );
+          }
           molecule.sprite ??= createMoleculeSprite(molecule, particleById, dpr);
         }
       }
@@ -617,6 +644,11 @@ function FurnaceCanvasInner(
 
       for (const molecule of moleculesRef.current) {
         if (molecule.stableAt && molecule.sprite) {
+          const deliveryAlpha = modeRef.current === "eject"
+            ? Math.max(0.2, 1 - (now - molecule.stableAt) / 1150)
+            : 1;
+          context.save();
+          context.globalAlpha = deliveryAlpha;
           context.drawImage(
             molecule.sprite.canvas,
             molecule.centerX - molecule.sprite.width / 2,
@@ -624,6 +656,7 @@ function FurnaceCanvasInner(
             molecule.sprite.width,
             molecule.sprite.height,
           );
+          context.restore();
           continue;
         }
         const moleculeParticles = molecule.particleIds
@@ -675,6 +708,15 @@ function FurnaceCanvasInner(
         context.stroke();
       }
 
+      if (deliveredMoleculeIds.size > 0) {
+        moleculesRef.current = moleculesRef.current.filter(
+          (molecule) => !deliveredMoleculeIds.has(molecule.id),
+        );
+        particlesRef.current = particlesRef.current.filter(
+          (particle) => !particle.moleculeId || !deliveredMoleculeIds.has(particle.moleculeId),
+        );
+      }
+
       const edge = context.createLinearGradient(0, 0, width, height);
       edge.addColorStop(0, "rgba(90,233,255,.5)");
       edge.addColorStop(0.5, "rgba(158,124,255,.28)");
@@ -696,7 +738,9 @@ function FurnaceCanvasInner(
     <canvas
       ref={canvasRef}
       className="furnace-canvas"
-      aria-label={`实时反应炉：投放的原子会在这里运动，并在配方齐全后聚合到 ${targetCount} 个结构停泊位`}
+      aria-label={mode === "eject"
+        ? "化学百宝箱反应区：投放的原子会在这里运动，组成物质后从底部离开"
+        : `实时反应炉：投放的原子会在这里运动，并在配方齐全后聚合到 ${targetCount} 个结构停泊位`}
     >
       当前浏览器不支持实时反应炉画面。
     </canvas>

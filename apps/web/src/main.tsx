@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
 import { ConservationGame } from "./features/conservation/ConservationGame";
+import { ChemistryTreasureBoxPage } from "./features/chemistry-treasure-box/ChemistryTreasureBoxPage";
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
 import { MysteryFunctionGame } from "./features/mystery-function/MysteryFunctionGame";
 import { PeriodicTablePage } from "./features/periodic-table/PeriodicTablePage";
@@ -177,6 +178,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "把原子组装成奇妙物质",
         shape: "compact",
         href: "/chemistry/reaction-furnace",
+      },
+      {
+        title: "化学百宝箱",
+        mark: "✦",
+        description: "自由投原子，发现新物质",
+        shape: "wide",
+        href: "/chemistry/treasure-box",
       },
       {
         title: "实验大师",
@@ -818,6 +826,7 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
   if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
+  if (window.location.pathname === "/chemistry/treasure-box") return <ChemistryTreasureBoxPage />;
   if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
   if (window.location.pathname === "/chinese/pinyin") {
     return (
