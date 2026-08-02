@@ -13,15 +13,15 @@ import { REACTION_COMPOUNDS, COMPOUND_KIND_LABELS } from "../reaction-furnace/co
 import { getReactionElementTheme } from "../reaction-furnace/element-colors";
 import { consumeAtomCounts, type AtomCounts, type ReactionCompound } from "../reaction-furnace/logic";
 import {
-  addTreasureAtom,
-  buildTreasureBoxLibrary,
-  canAddTreasureElementBatch,
-  findTreasureBoxMatch,
-  indexTreasureDiscoveries,
-  TREASURE_BOX_ELEMENT_LIMIT,
-  TREASURE_BOX_FREE_ATOM_LIMIT,
-  treasureAtomTotal,
-  treasureElementBatchSize,
+  addTreasureBasinAtom,
+  buildTreasureBasinLibrary,
+  canAddTreasureBasinElementBatch,
+  findTreasureBasinMatch,
+  indexTreasureBasinDiscoveries,
+  TREASURE_BASIN_ELEMENT_LIMIT,
+  TREASURE_BASIN_FREE_ATOM_LIMIT,
+  treasureBasinAtomTotal,
+  treasureBasinElementBatchSize,
 } from "./logic";
 import {
   readChemistryLocalCache,
@@ -29,27 +29,27 @@ import {
   type ChemistryCacheMetadata,
 } from "../chemistry-local-cache";
 import "../reaction-furnace/reaction-furnace.css";
-import "./chemistry-treasure-box.css";
+import "./chemistry-treasure-basin.css";
 
-const TREASURE_ELEMENTS = ELEMENTS.slice(0, TREASURE_BOX_ELEMENT_LIMIT);
-const TREASURE_SYMBOLS = new Set(TREASURE_ELEMENTS.map((element) => element.symbol));
-const TREASURE_COMPOUNDS = buildTreasureBoxLibrary(
+const BASIN_ELEMENTS = ELEMENTS.slice(0, TREASURE_BASIN_ELEMENT_LIMIT);
+const BASIN_SYMBOLS = new Set(BASIN_ELEMENTS.map((element) => element.symbol));
+const BASIN_COMPOUNDS = buildTreasureBasinLibrary(
   REACTION_COMPOUNDS,
-  TREASURE_SYMBOLS,
+  BASIN_SYMBOLS,
 );
-const TREASURE_COMPOUND_BY_ID = new Map(TREASURE_COMPOUNDS.map((compound) => [compound.id, compound]));
+const BASIN_COMPOUND_BY_ID = new Map(BASIN_COMPOUNDS.map((compound) => [compound.id, compound]));
 const MATCH_DELAY_MS = 520;
-const TREASURE_BOX_CACHE_KEY = "mumu.chemistry.treasure-box";
-const TREASURE_BOX_CACHE_STABLE_ID = "chemistry-treasure-box";
+const BASIN_CACHE_KEY = "mumu.chemistry.treasure-basin";
+const BASIN_CACHE_STABLE_ID = "chemistry-treasure-basin";
 
-type TreasureBoxCachePayload = {
+type BasinCachePayload = {
   pool: AtomCounts;
   discoveryIds: readonly string[];
   selectedSymbol: string;
   assemblingId: string | null;
 };
 
-type TreasureBoxInitialState = {
+type BasinInitialState = {
   pool: AtomCounts;
   discoveries: readonly ReactionCompound[];
   selectedSymbol: string;
@@ -60,13 +60,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function readTreasurePool(value: unknown) {
+function readBasinPool(value: unknown) {
   if (!isRecord(value)) return undefined;
   const pool: Record<string, number> = {};
   let total = 0;
   for (const [symbol, count] of Object.entries(value)) {
     if (
-      !TREASURE_SYMBOLS.has(symbol)
+      !BASIN_SYMBOLS.has(symbol)
       || typeof count !== "number"
       || !Number.isSafeInteger(count)
       || count <= 0
@@ -74,7 +74,7 @@ function readTreasurePool(value: unknown) {
       return undefined;
     }
     total += count;
-    if (total > TREASURE_BOX_FREE_ATOM_LIMIT) return undefined;
+    if (total > TREASURE_BASIN_FREE_ATOM_LIMIT) return undefined;
     pool[symbol] = count;
   }
   return pool;
@@ -88,15 +88,15 @@ function addAtomCounts(first: AtomCounts, second: AtomCounts): AtomCounts {
   return next;
 }
 
-function parseTreasureBoxCachePayload(value: unknown): TreasureBoxCachePayload | undefined {
+function parseBasinCachePayload(value: unknown): BasinCachePayload | undefined {
   if (!isRecord(value) || !Array.isArray(value.discoveryIds)) return undefined;
   if (value.discoveryIds.some((id) => typeof id !== "string")) return undefined;
   const discoveryIds = [...value.discoveryIds] as string[];
   if (
     new Set(discoveryIds).size !== discoveryIds.length
-    || discoveryIds.some((id) => !TREASURE_COMPOUND_BY_ID.has(id))
+    || discoveryIds.some((id) => !BASIN_COMPOUND_BY_ID.has(id))
     || typeof value.selectedSymbol !== "string"
-    || !TREASURE_SYMBOLS.has(value.selectedSymbol)
+    || !BASIN_SYMBOLS.has(value.selectedSymbol)
   ) {
     return undefined;
   }
@@ -106,60 +106,67 @@ function parseTreasureBoxCachePayload(value: unknown): TreasureBoxCachePayload |
   if (
     assemblingId === undefined
     || (assemblingId !== null && (
-      !TREASURE_COMPOUND_BY_ID.has(assemblingId)
+      !BASIN_COMPOUND_BY_ID.has(assemblingId)
       || discoveryIds.includes(assemblingId)
     ))
   ) {
     return undefined;
   }
-  const pool = readTreasurePool(value.pool);
+  const pool = readBasinPool(value.pool);
   if (!pool) return undefined;
   const recoveredPool = assemblingId === null
     ? pool
-    : addAtomCounts(pool, TREASURE_COMPOUND_BY_ID.get(assemblingId)!.atomCounts);
-  if (treasureAtomTotal(recoveredPool) > TREASURE_BOX_FREE_ATOM_LIMIT) return undefined;
+    : addAtomCounts(pool, BASIN_COMPOUND_BY_ID.get(assemblingId)!.atomCounts);
+  if (treasureBasinAtomTotal(recoveredPool) > TREASURE_BASIN_FREE_ATOM_LIMIT) return undefined;
   return { pool, discoveryIds, selectedSymbol: value.selectedSymbol, assemblingId };
 }
 
-const TREASURE_BOX_CACHE_SPEC = {
-  key: TREASURE_BOX_CACHE_KEY,
-  stableId: TREASURE_BOX_CACHE_STABLE_ID,
-  parsePayload: parseTreasureBoxCachePayload,
+const BASIN_CACHE_SPEC = {
+  key: BASIN_CACHE_KEY,
+  stableId: BASIN_CACHE_STABLE_ID,
+  parsePayload: parseBasinCachePayload,
   migrateLegacy(value: unknown) {
     if (!isRecord(value)) return undefined;
-    return parseTreasureBoxCachePayload({
+    return parseBasinCachePayload({
       pool: value.pool ?? {},
       discoveryIds: value.discoveryIds ?? value.completedIds ?? [],
-      selectedSymbol: value.selectedSymbol ?? TREASURE_ELEMENTS[0].symbol,
+      selectedSymbol: value.selectedSymbol ?? BASIN_ELEMENTS[0].symbol,
       assemblingId: value.assemblingId ?? null,
     });
   },
 };
 
-function createInitialState(): TreasureBoxInitialState {
-  const restored = readChemistryLocalCache(TREASURE_BOX_CACHE_SPEC);
+const LEGACY_TREASURE_BOX_CACHE_SPEC = {
+  ...BASIN_CACHE_SPEC,
+  key: "mumu.chemistry.treasure-box",
+  stableId: "chemistry-treasure-box",
+};
+
+function createInitialState(): BasinInitialState {
+  const restored = readChemistryLocalCache(BASIN_CACHE_SPEC)
+    ?? readChemistryLocalCache(LEGACY_TREASURE_BOX_CACHE_SPEC);
   if (!restored) {
     return {
       pool: {},
       discoveries: [],
-      selectedSymbol: TREASURE_ELEMENTS[0].symbol,
+      selectedSymbol: BASIN_ELEMENTS[0].symbol,
     };
   }
   const pool = restored.payload.assemblingId === null
     ? restored.payload.pool
     : addAtomCounts(
       restored.payload.pool,
-      TREASURE_COMPOUND_BY_ID.get(restored.payload.assemblingId)!.atomCounts,
+      BASIN_COMPOUND_BY_ID.get(restored.payload.assemblingId)!.atomCounts,
     );
   return {
     pool,
-    discoveries: restored.payload.discoveryIds.map((id) => TREASURE_COMPOUND_BY_ID.get(id)!),
+    discoveries: restored.payload.discoveryIds.map((id) => BASIN_COMPOUND_BY_ID.get(id)!),
     selectedSymbol: restored.payload.selectedSymbol,
     cacheMetadata: restored.metadata,
   };
 }
 
-export function ChemistryTreasureBoxPage() {
+export function ChemistryTreasureBasinPage() {
   const [initialState] = useState(createInitialState);
   const [pool, setPool] = useState<AtomCounts>(initialState.pool);
   const [completedIds, setCompletedIds] = useState<ReadonlySet<string>>(
@@ -170,7 +177,7 @@ export function ChemistryTreasureBoxPage() {
   const [assemblingId, setAssemblingId] = useState<string | null>(null);
   const [statusText, setStatusText] = useState(
     initialState.cacheMetadata
-      ? "已恢复上次的百宝箱探索，可以继续投放原子。"
+      ? "已恢复上次的聚宝盆探索，可以继续投放原子。"
       : "点击右侧元素，把第一个原子送进反应区。",
   );
 
@@ -183,14 +190,14 @@ export function ChemistryTreasureBoxPage() {
   const cacheMetadataRef = useRef<ChemistryCacheMetadata | undefined>(initialState.cacheMetadata);
   const restoredCanvasRef = useRef(false);
 
-  const freeAtomCount = treasureAtomTotal(pool);
+  const freeAtomCount = treasureBasinAtomTotal(pool);
   const discoveriesByElement = useMemo(
-    () => indexTreasureDiscoveries(discoveries),
+    () => indexTreasureBasinDiscoveries(discoveries),
     [discoveries],
   );
-  const selectedElement = TREASURE_ELEMENTS.find(
+  const selectedElement = BASIN_ELEMENTS.find(
     (element) => element.symbol === selectedSymbol,
-  ) ?? TREASURE_ELEMENTS[0];
+  ) ?? BASIN_ELEMENTS[0];
   const selectedDiscoveries = discoveriesByElement[selectedElement.symbol] ?? [];
   const poolEntries = useMemo(
     () => Object.entries(pool)
@@ -216,12 +223,12 @@ export function ChemistryTreasureBoxPage() {
       canvasRef.current.addAtoms(symbol, count);
     }
     restoredCanvasRef.current = true;
-    if (treasureAtomTotal(pool) > 0) scheduleMatch(120);
+    if (treasureBasinAtomTotal(pool) > 0) scheduleMatch(120);
   }, [pool, scheduleMatch]);
 
   useEffect(() => {
     const nextMetadata = writeChemistryLocalCache(
-      TREASURE_BOX_CACHE_SPEC,
+      BASIN_CACHE_SPEC,
       {
         pool,
         discoveryIds: discoveries.map((compound) => compound.id),
@@ -235,13 +242,13 @@ export function ChemistryTreasureBoxPage() {
 
   const tryAssembly = useCallback(() => {
     if (assemblingIdRef.current) return;
-    const target = findTreasureBoxMatch(
+    const target = findTreasureBasinMatch(
       poolRef.current,
-      TREASURE_COMPOUNDS,
+      BASIN_COMPOUNDS,
       completedIdsRef.current,
     );
     if (!target) {
-      if (treasureAtomTotal(poolRef.current) > 0) {
+      if (treasureBasinAtomTotal(poolRef.current) > 0) {
         setStatusText("这些原子正在做布朗运动，继续加入元素寻找新伙伴。");
       }
       return;
@@ -265,18 +272,18 @@ export function ChemistryTreasureBoxPage() {
     setDiscoveries((current) => [compound, ...current]);
     assemblingIdRef.current = null;
     setAssemblingId(null);
-    setStatusText(`${compound.formula} ${compound.name}已经飘入百宝架，本次不会重复生成。`);
+    setStatusText(`${compound.formula} ${compound.name}已经飘入聚宝架，本次不会重复生成。`);
     scheduleMatch(260);
   }, [scheduleMatch]);
 
   const addElement = (symbol: string, chineseName: string) => {
     setSelectedSymbol(symbol);
-    const batchSize = treasureElementBatchSize(symbol);
-    if (!canAddTreasureElementBatch(poolRef.current, symbol)) {
+    const batchSize = treasureBasinElementBatchSize(symbol);
+    if (!canAddTreasureBasinElementBatch(poolRef.current, symbol)) {
       setStatusText("反应区已经很热闹啦，先等原子组成物质，或清空游离原子。");
       return;
     }
-    poolRef.current = addTreasureAtom(poolRef.current, symbol, batchSize);
+    poolRef.current = addTreasureBasinAtom(poolRef.current, symbol, batchSize);
     setPool(poolRef.current);
     canvasRef.current?.addAtoms(symbol, batchSize);
     setStatusText(`${chineseName}原子已进入反应区，稍等一下看看它会遇见谁。`);
@@ -287,7 +294,7 @@ export function ChemistryTreasureBoxPage() {
     completedIdsRef.current.delete(compound.id);
     setCompletedIds(new Set(completedIdsRef.current));
     setDiscoveries((current) => current.filter((item) => item.id !== compound.id));
-    setStatusText(`${compound.formula} ${compound.name}已从百宝架移除，现在可以重新合成。`);
+    setStatusText(`${compound.formula} ${compound.name}已从聚宝架移除，现在可以重新合成。`);
     scheduleMatch(120);
   };
 
@@ -296,7 +303,7 @@ export function ChemistryTreasureBoxPage() {
     poolRef.current = {};
     setPool({});
     canvasRef.current?.reset();
-    setStatusText("游离原子已清空，百宝架上的发现仍然保留。");
+    setStatusText("游离原子已清空，聚宝架上的发现仍然保留。");
   };
 
   const restart = () => {
@@ -308,7 +315,7 @@ export function ChemistryTreasureBoxPage() {
     setCompletedIds(new Set());
     setDiscoveries([]);
     setAssemblingId(null);
-    setStatusText("新的百宝箱已经准备好，点击右侧元素开始探索。");
+    setStatusText("新的聚宝盆已经准备好，点击右侧元素开始探索。");
     canvasRef.current?.reset();
   };
 
@@ -323,7 +330,7 @@ export function ChemistryTreasureBoxPage() {
         <a href="/" className="treasure-back" aria-label="返回学习大厅">← 大厅</a>
         <div className="treasure-title">
           <span aria-hidden="true">✦</span>
-          <strong>化学百宝箱</strong>
+          <strong>化学聚宝盆</strong>
           <small>自由投原子，收集新物质</small>
         </div>
         <div className="treasure-top-stats" aria-label="探索统计">
@@ -379,7 +386,7 @@ export function ChemistryTreasureBoxPage() {
             <section className="treasure-shelf" aria-labelledby="treasure-shelf-title">
               <header>
                 <div>
-                  <p>TREASURE SHELF</p>
+                  <p>BASIN SHELF</p>
                   <h2 id="treasure-shelf-title">反应生成物</h2>
                 </div>
                 <span>已收集 {completedIds.size} 种 · 最新生成的排在最上面</span>
@@ -421,16 +428,16 @@ export function ChemistryTreasureBoxPage() {
               <span>1—90</span>
             </header>
             <p className="treasure-periodic-help">
-              按原子序数紧凑排列，每次点击投入 1 个原子。
+              按原子序数紧凑排列，点击元素即可投放原子。
             </p>
             <div className="treasure-periodic-scroll">
               <div className="treasure-periodic-grid">
-                {TREASURE_ELEMENTS.map((element) => {
+                {BASIN_ELEMENTS.map((element) => {
                   const theme = getReactionElementTheme(element.symbol);
                   const discoveryCount = discoveriesByElement[element.symbol]?.length ?? 0;
                   const freeCount = pool[element.symbol] ?? 0;
                   const isSelected = selectedSymbol === element.symbol;
-                  const batchSize = treasureElementBatchSize(element.symbol);
+                  const batchSize = treasureBasinElementBatchSize(element.symbol);
                   return (
                     <button
                       type="button"
@@ -446,8 +453,10 @@ export function ChemistryTreasureBoxPage() {
                       title={`${element.atomicNumber} · ${element.chineseName} · ${element.symbol} · 物 ${discoveryCount} · 原 ${freeCount}`}
                     >
                       <small className="treasure-element-number">{element.atomicNumber}</small>
-                      <strong className="treasure-element-symbol">{element.symbol}</strong>
-                      <span className="treasure-element-name">{element.chineseName}</span>
+                      <span className="treasure-element-identity">
+                        <strong className="treasure-element-symbol">{element.symbol}</strong>
+                        <span className="treasure-element-name">{element.chineseName}</span>
+                      </span>
                       <span className="treasure-element-metrics" aria-hidden="true">
                         <span>物 {discoveryCount}</span>
                         <span>原 {freeCount}</span>

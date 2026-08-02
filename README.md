@@ -4,7 +4,7 @@
 
 ## 当前状态
 
-项目已采用 React + Vite + Fastify，并已创建阿里云 Fun-ASR 实时语音识别、五个正式数学玩法、“元素周期表”“反应熔炉”“化学百宝箱”“物质守恒”四个化学模块，以及“拼音星桥”“常用汉字”两个语文模块。
+项目已采用 React + Vite + Fastify，并已创建阿里云 Fun-ASR 实时语音识别、五个正式数学玩法、“元素周期表”“反应熔炉”“化学聚宝盆”“物质守恒”四个化学模块，以及“拼音星桥”“常用汉字”两个语文模块。
 
 - 技术方案（已选定 A）：[`docs/TECH_STACK_OPTIONS.md`](docs/TECH_STACK_OPTIONS.md)
 - 正式设计系统（已选定星际探索舱）：[`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
@@ -17,7 +17,7 @@
 - 语文拼音总表、汉字关联与语音导航：[`docs/PINYIN_STAR_BRIDGE.md`](docs/PINYIN_STAR_BRIDGE.md)
 - 化学元素周期表数据、布局与语音交互：[`docs/PERIODIC_TABLE.md`](docs/PERIODIC_TABLE.md)
 - 化学反应熔炉资料库、组成规则与实时渲染：[`docs/REACTION_FURNACE.md`](docs/REACTION_FURNACE.md)
-- 化学百宝箱自由投放、自动组成与唯一收藏规则：[`docs/CHEMISTRY_TREASURE_BOX.md`](docs/CHEMISTRY_TREASURE_BOX.md)
+- 化学聚宝盆自由投放、自动组成与唯一收藏规则：[`docs/CHEMISTRY_TREASURE_BASIN.md`](docs/CHEMISTRY_TREASURE_BASIN.md)
 - 化学物质守恒资料库、配平语义与玩法：[`docs/CONSERVATION_GAME.md`](docs/CONSERVATION_GAME.md)
 - 当前规则、能力进展与后续顺序总览：[`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md)
 - Codex/工程协作规则：[`AGENTS.md`](AGENTS.md)
@@ -43,6 +43,6 @@
 4. 首页进入“数学 → 找数字”，选择零至百、千、万或十万的范围，通过语音询问“是 / 小于 / 大于某个数吗”，观察持续数轴一步步缩小范围。
 5. 首页进入“化学 → 元素周期表”，可浏览 1—118 号元素，通过点击、方向键或语音“上 / 下 / 左 / 右 / 详细信息 / 返回”探索元素档案。
 6. 首页进入“化学 → 反应熔炉”，从右侧原子仓投放原子，观察它们运动、聚合并组成每批随机出现的 10 种物质；518 种物质池覆盖教材常见酸碱盐、165 条守恒反应物质和四种碳材料，每批固定 2 种有机物，并先随机确定 10 种优先元素。
-7. 首页进入“化学 → 化学百宝箱”，从右侧前 90 号元素表自由投放原子；满足组成后物质会从反应区底部离场并进入百宝架，同一种物质本次只收藏一次。
+7. 首页进入“化学 → 化学聚宝盆”，从右侧前 90 号元素表自由投放原子；满足组成后物质会从反应区底部离场并进入聚宝架，同一种物质本次只收藏一次。
 7. 首页进入“化学 → 物质守恒”，选择题数和难度，通过数字控制台调整化学式前的系数，让箭头两边每一种原子都一样多。
 8. 首页进入“语文 → 拼音星桥”，在 63 个声母、韵母和整体认读音节中探索相关汉字、完整带调拼音与组词。

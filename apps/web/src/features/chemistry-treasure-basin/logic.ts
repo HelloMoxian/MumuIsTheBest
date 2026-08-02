@@ -1,7 +1,7 @@
 import type { AtomCounts, ReactionCompound } from "../reaction-furnace/logic";
 
-export const TREASURE_BOX_ELEMENT_LIMIT = 90;
-export const TREASURE_BOX_FREE_ATOM_LIMIT = 240;
+export const TREASURE_BASIN_ELEMENT_LIMIT = 90;
+export const TREASURE_BASIN_FREE_ATOM_LIMIT = 240;
 
 const TREASURE_ELEMENT_BATCH_SIZES: Readonly<Record<string, number>> = {
   H: 5,
@@ -9,17 +9,17 @@ const TREASURE_ELEMENT_BATCH_SIZES: Readonly<Record<string, number>> = {
   O: 3,
 };
 
-export function treasureElementBatchSize(symbol: string) {
+export function treasureBasinElementBatchSize(symbol: string) {
   return TREASURE_ELEMENT_BATCH_SIZES[symbol] ?? 1;
 }
 
-export function canAddTreasureElementBatch(
+export function canAddTreasureBasinElementBatch(
   pool: AtomCounts,
   symbol: string,
 ) {
   return (
-    treasureAtomTotal(pool) + treasureElementBatchSize(symbol)
-    <= TREASURE_BOX_FREE_ATOM_LIMIT
+    treasureBasinAtomTotal(pool) + treasureBasinElementBatchSize(symbol)
+    <= TREASURE_BASIN_FREE_ATOM_LIMIT
   );
 }
 
@@ -49,7 +49,7 @@ function isBetterRepresentative(
   );
 }
 
-export function buildTreasureBoxLibrary(
+export function buildTreasureBasinLibrary(
   library: readonly ReactionCompound[],
   allowedSymbols: ReadonlySet<string>,
 ) {
@@ -71,7 +71,7 @@ export function buildTreasureBoxLibrary(
   return [...representativeByComposition.values()];
 }
 
-export function addTreasureAtom(
+export function addTreasureBasinAtom(
   pool: AtomCounts,
   symbol: string,
   amount = 1,
@@ -82,11 +82,11 @@ export function addTreasureAtom(
   };
 }
 
-export function treasureAtomTotal(pool: AtomCounts) {
+export function treasureBasinAtomTotal(pool: AtomCounts) {
   return Object.values(pool).reduce((total, count) => total + count, 0);
 }
 
-export function indexTreasureDiscoveries(
+export function indexTreasureBasinDiscoveries(
   discoveries: readonly ReactionCompound[],
 ) {
   const byElement: Record<string, ReactionCompound[]> = {};
@@ -98,7 +98,7 @@ export function indexTreasureDiscoveries(
   return byElement;
 }
 
-export function canFormTreasureCompound(
+export function canFormTreasureBasinCompound(
   pool: AtomCounts,
   compound: ReactionCompound,
 ) {
@@ -107,15 +107,15 @@ export function canFormTreasureCompound(
   );
 }
 
-export function findTreasureBoxMatch(
+export function findTreasureBasinMatch(
   pool: AtomCounts,
   library: readonly ReactionCompound[],
   completedIds: ReadonlySet<string>,
 ) {
-  const poolTotal = treasureAtomTotal(pool);
+  const poolTotal = treasureBasinAtomTotal(pool);
   return library
     .filter(
-      (compound) => !completedIds.has(compound.id) && canFormTreasureCompound(pool, compound),
+      (compound) => !completedIds.has(compound.id) && canFormTreasureBasinCompound(pool, compound),
     )
     .map((compound) => {
       const distinctElements = Object.keys(compound.atomCounts).length;

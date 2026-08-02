@@ -797,7 +797,7 @@ function FurnaceCanvasInner(
       ref={canvasRef}
       className="furnace-canvas"
       aria-label={mode === "eject"
-        ? "化学百宝箱反应区：投放的原子会在这里运动，组成物质后从底部离开"
+        ? "化学聚宝盆反应区：投放的原子会在这里运动，组成物质后从底部离开"
         : `实时反应炉：投放的原子会在这里运动，并在配方齐全后聚合到 ${targetCount} 个结构停泊位`}
     >
       当前浏览器不支持实时反应炉画面。

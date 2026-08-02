@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
 import { ConservationGame } from "./features/conservation/ConservationGame";
-import { ChemistryTreasureBoxPage } from "./features/chemistry-treasure-box/ChemistryTreasureBoxPage";
+import { ChemistryTreasureBasinPage } from "./features/chemistry-treasure-basin/ChemistryTreasureBasinPage";
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
 import { MysteryFunctionGame } from "./features/mystery-function/MysteryFunctionGame";
 import { PeriodicTablePage } from "./features/periodic-table/PeriodicTablePage";
@@ -180,11 +180,11 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         href: "/chemistry/reaction-furnace",
       },
       {
-        title: "化学百宝箱",
+        title: "化学聚宝盆",
         mark: "✦",
         description: "自由投原子，发现新物质",
         shape: "wide",
-        href: "/chemistry/treasure-box",
+        href: "/chemistry/treasure-basin",
       },
       {
         title: "实验大师",
@@ -826,7 +826,11 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
   if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
-  if (window.location.pathname === "/chemistry/treasure-box") return <ChemistryTreasureBoxPage />;
+  if (window.location.pathname === "/chemistry/treasure-box") {
+    window.history.replaceState({}, "", "/chemistry/treasure-basin");
+    return <ChemistryTreasureBasinPage />;
+  }
+  if (window.location.pathname === "/chemistry/treasure-basin") return <ChemistryTreasureBasinPage />;
   if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
   if (window.location.pathname === "/chinese/pinyin") {
     return (

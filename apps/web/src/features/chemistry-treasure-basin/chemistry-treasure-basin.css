@@ -128,7 +128,7 @@
 
 .treasure-workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 440px;
+  grid-template-columns: minmax(0, 1fr) clamp(520px, 36vw, 620px);
   gap: 14px;
   align-items: start;
 }
@@ -309,9 +309,9 @@
   display: grid;
   width: 100%;
   min-width: 0;
-  grid-template-columns: repeat(8, minmax(48px, 1fr));
-  grid-auto-rows: 54px;
-  gap: 4px;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-auto-rows: 60px;
+  gap: 5px;
   align-content: start;
 }
 
@@ -321,8 +321,9 @@
   position: relative;
   display: grid;
   width: 100%;
-  height: 54px;
-  padding: 3px 2px;
+  height: 60px;
+  padding: 2px 1px 2px;
+  grid-template-rows: minmax(0, 1fr) auto;
   place-items: center;
   overflow: hidden;
   border: 1px solid rgba(var(--element-rgb), 0.5);
@@ -350,17 +351,30 @@
 }
 
 .treasure-periodic-grid .treasure-element-symbol {
-  margin-top: 3px;
-  color: var(--element-color);
-  font-size: 10px;
+  color: #eaf9ff;
+  color: color-mix(in srgb, var(--element-color) 42%, white);
+  font-size: 16px;
   line-height: 1;
-  text-shadow: 0 0 12px rgba(var(--element-rgb), 0.48);
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.34),
+    0 0 12px rgba(var(--element-rgb), 0.56);
 }
 
 .treasure-periodic-grid .treasure-element-name {
-  font-size: 15px;
+  font-size: 26px;
   font-weight: 900;
   line-height: 1;
+}
+
+.treasure-periodic-grid .treasure-element-identity {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
+  padding-top: 1px;
+  white-space: nowrap;
 }
 
 .treasure-periodic-grid .treasure-element-metrics {
@@ -707,7 +721,7 @@
   }
 
   .treasure-periodic-grid {
-    min-width: 412px;
+    min-width: 500px;
   }
 
   .treasure-card-list {

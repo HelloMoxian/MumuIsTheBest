@@ -86,13 +86,13 @@ test("化学本地缓存可迁移版本零的安全旧记录", () => {
   storage.setItem(spec.key, JSON.stringify({
     schemaVersion: 0,
     stableId: spec.stableId,
-    legacyLabel: "旧版百宝箱",
+    legacyLabel: "旧版聚宝盆",
   }));
 
   assert.deepEqual(
     readChemistryLocalCache(spec, storage, () => "2026-08-02T02:00:00.000Z"),
     {
-      payload: { label: "旧版百宝箱" },
+      payload: { label: "旧版聚宝盆" },
       metadata: {
         createdAt: "2026-08-02T02:00:00.000Z",
         updatedAt: "2026-08-02T02:00:00.000Z",
