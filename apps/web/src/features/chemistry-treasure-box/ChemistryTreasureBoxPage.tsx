@@ -19,9 +19,15 @@ import {
   findTreasureBoxMatch,
   indexTreasureDiscoveries,
   TREASURE_BOX_ELEMENT_LIMIT,
+  TREASURE_BOX_FREE_ATOM_LIMIT,
   treasureAtomTotal,
   treasureElementBatchSize,
 } from "./logic";
+import {
+  readChemistryLocalCache,
+  writeChemistryLocalCache,
+  type ChemistryCacheMetadata,
+} from "../chemistry-local-cache";
 import "../reaction-furnace/reaction-furnace.css";
 import "./chemistry-treasure-box.css";
 
@@ -31,22 +37,151 @@ const TREASURE_COMPOUNDS = buildTreasureBoxLibrary(
   REACTION_COMPOUNDS,
   TREASURE_SYMBOLS,
 );
+const TREASURE_COMPOUND_BY_ID = new Map(TREASURE_COMPOUNDS.map((compound) => [compound.id, compound]));
 const MATCH_DELAY_MS = 520;
+const TREASURE_BOX_CACHE_KEY = "mumu.chemistry.treasure-box";
+const TREASURE_BOX_CACHE_STABLE_ID = "chemistry-treasure-box";
+
+type TreasureBoxCachePayload = {
+  pool: AtomCounts;
+  discoveryIds: readonly string[];
+  selectedSymbol: string;
+  assemblingId: string | null;
+};
+
+type TreasureBoxInitialState = {
+  pool: AtomCounts;
+  discoveries: readonly ReactionCompound[];
+  selectedSymbol: string;
+  cacheMetadata?: ChemistryCacheMetadata;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readTreasurePool(value: unknown) {
+  if (!isRecord(value)) return undefined;
+  const pool: Record<string, number> = {};
+  let total = 0;
+  for (const [symbol, count] of Object.entries(value)) {
+    if (
+      !TREASURE_SYMBOLS.has(symbol)
+      || typeof count !== "number"
+      || !Number.isSafeInteger(count)
+      || count <= 0
+    ) {
+      return undefined;
+    }
+    total += count;
+    if (total > TREASURE_BOX_FREE_ATOM_LIMIT) return undefined;
+    pool[symbol] = count;
+  }
+  return pool;
+}
+
+function addAtomCounts(first: AtomCounts, second: AtomCounts): AtomCounts {
+  const next = { ...first };
+  for (const [symbol, count] of Object.entries(second)) {
+    next[symbol] = (next[symbol] ?? 0) + count;
+  }
+  return next;
+}
+
+function parseTreasureBoxCachePayload(value: unknown): TreasureBoxCachePayload | undefined {
+  if (!isRecord(value) || !Array.isArray(value.discoveryIds)) return undefined;
+  if (value.discoveryIds.some((id) => typeof id !== "string")) return undefined;
+  const discoveryIds = [...value.discoveryIds] as string[];
+  if (
+    new Set(discoveryIds).size !== discoveryIds.length
+    || discoveryIds.some((id) => !TREASURE_COMPOUND_BY_ID.has(id))
+    || typeof value.selectedSymbol !== "string"
+    || !TREASURE_SYMBOLS.has(value.selectedSymbol)
+  ) {
+    return undefined;
+  }
+  const assemblingId = value.assemblingId === null
+    ? null
+    : typeof value.assemblingId === "string" ? value.assemblingId : undefined;
+  if (
+    assemblingId === undefined
+    || (assemblingId !== null && (
+      !TREASURE_COMPOUND_BY_ID.has(assemblingId)
+      || discoveryIds.includes(assemblingId)
+    ))
+  ) {
+    return undefined;
+  }
+  const pool = readTreasurePool(value.pool);
+  if (!pool) return undefined;
+  const recoveredPool = assemblingId === null
+    ? pool
+    : addAtomCounts(pool, TREASURE_COMPOUND_BY_ID.get(assemblingId)!.atomCounts);
+  if (treasureAtomTotal(recoveredPool) > TREASURE_BOX_FREE_ATOM_LIMIT) return undefined;
+  return { pool, discoveryIds, selectedSymbol: value.selectedSymbol, assemblingId };
+}
+
+const TREASURE_BOX_CACHE_SPEC = {
+  key: TREASURE_BOX_CACHE_KEY,
+  stableId: TREASURE_BOX_CACHE_STABLE_ID,
+  parsePayload: parseTreasureBoxCachePayload,
+  migrateLegacy(value: unknown) {
+    if (!isRecord(value)) return undefined;
+    return parseTreasureBoxCachePayload({
+      pool: value.pool ?? {},
+      discoveryIds: value.discoveryIds ?? value.completedIds ?? [],
+      selectedSymbol: value.selectedSymbol ?? TREASURE_ELEMENTS[0].symbol,
+      assemblingId: value.assemblingId ?? null,
+    });
+  },
+};
+
+function createInitialState(): TreasureBoxInitialState {
+  const restored = readChemistryLocalCache(TREASURE_BOX_CACHE_SPEC);
+  if (!restored) {
+    return {
+      pool: {},
+      discoveries: [],
+      selectedSymbol: TREASURE_ELEMENTS[0].symbol,
+    };
+  }
+  const pool = restored.payload.assemblingId === null
+    ? restored.payload.pool
+    : addAtomCounts(
+      restored.payload.pool,
+      TREASURE_COMPOUND_BY_ID.get(restored.payload.assemblingId)!.atomCounts,
+    );
+  return {
+    pool,
+    discoveries: restored.payload.discoveryIds.map((id) => TREASURE_COMPOUND_BY_ID.get(id)!),
+    selectedSymbol: restored.payload.selectedSymbol,
+    cacheMetadata: restored.metadata,
+  };
+}
 
 export function ChemistryTreasureBoxPage() {
-  const [pool, setPool] = useState<AtomCounts>({});
-  const [completedIds, setCompletedIds] = useState<ReadonlySet<string>>(new Set());
-  const [discoveries, setDiscoveries] = useState<readonly ReactionCompound[]>([]);
-  const [selectedSymbol, setSelectedSymbol] = useState(TREASURE_ELEMENTS[0].symbol);
+  const [initialState] = useState(createInitialState);
+  const [pool, setPool] = useState<AtomCounts>(initialState.pool);
+  const [completedIds, setCompletedIds] = useState<ReadonlySet<string>>(
+    new Set(initialState.discoveries.map((compound) => compound.id)),
+  );
+  const [discoveries, setDiscoveries] = useState<readonly ReactionCompound[]>(initialState.discoveries);
+  const [selectedSymbol, setSelectedSymbol] = useState(initialState.selectedSymbol);
   const [assemblingId, setAssemblingId] = useState<string | null>(null);
-  const [statusText, setStatusText] = useState("点击右侧元素，把第一个原子送进反应区。");
+  const [statusText, setStatusText] = useState(
+    initialState.cacheMetadata
+      ? "已恢复上次的百宝箱探索，可以继续投放原子。"
+      : "点击右侧元素，把第一个原子送进反应区。",
+  );
 
   const canvasRef = useRef<FurnaceCanvasHandle>(null);
-  const poolRef = useRef<AtomCounts>({});
-  const completedIdsRef = useRef(new Set<string>());
+  const poolRef = useRef<AtomCounts>(initialState.pool);
+  const completedIdsRef = useRef(new Set(initialState.discoveries.map((compound) => compound.id)));
   const assemblingIdRef = useRef<string | null>(null);
   const matchTimerRef = useRef<number | null>(null);
   const tryAssemblyRef = useRef<() => void>(() => undefined);
+  const cacheMetadataRef = useRef<ChemistryCacheMetadata | undefined>(initialState.cacheMetadata);
+  const restoredCanvasRef = useRef(false);
 
   const freeAtomCount = treasureAtomTotal(pool);
   const discoveriesByElement = useMemo(
@@ -74,6 +209,29 @@ export function ChemistryTreasureBoxPage() {
       tryAssemblyRef.current();
     }, delay);
   }, []);
+
+  useEffect(() => {
+    if (restoredCanvasRef.current || !canvasRef.current) return;
+    for (const [symbol, count] of Object.entries(pool)) {
+      canvasRef.current.addAtoms(symbol, count);
+    }
+    restoredCanvasRef.current = true;
+    if (treasureAtomTotal(pool) > 0) scheduleMatch(120);
+  }, [pool, scheduleMatch]);
+
+  useEffect(() => {
+    const nextMetadata = writeChemistryLocalCache(
+      TREASURE_BOX_CACHE_SPEC,
+      {
+        pool,
+        discoveryIds: discoveries.map((compound) => compound.id),
+        selectedSymbol,
+        assemblingId,
+      },
+      cacheMetadataRef.current,
+    );
+    if (nextMetadata) cacheMetadataRef.current = nextMetadata;
+  }, [assemblingId, discoveries, pool, selectedSymbol]);
 
   const tryAssembly = useCallback(() => {
     if (assemblingIdRef.current) return;

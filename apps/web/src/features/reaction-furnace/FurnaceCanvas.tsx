@@ -73,6 +73,7 @@ type Ripple = {
 export type FurnaceCanvasHandle = {
   addAtoms: (symbol: string, count: number) => void;
   assemble: (compound: ReactionCompound, slotIndex: number) => boolean;
+  restoreStableCompound: (compound: ReactionCompound, slotIndex: number) => void;
   reset: () => void;
 };
 
@@ -454,6 +455,63 @@ function FurnaceCanvasInner(
         strength: 1.2,
       });
       return true;
+    },
+    restoreStableCompound(compound, slotIndex) {
+      if (moleculesRef.current.some((molecule) => molecule.compound.id === compound.id)) return;
+      const { width, height } = sizeRef.current;
+      const moleculeId = nextMoleculeIdRef.current;
+      nextMoleculeIdRef.current += 1;
+      const slot = getStableStructureSlot(
+        slotIndex,
+        targetCountRef.current,
+        { width, height },
+      );
+      const layout = layoutMolecularStructure(
+        compound,
+        slot.structureWidth,
+        slot.structureHeight,
+      );
+      const startedAt = performance.now();
+      const particleIds = compound.structure.atoms.map((atom, index) => {
+        const particleId = nextParticleIdRef.current;
+        nextParticleIdRef.current += 1;
+        const point = layout.points[index] ?? { x: 0, y: 0 };
+        particlesRef.current.push({
+          id: particleId,
+          symbol: atom.symbol,
+          color: getReactionElementTheme(atom.symbol).color,
+          x: slot.centerX + point.x,
+          y: slot.centerY + point.y,
+          vx: 0,
+          vy: 0,
+          radius: layout.atomRadius,
+          targetRadius: layout.atomRadius,
+          spawnedAt: startedAt,
+          driftTargetX: slot.centerX,
+          driftTargetY: slot.centerY,
+          diffusionSeed: particleId * 0.773,
+          state: "bound",
+          moleculeId,
+          localX: point.x,
+          localY: point.y,
+        });
+        return particleId;
+      });
+      moleculesRef.current.push({
+        id: moleculeId,
+        compound,
+        particleIds,
+        slotIndex,
+        centerX: slot.centerX,
+        centerY: slot.centerY,
+        vx: 0,
+        vy: 0,
+        diffusionSeed: moleculeId * 1.731 + slotIndex * 0.619,
+        radius: layout.radius,
+        startedAt,
+        stableAt: startedAt,
+        notified: true,
+      });
     },
     reset() {
       particlesRef.current = [];

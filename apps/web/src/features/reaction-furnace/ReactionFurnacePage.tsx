@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -30,12 +31,206 @@ import {
   type AtomCounts,
   type ReactionCompound,
 } from "./logic";
+import {
+  readChemistryLocalCache,
+  writeChemistryLocalCache,
+  type ChemistryCacheMetadata,
+} from "../chemistry-local-cache";
 import "./reaction-furnace.css";
 
 const ELEMENT_BY_SYMBOL = new Map(ELEMENTS.map((element) => [element.symbol, element]));
+const COMPOUND_BY_ID = new Map(REACTION_COMPOUNDS.map((compound) => [compound.id, compound]));
+const REACTION_FURNACE_CACHE_KEY = "mumu.chemistry.reaction-furnace";
+const REACTION_FURNACE_CACHE_STABLE_ID = "chemistry-reaction-furnace";
+
+type FurnaceCachePayload = {
+  targetIds: readonly string[];
+  targetElements: readonly string[];
+  usedBundleIds: readonly string[];
+  pool: AtomCounts;
+  completedIds: readonly string[];
+  assemblingId: string | null;
+  batchNumber: number;
+};
+
+type FurnaceInitialState = {
+  round: ReturnType<typeof freshRound>;
+  usedBundleIds: ReadonlySet<string>;
+  pool: AtomCounts;
+  completedIds: ReadonlySet<string>;
+  batchNumber: number;
+  cacheMetadata?: ChemistryCacheMetadata;
+};
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readUniqueIds(
+  value: unknown,
+  knownIds: ReadonlySet<string>,
+  options: { exactLength?: number; maximumLength?: number } = {},
+) {
+  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) return undefined;
+  if (options.exactLength !== undefined && value.length !== options.exactLength) return undefined;
+  if (options.maximumLength !== undefined && value.length > options.maximumLength) return undefined;
+  const ids = [...value] as string[];
+  if (new Set(ids).size !== ids.length || ids.some((id) => !knownIds.has(id))) return undefined;
+  return ids;
+}
+
+function readPool(value: unknown, allowedSymbols: ReadonlySet<string>) {
+  if (!isRecord(value)) return undefined;
+  const pool: Record<string, number> = {};
+  let total = 0;
+  for (const [symbol, count] of Object.entries(value)) {
+    if (
+      !allowedSymbols.has(symbol)
+      || typeof count !== "number"
+      || !Number.isSafeInteger(count)
+      || count <= 0
+    ) {
+      return undefined;
+    }
+    total += count;
+    if (total > REACTION_FURNACE_ATOM_BUDGET) return undefined;
+    pool[symbol] = count;
+  }
+  return pool;
+}
+
+function addAtomCounts(first: AtomCounts, second: AtomCounts): AtomCounts {
+  const next = { ...first };
+  for (const [symbol, count] of Object.entries(second)) {
+    next[symbol] = (next[symbol] ?? 0) + count;
+  }
+  return next;
+}
+
+function atomCountsEqual(first: AtomCounts, second: AtomCounts) {
+  const symbols = new Set([...Object.keys(first), ...Object.keys(second)]);
+  return [...symbols].every((symbol) => (first[symbol] ?? 0) === (second[symbol] ?? 0));
+}
+
+function parseFurnaceCachePayload(value: unknown): FurnaceCachePayload | undefined {
+  if (!isRecord(value)) return undefined;
+  const targetIds = readUniqueIds(
+    value.targetIds,
+    new Set(COMPOUND_BY_ID.keys()),
+    { exactLength: REACTION_FURNACE_TARGET_COUNT },
+  );
+  if (!targetIds) return undefined;
+  const targets = targetIds.map((id) => COMPOUND_BY_ID.get(id)!);
+  const targetSymbols = new Set(targets.flatMap((compound) => Object.keys(compound.atomCounts)));
+  const targetElements = readUniqueIds(
+    value.targetElements,
+    new Set(ELEMENT_BY_SYMBOL.keys()),
+    { exactLength: REACTION_FURNACE_PRIORITY_ELEMENT_COUNT },
+  );
+  if (!targetElements || targetElements.some((symbol) => !targetSymbols.has(symbol))) return undefined;
+
+  const bundles = buildAtomBundles(targets);
+  const usedBundleIds = readUniqueIds(
+    value.usedBundleIds,
+    new Set(bundles.map((bundle) => bundle.id)),
+    { maximumLength: bundles.length },
+  );
+  const completedIds = readUniqueIds(
+    value.completedIds,
+    new Set(targetIds),
+    { maximumLength: targetIds.length },
+  );
+  const assemblingId = value.assemblingId === null
+    ? null
+    : typeof value.assemblingId === "string" ? value.assemblingId : undefined;
+  if (
+    !usedBundleIds
+    || !completedIds
+    || assemblingId === undefined
+    || (assemblingId !== null && (!targetIds.includes(assemblingId) || completedIds.includes(assemblingId)))
+    || typeof value.batchNumber !== "number"
+    || !Number.isSafeInteger(value.batchNumber)
+    || value.batchNumber < 1
+  ) {
+    return undefined;
+  }
+  const pool = readPool(value.pool, targetSymbols);
+  if (!pool) return undefined;
+
+  const launchedAtoms = usedBundleIds.reduce<AtomCounts>((totals, id) => {
+    const bundle = bundles.find((item) => item.id === id)!;
+    return addAtomCounts(totals, { [bundle.symbol]: bundle.count });
+  }, {});
+  const consumedAtoms = completedIds.reduce<AtomCounts>((totals, id) => (
+    addAtomCounts(totals, COMPOUND_BY_ID.get(id)!.atomCounts)
+  ), assemblingId === null ? {} : COMPOUND_BY_ID.get(assemblingId)!.atomCounts);
+  let expectedPool: AtomCounts;
+  try {
+    expectedPool = consumeAtomCounts(launchedAtoms, consumedAtoms);
+  } catch {
+    return undefined;
+  }
+  if (!atomCountsEqual(pool, expectedPool)) return undefined;
+
+  return {
+    targetIds,
+    targetElements,
+    usedBundleIds,
+    pool,
+    completedIds,
+    assemblingId,
+    batchNumber: value.batchNumber,
+  };
+}
+
+const FURNACE_CACHE_SPEC = {
+  key: REACTION_FURNACE_CACHE_KEY,
+  stableId: REACTION_FURNACE_CACHE_STABLE_ID,
+  parsePayload: parseFurnaceCachePayload,
+  migrateLegacy(value: unknown) {
+    if (!isRecord(value)) return undefined;
+    return parseFurnaceCachePayload({
+      targetIds: value.targetIds,
+      targetElements: value.priorityElements,
+      usedBundleIds: value.usedBundleIds ?? [],
+      pool: value.pool ?? {},
+      completedIds: value.completedIds ?? [],
+      assemblingId: value.assemblingId ?? null,
+      batchNumber: value.batchNumber ?? 1,
+    });
+  },
+};
 
 function freshRound() {
   return selectReactionRoundPlan(REACTION_COMPOUNDS);
+}
+
+function createInitialState(): FurnaceInitialState {
+  const restored = readChemistryLocalCache(FURNACE_CACHE_SPEC);
+  if (restored) {
+    const targets = restored.payload.targetIds.map((id) => COMPOUND_BY_ID.get(id)!);
+    const recoveredPool = restored.payload.assemblingId === null
+      ? restored.payload.pool
+      : addAtomCounts(
+        restored.payload.pool,
+        COMPOUND_BY_ID.get(restored.payload.assemblingId)!.atomCounts,
+      );
+    return {
+      round: { targetElements: restored.payload.targetElements, compounds: targets },
+      usedBundleIds: new Set(restored.payload.usedBundleIds),
+      pool: recoveredPool,
+      completedIds: new Set(restored.payload.completedIds),
+      batchNumber: restored.payload.batchNumber,
+      cacheMetadata: restored.metadata,
+    };
+  }
+  return {
+    round: freshRound(),
+    usedBundleIds: new Set(),
+    pool: {},
+    completedIds: new Set(),
+    batchNumber: 1,
+  };
 }
 
 function addToPool(pool: AtomCounts, bundle: AtomBundle) {
@@ -46,21 +241,24 @@ function addToPool(pool: AtomCounts, bundle: AtomBundle) {
 }
 
 export function ReactionFurnacePage() {
-  const [round, setRound] = useState(freshRound);
+  const [initialState] = useState(createInitialState);
+  const [round, setRound] = useState(initialState.round);
   const targets = round.compounds;
-  const [bundles, setBundles] = useState(() => buildAtomBundles(targets));
-  const [usedBundleIds, setUsedBundleIds] = useState<ReadonlySet<string>>(new Set());
-  const [pool, setPool] = useState<AtomCounts>({});
-  const [completedIds, setCompletedIds] = useState<ReadonlySet<string>>(new Set());
+  const bundles = useMemo(() => buildAtomBundles(targets), [targets]);
+  const [usedBundleIds, setUsedBundleIds] = useState<ReadonlySet<string>>(initialState.usedBundleIds);
+  const [pool, setPool] = useState<AtomCounts>(initialState.pool);
+  const [completedIds, setCompletedIds] = useState<ReadonlySet<string>>(initialState.completedIds);
   const [assemblingId, setAssemblingId] = useState<string | null>(null);
   const [latestCompound, setLatestCompound] = useState<ReactionCompound | null>(null);
-  const [batchNumber, setBatchNumber] = useState(1);
+  const [batchNumber, setBatchNumber] = useState(initialState.batchNumber);
 
   const canvasRef = useRef<FurnaceCanvasHandle>(null);
-  const poolRef = useRef<AtomCounts>({});
-  const completedIdsRef = useRef(new Set<string>());
+  const poolRef = useRef<AtomCounts>(initialState.pool);
+  const completedIdsRef = useRef(new Set(initialState.completedIds));
   const assemblingIdRef = useRef<string | null>(null);
   const tryAssemblyRef = useRef<() => void>(() => undefined);
+  const cacheMetadataRef = useRef<ChemistryCacheMetadata | undefined>(initialState.cacheMetadata);
+  const restoredCanvasRef = useRef(false);
 
   const remainingBundles = useMemo(
     () => bundles.filter((bundle) => !usedBundleIds.has(bundle.id)),
@@ -79,6 +277,36 @@ export function ReactionFurnacePage() {
   }, [remainingBundles]);
   const atomsRemaining = remainingBundles.reduce((total, bundle) => total + bundle.count, 0);
   const atomsInFurnace = Object.values(pool).reduce((total, count) => total + count, 0);
+
+  useEffect(() => {
+    if (restoredCanvasRef.current || !canvasRef.current) return;
+    for (const [symbol, count] of Object.entries(pool)) {
+      canvasRef.current.addAtoms(symbol, count);
+    }
+    for (const [index, compound] of targets.entries()) {
+      if (completedIds.has(compound.id)) {
+        canvasRef.current.restoreStableCompound(compound, index);
+      }
+    }
+    restoredCanvasRef.current = true;
+  }, [completedIds, pool, targets]);
+
+  useEffect(() => {
+    const nextMetadata = writeChemistryLocalCache(
+      FURNACE_CACHE_SPEC,
+      {
+        targetIds: targets.map((compound) => compound.id),
+        targetElements: [...round.targetElements],
+        usedBundleIds: [...usedBundleIds],
+        pool,
+        completedIds: [...completedIds],
+        assemblingId,
+        batchNumber,
+      },
+      cacheMetadataRef.current,
+    );
+    if (nextMetadata) cacheMetadataRef.current = nextMetadata;
+  }, [assemblingId, batchNumber, completedIds, pool, round.targetElements, targets, usedBundleIds]);
 
   const tryAssembly = useCallback(() => {
     if (assemblingIdRef.current) return;
@@ -121,9 +349,7 @@ export function ReactionFurnacePage() {
 
   const resetBatch = () => {
     const nextRound = freshRound();
-    const nextTargets = nextRound.compounds;
     setRound(nextRound);
-    setBundles(buildAtomBundles(nextTargets));
     setUsedBundleIds(new Set());
     setPool({});
     poolRef.current = {};
