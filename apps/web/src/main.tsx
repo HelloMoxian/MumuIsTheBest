@@ -22,6 +22,11 @@ const PinyinBridgePage = lazy(async () => {
   return { default: module.PinyinBridgePage };
 });
 
+const RhymeEnlightenmentPage = lazy(async () => {
+  const module = await import("./features/rhyme-enlightenment/RhymeEnlightenmentPage");
+  return { default: module.RhymeEnlightenmentPage };
+});
+
 const MissionLabRoute = lazy(async () => {
   const module = await import("./features/mission-lab/MissionLabRoute");
   return { default: module.MissionLabRoute };
@@ -122,7 +127,7 @@ type AsrConfiguration = {
   isConfigured: boolean;
   storage: "local-file" | "environment" | "none";
 };
-type SubjectIconKind = "math" | "chemistry" | "chinese" | "english" | "physics" | "universe" | "biology" | "game";
+type SubjectIconKind = "math" | "chemistry" | "chinese" | "classics" | "english" | "physics" | "universe" | "biology" | "game";
 type GamePlaceholder = {
   title: string;
   mark: string;
@@ -249,6 +254,21 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     ],
   },
   {
+    id: "classics",
+    title: "国学",
+    caption: "读懂古人的词语、画面和故事",
+    icon: "classics",
+    games: [
+      {
+        title: "声律启蒙",
+        mark: "韵",
+        description: "逐句听读，发现对子里的意思",
+        shape: "wide",
+        href: "/classics/rhyme-enlightenment",
+      },
+    ],
+  },
+  {
     id: "english",
     title: "英语",
     caption: "跟着声音和字母去旅行",
@@ -307,6 +327,9 @@ function SubjectGlyph({ kind }: { kind: SubjectIconKind }) {
   }
   if (kind === "chinese") {
     return <span className="subject-glyph glyph-letter" aria-hidden="true">文</span>;
+  }
+  if (kind === "classics") {
+    return <span className="subject-glyph glyph-letter glyph-classics" aria-hidden="true">雅</span>;
   }
   if (kind === "english") {
     return <span className="subject-glyph glyph-letter glyph-english" aria-hidden="true">Aa</span>;
@@ -879,6 +902,22 @@ function CurrentPage() {
         )}
       >
         <PinyinBridgePage />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname === "/classics/rhyme-enlightenment") {
+    return (
+      <Suspense
+        fallback={(
+          <div className="app-shell" aria-live="polite">
+            <div className="star-field" aria-hidden="true" />
+            <main className="asr-lab">
+              <section className="safety-note"><span aria-hidden="true">雅</span><p><strong>正在展开声律启蒙精读舱…</strong></p></section>
+            </main>
+          </div>
+        )}
+      >
+        <RhymeEnlightenmentPage />
       </Suspense>
     );
   }
