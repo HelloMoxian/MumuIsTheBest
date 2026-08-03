@@ -6,7 +6,7 @@ import {
   type Ref,
 } from "react";
 import { getReactionElementTheme } from "./element-colors";
-import type { AtomCounts, ReactionCompound } from "./logic";
+import { getMolecularDisplayStructure, type AtomCounts, type ReactionCompound } from "./logic";
 import {
   advanceStableStructureMotion,
   advanceFreeAtomMotion,
@@ -15,7 +15,7 @@ import {
   type FreeAtomMotion,
 } from "./particle-motion";
 
-type ParticleState = "free" | "assembling" | "bound";
+type ParticleState = "free" | "forming-ion" | "assembling" | "bound";
 
 type AtomParticle = {
   id: number;
@@ -33,8 +33,17 @@ type AtomParticle = {
   diffusionSeed: number;
   state: ParticleState;
   moleculeId?: number;
+  ionFormationId?: number;
+  sourceIonId?: string;
   localX: number;
   localY: number;
+};
+
+type MoleculeSourceIon = {
+  ion: CanvasPolyatomicIon;
+  startX: number;
+  startY: number;
+  radius: number;
 };
 
 type Molecule = {
@@ -51,6 +60,7 @@ type Molecule = {
   startedAt: number;
   stableAt?: number;
   notified: boolean;
+  sourceIons: readonly MoleculeSourceIon[];
   sprite?: MoleculeSprite;
 };
 
@@ -75,6 +85,7 @@ export type CanvasPolyatomicIon = {
   id: string;
   formula: string;
   name: string;
+  charge: number;
   chargeLabel: string;
   atomCounts: AtomCounts;
 };
@@ -83,10 +94,20 @@ type FloatingPolyatomicIon = FreeAtomMotion & {
   ion: CanvasPolyatomicIon;
 };
 
+type PolyatomicIonFormation = {
+  id: number;
+  ion: CanvasPolyatomicIon;
+  particleIds: readonly number[];
+  centerX: number;
+  centerY: number;
+  startedAt: number;
+};
+
 export type FurnaceCanvasHandle = {
   addAtoms: (symbol: string, count: number) => void;
   addPolyatomicIon: (ion: CanvasPolyatomicIon) => void;
-  assemble: (compound: ReactionCompound, slotIndex: number) => boolean;
+  formPolyatomicIon: (ion: CanvasPolyatomicIon) => boolean;
+  assemble: (compound: ReactionCompound, slotIndex: number, ionIds?: readonly string[]) => boolean;
   restoreStableCompound: (compound: ReactionCompound, slotIndex: number) => void;
   reset: () => void;
 };
@@ -96,6 +117,7 @@ function layoutMolecularStructure(
   maximumWidth: number,
   maximumHeight: number,
 ) {
+  const structure = getMolecularDisplayStructure(compound);
   const preferredAtomRadius = compound.totalAtoms > 50
     ? 6.2
     : compound.totalAtoms > 30
@@ -109,10 +131,10 @@ function layoutMolecularStructure(
     preferredAtomRadius,
     Math.max(3.2, Math.min(maximumWidth, maximumHeight) * 0.09),
   );
-  const minimumX = Math.min(...compound.structure.atoms.map((atom) => atom.x));
-  const maximumX = Math.max(...compound.structure.atoms.map((atom) => atom.x));
-  const minimumY = Math.min(...compound.structure.atoms.map((atom) => atom.y));
-  const maximumY = Math.max(...compound.structure.atoms.map((atom) => atom.y));
+  const minimumX = Math.min(...structure.atoms.map((atom) => atom.x));
+  const maximumX = Math.max(...structure.atoms.map((atom) => atom.x));
+  const minimumY = Math.min(...structure.atoms.map((atom) => atom.y));
+  const maximumY = Math.max(...structure.atoms.map((atom) => atom.y));
   const sourceWidth = Math.max(0.1, maximumX - minimumX);
   const sourceHeight = Math.max(0.1, maximumY - minimumY);
   const sourceCenterX = (minimumX + maximumX) / 2;
@@ -122,7 +144,7 @@ function layoutMolecularStructure(
     Math.max(0.1, (maximumWidth - atomRadius * 3) / sourceWidth),
     Math.max(0.1, (maximumHeight - atomRadius * 3) / sourceHeight),
   );
-  const points = compound.structure.atoms.map((atom) => ({
+  const points = structure.atoms.map((atom) => ({
     x: (atom.x - sourceCenterX) * scale,
     y: (atom.y - sourceCenterY) * scale,
   }));
@@ -192,7 +214,7 @@ function drawAtom(
 
 function drawPolyatomicIon(
   context: CanvasRenderingContext2D,
-  particle: FloatingPolyatomicIon,
+  particle: Pick<FloatingPolyatomicIon, "x" | "y" | "radius" | "ion">,
 ) {
   const { x, y, radius, ion } = particle;
   drawGlow(context, x, y, radius * 2.25, "#b878ff", 0.34);
@@ -242,6 +264,52 @@ function drawPolyatomicIon(
   context.font = `850 ${Math.max(8, radius * 0.22)}px ui-rounded, sans-serif`;
   context.fillText(`电荷 ${ion.chargeLabel}`, x, y + radius * 0.47);
   context.shadowBlur = 0;
+}
+
+function drawPolyatomicIonFormationField(
+  context: CanvasRenderingContext2D,
+  formation: PolyatomicIonFormation,
+  now: number,
+  reducedMotion: boolean,
+) {
+  const elapsed = now - formation.startedAt;
+  const progress = Math.min(1, elapsed / (reducedMotion ? 320 : 1_350));
+  const pulse = reducedMotion ? 0.5 : 0.5 + Math.sin(now * 0.014) * 0.5;
+  const radius = 46 + progress * 24;
+  context.save();
+  context.globalCompositeOperation = "lighter";
+  drawGlow(context, formation.centerX, formation.centerY, radius * 2.2, "#b878ff", 0.16 + pulse * 0.12);
+  context.strokeStyle = `rgba(133,238,255,${0.28 + pulse * 0.34})`;
+  context.lineWidth = 2;
+  context.setLineDash([7, 8]);
+  context.beginPath();
+  context.arc(formation.centerX, formation.centerY, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
+  context.stroke();
+  context.setLineDash([]);
+  for (let index = 0; index < 6; index += 1) {
+    const angle = now * 0.0018 + index * Math.PI / 3;
+    const starRadius = radius + 10 + (index % 2) * 8;
+    context.fillStyle = index % 2 ? "#ff8ed4" : "#82efff";
+    context.beginPath();
+    context.arc(
+      formation.centerX + Math.cos(angle) * starRadius,
+      formation.centerY + Math.sin(angle) * starRadius,
+      1.8 + pulse * 1.5,
+      0,
+      Math.PI * 2,
+    );
+    context.fill();
+  }
+  context.restore();
+  context.fillStyle = "rgba(8,9,41,.82)";
+  context.beginPath();
+  context.roundRect(formation.centerX - 48, formation.centerY + radius + 9, 96, 27, 12);
+  context.fill();
+  context.fillStyle = "#f8f7ff";
+  context.font = "900 15px ui-rounded, sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText(`${formation.ion.formula} 构建中`, formation.centerX, formation.centerY + radius + 22);
 }
 
 function drawMolecularBond(
@@ -328,7 +396,7 @@ function createMoleculeSprite(
     y: centerY + particle.localY,
     radius: particle.targetRadius,
   }));
-  for (const bond of molecule.compound.structure.bonds) {
+  for (const bond of getMolecularDisplayStructure(molecule.compound).bonds) {
     const first = renderedParticles[bond.from];
     const second = renderedParticles[bond.to];
     if (first && second) {
@@ -400,28 +468,34 @@ function FurnaceCanvasInner(
     targetCount,
     mode = "dock",
     freeParticleSpeed = 1,
+    onPolyatomicIonComplete,
   }: {
     onAssemblyComplete: (compound: ReactionCompound) => void;
     targetCount: number;
     mode?: FurnaceCanvasMode;
     freeParticleSpeed?: number;
+    onPolyatomicIonComplete?: (ion: CanvasPolyatomicIon) => void;
   },
   ref: Ref<FurnaceCanvasHandle>,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<AtomParticle[]>([]);
   const floatingIonsRef = useRef<FloatingPolyatomicIon[]>([]);
+  const ionFormationsRef = useRef<PolyatomicIonFormation[]>([]);
   const moleculesRef = useRef<Molecule[]>([]);
   const ripplesRef = useRef<Ripple[]>([]);
   const nextParticleIdRef = useRef(1);
   const nextMoleculeIdRef = useRef(1);
+  const nextIonFormationIdRef = useRef(1);
   const sizeRef = useRef({ width: 900, height: 650, dpr: 1 });
   const reducedMotionRef = useRef(false);
   const targetCountRef = useRef(targetCount);
   const modeRef = useRef(mode);
   const freeParticleSpeedRef = useRef(freeParticleSpeed);
   const onCompleteRef = useRef(onAssemblyComplete);
+  const onIonCompleteRef = useRef(onPolyatomicIonComplete);
   onCompleteRef.current = onAssemblyComplete;
+  onIonCompleteRef.current = onPolyatomicIonComplete;
   targetCountRef.current = targetCount;
   modeRef.current = mode;
   freeParticleSpeedRef.current = freeParticleSpeed;
@@ -488,7 +562,11 @@ function FurnaceCanvasInner(
         strength: 1,
       });
     },
-    assemble(compound, slotIndex) {
+    formPolyatomicIon(ion) {
+      if (
+        floatingIonsRef.current.some((particle) => particle.ion.id === ion.id)
+        || ionFormationsRef.current.some((formation) => formation.ion.id === ion.id)
+      ) return false;
       const availableBySymbol = new Map<string, AtomParticle[]>();
       for (const particle of particlesRef.current) {
         if (particle.state !== "free") continue;
@@ -497,11 +575,80 @@ function FurnaceCanvasInner(
           [...(availableBySymbol.get(particle.symbol) ?? []), particle],
         );
       }
-      const selected = compound.structure.atoms.map((atom) => (
-        availableBySymbol.get(atom.symbol)?.shift()
+      const selected: AtomParticle[] = [];
+      for (const [symbol, count] of Object.entries(ion.atomCounts)) {
+        const available = availableBySymbol.get(symbol) ?? [];
+        if (available.length < count) return false;
+        selected.push(...available.slice(0, count));
+      }
+      const { width, height } = sizeRef.current;
+      const id = nextIonFormationIdRef.current;
+      nextIonFormationIdRef.current += 1;
+      const centerX = width * (0.42 + Math.random() * 0.16);
+      const centerY = height * (0.38 + Math.random() * 0.18);
+      selected.forEach((particle, index) => {
+        const angle = -Math.PI / 2 + (index / Math.max(1, selected.length)) * Math.PI * 2;
+        particle.state = "forming-ion";
+        particle.ionFormationId = id;
+        particle.localX = Math.cos(angle) * 25;
+        particle.localY = Math.sin(angle) * 20;
+        particle.targetRadius = 10;
+      });
+      ionFormationsRef.current.push({
+        id,
+        ion,
+        particleIds: selected.map((particle) => particle.id),
+        centerX,
+        centerY,
+        startedAt: performance.now(),
+      });
+      ripplesRef.current.push({
+        x: centerX,
+        y: centerY,
+        startedAt: performance.now(),
+        color: "#b878ff",
+        strength: 1.45,
+      });
+      return true;
+    },
+    assemble(compound, slotIndex, ionIds = []) {
+      const structure = getMolecularDisplayStructure(compound);
+      const selectedIons = ionIds.map((ionId) => (
+        floatingIonsRef.current.find((particle) => particle.ion.id === ionId)
       ));
-      if (selected.some((particle) => !particle)) return false;
-      const selectedParticles = selected as AtomParticle[];
+      if (selectedIons.some((ion) => !ion)) return false;
+      const presentIons = selectedIons as FloatingPolyatomicIon[];
+      const unassignedAtomIndices = new Map<string, number[]>();
+      structure.atoms.forEach((atom, index) => {
+        unassignedAtomIndices.set(
+          atom.symbol,
+          [...(unassignedAtomIndices.get(atom.symbol) ?? []), index],
+        );
+      });
+      const sourceIonByAtomIndex = new Map<number, FloatingPolyatomicIon>();
+      for (const floatingIon of presentIons) {
+        for (const [symbol, count] of Object.entries(floatingIon.ion.atomCounts)) {
+          const availableIndices = unassignedAtomIndices.get(symbol) ?? [];
+          if (availableIndices.length < count) return false;
+          for (let index = 0; index < count; index += 1) {
+            sourceIonByAtomIndex.set(availableIndices.shift()!, floatingIon);
+          }
+        }
+      }
+      const availableBySymbol = new Map<string, AtomParticle[]>();
+      for (const particle of particlesRef.current) {
+        if (particle.state !== "free") continue;
+        availableBySymbol.set(
+          particle.symbol,
+          [...(availableBySymbol.get(particle.symbol) ?? []), particle],
+        );
+      }
+      const selectedFreeByIndex = new Map<number, AtomParticle>();
+      for (const [symbol, indices] of unassignedAtomIndices) {
+        const available = availableBySymbol.get(symbol) ?? [];
+        if (available.length < indices.length) return false;
+        indices.forEach((atomIndex) => selectedFreeByIndex.set(atomIndex, available.shift()!));
+      }
 
       const { width, height } = sizeRef.current;
       const moleculeId = nextMoleculeIdRef.current;
@@ -525,6 +672,35 @@ function FurnaceCanvasInner(
         radius + 34,
         Math.min(height - radius - 62, height * (0.4 + Math.random() * 0.2)),
       );
+      const selectedParticles = structure.atoms.map((atom, index) => {
+        const sourceIon = sourceIonByAtomIndex.get(index);
+        if (!sourceIon) return selectedFreeByIndex.get(index)!;
+        const particleId = nextParticleIdRef.current;
+        nextParticleIdRef.current += 1;
+        const angle = (index / Math.max(1, structure.atoms.length)) * Math.PI * 2;
+        const particle: AtomParticle = {
+          id: particleId,
+          symbol: atom.symbol,
+          color: getReactionElementTheme(atom.symbol).color,
+          x: sourceIon.x + Math.cos(angle) * 8,
+          y: sourceIon.y + Math.sin(angle) * 8,
+          vx: 0,
+          vy: 0,
+          radius: 5,
+          targetRadius: layout.atomRadius,
+          spawnedAt: performance.now(),
+          driftTargetX: centerX,
+          driftTargetY: centerY,
+          diffusionSeed: particleId * 0.773,
+          state: "assembling",
+          moleculeId,
+          sourceIonId: sourceIon.ion.id,
+          localX: layout.points[index]?.x ?? 0,
+          localY: layout.points[index]?.y ?? 0,
+        };
+        particlesRef.current.push(particle);
+        return particle;
+      });
       selectedParticles.forEach((particle, index) => {
         particle.state = "assembling";
         particle.moleculeId = moleculeId;
@@ -532,6 +708,10 @@ function FurnaceCanvasInner(
         particle.localY = layout.points[index]?.y ?? 0;
         particle.targetRadius = layout.atomRadius;
       });
+      const selectedIonIds = new Set(presentIons.map((particle) => particle.ion.id));
+      floatingIonsRef.current = floatingIonsRef.current.filter(
+        (particle) => !selectedIonIds.has(particle.ion.id),
+      );
       moleculesRef.current.push({
         id: moleculeId,
         compound,
@@ -545,6 +725,12 @@ function FurnaceCanvasInner(
         radius,
         startedAt: performance.now(),
         notified: false,
+        sourceIons: presentIons.map((particle) => ({
+          ion: particle.ion,
+          startX: particle.x,
+          startY: particle.y,
+          radius: particle.radius,
+        })),
       });
       ripplesRef.current.push({
         x: centerX,
@@ -571,7 +757,8 @@ function FurnaceCanvasInner(
         slot.structureHeight,
       );
       const startedAt = performance.now();
-      const particleIds = compound.structure.atoms.map((atom, index) => {
+      const structure = getMolecularDisplayStructure(compound);
+      const particleIds = structure.atoms.map((atom, index) => {
         const particleId = nextParticleIdRef.current;
         nextParticleIdRef.current += 1;
         const point = layout.points[index] ?? { x: 0, y: 0 };
@@ -610,15 +797,18 @@ function FurnaceCanvasInner(
         startedAt,
         stableAt: startedAt,
         notified: true,
+        sourceIons: [],
       });
     },
     reset() {
       particlesRef.current = [];
       floatingIonsRef.current = [];
+      ionFormationsRef.current = [];
       moleculesRef.current = [];
       ripplesRef.current = [];
       nextParticleIdRef.current = 1;
       nextMoleculeIdRef.current = 1;
+      nextIonFormationIdRef.current = 1;
     },
   }), []);
 
@@ -706,6 +896,47 @@ function FurnaceCanvasInner(
         context.fill();
       }
 
+      const completedIonFormationIds = new Set<number>();
+      for (const formation of ionFormationsRef.current) {
+        const duration = reducedMotionRef.current ? 320 : 1_350;
+        if (now - formation.startedAt < duration) continue;
+        completedIonFormationIds.add(formation.id);
+        const motion = createInjectedAtomMotion({
+          particleId: nextParticleIdRef.current,
+          index: floatingIonsRef.current.length,
+          count: floatingIonsRef.current.length + 1,
+          width,
+          height,
+          now,
+          radius: 38,
+          reducedMotion: reducedMotionRef.current,
+        });
+        nextParticleIdRef.current += 1;
+        floatingIonsRef.current.push({
+          ion: formation.ion,
+          ...motion,
+          x: formation.centerX,
+          y: formation.centerY,
+          driftTargetX: formation.centerX,
+          driftTargetY: formation.centerY,
+        });
+        ripplesRef.current.push({
+          x: formation.centerX,
+          y: formation.centerY,
+          startedAt: now,
+          color: "#ffffff",
+          strength: 1.65,
+        });
+        onIonCompleteRef.current?.(formation.ion);
+      }
+      if (completedIonFormationIds.size > 0) {
+        ionFormationsRef.current = ionFormationsRef.current.filter(
+          (formation) => !completedIonFormationIds.has(formation.id),
+        );
+        particlesRef.current = particlesRef.current.filter(
+          (particle) => !particle.ionFormationId || !completedIonFormationIds.has(particle.ionFormationId),
+        );
+      }
       const particleById = new Map(particlesRef.current.map((particle) => [particle.id, particle]));
       const moleculeById = new Map(moleculesRef.current.map((molecule) => [molecule.id, molecule]));
       const occupiedSlots = new Set(
@@ -772,6 +1003,10 @@ function FurnaceCanvasInner(
         }
       }
 
+      for (const formation of ionFormationsRef.current) {
+        drawPolyatomicIonFormationField(context, formation, now, reducedMotionRef.current);
+      }
+
       for (const particle of particlesRef.current) {
         if (particle.state === "free") {
           if (!reducedMotionRef.current) {
@@ -785,6 +1020,27 @@ function FurnaceCanvasInner(
             );
           }
           drawAtom(context, particle, particle.x, particle.y);
+          continue;
+        }
+
+        if (particle.state === "forming-ion") {
+          const formation = ionFormationsRef.current.find(
+            (candidate) => candidate.id === particle.ionFormationId,
+          );
+          if (!formation) continue;
+          const elapsed = now - formation.startedAt;
+          const progress = reducedMotionRef.current
+            ? Math.min(1, elapsed / 260)
+            : Math.min(1, elapsed / 1_050);
+          const targetX = formation.centerX + particle.localX * (1 - progress * 0.4);
+          const targetY = formation.centerY + particle.localY * (1 - progress * 0.4);
+          particle.x += (targetX - particle.x) * (0.045 + progress * 0.12) * delta;
+          particle.y += (targetY - particle.y) * (0.045 + progress * 0.12) * delta;
+          particle.radius += (particle.targetRadius - particle.radius) * 0.08 * delta;
+          const sparkle = !reducedMotionRef.current && elapsed > 760
+            ? Math.sin(now * 0.052 + particle.id) * 2.2
+            : 0;
+          drawAtom(context, particle, particle.x + sparkle, particle.y - sparkle, 0.75);
           continue;
         }
 
@@ -838,9 +1094,22 @@ function FurnaceCanvasInner(
           y: particle.y + Math.cos(now * 0.061 + particle.id) * shakeStrength,
           radius: particle.radius,
         }));
+        for (const sourceIon of molecule.sourceIons) {
+          const travel = Math.min(1, elapsed / (reducedMotionRef.current ? 240 : 820));
+          const fade = Math.max(0, 1 - Math.max(0, elapsed - 430) / 520);
+          context.save();
+          context.globalAlpha = fade;
+          drawPolyatomicIon(context, {
+            ion: sourceIon.ion,
+            x: sourceIon.startX + (molecule.centerX - sourceIon.startX) * travel,
+            y: sourceIon.startY + (molecule.centerY - sourceIon.startY) * travel,
+            radius: sourceIon.radius * (1 - travel * 0.18),
+          });
+          context.restore();
+        }
         if (bondAlpha > 0 && moleculeParticles.length > 1) {
           const energetic = elapsed > 1250 && elapsed < 1750;
-          for (const bond of molecule.compound.structure.bonds) {
+          for (const bond of getMolecularDisplayStructure(molecule.compound).bonds) {
             const first = renderedParticles[bond.from];
             const second = renderedParticles[bond.to];
             if (first && second) {
@@ -853,6 +1122,11 @@ function FurnaceCanvasInner(
           drawGlow(context, molecule.centerX, molecule.centerY, molecule.radius * 1.5, "#ffffff", flash * 0.34);
         }
         for (const rendered of renderedParticles) {
+          const sourceIonAlpha = rendered.particle.sourceIonId
+            ? Math.min(1, Math.max(0.06, (elapsed - 430) / 540))
+            : 1;
+          context.save();
+          context.globalAlpha = sourceIonAlpha;
           drawAtom(
             context,
             rendered.particle,
@@ -860,6 +1134,7 @@ function FurnaceCanvasInner(
             rendered.y,
             rendered.particle.state === "assembling" ? 0.72 : 0.34,
           );
+          context.restore();
         }
       }
 

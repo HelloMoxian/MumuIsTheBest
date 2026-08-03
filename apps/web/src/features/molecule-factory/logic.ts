@@ -14,6 +14,11 @@ export type PolyatomicIon = {
   atomCounts: AtomCounts;
 };
 
+export type TreasureBasinAssemblyPlan = {
+  freeAtomCounts: AtomCounts;
+  ionIds: readonly string[];
+};
+
 export const POLYATOMIC_IONS: readonly PolyatomicIon[] = [
   { id: "hydroxide", formula: "OH⁻", name: "氢氧根", charge: -1, chargeLabel: "−1", atomCounts: { O: 1, H: 1 } },
   { id: "nitrate", formula: "NO₃⁻", name: "硝酸根", charge: -1, chargeLabel: "−1", atomCounts: { N: 1, O: 3 } },
@@ -125,22 +130,80 @@ export function indexTreasureBasinDiscoveries(
 export function canFormTreasureBasinCompound(
   pool: AtomCounts,
   compound: ReactionCompound,
+  formedIons: readonly PolyatomicIon[] = [],
 ) {
-  return Object.entries(compound.atomCounts).every(
-    ([symbol, count]) => (pool[symbol] ?? 0) >= count,
-  );
+  return planTreasureBasinCompoundAssembly(pool, formedIons, compound) !== undefined;
 }
 
 export function discoverPolyatomicIons(
   pool: AtomCounts,
   formedIds: ReadonlySet<string>,
 ) {
-  return POLYATOMIC_IONS.filter((ion) => (
-    !formedIds.has(ion.id)
-    && Object.entries(ion.atomCounts).every(
-      ([symbol, count]) => (pool[symbol] ?? 0) >= count,
-    )
-  ));
+  return POLYATOMIC_IONS
+    .filter((ion) => (
+      !formedIds.has(ion.id)
+      && Object.entries(ion.atomCounts).every(
+        ([symbol, count]) => (pool[symbol] ?? 0) >= count,
+      )
+    ))
+    .sort((first, second) => (
+      treasureBasinAtomTotal(second.atomCounts) - treasureBasinAtomTotal(first.atomCounts)
+      || first.id.localeCompare(second.id)
+    ));
+}
+
+function countsFitWithin(available: AtomCounts, required: AtomCounts) {
+  return Object.entries(required).every(
+    ([symbol, count]) => (available[symbol] ?? 0) >= count,
+  );
+}
+
+function subtractCounts(available: AtomCounts, consumed: AtomCounts) {
+  const next = { ...available };
+  for (const [symbol, count] of Object.entries(consumed)) {
+    const remaining = (next[symbol] ?? 0) - count;
+    if (remaining > 0) next[symbol] = remaining;
+    else delete next[symbol];
+  }
+  return next;
+}
+
+export function planTreasureBasinCompoundAssembly(
+  pool: AtomCounts,
+  formedIons: readonly PolyatomicIon[],
+  compound: ReactionCompound,
+): TreasureBasinAssemblyPlan | undefined {
+  const usableIons = formedIons.filter((ion) => countsFitWithin(compound.atomCounts, ion.atomCounts));
+  let bestPlan: TreasureBasinAssemblyPlan | undefined;
+  let bestIonAtomCount = -1;
+  const subsetCount = 2 ** usableIons.length;
+
+  for (let mask = 0; mask < subsetCount; mask += 1) {
+    let remaining = { ...compound.atomCounts };
+    const ionIds: string[] = [];
+    let ionAtomCount = 0;
+    let validSubset = true;
+    for (let index = 0; index < usableIons.length; index += 1) {
+      if ((mask & (2 ** index)) === 0) continue;
+      const ion = usableIons[index]!;
+      if (!countsFitWithin(remaining, ion.atomCounts)) {
+        validSubset = false;
+        break;
+      }
+      remaining = subtractCounts(remaining, ion.atomCounts);
+      ionIds.push(ion.id);
+      ionAtomCount += treasureBasinAtomTotal(ion.atomCounts);
+    }
+    if (
+      validSubset
+      && countsFitWithin(pool, remaining)
+      && ionAtomCount > bestIonAtomCount
+    ) {
+      bestPlan = { freeAtomCounts: remaining, ionIds };
+      bestIonAtomCount = ionAtomCount;
+    }
+  }
+  return bestPlan;
 }
 
 type MatchOptions = {
@@ -148,17 +211,32 @@ type MatchOptions = {
   limit?: number;
   random?: () => number;
   avoidIds?: ReadonlySet<string>;
+  formedIons?: readonly PolyatomicIon[];
 };
 
-function scoreTreasureBasinCompound(pool: AtomCounts, compound: ReactionCompound) {
-  const poolTotal = treasureBasinAtomTotal(pool);
+function scoreTreasureBasinCompound(
+  pool: AtomCounts,
+  formedIons: readonly PolyatomicIon[],
+  compound: ReactionCompound,
+) {
+  const plan = planTreasureBasinCompoundAssembly(pool, formedIons, compound);
+  const usedIonIds = new Set(plan?.ionIds ?? []);
+  const usedIonAtomCount = formedIons
+    .filter((ion) => usedIonIds.has(ion.id))
+    .reduce((total, ion) => total + treasureBasinAtomTotal(ion.atomCounts), 0);
+  const freeAtomCount = treasureBasinAtomTotal(plan?.freeAtomCounts ?? {});
+  const poolTotal = treasureBasinAtomTotal(pool)
+    + formedIons.reduce((total, ion) => total + treasureBasinAtomTotal(ion.atomCounts), 0);
   const distinctElements = Object.keys(compound.atomCounts).length;
   const exactComposition = compound.totalAtoms === poolTotal
     && Object.keys(pool).every(
       (symbol) => (compound.atomCounts[symbol] ?? 0) === (pool[symbol] ?? 0),
     );
   return (
-    (exactComposition ? 100_000 : 0)
+    (usedIonAtomCount > 0 ? 1_000_000 : 0)
+    + usedIonAtomCount * 10_000
+    - freeAtomCount * 100
+    + (exactComposition ? 100_000 : 0)
     + compound.totalAtoms * 100
     + distinctElements * 20
     + compound.curriculumPriority * 5
@@ -184,12 +262,13 @@ export function findTreasureBasinMatches(
     .filter((compound) => (
       !completedIds.has(compound.id)
       && (!options.excludeOrganic || compound.family !== "organic")
-      && canFormTreasureBasinCompound(pool, compound)
+      && canFormTreasureBasinCompound(pool, compound, options.formedIons)
     ));
   const ranked = options.random
     ? shuffle(candidates, options.random)
     : candidates.sort((first, second) => (
-      scoreTreasureBasinCompound(pool, second) - scoreTreasureBasinCompound(pool, first)
+      scoreTreasureBasinCompound(pool, options.formedIons ?? [], second)
+      - scoreTreasureBasinCompound(pool, options.formedIons ?? [], first)
       || first.id.localeCompare(second.id)
     ));
   const rotated = options.avoidIds?.size
@@ -205,7 +284,7 @@ export function findTreasureBasinMatch(
   pool: AtomCounts,
   library: readonly ReactionCompound[],
   completedIds: ReadonlySet<string>,
-  options: Pick<MatchOptions, "excludeOrganic"> = {},
+  options: Pick<MatchOptions, "excludeOrganic" | "formedIons"> = {},
 ) {
   return findTreasureBasinMatches(pool, library, completedIds, {
     ...options,

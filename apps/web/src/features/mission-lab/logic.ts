@@ -1,17 +1,6 @@
 import { parseSpokenNumber } from "../add-subtract/logic";
 
-export type MissionGameId =
-  | "experiment-master"
-  | "matter-world"
-  | "word-orbit"
-  | "unit-magic"
-  | "force-lab"
-  | "light-shadow"
-  | "solar-route"
-  | "number-war"
-  | "pattern-detective"
-  | "body-station"
-  | "cell-universe";
+export type MissionGameId = "experiment-master";
 
 export type MissionChoice = {
   id: string;
@@ -23,15 +12,9 @@ export type MissionChoice = {
 export type MissionVisual = {
   mode:
     | "beam"
-    | "body"
-    | "cell"
-    | "letters"
-    | "number"
-    | "orbit"
     | "particles"
     | "scale"
-    | "sequence"
-    | "word";
+    | "sequence";
   eyebrow: string;
   title: string;
   tokens: readonly string[];
@@ -57,8 +40,8 @@ export type MissionGameDefinition = {
   mark: string;
   subtitle: string;
   introduction: string;
-  accent: "cyan" | "green" | "orange" | "pink" | "violet" | "yellow";
-  speechLanguage: "zh-CN" | "en-US";
+  accent: "orange";
+  speechLanguage: "zh-CN";
   goals: readonly [string, string, string];
   missions: readonly LearningMission[];
 };

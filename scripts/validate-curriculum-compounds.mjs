@@ -5,10 +5,6 @@ const chemistryDir = path.resolve(process.cwd(), "content/chemistry");
 const molecularPath = path.join(chemistryDir, "molecular-structures.v1.json");
 const elementPath = path.join(chemistryDir, "element-compounds.v1.json");
 const curriculumPath = path.join(chemistryDir, "curriculum-compounds.v1.json");
-const reactionLibraryPath = path.resolve(
-  process.cwd(),
-  "apps/web/src/features/conservation/reaction-library.ts",
-);
 
 const VALID_CATEGORIES = new Set([
   "acid", "base", "salt", "oxide", "allotrope", "simple-substance", "other",
@@ -134,11 +130,10 @@ function validateBond(record, bond) {
   }
 }
 
-const [molecularAsset, elementAsset, curriculumAsset, reactionLibrarySource] = await Promise.all([
+const [molecularAsset, elementAsset, curriculumAsset] = await Promise.all([
   readFile(molecularPath, "utf8").then(JSON.parse),
   readFile(elementPath, "utf8").then(JSON.parse),
   readFile(curriculumPath, "utf8").then(JSON.parse),
-  readFile(reactionLibraryPath, "utf8"),
 ]);
 
 if (curriculumAsset.schemaVersion !== 1) fail("教材物质资料 schemaVersion 必须为 1");
@@ -223,38 +218,6 @@ for (const symbol of LATER_METALS) {
   if (!nonOxide) fail(`${symbol} 仍然只有氧化物，没有非氧化物选择`);
 }
 
-const conventionalFormulaByCid = new Map([
-  [222, "NH3"], [1119, "SO2"], [24682, "SO3"], [313, "HCl"], [14917, "HF"],
-  [260, "HBr"], [24341, "HClO"], [767, "H2CO3"], [1118, "H2SO4"],
-  [1004, "H3PO4"], [7628, "H3BO3"], [23953, "SiH4"], [24404, "PH3"],
-]);
-const furnaceFormulas = new Set([
-  ...molecularAsset.records.map((record) => conventionalFormulaByCid.get(record.cid) ?? record.formula),
-  ...elementAsset.records.map((record) => record.formula),
-  ...curriculumAsset.records.map((record) => record.formula),
-].map((formula) => formula.replace(/·/gu, "·")));
-const reactionEquations = [...reactionLibrarySource.matchAll(
-  /r\([^\n]*?,\s*"([^"]*?(?:->|⇌)[^"]*?)"/gu,
-)].map((match) => match[1]);
-if (reactionEquations.length !== 165) fail(`守恒反应数量异常：${reactionEquations.length}`);
-const missingReactionFormulas = new Set();
-for (const equation of reactionEquations) {
-  for (const side of equation.split(/->|⇌/u)) {
-    for (const rawTerm of side.split("+")) {
-      const formula = rawTerm.trim().replace(/^\d+\s*/u, "");
-      if (!formula || /^[A-Z][a-z]?$/u.test(formula)) continue;
-      const normalized = [...formula].map((character) => ({
-        "₀": "0", "₁": "1", "₂": "2", "₃": "3", "₄": "4",
-        "₅": "5", "₆": "6", "₇": "7", "₈": "8", "₉": "9",
-      })[character] ?? character).join("");
-      if (!furnaceFormulas.has(normalized)) missingReactionFormulas.add(normalized);
-    }
-  }
-}
-if (missingReactionFormulas.size > 0) {
-  fail(`守恒反应仍有物质未进入熔炉：${[...missingReactionFormulas].join("、")}`);
-}
-
 console.log(
-  `教材物质资料校验通过：${curriculumAsset.records.length} 条新增记录，165 条守恒反应物质全覆盖，后段金属均至少两种且含非氧化物。`,
+  `教材物质资料校验通过：${curriculumAsset.records.length} 条新增记录，后段金属均至少两种且含非氧化物。`,
 );

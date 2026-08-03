@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { getReactionElementTheme } from "./element-colors";
-import type { MolecularBond, ReactionCompound } from "./logic";
+import { getMolecularDisplayStructure, type MolecularBond, type ReactionCompound } from "./logic";
 
 function bondOffsets(order: MolecularBond["order"], spacing: number) {
   if (order === 1) return [0];
@@ -14,7 +14,8 @@ function drawStructure(
   width: number,
   height: number,
 ) {
-  const atoms = compound.structure.atoms;
+  const structure = getMolecularDisplayStructure(compound);
+  const atoms = structure.atoms;
   if (atoms.length === 0) return;
 
   const minimumX = Math.min(...atoms.map((atom) => atom.x));
@@ -50,7 +51,7 @@ function drawStructure(
 
   context.clearRect(0, 0, width, height);
   context.lineCap = "round";
-  const bondsByDepth = [...compound.structure.bonds].sort((first, second) => {
+  const bondsByDepth = [...structure.bonds].sort((first, second) => {
     const firstDepth = ((points[first.from]?.z ?? 0) + (points[first.to]?.z ?? 0)) / 2;
     const secondDepth = ((points[second.from]?.z ?? 0) + (points[second.to]?.z ?? 0)) / 2;
     return firstDepth - secondDepth;

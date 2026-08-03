@@ -13,6 +13,8 @@ import {
   findTreasureBasinMatch,
   findTreasureBasinMatches,
   indexTreasureBasinDiscoveries,
+  planTreasureBasinCompoundAssembly,
+  POLYATOMIC_IONS,
   TREASURE_BASIN_ELEMENT_LIMIT,
   TREASURE_BASIN_FREE_ATOM_LIMIT,
   treasureBasinAtomTotal,
@@ -101,6 +103,46 @@ test("每类原子团只自动形成一个并明确记录电荷", () => {
   assert.equal(sulfate.charge, -2);
   const formedIds = new Set(first.map((ion) => ion.id));
   assert.deepEqual(discoverPolyatomicIons(pool, formedIds), []);
+});
+
+test("碳酸氢根会优先于较小的碳酸根构建", () => {
+  const candidates = discoverPolyatomicIons({ H: 1, C: 1, O: 3 }, new Set());
+  assert.equal(candidates[0]?.id, "bicarbonate");
+});
+
+test("一个游离碳酸氢根和一个钠原子可以直接组成碳酸氢钠", () => {
+  const bicarbonate = POLYATOMIC_IONS.find((ion) => ion.id === "bicarbonate")!;
+  const bakingSoda = library.find((compound) => compound.sourceFormula === "NaHCO3")!;
+  const busyPool = { H: 4, C: 4, Na: 1 };
+  const plan = planTreasureBasinCompoundAssembly(busyPool, [bicarbonate], bakingSoda);
+
+  assert.ok(plan);
+  assert.deepEqual(plan.ionIds, ["bicarbonate"]);
+  assert.deepEqual(plan.freeAtomCounts, { Na: 1 });
+  assert.equal(canFormTreasureBasinCompound(busyPool, bakingSoda, [bicarbonate]), true);
+  assert.equal(
+    findTreasureBasinMatch(
+      busyPool,
+      library,
+      new Set(),
+      { formedIons: [bicarbonate] },
+    )?.id,
+    bakingSoda.id,
+  );
+});
+
+test("化合物需要两个同类原子团时只使用界面上的一份，其余由散装原子补足", () => {
+  const hydroxide = POLYATOMIC_IONS.find((ion) => ion.id === "hydroxide")!;
+  const calciumHydroxide = library.find((compound) => compound.sourceFormula === "Ca(OH)2")!;
+  const plan = planTreasureBasinCompoundAssembly(
+    { Ca: 1, O: 1, H: 1 },
+    [hydroxide],
+    calciumHydroxide,
+  );
+
+  assert.ok(plan);
+  assert.deepEqual(plan.ionIds, ["hydroxide"]);
+  assert.deepEqual(plan.freeAtomCounts, { Ca: 1, O: 1, H: 1 });
 });
 
 test("氧气生成一次后，三个新氧原子可以生成臭氧", () => {

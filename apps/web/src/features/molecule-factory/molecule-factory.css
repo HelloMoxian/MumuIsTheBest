@@ -357,6 +357,105 @@
   font-size: 9px;
 }
 
+.factory-build-banner {
+  position: absolute;
+  z-index: 6;
+  right: 18px;
+  bottom: 18px;
+  display: grid;
+  width: min(390px, calc(100% - 36px));
+  min-height: 118px;
+  padding: 16px 18px;
+  gap: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(89, 231, 255, 0.58);
+  border-radius: 24px;
+  color: var(--furnace-ink);
+  background:
+    radial-gradient(circle at 12% 0, rgba(89, 231, 255, 0.2), transparent 45%),
+    linear-gradient(145deg, rgba(18, 25, 84, 0.94), rgba(38, 22, 93, 0.9));
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.12),
+    0 18px 50px rgba(3, 4, 35, 0.5),
+    0 0 28px rgba(89, 231, 255, 0.12);
+  backdrop-filter: blur(16px);
+  pointer-events: none;
+  animation: factory-build-arrive 240ms ease-out both;
+}
+
+.factory-build-banner.is-ion {
+  border-color: rgba(199, 139, 255, 0.72);
+  background:
+    radial-gradient(circle at 15% 0, rgba(89, 231, 255, 0.22), transparent 42%),
+    radial-gradient(circle at 100% 100%, rgba(255, 103, 199, 0.2), transparent 48%),
+    linear-gradient(145deg, rgba(37, 25, 101, 0.96), rgba(68, 29, 111, 0.92));
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.16),
+    0 18px 50px rgba(3, 4, 35, 0.5),
+    0 0 34px rgba(184, 120, 255, 0.22);
+}
+
+.factory-build-banner::after {
+  position: absolute;
+  inset: -60% -20%;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.16), transparent 58%);
+  content: "";
+  transform: translateX(-55%);
+  animation: factory-build-scan 1.25s ease-in-out infinite;
+}
+
+.factory-build-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+.factory-build-banner small {
+  color: #9ceeff;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.factory-build-banner strong {
+  font-size: clamp(20px, 2.4vw, 28px);
+  line-height: 1.15;
+}
+
+.factory-build-banner em {
+  color: #d4d3ee;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.factory-build-sparkles {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  color: #ffd5f2;
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  text-shadow: 0 0 14px rgba(255, 142, 212, 0.8);
+  animation: factory-build-sparkle 620ms ease-in-out infinite alternate;
+}
+
+@keyframes factory-build-arrive {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes factory-build-scan {
+  0% { transform: translateX(-55%); }
+  72%, 100% { transform: translateX(55%); }
+}
+
+@keyframes factory-build-sparkle {
+  from { opacity: 0.5; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1.04); }
+}
+
 .factory-suggestions {
   position: absolute;
   z-index: 7;
@@ -882,13 +981,11 @@
     display: none;
   }
 
-  .treasure-actions button:first-child {
-    display: none;
-  }
-
   .treasure-actions button {
-    padding: 0 10px;
-    font-size: 12px;
+    max-width: 100px;
+    padding: 0 8px;
+    font-size: 11px;
+    line-height: 1.15;
   }
 
   .factory-options {
@@ -936,6 +1033,14 @@
   .factory-suggestions button span { text-align: center; }
   .factory-suggestions button strong { font-size: 17px; }
   .factory-suggestions button span { font-size: 11px; }
+
+  .factory-build-banner {
+    right: 8px;
+    bottom: 8px;
+    width: calc(100% - 16px);
+    min-height: 108px;
+    padding: 14px 15px;
+  }
 
   .treasure-periodic > header,
   .treasure-shelf > header {

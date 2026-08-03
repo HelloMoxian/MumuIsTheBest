@@ -105,6 +105,49 @@ export type ReactionCompound = {
   image: CompoundImage | null;
 };
 
+const DIAMOND_TRIANGULAR_DISPLAY_ATOMS: readonly MolecularAtom[] = [
+  { symbol: "C", x: 0, y: -1.8, z: 1.8 },
+  { symbol: "C", x: -0.72, y: -0.65, z: 0.85 },
+  { symbol: "C", x: 0.72, y: -0.65, z: 0.85 },
+  { symbol: "C", x: -1.44, y: 0.5, z: 0.05 },
+  { symbol: "C", x: 0, y: 0.5, z: 0.42 },
+  { symbol: "C", x: 1.44, y: 0.5, z: 0.05 },
+  { symbol: "C", x: -2.16, y: 1.65, z: -0.75 },
+  { symbol: "C", x: -0.72, y: 1.65, z: -0.28 },
+  { symbol: "C", x: 0.72, y: 1.65, z: -0.28 },
+  { symbol: "C", x: 2.16, y: 1.65, z: -0.75 },
+];
+
+const DIAMOND_TRIANGULAR_DISPLAY_BONDS: readonly MolecularBond[] = [
+  { from: 0, to: 1, order: 1 },
+  { from: 0, to: 2, order: 1 },
+  { from: 1, to: 2, order: 1 },
+  { from: 1, to: 3, order: 1 },
+  { from: 1, to: 4, order: 1 },
+  { from: 2, to: 4, order: 1 },
+  { from: 2, to: 5, order: 1 },
+  { from: 3, to: 4, order: 1 },
+  { from: 4, to: 5, order: 1 },
+  { from: 3, to: 6, order: 1 },
+  { from: 3, to: 7, order: 1 },
+  { from: 4, to: 7, order: 1 },
+  { from: 4, to: 8, order: 1 },
+  { from: 5, to: 8, order: 1 },
+  { from: 5, to: 9, order: 1 },
+  { from: 6, to: 7, order: 1 },
+  { from: 7, to: 8, order: 1 },
+  { from: 8, to: 9, order: 1 },
+];
+
+export function getMolecularDisplayStructure(compound: ReactionCompound): MolecularStructure {
+  if (compound.id !== "curriculum-diamond") return compound.structure;
+  return {
+    ...compound.structure,
+    atoms: DIAMOND_TRIANGULAR_DISPLAY_ATOMS,
+    bonds: DIAMOND_TRIANGULAR_DISPLAY_BONDS,
+  };
+}
+
 export type AtomBundle = {
   id: string;
   symbol: string;

@@ -228,21 +228,13 @@ export function MissionLabGame({
     await stopRecognition();
     setVoiceState("stopped");
     setVoiceDetail("正在朗读，读完后再继续听");
-    const englishSpeech = definition.speechLanguage === "en-US";
-    const promptText = englishSpeech
-      ? mission.prompt.split(/[?？]/)[0] ?? mission.prompt
-      : mission.prompt;
     const optionText = mission.choices
-      .map((option, index) => (
-        englishSpeech
-          ? `Option ${["one", "two", "three", "four", "five"][index]}, ${option.label}`
-          : `第${["一", "二", "三", "四", "五"][index]}个，${option.label}`
-      ))
-      .join(englishSpeech ? ". " : "。");
+      .map((option, index) => `第${["一", "二", "三", "四", "五"][index]}个，${option.label}`)
+      .join("。");
     const result = await browserTts.speak({
-      text: `${promptText}${englishSpeech ? "? " : "。"}${optionText}${englishSpeech ? "." : "。"}`,
+      text: `${mission.prompt}。${optionText}。`,
       lang: definition.speechLanguage,
-      rate: definition.speechLanguage === "en-US" ? 0.78 : 0.88,
+      rate: 0.88,
       pitch: 1.03,
       preferLocalVoice: true,
     });

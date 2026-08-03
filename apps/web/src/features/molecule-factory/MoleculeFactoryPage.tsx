@@ -16,13 +16,13 @@ import {
   addTreasureBasinAtom,
   buildTreasureBasinLibrary,
   canAddTreasureBasinElementBatch,
-  canFormTreasureBasinCompound,
   discoverPolyatomicIons,
   findTreasureBasinMatch,
   findTreasureBasinMatches,
   indexTreasureBasinDiscoveries,
   MOLECULE_FACTORY_SUGGESTION_DURATION_MS,
   MOLECULE_FACTORY_SUGGESTION_LIMIT,
+  planTreasureBasinCompoundAssembly,
   POLYATOMIC_IONS,
   TREASURE_BASIN_ELEMENT_LIMIT,
   TREASURE_BASIN_FREE_ATOM_LIMIT,
@@ -229,6 +229,7 @@ export function MoleculeFactoryPage() {
   const [discoveries, setDiscoveries] = useState<readonly ReactionCompound[]>(initialState.discoveries);
   const [selectedSymbol, setSelectedSymbol] = useState(initialState.selectedSymbol);
   const [assemblingId, setAssemblingId] = useState<string | null>(null);
+  const [formingIonId, setFormingIonId] = useState<string | null>(null);
   const [excludeOrganic, setExcludeOrganic] = useState(initialState.excludeOrganic);
   const [autoAssemble, setAutoAssemble] = useState(initialState.autoAssemble);
   const [formedIons, setFormedIons] = useState<readonly PolyatomicIon[]>(initialState.formedIons);
@@ -243,9 +244,11 @@ export function MoleculeFactoryPage() {
   const poolRef = useRef<AtomCounts>(initialState.pool);
   const completedIdsRef = useRef(new Set(initialState.discoveries.map((compound) => compound.id)));
   const assemblingIdRef = useRef<string | null>(null);
+  const formingIonIdRef = useRef<string | null>(null);
   const excludeOrganicRef = useRef(initialState.excludeOrganic);
   const autoAssembleRef = useRef(initialState.autoAssemble);
   const formedIonIdsRef = useRef(new Set(initialState.formedIons.map((ion) => ion.id)));
+  const formedIonsRef = useRef<readonly PolyatomicIon[]>(initialState.formedIons);
   const previousSuggestionIdsRef = useRef<ReadonlySet<string>>(new Set());
   const matchTimerRef = useRef<number | null>(null);
   const suggestionTimerRef = useRef<number | null>(null);
@@ -254,6 +257,9 @@ export function MoleculeFactoryPage() {
   const restoredCanvasRef = useRef(false);
 
   const freeAtomCount = treasureBasinAtomTotal(pool);
+  const factoryBusy = Boolean(assemblingId || formingIonId);
+  const formingIon = formingIonId ? POLYATOMIC_ION_BY_ID.get(formingIonId) : undefined;
+  const assemblingCompound = assemblingId ? BASIN_COMPOUND_BY_ID.get(assemblingId) : undefined;
   const discoveriesByElement = useMemo(
     () => indexTreasureBasinDiscoveries(discoveries),
     [discoveries],
@@ -280,17 +286,6 @@ export function MoleculeFactoryPage() {
     setSuggestions([]);
   }, []);
 
-  const registerPolyatomicIons = useCallback((nextPool: AtomCounts) => {
-    const newlyFormed = discoverPolyatomicIons(nextPool, formedIonIdsRef.current);
-    if (newlyFormed.length === 0) return newlyFormed;
-    for (const ion of newlyFormed) {
-      formedIonIdsRef.current.add(ion.id);
-      canvasRef.current?.addPolyatomicIon(ion);
-    }
-    setFormedIons((current) => [...current, ...newlyFormed]);
-    return newlyFormed;
-  }, []);
-
   const scheduleMatch = useCallback((delay = MATCH_DELAY_MS) => {
     if (matchTimerRef.current !== null) window.clearTimeout(matchTimerRef.current);
     matchTimerRef.current = window.setTimeout(() => {
@@ -308,7 +303,7 @@ export function MoleculeFactoryPage() {
       canvasRef.current.addPolyatomicIon(ion);
     }
     restoredCanvasRef.current = true;
-    if (treasureBasinAtomTotal(pool) > 0) scheduleMatch(120);
+    if (treasureBasinAtomTotal(pool) > 0 || initialState.formedIons.length > 0) scheduleMatch(120);
   }, [pool, scheduleMatch]);
 
   useEffect(() => {
@@ -328,24 +323,70 @@ export function MoleculeFactoryPage() {
     if (nextMetadata) cacheMetadataRef.current = nextMetadata;
   }, [assemblingId, autoAssemble, discoveries, excludeOrganic, formedIons, pool, selectedSymbol]);
 
-  const startAssembly = useCallback((target: ReactionCompound) => {
+  const startIonFormation = useCallback((ion: PolyatomicIon) => {
     if (
       assemblingIdRef.current
+      || formingIonIdRef.current
+      || formedIonIdsRef.current.has(ion.id)
+    ) return false;
+    const started = canvasRef.current?.formPolyatomicIon(ion) ?? false;
+    if (!started) return false;
+    clearSuggestions();
+    formingIonIdRef.current = ion.id;
+    setFormingIonId(ion.id);
+    setStatusText(`${ion.name}正在构建：游离原子会先靠近、连接，再稳定成 ${ion.formula}。`);
+    return true;
+  }, [clearSuggestions]);
+
+  const handlePolyatomicIonComplete = useCallback((ion: PolyatomicIon) => {
+    if (formingIonIdRef.current !== ion.id) return;
+    poolRef.current = consumeAtomCounts(poolRef.current, ion.atomCounts);
+    setPool(poolRef.current);
+    formedIonIdsRef.current.add(ion.id);
+    formedIonsRef.current = [...formedIonsRef.current, ion];
+    setFormedIons(formedIonsRef.current);
+    formingIonIdRef.current = null;
+    setFormingIonId(null);
+    setStatusText(`${ion.formula} ${ion.name}已经稳定，可以整团参加下一次化合物构建。`);
+    scheduleMatch(220);
+  }, [scheduleMatch]);
+
+  const startAssembly = useCallback((target: ReactionCompound) => {
+    const plan = planTreasureBasinCompoundAssembly(
+      poolRef.current,
+      formedIonsRef.current,
+      target,
+    );
+    if (
+      assemblingIdRef.current
+      || formingIonIdRef.current
       || completedIdsRef.current.has(target.id)
       || (excludeOrganicRef.current && target.family === "organic")
-      || !canFormTreasureBasinCompound(poolRef.current, target)
+      || !plan
     ) return;
-    const started = canvasRef.current?.assemble(target, 0) ?? false;
+    const started = canvasRef.current?.assemble(target, 0, plan.ionIds) ?? false;
     if (!started) {
       scheduleMatch(100);
       return;
     }
     clearSuggestions();
-    poolRef.current = consumeAtomCounts(poolRef.current, target.atomCounts);
+    poolRef.current = consumeAtomCounts(poolRef.current, plan.freeAtomCounts);
     setPool(poolRef.current);
+    if (plan.ionIds.length > 0) {
+      const consumedIonIds = new Set(plan.ionIds);
+      for (const ionId of consumedIonIds) formedIonIdsRef.current.delete(ionId);
+      formedIonsRef.current = formedIonsRef.current.filter((ion) => !consumedIonIds.has(ion.id));
+      setFormedIons(formedIonsRef.current);
+    }
     assemblingIdRef.current = target.id;
     setAssemblingId(target.id);
-    setStatusText(`${target.formula} 的原子正在靠近，准备组成${target.name}。`);
+    const ionNames = plan.ionIds
+      .map((ionId) => POLYATOMIC_ION_BY_ID.get(ionId)?.name)
+      .filter(Boolean)
+      .join("、");
+    setStatusText(ionNames
+      ? `${ionNames}正保持完整结构，与其余游离原子一起构建 ${target.formula}。`
+      : `${target.formula} 的原子正在排队靠近，准备组成${target.name}。`);
   }, [clearSuggestions, scheduleMatch]);
 
   const showManualSuggestions = useCallback(() => {
@@ -359,11 +400,12 @@ export function MoleculeFactoryPage() {
         limit: MOLECULE_FACTORY_SUGGESTION_LIMIT,
         random: Math.random,
         avoidIds: previousSuggestionIdsRef.current,
+        formedIons: formedIonsRef.current,
       },
     );
     if (candidates.length === 0) {
-      if (treasureBasinAtomTotal(poolRef.current) > 0) {
-        setStatusText("这些原子正在做布朗运动，继续加入元素寻找新伙伴。");
+      if (treasureBasinAtomTotal(poolRef.current) > 0 || formedIonsRef.current.length > 0) {
+        setStatusText("这些原子和原子团正在做布朗运动，继续加入元素寻找新伙伴。");
       }
       return;
     }
@@ -376,7 +418,8 @@ export function MoleculeFactoryPage() {
       if (
         !autoAssembleRef.current
         && !assemblingIdRef.current
-        && treasureBasinAtomTotal(poolRef.current) > 0
+        && !formingIonIdRef.current
+        && (treasureBasinAtomTotal(poolRef.current) > 0 || formedIonsRef.current.length > 0)
       ) {
         setStatusText("这一批提示已经飘走，正在寻找下一批可以合成的物质。");
         scheduleMatch(180);
@@ -385,7 +428,9 @@ export function MoleculeFactoryPage() {
   }, [clearSuggestions, scheduleMatch]);
 
   const evaluatePool = useCallback(() => {
-    if (assemblingIdRef.current) return;
+    if (assemblingIdRef.current || formingIonIdRef.current) return;
+    const nextIon = discoverPolyatomicIons(poolRef.current, formedIonIdsRef.current)[0];
+    if (nextIon && startIonFormation(nextIon)) return;
     if (!autoAssembleRef.current) {
       showManualSuggestions();
       return;
@@ -394,14 +439,17 @@ export function MoleculeFactoryPage() {
       poolRef.current,
       BASIN_COMPOUNDS,
       completedIdsRef.current,
-      { excludeOrganic: excludeOrganicRef.current },
+      {
+        excludeOrganic: excludeOrganicRef.current,
+        formedIons: formedIonsRef.current,
+      },
     );
     if (target) {
       startAssembly(target);
-    } else if (treasureBasinAtomTotal(poolRef.current) > 0) {
+    } else if (treasureBasinAtomTotal(poolRef.current) > 0 || formedIonsRef.current.length > 0) {
       setStatusText("这些原子正在做布朗运动，继续加入元素寻找新伙伴。");
     }
-  }, [showManualSuggestions, startAssembly]);
+  }, [showManualSuggestions, startAssembly, startIonFormation]);
   evaluatePoolRef.current = evaluatePool;
 
   const handleAssemblyComplete = useCallback((compound: ReactionCompound) => {
@@ -424,10 +472,7 @@ export function MoleculeFactoryPage() {
     poolRef.current = addTreasureBasinAtom(poolRef.current, symbol, batchSize);
     setPool(poolRef.current);
     canvasRef.current?.addAtoms(symbol, batchSize);
-    const newIons = registerPolyatomicIons(poolRef.current);
-    setStatusText(newIons.length > 0
-      ? `原子们先组成了${newIons.map((ion) => ion.name).join("、")}，它们不会阻挡后续物质合成。`
-      : `${chineseName}原子已进入反应区，稍等一下看看它会遇见谁。`);
+    setStatusText(`${chineseName}原子已进入反应区，构建队列会逐个检查原子团和化合物。`);
     scheduleMatch();
   };
 
@@ -440,14 +485,16 @@ export function MoleculeFactoryPage() {
   };
 
   const clearFreeAtoms = () => {
-    if (assemblingIdRef.current) return;
+    if (assemblingIdRef.current || formingIonIdRef.current) return;
     poolRef.current = {};
     setPool({});
     clearSuggestions();
     previousSuggestionIdsRef.current = new Set();
+    formedIonIdsRef.current = new Set();
+    formedIonsRef.current = [];
+    setFormedIons([]);
     canvasRef.current?.reset();
-    for (const ion of formedIons) canvasRef.current?.addPolyatomicIon(ion);
-    setStatusText("游离原子已清空，成品收藏和已形成的原子团仍然保留。");
+    setStatusText("游离原子和原子团已清空，成品收藏仍然保留。");
   };
 
   const restart = () => {
@@ -455,14 +502,17 @@ export function MoleculeFactoryPage() {
     poolRef.current = {};
     completedIdsRef.current = new Set();
     formedIonIdsRef.current = new Set();
+    formedIonsRef.current = [];
     previousSuggestionIdsRef.current = new Set();
     assemblingIdRef.current = null;
+    formingIonIdRef.current = null;
     setPool({});
     setCompletedIds(new Set());
     setDiscoveries([]);
     setFormedIons([]);
     clearSuggestions();
     setAssemblingId(null);
+    setFormingIonId(null);
     setStatusText("新的分子工厂已经准备好，点击右侧元素开始探索。");
     canvasRef.current?.reset();
   };
@@ -478,7 +528,7 @@ export function MoleculeFactoryPage() {
     clearSuggestions();
     previousSuggestionIdsRef.current = new Set();
     setStatusText(checked ? "已开启不创造有机物，只会匹配无机物。" : "有机物已经重新加入可合成目录。");
-    if (treasureBasinAtomTotal(poolRef.current) > 0) scheduleMatch(80);
+    if (treasureBasinAtomTotal(poolRef.current) > 0 || formedIonsRef.current.length > 0) scheduleMatch(80);
   };
 
   const changeAutoAssemble = (checked: boolean) => {
@@ -490,7 +540,7 @@ export function MoleculeFactoryPage() {
       ? "自动合成已开启，配方满足后工厂会自动开始。"
       : "自动合成已关闭，配方满足后请点击底部漂浮提示卡。"
     );
-    if (treasureBasinAtomTotal(poolRef.current) > 0) scheduleMatch(80);
+    if (treasureBasinAtomTotal(poolRef.current) > 0 || formedIonsRef.current.length > 0) scheduleMatch(80);
   };
 
   return (
@@ -505,9 +555,10 @@ export function MoleculeFactoryPage() {
         </div>
         <div className="treasure-top-stats" aria-label="探索统计">
           <span><strong>{freeAtomCount}</strong> 游离原子</span>
+          <span><strong>{formedIons.length}</strong> 个原子团</span>
           <span><strong>{discoveries.length}</strong> 种发现</span>
         </div>
-        <fieldset className="factory-options" disabled={Boolean(assemblingId)}>
+        <fieldset className="factory-options" disabled={factoryBusy}>
           <legend className="sr-only">分子工厂合成选项</legend>
           <label>
             <input
@@ -529,8 +580,8 @@ export function MoleculeFactoryPage() {
           </label>
         </fieldset>
         <div className="treasure-actions">
-          <button type="button" onClick={clearFreeAtoms} disabled={freeAtomCount === 0 || Boolean(assemblingId)}>
-            清空原子
+          <button type="button" onClick={clearFreeAtoms} disabled={(freeAtomCount === 0 && formedIons.length === 0) || factoryBusy}>
+            清空原子和原子团
           </button>
           <button type="button" onClick={restart}>重新开始</button>
         </div>
@@ -542,10 +593,12 @@ export function MoleculeFactoryPage() {
             <article className="treasure-reactor">
               <header>
                 <div>
-                  <span className={assemblingId ? "reactor-status is-assembling" : "reactor-status"}>
+                  <span className={factoryBusy ? "reactor-status is-assembling" : "reactor-status"}>
                     <i aria-hidden="true" />
-                    {assemblingId
-                      ? "正在组成新物质"
+                    {formingIonId
+                      ? "正在构建原子团"
+                      : assemblingId
+                        ? "正在组成新物质"
                       : freeAtomCount
                         ? "游离原子布朗运动中"
                         : formedIons.length ? "原子团自由漂浮中" : "反应区等待原子"}
@@ -561,14 +614,31 @@ export function MoleculeFactoryPage() {
                   targetCount={1}
                   freeParticleSpeed={0.5}
                   onAssemblyComplete={handleAssemblyComplete}
+                  onPolyatomicIonComplete={handlePolyatomicIonComplete}
                 />
-                {freeAtomCount === 0 && formedIons.length === 0 && !assemblingId && (
+                {freeAtomCount === 0 && formedIons.length === 0 && !factoryBusy && (
                   <div className="treasure-empty">
                     <span aria-hidden="true">✦</span>
                     <strong>从右侧点一个元素</strong>
                     <p>{autoAssemble
                       ? "连续点击投入多个原子，配方满足后会自动组成物质。"
                       : "连续点击投入多个原子，配方满足后点底部提示卡来合成。"}</p>
+                  </div>
+                )}
+                {factoryBusy && (
+                  <div
+                    className={`factory-build-banner ${formingIon ? "is-ion" : "is-compound"}`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <span className="factory-build-sparkles" aria-hidden="true">✦ · ✧ · ✦</span>
+                    <small>串行构建队列 · 当前第 1 项</small>
+                    <strong>{formingIon
+                      ? `${formingIon.formula} ${formingIon.name}`
+                      : `${assemblingCompound?.formula ?? "新物质"} ${assemblingCompound?.name ?? ""}`}</strong>
+                    <em>{formingIon
+                      ? "原子正在靠近，连接成一个特别的带电伙伴"
+                      : "原子团与游离原子正在共同合并，完成后再构建下一项"}</em>
                   </div>
                 )}
                 {suggestions.length > 0 && !autoAssemble && (

@@ -4,7 +4,7 @@
 
 - `molecular-structures.v1.json` 保存离散中性分子的权威连接拓扑；
 - `element-compounds.v1.json` 保存补齐前 80 号元素的化合物记录。
-- `curriculum-compounds.v1.json` 保存教材常见酸碱盐、守恒反应物质、后段金属非氧化物和碳材料代表结构。
+- `curriculum-compounds.v1.json` 保存教材常见酸碱盐、后段金属非氧化物和碳材料代表结构。
 
 `pubchem-compound-properties.v1.json` 保存 504 个 PubChem CID 的分子属性和本地图集索引。生成器把上述四份维护源合并、过滤并标准化为 `compound-catalog.v1.json`；这份 518 条目录是反应熔炉、分子工厂和元素周期表唯一允许消费的运行时化合物事实来源。业务代码不得直接拼接三个源资产，也不得在元素页面再维护手写化合物清单。
 
@@ -18,7 +18,7 @@
 - 常见物质候选：中文维基百科《有机化合物列表》；
 - 中文名称、PubChem CID 对照和简短说明：Wikidata；
 - 水、氧气、二氧化碳等基础小分子使用单独白名单确保进入学习库，但连接关系仍来自 PubChem。
-- 酸、碱、盐和金属材料范围：人民教育出版社《化学 九年级下册》目录与项目既有 165 条守恒反应；
+- 酸、碱、盐和金属材料范围：人民教育出版社《化学 九年级下册》目录；
 - 金刚石、C₆₀、碳纳米管和石墨烯：Crystallography Open Database、Nature 原始论文和 Nobel Prize 科学资料。
 
 每条记录都保留 PubChem CID 和详情 URL，便于逐条追溯。中文候选来源不能覆盖或修改 PubChem 给出的原子与键数据。
@@ -51,4 +51,4 @@ pnpm content:chemistry:validate
 
 `content:chemistry:catalog:refresh` 通过 PubChem PUG REST 批量更新属性与 100 × 100 二维图，再重建统一目录；只修改已有源资产且不需要联网时，可运行 `pnpm content:chemistry:catalog:generate`。生成过程限制并发并对 429/5xx 进行退避重试。
 
-校验器锁定乙炔 `H—C≡C—H` 和 C₆₀ 60 顶点/90 连接拓扑，检查全部记录的分子式、连通性、键索引、键级、虚实线语义和来源 URL，并保证目录恰好 518 条、ID 唯一、覆盖至少 80 种元素、每条都有丰富档案、有 CID 的运行时记录都有正确图集坐标，165 条守恒反应物质全部进入运行时目录。
+校验器锁定乙炔 `H—C≡C—H` 和 C₆₀ 60 顶点/90 连接拓扑，检查全部记录的分子式、连通性、键索引、键级、虚实线语义和来源 URL，并保证目录恰好 518 条、ID 唯一、覆盖至少 80 种元素、每条都有丰富档案、有 CID 的运行时记录都有正确图集坐标。

@@ -7,6 +7,7 @@ import {
   compoundElementSymbols,
   consumeAtomCounts,
   findCompletableCompound,
+  getMolecularDisplayStructure,
   isOrganicCompound,
   parseFormula,
   REACTION_FURNACE_ATOM_BUDGET,
@@ -82,6 +83,19 @@ test("教材常见物质与四种碳结构都进入随机池", () => {
     assert.equal(compound.structure.bonds.length, expectation.bonds);
     assert.ok(compound.structure.bonds.every((bond) => bond.style !== "dashed"));
   }
+});
+
+test("金刚石使用一二三四行的三角锥展示布局", () => {
+  const diamond = REACTION_COMPOUNDS.find((compound) => compound.id === "curriculum-diamond")!;
+  const display = getMolecularDisplayStructure(diamond);
+  const rowCounts = [...new Set(display.atoms.map((atom) => atom.y))]
+    .sort((first, second) => first - second)
+    .map((rowY) => display.atoms.filter((atom) => atom.y === rowY).length);
+
+  assert.deepEqual(rowCounts, [1, 2, 3, 4]);
+  assert.equal(display.bonds.length, 18);
+  assert.equal(diamond.structure.bonds.length, 9);
+  assert.ok(display.atoms[0]!.z! > display.atoms.at(-1)!.z!);
 });
 
 test("乙炔严格使用 H—C≡C—H 的 PubChem 拓扑", () => {
