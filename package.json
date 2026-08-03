@@ -10,11 +10,13 @@
     "dev": "pnpm --parallel --stream --filter @mumu/web --filter @mumu/server dev",
     "build": "pnpm --filter @mumu/web build && pnpm --filter @mumu/server build",
     "build:sites": "pnpm --filter @mumu/web build && node scripts/prepare-sites-dist.mjs",
-    "content:validate": "node scripts/validate-common-characters.mjs && node scripts/validate-molecular-structures.mjs && node scripts/validate-element-compounds.mjs && node scripts/validate-curriculum-compounds.mjs",
+    "content:validate": "node scripts/validate-common-characters.mjs && node scripts/validate-molecular-structures.mjs && node scripts/validate-element-compounds.mjs && node scripts/validate-curriculum-compounds.mjs && node scripts/validate-compound-catalog.mjs",
     "content:chemistry:generate": "node scripts/generate-molecular-structures.mjs",
     "content:chemistry:elements:generate": "node scripts/generate-element-compounds.mjs",
     "content:chemistry:curriculum:generate": "node scripts/generate-curriculum-compounds.mjs",
-    "content:chemistry:validate": "node scripts/validate-molecular-structures.mjs && node scripts/validate-element-compounds.mjs && node scripts/validate-curriculum-compounds.mjs",
+    "content:chemistry:catalog:generate": "node scripts/generate-compound-catalog.mjs",
+    "content:chemistry:catalog:refresh": "node scripts/fetch-pubchem-compound-assets.mjs && node scripts/generate-compound-catalog.mjs",
+    "content:chemistry:validate": "node scripts/validate-molecular-structures.mjs && node scripts/validate-element-compounds.mjs && node scripts/validate-curriculum-compounds.mjs && node scripts/validate-compound-catalog.mjs",
     "start": "pnpm --filter @mumu/server start",
     "typecheck": "pnpm --filter @mumu/web typecheck && pnpm --filter @mumu/server typecheck"
   }

@@ -3,6 +3,10 @@ import test from "node:test";
 import { nucleusParticleCounts } from "./element-knowledge";
 import { ELEMENTS } from "./elements.generated";
 import {
+  REACTION_COMPOUNDS,
+  compoundsContainingElement,
+} from "../reaction-furnace/compound-library";
+import {
   applyNavigationCommands,
   isBackCommand,
   isDetailCommand,
@@ -31,6 +35,26 @@ test("每个元素的电子层总数等于原子序数", () => {
     const electronCount = element.shells.reduce((total, count) => total + count, 0);
     assert.equal(electronCount, element.atomicNumber, element.chineseName);
   }
+});
+
+test("每个元素展示统一知识库中全部含该元素的化合物", () => {
+  for (const element of ELEMENTS) {
+    const expectedIds = REACTION_COMPOUNDS
+      .filter((compound) => compound.atomCounts[element.symbol])
+      .map((compound) => compound.id)
+      .sort();
+    const indexedIds = compoundsContainingElement(element.symbol)
+      .map((compound) => compound.id)
+      .sort();
+    assert.deepEqual(indexedIds, expectedIds, element.chineseName);
+  }
+  assert.ok(compoundsContainingElement("H").length > 100);
+  assert.ok(REACTION_COMPOUNDS.every((compound) => (
+    compound.profile.summary
+    && compound.profile.composition
+    && compound.profile.learningPoints.length >= 3
+  )));
+  assert.equal(REACTION_COMPOUNDS.filter((compound) => compound.image).length, 502);
 });
 
 test("周期表坐标唯一，镧系和锕系各有 15 个元素", () => {

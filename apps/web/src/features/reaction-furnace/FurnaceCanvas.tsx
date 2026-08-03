@@ -6,12 +6,13 @@ import {
   type Ref,
 } from "react";
 import { getReactionElementTheme } from "./element-colors";
-import type { ReactionCompound } from "./logic";
+import type { AtomCounts, ReactionCompound } from "./logic";
 import {
   advanceStableStructureMotion,
   advanceFreeAtomMotion,
   createInjectedAtomMotion,
   getStableStructureSlot,
+  type FreeAtomMotion,
 } from "./particle-motion";
 
 type ParticleState = "free" | "assembling" | "bound";
@@ -70,8 +71,21 @@ type Ripple = {
   strength: number;
 };
 
+export type CanvasPolyatomicIon = {
+  id: string;
+  formula: string;
+  name: string;
+  chargeLabel: string;
+  atomCounts: AtomCounts;
+};
+
+type FloatingPolyatomicIon = FreeAtomMotion & {
+  ion: CanvasPolyatomicIon;
+};
+
 export type FurnaceCanvasHandle = {
   addAtoms: (symbol: string, count: number) => void;
+  addPolyatomicIon: (ion: CanvasPolyatomicIon) => void;
   assemble: (compound: ReactionCompound, slotIndex: number) => boolean;
   restoreStableCompound: (compound: ReactionCompound, slotIndex: number) => void;
   reset: () => void;
@@ -173,6 +187,60 @@ function drawAtom(
   context.shadowColor = "#090a28";
   context.shadowBlur = 4;
   context.fillText(particle.symbol, x, y + 0.5);
+  context.shadowBlur = 0;
+}
+
+function drawPolyatomicIon(
+  context: CanvasRenderingContext2D,
+  particle: FloatingPolyatomicIon,
+) {
+  const { x, y, radius, ion } = particle;
+  drawGlow(context, x, y, radius * 2.25, "#b878ff", 0.34);
+  const shell = context.createRadialGradient(
+    x - radius * 0.28,
+    y - radius * 0.36,
+    radius * 0.08,
+    x,
+    y,
+    radius,
+  );
+  shell.addColorStop(0, "rgba(255,255,255,.96)");
+  shell.addColorStop(0.17, "rgba(89,231,255,.88)");
+  shell.addColorStop(0.46, "rgba(105,80,220,.9)");
+  shell.addColorStop(1, "rgba(21,18,72,.96)");
+  context.fillStyle = shell;
+  context.strokeStyle = "rgba(255,255,255,.78)";
+  context.lineWidth = 1.5;
+  context.beginPath();
+  context.arc(x, y, radius, 0, Math.PI * 2);
+  context.fill();
+  context.stroke();
+
+  const memberSymbols = Object.entries(ion.atomCounts)
+    .flatMap(([symbol, count]) => Array.from({ length: count }, () => symbol))
+    .slice(0, 7);
+  const memberRadius = Math.max(3.6, Math.min(5.2, radius * 0.13));
+  memberSymbols.forEach((symbol, index) => {
+    const angle = -Math.PI + ((index + 0.5) / memberSymbols.length) * Math.PI;
+    const orbitRadius = radius * 0.56;
+    const theme = getReactionElementTheme(symbol);
+    drawAtom(context, {
+      color: theme.color,
+      radius: memberRadius,
+      symbol,
+    }, x + Math.cos(angle) * orbitRadius, y + Math.sin(angle) * orbitRadius - radius * 0.08, 0.12);
+  });
+
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillStyle = "#ffffff";
+  context.shadowColor = "#090a28";
+  context.shadowBlur = 5;
+  context.font = `900 ${Math.max(13, radius * 0.43)}px ui-rounded, sans-serif`;
+  context.fillText(ion.formula, x, y + radius * 0.05);
+  context.fillStyle = "#83efff";
+  context.font = `850 ${Math.max(8, radius * 0.22)}px ui-rounded, sans-serif`;
+  context.fillText(`电荷 ${ion.chargeLabel}`, x, y + radius * 0.47);
   context.shadowBlur = 0;
 }
 
@@ -331,15 +399,18 @@ function FurnaceCanvasInner(
     onAssemblyComplete,
     targetCount,
     mode = "dock",
+    freeParticleSpeed = 1,
   }: {
     onAssemblyComplete: (compound: ReactionCompound) => void;
     targetCount: number;
     mode?: FurnaceCanvasMode;
+    freeParticleSpeed?: number;
   },
   ref: Ref<FurnaceCanvasHandle>,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<AtomParticle[]>([]);
+  const floatingIonsRef = useRef<FloatingPolyatomicIon[]>([]);
   const moleculesRef = useRef<Molecule[]>([]);
   const ripplesRef = useRef<Ripple[]>([]);
   const nextParticleIdRef = useRef(1);
@@ -348,10 +419,12 @@ function FurnaceCanvasInner(
   const reducedMotionRef = useRef(false);
   const targetCountRef = useRef(targetCount);
   const modeRef = useRef(mode);
+  const freeParticleSpeedRef = useRef(freeParticleSpeed);
   const onCompleteRef = useRef(onAssemblyComplete);
   onCompleteRef.current = onAssemblyComplete;
   targetCountRef.current = targetCount;
   modeRef.current = mode;
+  freeParticleSpeedRef.current = freeParticleSpeed;
 
   useImperativeHandle(ref, () => ({
     addAtoms(symbol, count) {
@@ -387,6 +460,32 @@ function FurnaceCanvasInner(
         startedAt: now,
         color,
         strength: Math.min(1.4, 0.5 + count * 0.08),
+      });
+    },
+    addPolyatomicIon(ion) {
+      if (floatingIonsRef.current.some((particle) => particle.ion.id === ion.id)) return;
+      const { width, height } = sizeRef.current;
+      const particleId = nextParticleIdRef.current;
+      nextParticleIdRef.current += 1;
+      floatingIonsRef.current.push({
+        ion,
+        ...createInjectedAtomMotion({
+          particleId,
+          index: floatingIonsRef.current.length,
+          count: floatingIonsRef.current.length + 1,
+          width,
+          height,
+          now: performance.now(),
+          radius: 38,
+          reducedMotion: reducedMotionRef.current,
+        }),
+      });
+      ripplesRef.current.push({
+        x: width - 42,
+        y: height * 0.5,
+        startedAt: performance.now(),
+        color: "#b878ff",
+        strength: 1,
       });
     },
     assemble(compound, slotIndex) {
@@ -515,6 +614,7 @@ function FurnaceCanvasInner(
     },
     reset() {
       particlesRef.current = [];
+      floatingIonsRef.current = [];
       moleculesRef.current = [];
       ripplesRef.current = [];
       nextParticleIdRef.current = 1;
@@ -675,7 +775,14 @@ function FurnaceCanvasInner(
       for (const particle of particlesRef.current) {
         if (particle.state === "free") {
           if (!reducedMotionRef.current) {
-            advanceFreeAtomMotion(particle, { width, height }, now, delta);
+            advanceFreeAtomMotion(
+              particle,
+              { width, height },
+              now,
+              delta,
+              Math.random,
+              freeParticleSpeedRef.current,
+            );
           }
           drawAtom(context, particle, particle.x, particle.y);
           continue;
@@ -756,6 +863,20 @@ function FurnaceCanvasInner(
         }
       }
 
+      for (const floatingIon of floatingIonsRef.current) {
+        if (!reducedMotionRef.current) {
+          advanceFreeAtomMotion(
+            floatingIon,
+            { width, height },
+            now,
+            delta,
+            Math.random,
+            freeParticleSpeedRef.current,
+          );
+        }
+        drawPolyatomicIon(context, floatingIon);
+      }
+
       ripplesRef.current = ripplesRef.current.filter((ripple) => now - ripple.startedAt < 1300);
       for (const ripple of ripplesRef.current) {
         const progress = (now - ripple.startedAt) / 1300;
@@ -797,7 +918,7 @@ function FurnaceCanvasInner(
       ref={canvasRef}
       className="furnace-canvas"
       aria-label={mode === "eject"
-        ? "化学聚宝盆反应区：投放的原子会在这里运动，组成物质后从底部离开"
+        ? "分子工厂反应区：投放的原子和已形成的原子团会在这里运动，组成物质后从底部离开"
         : `实时反应炉：投放的原子会在这里运动，并在配方齐全后聚合到 ${targetCount} 个结构停泊位`}
     >
       当前浏览器不支持实时反应炉画面。

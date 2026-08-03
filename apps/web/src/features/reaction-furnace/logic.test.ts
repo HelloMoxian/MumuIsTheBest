@@ -201,8 +201,11 @@ test("少量原子逐个陈列，大量原子按最多十个成组", () => {
 test("只在原子齐全时命中未完成配方并正确消耗", () => {
   const target: ReactionCompound = {
     id: "co2",
+    cid: 280,
     formula: "CO₂",
+    sourceFormula: "CO2",
     name: "二氧化碳",
+    nameEnglish: "carbon dioxide",
     feature: "测试",
     kind: "molecule",
     family: "inorganic",
@@ -227,6 +230,17 @@ test("只在原子齐全时命中未完成配方并正确消耗", () => {
         url: "https://pubchem.ncbi.nlm.nih.gov/compound/280",
       },
     },
+    profile: {
+      summary: "测试",
+      englishName: "carbon dioxide",
+      composition: "C × 1、O × 2",
+      classification: "无机物 · 分子 · 氧化物",
+      structureNote: "权威结构记录",
+      learningPoints: ["组成", "分类", "来源"],
+      safetyNote: "仅用于测试",
+      properties: null,
+    },
+    image: null,
   };
   assert.equal(findCompletableCompound({ C: 1, O: 1 }, [target], new Set()), undefined);
   assert.equal(findCompletableCompound({ C: 2, O: 2 }, [target], new Set())?.id, "co2");

@@ -50,10 +50,49 @@ export type MolecularStructure = {
   };
 };
 
+export type CompoundProperties = {
+  molecularFormula: string | null;
+  molecularWeight: string | null;
+  iupacName: string | null;
+  xLogP: number | null;
+  topologicalPolarSurfaceArea: number | null;
+  complexity: number | null;
+  charge: number | null;
+  hydrogenBondDonorCount: number | null;
+  hydrogenBondAcceptorCount: number | null;
+  rotatableBondCount: number | null;
+  heavyAtomCount: number | null;
+};
+
+export type CompoundProfile = {
+  summary: string;
+  englishName: string;
+  composition: string;
+  classification: string;
+  structureNote: string;
+  learningPoints: readonly string[];
+  safetyNote: string;
+  properties: CompoundProperties | null;
+};
+
+export type CompoundImage = {
+  kind: "pubchem-atlas";
+  path: string;
+  atlasIndex: number;
+  columns: number;
+  rows: number;
+  alt: string;
+  sourceUrl: string;
+  attribution: string;
+};
+
 export type ReactionCompound = {
   id: string;
+  cid: number | null;
   formula: string;
+  sourceFormula: string;
   name: string;
+  nameEnglish: string;
   feature: string;
   kind: CompoundKind;
   family: CompoundFamily;
@@ -62,6 +101,8 @@ export type ReactionCompound = {
   atomCounts: AtomCounts;
   totalAtoms: number;
   structure: MolecularStructure;
+  profile: CompoundProfile;
+  image: CompoundImage | null;
 };
 
 export type AtomBundle = {

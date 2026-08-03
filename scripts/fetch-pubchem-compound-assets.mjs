@@ -1,0 +1,162 @@
+import { execFile } from "node:child_process";
+import { mkdir, mkdtemp, readFile, rename, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
+const root = process.cwd();
+const chemistryDir = path.join(root, "content", "chemistry");
+const propertyPath = path.join(chemistryDir, "pubchem-compound-properties.v1.json");
+const atlasPath = path.join(
+  root,
+  "apps",
+  "web",
+  "public",
+  "images",
+  "chemistry",
+  "pubchem-compounds.v1.png",
+);
+const sourceFiles = [
+  "molecular-structures.v1.json",
+  "element-compounds.v1.json",
+  "curriculum-compounds.v1.json",
+];
+const columns = 24;
+const cellSize = 100;
+const propertyNames = [
+  "MolecularFormula",
+  "MolecularWeight",
+  "IUPACName",
+  "XLogP",
+  "TPSA",
+  "Complexity",
+  "HBondDonorCount",
+  "HBondAcceptorCount",
+  "RotatableBondCount",
+  "HeavyAtomCount",
+  "Charge",
+].join(",");
+
+async function readSourceRecords() {
+  const assets = await Promise.all(
+    sourceFiles.map(async (fileName) => JSON.parse(
+      await readFile(path.join(chemistryDir, fileName), "utf8"),
+    )),
+  );
+  return assets.flatMap((asset) => asset.records);
+}
+
+function chunks(values, size) {
+  const result = [];
+  for (let index = 0; index < values.length; index += size) {
+    result.push(values.slice(index, index + size));
+  }
+  return result;
+}
+
+async function fetchJson(url) {
+  const response = await fetch(url, { headers: { "User-Agent": "MumuIsTheBest-content-builder/1.0" } });
+  if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${url}`);
+  return response.json();
+}
+
+async function fetchProperties(cids) {
+  const records = [];
+  for (const batch of chunks(cids, 80)) {
+    const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${batch.join(",")}/property/${propertyNames}/JSON`;
+    const payload = await fetchJson(url);
+    records.push(...(payload.PropertyTable?.Properties ?? []));
+  }
+  const byCid = new Map(records.map((record) => [record.CID, record]));
+  return cids.map((cid) => {
+    const record = byCid.get(cid);
+    if (!record) throw new Error(`PubChem properties missing for CID ${cid}`);
+    return record;
+  });
+}
+
+async function mapWithConcurrency(values, concurrency, worker) {
+  let cursor = 0;
+  const runners = Array.from({ length: concurrency }, async () => {
+    while (cursor < values.length) {
+      const index = cursor;
+      cursor += 1;
+      await worker(values[index], index);
+    }
+  });
+  await Promise.all(runners);
+}
+
+async function fetchImage(cid, destination) {
+  const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${cid}/PNG?record_type=2d&image_size=${cellSize}x${cellSize}`;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const response = await fetch(url, { headers: { "User-Agent": "MumuIsTheBest-content-builder/1.0" } });
+    if (response.ok) {
+      await writeFile(destination, Buffer.from(await response.arrayBuffer()));
+      return;
+    }
+    if (![429, 500, 502, 503, 504].includes(response.status) || attempt === 4) {
+      throw new Error(`${response.status} ${response.statusText}: ${url}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500 * (2 ** attempt)));
+  }
+}
+
+async function buildAtlas(cids, temporaryDirectory) {
+  const images = cids.map((cid, index) => (
+    path.join(temporaryDirectory, `${String(index).padStart(4, "0")}-${cid}.png`)
+  ));
+  await mapWithConcurrency(cids, 3, async (cid, index) => {
+    await fetchImage(cid, images[index]);
+  });
+  await mkdir(path.dirname(atlasPath), { recursive: true });
+  const temporaryAtlas = path.join(path.dirname(atlasPath), ".pubchem-compounds.v1.tmp.png");
+  await execFileAsync("magick", [
+    "montage",
+    ...images,
+    "-tile",
+    `${columns}x`,
+    "-geometry",
+    `${cellSize}x${cellSize}+0+0`,
+    "-background",
+    "none",
+    temporaryAtlas,
+  ], { maxBuffer: 10 * 1024 * 1024 });
+  await rename(temporaryAtlas, atlasPath);
+}
+
+const records = await readSourceRecords();
+const cids = [...new Set(
+  records.map((record) => record.cid).filter((cid) => Number.isSafeInteger(cid) && cid > 0),
+)].sort((first, second) => first - second);
+const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), "mumu-pubchem-"));
+
+try {
+  const properties = await fetchProperties(cids);
+  const propertyAsset = {
+    schemaVersion: 1,
+    source: {
+      name: "PubChem PUG REST",
+      url: "https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest",
+      retrievedOn: "2026-08-03",
+    },
+    imageAtlas: {
+      path: "/images/chemistry/pubchem-compounds.v1.png",
+      columns,
+      rows: Math.ceil(cids.length / columns),
+      cellSize,
+      cids,
+      sourceUrlTemplate: "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{cid}/PNG?record_type=2d&image_size=100x100",
+      attribution: "2D structure image generated by PubChem PUG REST",
+    },
+    records: properties,
+  };
+  await buildAtlas(cids, temporaryDirectory);
+  const temporaryPropertyPath = `${propertyPath}.tmp`;
+  await writeFile(temporaryPropertyPath, `${JSON.stringify(propertyAsset, null, 2)}\n`, "utf8");
+  await rename(temporaryPropertyPath, propertyPath);
+  console.log(`Fetched ${properties.length} PubChem property records and built a ${columns} × ${Math.ceil(cids.length / columns)} image atlas.`);
+} finally {
+  await rm(temporaryDirectory, { recursive: true, force: true });
+}

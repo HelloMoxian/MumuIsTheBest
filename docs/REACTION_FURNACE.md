@@ -13,13 +13,14 @@
 
 ## 2. 当前资料库
 
-正式资料由三个可版本控制的静态资产组成，运行时适配器位于 `apps/web/src/features/reaction-furnace/compound-library.ts`：
+正式运行时只读取统一关键资产 `content/chemistry/compound-catalog.v1.json`，适配器位于 `apps/web/src/features/reaction-furnace/compound-library.ts`。目录由以下维护源生成：
 
 - `content/chemistry/molecular-structures.v1.json`：300 条原始中性分子记录；运行时过滤旧资料中的“巴拉松”和“毒芹碱”，并用新球形 C₆₀ 替换旧二维记录后使用 297 条；
 - `content/chemistry/element-compounds.v1.json`：68 条元素覆盖记录，用来补齐原子序数 1—80 的元素。
 - `content/chemistry/curriculum-compounds.v1.json`：153 条教材常见物质、后段金属非氧化物和碳材料结构记录。
+- `content/chemistry/pubchem-compound-properties.v1.json`：504 个 PubChem CID 的分子属性与本地图集索引。
 
-合并后的正式运行时池固定为 **518 种物质**，包括 **268 种有机物和 250 种无机物**。有机/无机分类使用显式资料分类，不能用“是否含碳”代替；CO、CO₂、H₂CO₃、金刚石、石墨烯、碳纳米管和 C₆₀ 都含碳但属于无机物或碳单质。
+生成后的正式运行时池固定为 **518 种物质**，包括 **268 种有机物和 250 种无机物**。元素周期表和分子工厂复用同一目录，不再各自维护清单。有机/无机分类使用显式资料分类，不能用“是否含碳”代替；CO、CO₂、H₂CO₃、金刚石、石墨烯、碳纳米管和 C₆₀ 都含碳但属于无机物或碳单质。
 
 - 水、氧气、氮气、二氧化碳、氨等基础小分子；
 - 乙炔、乙烯、苯、醇、醛、酮、有机酸和常见杂环分子；

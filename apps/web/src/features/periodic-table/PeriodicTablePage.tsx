@@ -15,7 +15,6 @@ import {
 import {
   chemicalSummary,
   discoveryLabel,
-  elementCompounds,
   elementUses,
   kelvinLabel,
   neutronEstimate,
@@ -23,6 +22,14 @@ import {
   stateLabel,
   type ElementRecord,
 } from "./element-knowledge";
+import {
+  COMPOUND_CATEGORY_LABELS,
+  COMPOUND_KIND_LABELS,
+  compoundsContainingElement,
+} from "../reaction-furnace/compound-library";
+import { CompoundReferenceImage } from "../reaction-furnace/CompoundReferenceImage";
+import { MoleculeStructurePreview } from "../reaction-furnace/MoleculeStructurePreview";
+import type { ReactionCompound } from "../reaction-furnace/logic";
 import { ELEMENTS } from "./elements.generated";
 import {
   applyNavigationCommands,
@@ -212,6 +219,163 @@ function Property({
   );
 }
 
+const COMPOUNDS_PER_PAGE = 12;
+
+function CompoundProfilePanel({ compound }: { compound: ReactionCompound }) {
+  const properties = compound.profile.properties;
+  return (
+    <article className="compound-profile" aria-labelledby="compound-profile-title">
+      <header>
+        <div>
+          <p>{compound.profile.classification}</p>
+          <h4 id="compound-profile-title"><strong>{compound.formula}</strong> {compound.name}</h4>
+          <span>{compound.nameEnglish}</span>
+        </div>
+        <span className={`compound-family is-${compound.family}`}>
+          {compound.family === "organic" ? "有机物" : "无机物"}
+        </span>
+      </header>
+
+      <div className="compound-visuals">
+        <CompoundReferenceImage compound={compound} />
+        <figure className="compound-ball-model">
+          <MoleculeStructurePreview compound={compound} />
+          <figcaption>{COMPOUND_KIND_LABELS[compound.kind]}组成示意</figcaption>
+        </figure>
+      </div>
+
+      <p className="compound-summary">{compound.profile.summary}</p>
+      <dl className="compound-facts">
+        <div><dt>具体组成</dt><dd>{compound.profile.composition}</dd></div>
+        <div><dt>结构说明</dt><dd>{compound.profile.structureNote}</dd></div>
+        <div><dt>目录分类</dt><dd>{COMPOUND_CATEGORY_LABELS[compound.category]} · {COMPOUND_KIND_LABELS[compound.kind]}</dd></div>
+        <div><dt>来源</dt><dd><a href={compound.structure.source.url} target="_blank" rel="noreferrer">{compound.structure.source.name}</a></dd></div>
+      </dl>
+
+      {properties && (
+        <section className="compound-property-section" aria-labelledby="compound-property-title">
+          <h5 id="compound-property-title">PubChem 分子数据</h5>
+          <div className="compound-property-grid">
+            <Property label="分子量" value={properties.molecularWeight} />
+            <Property label="IUPAC 名称" value={properties.iupacName} />
+            <Property label="形式电荷" value={properties.charge} />
+            <Property label="重原子数" value={properties.heavyAtomCount} />
+            <Property label="氢键供体 / 受体" value={`${properties.hydrogenBondDonorCount ?? "—"} / ${properties.hydrogenBondAcceptorCount ?? "—"}`} />
+            <Property label="可旋转键数" value={properties.rotatableBondCount} />
+            <Property label="拓扑极性表面积" value={properties.topologicalPolarSurfaceArea === null ? null : `${properties.topologicalPolarSurfaceArea} Å²`} />
+            <Property label="结构复杂度" value={properties.complexity} />
+          </div>
+        </section>
+      )}
+
+      <section className="compound-learning-points">
+        <h5>观察要点</h5>
+        <ul>
+          {compound.profile.learningPoints.map((point) => <li key={point}>{point}</li>)}
+        </ul>
+      </section>
+      <aside className="compound-safety-note"><strong>安全说明</strong><p>{compound.profile.safetyNote}</p></aside>
+    </article>
+  );
+}
+
+function ElementCompoundCatalog({ element }: { element: ElementRecord }) {
+  const compounds = useMemo(() => compoundsContainingElement(element.symbol), [element.symbol]);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(0);
+  const [selectedId, setSelectedId] = useState<string | null>(compounds[0]?.id ?? null);
+  const filteredCompounds = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase("zh-CN");
+    if (!normalized) return compounds;
+    return compounds.filter((compound) => (
+      compound.name.toLocaleLowerCase("zh-CN").includes(normalized)
+      || compound.nameEnglish.toLocaleLowerCase("en").includes(normalized)
+      || compound.sourceFormula.toLocaleLowerCase("en").includes(normalized)
+      || compound.feature.toLocaleLowerCase("zh-CN").includes(normalized)
+    ));
+  }, [compounds, query]);
+  const pageCount = Math.max(1, Math.ceil(filteredCompounds.length / COMPOUNDS_PER_PAGE));
+  const safePage = Math.min(page, pageCount - 1);
+  const visibleCompounds = filteredCompounds.slice(
+    safePage * COMPOUNDS_PER_PAGE,
+    (safePage + 1) * COMPOUNDS_PER_PAGE,
+  );
+  const selectedCompound = filteredCompounds.find((compound) => compound.id === selectedId)
+    ?? filteredCompounds[0]
+    ?? null;
+
+  useEffect(() => {
+    setQuery("");
+    setPage(0);
+    setSelectedId(compounds[0]?.id ?? null);
+  }, [compounds]);
+
+  const changeQuery = (value: string) => {
+    setQuery(value);
+    setPage(0);
+  };
+
+  return (
+    <section className="story-section compounds-section" aria-labelledby="element-compound-catalog-title">
+      <div className="story-heading">
+        <span aria-hidden="true">⬡</span>
+        <div>
+          <small>COMPOUND KNOWLEDGE BASE</small>
+          <h3 id="element-compound-catalog-title">{element.chineseName}的知识库化合物</h3>
+        </div>
+        <strong className="compound-total">全部 {compounds.length} 种</strong>
+      </div>
+
+      {compounds.length === 0 ? (
+        <div className="compound-catalog-empty">
+          <strong>目录中暂时没有含{element.chineseName}的可靠物质记录</strong>
+          <p>这种元素可能寿命很短，或当前统一资产还没有可稳定维护的结构资料。</p>
+        </div>
+      ) : (
+        <div className="compound-catalog-layout">
+          <div className="compound-catalog-browser">
+            <label className="compound-search">
+              <span>搜索这 {compounds.length} 种物质</span>
+              <input
+                type="search"
+                value={query}
+                onChange={(event) => changeQuery(event.target.value)}
+                placeholder="输入中文名、英文名或分子式"
+              />
+            </label>
+            {visibleCompounds.length === 0 ? (
+              <div className="compound-search-empty">没有找到匹配物质，换一个关键词试试。</div>
+            ) : (
+              <div className="compound-catalog-list" role="list" aria-label={`含${element.chineseName}的化合物清单`}>
+                {visibleCompounds.map((compound) => (
+                  <button
+                    type="button"
+                    role="listitem"
+                    key={compound.id}
+                    className={compound.id === selectedCompound?.id ? "is-selected" : ""}
+                    aria-pressed={compound.id === selectedCompound?.id}
+                    onClick={() => setSelectedId(compound.id)}
+                  >
+                    <strong>{compound.formula}</strong>
+                    <span>{compound.name}</span>
+                    <small>{COMPOUND_CATEGORY_LABELS[compound.category]} · {compound.family === "organic" ? "有机" : "无机"}</small>
+                  </button>
+                ))}
+              </div>
+            )}
+            <nav className="compound-pagination" aria-label="化合物清单分页">
+              <button type="button" onClick={() => setPage(Math.max(0, safePage - 1))} disabled={safePage === 0}>← 上一页</button>
+              <span>第 {safePage + 1} / {pageCount} 页 · 当前筛选 {filteredCompounds.length} 种</span>
+              <button type="button" onClick={() => setPage(Math.min(pageCount - 1, safePage + 1))} disabled={safePage >= pageCount - 1}>下一页 →</button>
+            </nav>
+          </div>
+          {selectedCompound && <CompoundProfilePanel compound={selectedCompound} />}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function ElementDetail({
   element,
   onClose,
@@ -220,7 +384,6 @@ function ElementDetail({
   onClose: () => void;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const compounds = elementCompounds(element);
   const uses = elementUses(element);
 
   useEffect(() => {
@@ -340,21 +503,7 @@ function ElementDetail({
                 </div>
               </section>
 
-              <section className="story-section compounds-section">
-                <div className="story-heading">
-                  <span aria-hidden="true">⬡</span>
-                  <div><small>COMPOUND CONSTELLATION</small><h3>相关化合物星图</h3></div>
-                </div>
-                <div className="compound-grid">
-                  {compounds.map((compound) => (
-                    <article key={`${compound.formula}-${compound.name}`}>
-                      <strong>{compound.formula}</strong>
-                      <h4>{compound.name}</h4>
-                      <p>{compound.note}</p>
-                    </article>
-                  ))}
-                </div>
-              </section>
+              <ElementCompoundCatalog element={element} />
 
               <aside className="element-data-note">
                 <strong>资料说明</strong>

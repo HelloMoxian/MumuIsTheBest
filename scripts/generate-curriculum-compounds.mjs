@@ -793,6 +793,7 @@ async function main() {
         fullereneTopology,
         { name: "Nature", url: "https://doi.org/10.1038/318162a0" },
       ),
+      cid: 123591,
       representation: "authoritative-topology",
     },
     allotropeRecord(

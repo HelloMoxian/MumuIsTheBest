@@ -49,6 +49,33 @@ test("投放原子在数秒内离开右侧入口并扩散到反应炉多列", ()
   assert.ok(averageX < width * 0.6, `平均横坐标仍偏右：${averageX}`);
 });
 
+test("分子工厂的半速倍率把游离粒子位移降到接近默认的一半", () => {
+  const options = {
+    particleId: 7,
+    index: 0,
+    count: 1,
+    width: 1_200,
+    height: 720,
+    now: 0,
+  };
+  const fastRandom = seededRandom(20260803);
+  const slowRandom = seededRandom(20260803);
+  const fast = createInjectedAtomMotion({ ...options, random: fastRandom });
+  const slow = createInjectedAtomMotion({ ...options, random: slowRandom });
+  const start = { x: fast.x, y: fast.y };
+
+  for (let frame = 1; frame <= 120; frame += 1) {
+    const now = frame * 16.67;
+    advanceFreeAtomMotion(fast, options, now, 1, fastRandom, 1);
+    advanceFreeAtomMotion(slow, options, now, 1, slowRandom, 0.5);
+  }
+
+  const fastDistance = Math.hypot(fast.x - start.x, fast.y - start.y);
+  const slowDistance = Math.hypot(slow.x - start.x, slow.y - start.y);
+  assert.ok(slowDistance < fastDistance * 0.65, `${slowDistance} 应明显小于 ${fastDistance}`);
+  assert.ok(slowDistance > fastDistance * 0.35, `${slowDistance} 不应接近静止`);
+});
+
 test("持续布朗运动始终遵守炉体边界", () => {
   const width = 760;
   const height = 520;

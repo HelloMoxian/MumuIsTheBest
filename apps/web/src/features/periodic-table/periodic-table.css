@@ -1284,6 +1284,269 @@
   line-height: 1.55;
 }
 
+.compounds-section .story-heading { align-items: center; }
+
+.compound-total {
+  margin-left: auto;
+  padding: 8px 12px;
+  border: 1px solid rgba(89, 231, 255, 0.24);
+  border-radius: 999px;
+  color: var(--space-cyan);
+  background: rgba(89, 231, 255, 0.07);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.compound-catalog-layout {
+  display: grid;
+  grid-template-columns: minmax(330px, 0.82fr) minmax(390px, 1.18fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.compound-catalog-browser,
+.compound-profile,
+.compound-catalog-empty {
+  min-width: 0;
+  border: 1px solid rgba(202, 204, 255, 0.15);
+  border-radius: 24px;
+  background: rgba(11, 13, 52, 0.6);
+}
+
+.compound-catalog-browser,
+.compound-profile { padding: 14px; }
+
+.compound-search {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 12px;
+  color: #d8d7ec;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.compound-search input {
+  min-height: 50px;
+  padding: 0 14px;
+  border: 1px solid rgba(141, 115, 255, 0.38);
+  border-radius: 14px;
+  outline: none;
+  color: var(--space-ink);
+  background: rgba(255, 255, 255, 0.06);
+  font: inherit;
+  font-size: 15px;
+}
+
+.compound-search input::placeholder { color: rgba(184, 183, 215, 0.7); }
+.compound-search input:hover { border-color: rgba(89, 231, 255, 0.62); }
+.compound-search input:focus-visible {
+  border-color: var(--space-cyan);
+  box-shadow: 0 0 0 3px rgba(89, 231, 255, 0.2);
+}
+
+.compound-catalog-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.compound-catalog-list button {
+  display: grid;
+  min-width: 0;
+  min-height: 76px;
+  padding: 8px 10px;
+  justify-items: start;
+  border: 1px solid rgba(202, 204, 255, 0.13);
+  border-radius: 14px;
+  color: var(--space-ink);
+  text-align: left;
+  background: rgba(255, 255, 255, 0.035);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.compound-catalog-list button strong { color: var(--space-cyan); font-size: 19px; }
+.compound-catalog-list button span {
+  width: 100%;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.compound-catalog-list button small { color: var(--space-muted); font-size: 10px; }
+.compound-catalog-list button:hover,
+.compound-catalog-list button:focus-visible {
+  border-color: var(--space-cyan);
+  outline: none;
+  background: rgba(89, 231, 255, 0.08);
+  transform: translateY(-1px);
+}
+.compound-catalog-list button:focus-visible { box-shadow: 0 0 0 3px rgba(89, 231, 255, 0.2); }
+.compound-catalog-list button:active { transform: translateY(1px) scale(0.98); }
+.compound-catalog-list button.is-selected {
+  border-color: white;
+  background: linear-gradient(135deg, rgba(89, 231, 255, 0.13), rgba(141, 115, 255, 0.15));
+  box-shadow: inset 0 0 0 1px rgba(89, 231, 255, 0.28);
+}
+
+.compound-pagination {
+  display: grid;
+  margin-top: 12px;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.compound-pagination button {
+  min-height: 48px;
+  padding: 0 11px;
+  border: 1px solid rgba(141, 115, 255, 0.35);
+  border-radius: 13px;
+  color: var(--space-ink);
+  background: rgba(105, 80, 220, 0.13);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.compound-pagination button:hover:not(:disabled),
+.compound-pagination button:focus-visible {
+  border-color: var(--space-cyan);
+  outline: 2px solid rgba(89, 231, 255, 0.55);
+  outline-offset: 1px;
+}
+.compound-pagination button:active:not(:disabled) { transform: translateY(1px); }
+.compound-pagination button:disabled { cursor: not-allowed; opacity: 0.4; }
+.compound-pagination span { color: var(--space-muted); font-size: 11px; text-align: center; }
+
+.compound-search-empty,
+.compound-catalog-empty {
+  display: grid;
+  min-height: 150px;
+  padding: 22px;
+  place-items: center;
+  color: var(--space-muted);
+  text-align: center;
+}
+.compound-catalog-empty strong { color: var(--space-ink); font-size: 18px; }
+.compound-catalog-empty p { margin: 7px 0 0; }
+
+.compound-profile > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.compound-profile > header p {
+  margin: 0 0 4px;
+  color: var(--space-cyan);
+  font-size: 11px;
+  font-weight: 900;
+}
+.compound-profile > header h4 { margin: 0; font-size: 24px; }
+.compound-profile > header h4 strong { margin-right: 7px; color: #fff; font-size: 31px; }
+.compound-profile > header > div > span { color: var(--space-muted); font-size: 13px; }
+
+.compound-family {
+  padding: 7px 10px;
+  border: 1px solid rgba(89, 231, 255, 0.28);
+  border-radius: 999px;
+  color: var(--space-cyan);
+  background: rgba(89, 231, 255, 0.08);
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.compound-family.is-organic {
+  border-color: rgba(255, 103, 199, 0.35);
+  color: #ffabde;
+  background: rgba(255, 103, 199, 0.08);
+}
+
+.compound-visuals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.compound-reference-image,
+.compound-ball-model {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  padding: 9px;
+  border: 1px solid rgba(89, 231, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(6, 9, 39, 0.55);
+}
+.compound-reference-image > span,
+.compound-reference-image > .molecule-structure-preview,
+.compound-ball-model > .molecule-structure-preview {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  background-color: rgba(245, 245, 255, 0.95);
+  background-repeat: no-repeat;
+}
+.compound-reference-image.is-schematic > .molecule-structure-preview,
+.compound-ball-model > .molecule-structure-preview { background-color: rgba(9, 11, 47, 0.76); }
+.compound-reference-image figcaption,
+.compound-ball-model figcaption {
+  margin-top: 6px;
+  color: var(--space-muted);
+  font-size: 10px;
+  text-align: center;
+}
+.compound-reference-image figcaption a,
+.compound-facts a { color: var(--space-cyan); text-underline-offset: 3px; }
+
+.compound-summary { margin: 14px 0; color: #e5e4f5; font-size: 16px; line-height: 1.65; }
+.compound-facts { display: grid; gap: 7px; margin: 0; }
+.compound-facts > div {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 10px;
+  padding: 9px 11px;
+  border: 1px solid rgba(202, 204, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+}
+.compound-facts dt { color: var(--space-muted); font-size: 12px; font-weight: 850; }
+.compound-facts dd { margin: 0; color: #e9e8f7; font-size: 13px; line-height: 1.55; }
+.compound-property-section,
+.compound-learning-points { margin-top: 14px; }
+.compound-property-section h5,
+.compound-learning-points h5 { margin: 0 0 8px; color: var(--space-cyan); font-size: 14px; }
+.compound-property-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+.compound-property-grid .element-property { min-height: 72px; }
+.compound-learning-points ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 21px;
+  color: #dddced;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.compound-safety-note {
+  margin-top: 14px;
+  padding: 11px 13px;
+  border: 1px solid rgba(255, 209, 102, 0.24);
+  border-radius: 14px;
+  color: #f4e9c2;
+  background: rgba(255, 209, 102, 0.06);
+}
+.compound-safety-note strong { font-size: 12px; }
+.compound-safety-note p { margin: 4px 0 0; font-size: 12px; line-height: 1.55; }
+
 .element-data-note {
   padding: 17px 19px;
   border: 1px dashed rgba(150, 148, 214, 0.3);
@@ -1498,6 +1761,17 @@
   .compound-grid {
     grid-template-columns: 1fr;
   }
+
+  .compound-catalog-layout,
+  .compound-catalog-list,
+  .compound-visuals,
+  .compound-property-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compound-pagination { grid-template-columns: 1fr 1fr; }
+  .compound-pagination span { grid-column: 1 / -1; grid-row: 1; }
+  .compound-facts > div { grid-template-columns: 1fr; gap: 3px; }
 
   .element-property.is-wide {
     grid-column: auto;

@@ -136,9 +136,12 @@ export function advanceFreeAtomMotion(
   now: number,
   delta: number,
   random: () => number = Math.random,
+  speedScale = 1,
 ) {
   const safeDelta = clamp(delta, 0.35, 2);
-  const age = Math.max(0, now - particle.spawnedAt);
+  const safeSpeedScale = clamp(speedScale, 0.1, 2);
+  const motionDelta = safeDelta * safeSpeedScale;
+  const age = Math.max(0, now - particle.spawnedAt) * safeSpeedScale;
   const targetDx = particle.driftTargetX - particle.x;
   const targetDy = particle.driftTargetY - particle.y;
   const targetDistance = Math.hypot(targetDx, targetDy);
@@ -146,24 +149,25 @@ export function advanceFreeAtomMotion(
 
   if (transporting) {
     const desiredSpeed = clamp(targetDistance / 105, 4.8, 7.1);
-    const steer = Math.min(0.13, 0.045 * safeDelta);
+    const steer = Math.min(0.13, 0.045 * motionDelta);
     particle.vx += ((targetDx / targetDistance) * desiredSpeed - particle.vx) * steer;
     particle.vy += ((targetDy / targetDistance) * desiredSpeed - particle.vy) * steer;
   }
 
   const noiseStrength = transporting ? 0.075 : 0.18;
-  particle.vx += (random() - 0.5) * noiseStrength * safeDelta;
-  particle.vy += (random() - 0.5) * noiseStrength * safeDelta;
+  particle.vx += (random() - 0.5) * noiseStrength * motionDelta;
+  particle.vy += (random() - 0.5) * noiseStrength * motionDelta;
 
-  const phase = now * 0.00115 + particle.diffusionSeed;
-  particle.vx += Math.cos(phase * 1.17) * 0.026 * safeDelta;
-  particle.vy += Math.sin(phase * 0.93) * 0.03 * safeDelta;
+  const motionNow = particle.spawnedAt + age;
+  const phase = motionNow * 0.00115 + particle.diffusionSeed;
+  particle.vx += Math.cos(phase * 1.17) * 0.026 * motionDelta;
+  particle.vy += Math.sin(phase * 0.93) * 0.03 * motionDelta;
 
   if (particle.x > width * 0.78) {
-    particle.vx -= 0.085 * safeDelta;
+    particle.vx -= 0.085 * motionDelta;
   }
 
-  const drag = Math.pow(transporting ? 0.9995 : 0.997, safeDelta);
+  const drag = Math.pow(transporting ? 0.9995 : 0.997, motionDelta);
   particle.vx *= drag;
   particle.vy *= drag;
 
@@ -175,13 +179,13 @@ export function advanceFreeAtomMotion(
     speed = maximumSpeed;
   }
   if (!transporting && speed < 1.75) {
-    const boost = Math.min(0.12, (1.75 - speed) * 0.075) * safeDelta;
+    const boost = Math.min(0.12, (1.75 - speed) * 0.075) * motionDelta;
     particle.vx += Math.cos(phase) * boost;
     particle.vy += Math.sin(phase) * boost;
   }
 
-  particle.x += particle.vx * safeDelta;
-  particle.y += particle.vy * safeDelta;
+  particle.x += particle.vx * motionDelta;
+  particle.y += particle.vy * motionDelta;
 
   const bounds = getSafeBounds(width, height, particle.radius);
   if (particle.x < bounds.left) {

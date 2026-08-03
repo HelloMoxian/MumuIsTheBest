@@ -8,7 +8,10 @@ import {
   atomCountsKey,
   buildTreasureBasinLibrary,
   canAddTreasureBasinElementBatch,
+  canFormTreasureBasinCompound,
+  discoverPolyatomicIons,
   findTreasureBasinMatch,
+  findTreasureBasinMatches,
   indexTreasureBasinDiscoveries,
   TREASURE_BASIN_ELEMENT_LIMIT,
   TREASURE_BASIN_FREE_ATOM_LIMIT,
@@ -21,7 +24,7 @@ const allowedSymbols = new Set(
 );
 const library = buildTreasureBasinLibrary(REACTION_COMPOUNDS, allowedSymbols);
 
-test("聚宝盆只保留前九十号元素可组成的多原子代表物质", () => {
+test("分子工厂只保留前九十号元素可组成的多原子代表物质", () => {
   assert.ok(library.length > 250);
   assert.equal(
     new Set(library.map((compound) => atomCountsKey(compound.atomCounts))).size,
@@ -32,6 +35,72 @@ test("聚宝盆只保留前九十号元素可组成的多原子代表物质", ()
     && Object.keys(compound.atomCounts).every((symbol) => allowedSymbols.has(symbol))
   )));
   assert.ok(!library.some((compound) => compound.totalAtoms === 1));
+});
+
+test("不创造有机物会同时过滤自动匹配和手动提示", () => {
+  const ethane = library.find((compound) => (
+    compound.sourceFormula === "C2H6" && compound.family === "organic"
+  ))!;
+  assert.ok(ethane);
+  assert.equal(findTreasureBasinMatch({ C: 2, H: 6 }, library, new Set())?.id, ethane.id);
+  const inorganicMatch = findTreasureBasinMatch(
+    { C: 2, H: 6 },
+    library,
+    new Set(),
+    { excludeOrganic: true },
+  );
+  assert.equal(inorganicMatch?.family, "inorganic");
+  const suggestions = findTreasureBasinMatches(
+    { C: 2, H: 6 },
+    library,
+    new Set(),
+    { excludeOrganic: true, limit: 3, random: () => 0.5 },
+  );
+  assert.ok(suggestions.every((compound) => compound.family === "inorganic"));
+  assert.ok(!suggestions.some((compound) => compound.id === ethane.id));
+});
+
+test("手动合成一次最多给出三个随机且当前可组成的候选", () => {
+  const pool = { H: 8, C: 4, O: 6, N: 2 };
+  const matches = findTreasureBasinMatches(pool, library, new Set(), {
+    limit: 3,
+    random: () => 0.37,
+  });
+  assert.equal(matches.length, 3);
+  assert.equal(new Set(matches.map((compound) => compound.id)).size, matches.length);
+  assert.ok(matches.every((compound) => canFormTreasureBasinCompound(pool, compound)));
+});
+
+test("手动候选轮询在有足够物质时优先换成下一批三个", () => {
+  const pool = { H: 30, C: 30, O: 30, N: 10, S: 10, Na: 10, Cl: 10 };
+  const first = findTreasureBasinMatches(pool, library, new Set(), {
+    limit: 3,
+    random: () => 0.37,
+  });
+  const firstIds = new Set(first.map((compound) => compound.id));
+  const second = findTreasureBasinMatches(pool, library, new Set(), {
+    limit: 3,
+    random: () => 0.37,
+    avoidIds: firstIds,
+  });
+
+  assert.equal(first.length, 3);
+  assert.equal(second.length, 3);
+  assert.ok(second.every((compound) => !firstIds.has(compound.id)));
+});
+
+test("每类原子团只自动形成一个并明确记录电荷", () => {
+  const pool = { N: 1, H: 4, S: 1, O: 4 };
+  const first = discoverPolyatomicIons(pool, new Set());
+  const ammonium = first.find((ion) => ion.id === "ammonium")!;
+  const sulfate = first.find((ion) => ion.id === "sulfate")!;
+  assert.equal(ammonium.formula, "NH₄⁺");
+  assert.equal(ammonium.charge, 1);
+  assert.equal(ammonium.chargeLabel, "+1");
+  assert.equal(sulfate.formula, "SO₄²⁻");
+  assert.equal(sulfate.charge, -2);
+  const formedIds = new Set(first.map((ion) => ion.id));
+  assert.deepEqual(discoverPolyatomicIons(pool, formedIds), []);
 });
 
 test("氧气生成一次后，三个新氧原子可以生成臭氧", () => {

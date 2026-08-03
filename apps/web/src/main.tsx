@@ -3,11 +3,8 @@ import { createRoot } from "react-dom/client";
 import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
 import { ConservationGame } from "./features/conservation/ConservationGame";
-import { ChemistryTreasureBasinPage } from "./features/chemistry-treasure-basin/ChemistryTreasureBasinPage";
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
 import { MysteryFunctionGame } from "./features/mystery-function/MysteryFunctionGame";
-import { PeriodicTablePage } from "./features/periodic-table/PeriodicTablePage";
-import { ReactionFurnacePage } from "./features/reaction-furnace/ReactionFurnacePage";
 import "./styles.css";
 
 const FindNumberGame = lazy(async () => {
@@ -29,6 +26,34 @@ const MissionLabRoute = lazy(async () => {
   const module = await import("./features/mission-lab/MissionLabRoute");
   return { default: module.MissionLabRoute };
 });
+
+const PeriodicTablePage = lazy(async () => {
+  const module = await import("./features/periodic-table/PeriodicTablePage");
+  return { default: module.PeriodicTablePage };
+});
+
+const ReactionFurnacePage = lazy(async () => {
+  const module = await import("./features/reaction-furnace/ReactionFurnacePage");
+  return { default: module.ReactionFurnacePage };
+});
+
+const MoleculeFactoryPage = lazy(async () => {
+  const module = await import("./features/molecule-factory/MoleculeFactoryPage");
+  return { default: module.MoleculeFactoryPage };
+});
+
+function ChemistryLoading({ label }: { label: string }) {
+  return (
+    <div className="app-shell" aria-live="polite">
+      <div className="star-field" aria-hidden="true" />
+      <main className="asr-lab">
+        <section className="safety-note">
+          <span aria-hidden="true">⬡</span><p><strong>正在打开{label}…</strong></p>
+        </section>
+      </main>
+    </div>
+  );
+}
 
 const MISSION_LAB_ROUTES = new Set([
   "/math/pattern-detective",
@@ -180,11 +205,11 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         href: "/chemistry/reaction-furnace",
       },
       {
-        title: "化学聚宝盆",
+        title: "分子工厂",
         mark: "✦",
-        description: "自由投原子，发现新物质",
+        description: "投放原子，选择合成并发现原子团",
         shape: "wide",
-        href: "/chemistry/treasure-basin",
+        href: "/chemistry/molecule-factory",
       },
       {
         title: "实验大师",
@@ -824,13 +849,22 @@ function CurrentPage() {
       </Suspense>
     );
   }
-  if (window.location.pathname === "/chemistry/periodic-table") return <PeriodicTablePage />;
-  if (window.location.pathname === "/chemistry/reaction-furnace") return <ReactionFurnacePage />;
-  if (window.location.pathname === "/chemistry/treasure-box") {
-    window.history.replaceState({}, "", "/chemistry/treasure-basin");
-    return <ChemistryTreasureBasinPage />;
+  if (window.location.pathname === "/chemistry/periodic-table") {
+    return <Suspense fallback={<ChemistryLoading label="元素周期表" />}><PeriodicTablePage /></Suspense>;
   }
-  if (window.location.pathname === "/chemistry/treasure-basin") return <ChemistryTreasureBasinPage />;
+  if (window.location.pathname === "/chemistry/reaction-furnace") {
+    return <Suspense fallback={<ChemistryLoading label="反应熔炉" />}><ReactionFurnacePage /></Suspense>;
+  }
+  if (
+    window.location.pathname === "/chemistry/treasure-box"
+    || window.location.pathname === "/chemistry/treasure-basin"
+  ) {
+    window.history.replaceState({}, "", "/chemistry/molecule-factory");
+    return <Suspense fallback={<ChemistryLoading label="分子工厂" />}><MoleculeFactoryPage /></Suspense>;
+  }
+  if (window.location.pathname === "/chemistry/molecule-factory") {
+    return <Suspense fallback={<ChemistryLoading label="分子工厂" />}><MoleculeFactoryPage /></Suspense>;
+  }
   if (window.location.pathname === "/chemistry/conservation") return <ConservationGame />;
   if (window.location.pathname === "/chinese/pinyin") {
     return (
