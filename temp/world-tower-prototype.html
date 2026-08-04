@@ -1,0 +1,2121 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="万物通天塔临时交互原型：观察层级、解锁节点、聚焦组合路径并使用动作、条件和环境工具。"
+    />
+    <title>万物通天塔 · 临时交互原型</title>
+    <style>
+      :root {
+        --space-950: #0e0d2b;
+        --space-850: #171536;
+        --glass-700: rgba(28, 28, 66, 0.82);
+        --glass-500: rgba(255, 255, 255, 0.07);
+        --ink-primary: #f5f5ff;
+        --ink-secondary: #b8b7d7;
+        --line-glow: rgba(202, 204, 255, 0.17);
+        --violet-400: #8d73ff;
+        --violet-600: #6950dc;
+        --cyan-300: #59e7ff;
+        --pink-400: #ff67c7;
+        --green-400: #4ce0a3;
+        --rose-400: #ff7596;
+        --warning-300: #ffd166;
+        --font-display: ui-rounded, "Arial Rounded MT Bold", "PingFang SC",
+          "Microsoft YaHei", sans-serif;
+        --font-body: ui-rounded, "PingFang SC", "Microsoft YaHei", sans-serif;
+        color-scheme: dark;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-width: 320px;
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        overflow: hidden;
+        color: var(--ink-primary);
+        background:
+          radial-gradient(circle at 14% 18%, rgba(89, 231, 255, 0.11), transparent 24%),
+          radial-gradient(circle at 84% 10%, rgba(255, 103, 199, 0.1), transparent 25%),
+          radial-gradient(circle at 48% 92%, rgba(141, 115, 255, 0.15), transparent 34%),
+          var(--space-950);
+        font-family: var(--font-body);
+        font-size: 18px;
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background-image:
+          radial-gradient(circle, rgba(255, 255, 255, 0.72) 0 1px, transparent 1.5px),
+          radial-gradient(circle, rgba(89, 231, 255, 0.45) 0 1px, transparent 1.5px);
+        background-position:
+          0 0,
+          44px 57px;
+        background-size:
+          92px 92px,
+          137px 137px;
+        content: "";
+        opacity: 0.22;
+      }
+
+      button {
+        border: 0;
+        color: inherit;
+        font: inherit;
+      }
+
+      button:not(:disabled) {
+        cursor: pointer;
+      }
+
+      button:focus-visible {
+        outline: 3px solid var(--warning-300);
+        outline-offset: 3px;
+      }
+
+      .topbar {
+        display: grid;
+        width: min(100% - 28px, 1580px);
+        min-height: 78px;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 16px;
+        margin: 0 auto;
+      }
+
+      .brand {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .back-button,
+      .icon-button {
+        display: grid;
+        width: 50px;
+        height: 50px;
+        flex: 0 0 auto;
+        place-items: center;
+        border: 1px solid var(--line-glow);
+        border-radius: 17px;
+        color: var(--ink-primary);
+        background: var(--glass-500);
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.1);
+        font-size: 24px;
+        font-weight: 950;
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          background 160ms ease;
+      }
+
+      .back-button:hover,
+      .icon-button:hover {
+        border-color: rgba(89, 231, 255, 0.48);
+        background: rgba(89, 231, 255, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .back-button:active,
+      .icon-button:active {
+        transform: translateY(1px);
+      }
+
+      .brand-mark {
+        position: relative;
+        display: grid;
+        width: 48px;
+        height: 48px;
+        flex: 0 0 auto;
+        place-items: center;
+        border: 1px solid rgba(202, 204, 255, 0.28);
+        border-radius: 17px;
+        background:
+          radial-gradient(circle at 32% 25%, rgba(255, 255, 255, 0.8), transparent 18%),
+          linear-gradient(145deg, rgba(89, 231, 255, 0.5), rgba(141, 115, 255, 0.75));
+        box-shadow:
+          inset 0 1px rgba(255, 255, 255, 0.3),
+          0 0 24px rgba(89, 231, 255, 0.25);
+      }
+
+      .brand-mark::before,
+      .brand-mark::after {
+        position: absolute;
+        width: 24px;
+        height: 8px;
+        border: 2px solid rgba(255, 255, 255, 0.82);
+        border-radius: 50%;
+        content: "";
+        transform: rotate(35deg);
+      }
+
+      .brand-mark::after {
+        transform: rotate(-35deg);
+      }
+
+      .brand-copy {
+        min-width: 0;
+      }
+
+      .brand-copy strong {
+        display: block;
+        overflow: hidden;
+        font-family: var(--font-display);
+        font-size: clamp(20px, 2.2vw, 29px);
+        font-weight: 950;
+        letter-spacing: -0.04em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .brand-copy span {
+        display: block;
+        margin-top: 2px;
+        color: var(--ink-secondary);
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+      }
+
+      .topbar-center {
+        color: var(--ink-secondary);
+        font-size: 14px;
+        font-weight: 800;
+        text-align: center;
+      }
+
+      .resource-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+      }
+
+      .resource-pill {
+        display: inline-flex;
+        min-height: 48px;
+        align-items: center;
+        gap: 8px;
+        padding: 0 14px;
+        border: 1px solid var(--line-glow);
+        border-radius: 999px;
+        background: rgba(28, 28, 66, 0.78);
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.08);
+        font-size: 15px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .resource-pill strong {
+        color: var(--warning-300);
+        font-size: 20px;
+      }
+
+      .resource-pill.discovery strong {
+        color: var(--cyan-300);
+      }
+
+      .app-shell {
+        display: grid;
+        width: min(100% - 28px, 1580px);
+        height: calc(100vh - 92px);
+        grid-template-columns: minmax(0, 1fr) 318px;
+        gap: 14px;
+        margin: 0 auto 14px;
+      }
+
+      .glass-panel {
+        border: 1px solid var(--line-glow);
+        background: var(--glass-700);
+        box-shadow:
+          0 24px 60px rgba(0, 0, 0, 0.34),
+          inset 0 1px rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+      }
+
+      .tower-panel {
+        position: relative;
+        display: grid;
+        min-width: 0;
+        min-height: 0;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        overflow: hidden;
+        border-radius: 30px;
+      }
+
+      .tower-panel::before {
+        position: absolute;
+        top: 0;
+        left: 12%;
+        width: 70%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(89, 231, 255, 0.78), transparent);
+        content: "";
+      }
+
+      .tower-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 19px 22px 15px;
+        border-bottom: 1px solid var(--line-glow);
+      }
+
+      .tower-heading-copy {
+        min-width: 0;
+      }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 4px;
+        color: var(--cyan-300);
+        font-size: 12px;
+        font-weight: 950;
+        letter-spacing: 0.12em;
+      }
+
+      .eyebrow::before {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--cyan-300);
+        box-shadow: 0 0 12px var(--cyan-300);
+        content: "";
+      }
+
+      .tower-heading h1 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: clamp(30px, 3.4vw, 46px);
+        font-weight: 950;
+        letter-spacing: -0.055em;
+        line-height: 1;
+      }
+
+      .tower-heading p {
+        margin: 7px 0 0;
+        color: var(--ink-secondary);
+        font-size: 14px;
+        font-weight: 750;
+      }
+
+      .route-tabs {
+        display: flex;
+        flex: 0 0 auto;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .route-tab {
+        min-height: 48px;
+        padding: 0 14px;
+        border: 1px solid var(--line-glow);
+        border-radius: 15px;
+        color: var(--ink-secondary);
+        background: var(--glass-500);
+        font-size: 14px;
+        font-weight: 900;
+        transition:
+          transform 160ms ease,
+          border-color 160ms ease,
+          color 160ms ease,
+          background 160ms ease;
+      }
+
+      .route-tab:hover {
+        border-color: rgba(141, 115, 255, 0.58);
+        color: var(--ink-primary);
+        transform: translateY(-2px);
+      }
+
+      .route-tab:active {
+        transform: translateY(1px);
+      }
+
+      .route-tab.is-active {
+        border-color: rgba(89, 231, 255, 0.68);
+        color: #effdff;
+        background: linear-gradient(145deg, rgba(89, 231, 255, 0.15), rgba(141, 115, 255, 0.22));
+        box-shadow: 0 0 20px rgba(89, 231, 255, 0.11);
+      }
+
+      .tower-viewport {
+        position: relative;
+        min-height: 0;
+        overflow: auto;
+        background:
+          linear-gradient(90deg, transparent 49.9%, rgba(141, 115, 255, 0.1) 50%, transparent 50.1%),
+          radial-gradient(circle at 50% 30%, rgba(89, 231, 255, 0.06), transparent 45%),
+          rgba(8, 8, 34, 0.3);
+        scrollbar-color: rgba(141, 115, 255, 0.5) transparent;
+        scrollbar-width: thin;
+      }
+
+      .tower-map {
+        position: relative;
+        min-width: 790px;
+        min-height: 954px;
+        padding: 10px 14px 20px;
+        isolation: isolate;
+      }
+
+      .tower-spine {
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 110px;
+        border-right: 1px solid rgba(141, 115, 255, 0.13);
+        border-left: 1px solid rgba(89, 231, 255, 0.13);
+        background: linear-gradient(90deg, transparent, rgba(141, 115, 255, 0.04), transparent);
+        transform: translateX(-50%);
+      }
+
+      .connector-layer {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .connector {
+        position: absolute;
+        height: 3px;
+        border-radius: 999px;
+        background: rgba(184, 183, 215, 0.13);
+        box-shadow: 0 0 0 1px rgba(14, 13, 43, 0.42);
+        transform-origin: 0 50%;
+        transition:
+          opacity 220ms ease,
+          background 220ms ease,
+          box-shadow 220ms ease,
+          height 220ms ease;
+      }
+
+      .connector::after {
+        position: absolute;
+        top: 50%;
+        right: -4px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: inherit;
+        content: "";
+        transform: translateY(-50%);
+      }
+
+      .connector.is-active {
+        z-index: 3;
+        height: 4px;
+        background: linear-gradient(90deg, var(--cyan-300), var(--violet-400), var(--pink-400));
+        box-shadow:
+          0 0 10px rgba(89, 231, 255, 0.58),
+          0 0 19px rgba(141, 115, 255, 0.35);
+      }
+
+      .floor {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        height: 132px;
+        grid-template-columns: 126px minmax(620px, 1fr);
+        border-bottom: 1px solid rgba(202, 204, 255, 0.1);
+      }
+
+      .floor:last-child {
+        border-bottom: 0;
+      }
+
+      .floor:nth-of-type(4n + 2) {
+        background: linear-gradient(90deg, rgba(89, 231, 255, 0.025), transparent 65%);
+      }
+
+      .floor:nth-of-type(4n + 3) {
+        background: linear-gradient(90deg, rgba(255, 103, 199, 0.025), transparent 65%);
+      }
+
+      .floor-label {
+        align-self: start;
+        padding: 20px 10px 0 2px;
+      }
+
+      .floor-label span {
+        display: block;
+        color: var(--cyan-300);
+        font-size: 11px;
+        font-weight: 950;
+        letter-spacing: 0.1em;
+      }
+
+      .floor-label strong {
+        display: block;
+        margin-top: 4px;
+        font-family: var(--font-display);
+        font-size: 19px;
+        font-weight: 950;
+        line-height: 1.08;
+      }
+
+      .floor-label small {
+        display: block;
+        margin-top: 6px;
+        color: #8887aa;
+        font-size: 11px;
+        font-weight: 750;
+      }
+
+      .floor-stage {
+        position: relative;
+      }
+
+      .tower-node {
+        --node-color: var(--violet-400);
+        position: absolute;
+        top: 17px;
+        left: var(--x);
+        z-index: 4;
+        display: grid;
+        width: 102px;
+        min-height: 96px;
+        place-items: center;
+        padding: 9px 7px;
+        border: 1px solid rgba(202, 204, 255, 0.2);
+        border-radius: 24px;
+        color: var(--ink-primary);
+        background: linear-gradient(145deg, rgba(39, 38, 91, 0.92), rgba(19, 20, 55, 0.96));
+        box-shadow:
+          inset 0 1px rgba(255, 255, 255, 0.1),
+          0 10px 24px rgba(0, 0, 0, 0.24);
+        text-align: center;
+        transform: translateX(-50%);
+        transition:
+          opacity 220ms ease,
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease,
+          filter 180ms ease;
+      }
+
+      .tower-node:hover {
+        border-color: rgba(89, 231, 255, 0.52);
+        transform: translateX(-50%) translateY(-4px);
+      }
+
+      .tower-node:active {
+        transform: translateX(-50%) translateY(1px);
+      }
+
+      .tower-node .node-icon {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 15px;
+        background: linear-gradient(145deg, color-mix(in srgb, var(--node-color) 36%, transparent), rgba(255, 255, 255, 0.05));
+        box-shadow: 0 0 16px color-mix(in srgb, var(--node-color) 30%, transparent);
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 950;
+      }
+
+      .tower-node .node-name {
+        display: block;
+        margin-top: 4px;
+        font-size: 14px;
+        font-weight: 950;
+        line-height: 1.05;
+      }
+
+      .tower-node .node-state {
+        display: block;
+        margin-top: 3px;
+        color: var(--ink-secondary);
+        font-size: 10px;
+        font-weight: 850;
+      }
+
+      .tower-node.is-discovered {
+        border-color: color-mix(in srgb, var(--node-color) 50%, transparent);
+        box-shadow:
+          inset 0 1px rgba(255, 255, 255, 0.16),
+          0 0 24px color-mix(in srgb, var(--node-color) 16%, transparent),
+          0 10px 24px rgba(0, 0, 0, 0.24);
+      }
+
+      .tower-node.is-discovered .node-state {
+        color: #aef4d4;
+      }
+
+      .tower-node.is-revealed {
+        border-style: dashed;
+        border-color: rgba(255, 209, 102, 0.54);
+      }
+
+      .tower-node.is-revealed .node-state {
+        color: var(--warning-300);
+      }
+
+      .tower-node.is-unknown {
+        width: 82px;
+        min-height: 82px;
+        top: 24px;
+        border: 2px dashed rgba(202, 204, 255, 0.24);
+        border-radius: 50%;
+        color: #d4d3ec;
+        background: radial-gradient(circle at 34% 25%, rgba(255, 255, 255, 0.1), rgba(37, 35, 81, 0.9));
+      }
+
+      .tower-node.is-unknown .node-icon {
+        width: auto;
+        height: auto;
+        border: 0;
+        background: none;
+        box-shadow: none;
+        font-size: 34px;
+      }
+
+      .tower-node.is-unknown .node-name {
+        margin: 0;
+        font-size: 11px;
+      }
+
+      .tower-node.is-unknown .node-state {
+        display: none;
+      }
+
+      .tower-map.has-focus .tower-node:not(.is-route-node) {
+        opacity: 0.24;
+        filter: saturate(0.45);
+      }
+
+      .tower-map.has-focus .tower-node.is-route-node {
+        border-color: rgba(89, 231, 255, 0.78);
+        box-shadow:
+          0 0 0 3px rgba(89, 231, 255, 0.08),
+          0 0 28px rgba(89, 231, 255, 0.25),
+          inset 0 1px rgba(255, 255, 255, 0.18);
+      }
+
+      .tower-map.has-focus .tower-node.is-route-target {
+        border-color: rgba(255, 103, 199, 0.82);
+        box-shadow:
+          0 0 0 4px rgba(255, 103, 199, 0.09),
+          0 0 34px rgba(255, 103, 199, 0.34);
+      }
+
+      .focus-dock {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(180px, 0.35fr) minmax(320px, 1fr) auto;
+        align-items: center;
+        gap: 14px;
+        min-height: 150px;
+        padding: 16px 18px;
+        border-top: 1px solid rgba(89, 231, 255, 0.22);
+        background:
+          radial-gradient(circle at 48% 100%, rgba(141, 115, 255, 0.15), transparent 50%),
+          rgba(15, 14, 48, 0.92);
+        box-shadow: 0 -18px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .focus-copy h2 {
+        margin: 2px 0 0;
+        font-family: var(--font-display);
+        font-size: clamp(21px, 2.3vw, 30px);
+        font-weight: 950;
+        letter-spacing: -0.04em;
+      }
+
+      .focus-copy p {
+        margin: 6px 0 0;
+        color: var(--ink-secondary);
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.4;
+      }
+
+      .path-strip {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 8px 4px;
+        scrollbar-width: thin;
+      }
+
+      .path-chip {
+        display: grid;
+        min-width: 96px;
+        min-height: 67px;
+        flex: 0 0 auto;
+        align-content: center;
+        padding: 8px 11px;
+        border: 1px solid rgba(202, 204, 255, 0.2);
+        border-radius: 17px;
+        background: rgba(255, 255, 255, 0.05);
+        text-align: center;
+      }
+
+      .path-chip strong {
+        font-size: 15px;
+        font-weight: 950;
+      }
+
+      .path-chip small {
+        margin-top: 3px;
+        color: var(--ink-secondary);
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .path-chip.requirement {
+        border-color: rgba(255, 209, 102, 0.35);
+        background: rgba(255, 209, 102, 0.07);
+      }
+
+      .path-chip.requirement.is-missing {
+        border-color: rgba(255, 117, 150, 0.55);
+        background: rgba(255, 117, 150, 0.09);
+      }
+
+      .path-chip.target {
+        border-color: rgba(255, 103, 199, 0.48);
+        background: linear-gradient(145deg, rgba(141, 115, 255, 0.14), rgba(255, 103, 199, 0.13));
+      }
+
+      .path-arrow,
+      .path-plus {
+        flex: 0 0 auto;
+        color: var(--cyan-300);
+        font-family: var(--font-display);
+        font-size: 24px;
+        font-weight: 950;
+      }
+
+      .path-plus {
+        color: var(--ink-secondary);
+        font-size: 17px;
+      }
+
+      .primary-action {
+        min-width: 152px;
+        min-height: 56px;
+        padding: 0 18px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 17px;
+        color: white;
+        background: linear-gradient(90deg, var(--violet-600), var(--pink-400));
+        box-shadow:
+          0 7px 0 rgba(79, 44, 138, 0.84),
+          0 14px 28px rgba(98, 57, 173, 0.28);
+        font-weight: 950;
+        transition:
+          transform 160ms ease,
+          filter 160ms ease,
+          box-shadow 160ms ease;
+      }
+
+      .primary-action:hover:not(:disabled) {
+        filter: brightness(1.1);
+        transform: translateY(-2px);
+      }
+
+      .primary-action:active:not(:disabled) {
+        box-shadow:
+          0 3px 0 rgba(79, 44, 138, 0.84),
+          0 8px 18px rgba(98, 57, 173, 0.24);
+        transform: translateY(4px);
+      }
+
+      .primary-action:disabled {
+        color: #9392ae;
+        background: rgba(255, 255, 255, 0.07);
+        box-shadow: none;
+        cursor: not-allowed;
+      }
+
+      .toolbox {
+        display: grid;
+        min-height: 0;
+        grid-template-rows: auto auto minmax(0, 1fr) auto;
+        overflow: hidden;
+        border-radius: 30px;
+      }
+
+      .toolbox-heading {
+        padding: 21px 20px 13px;
+      }
+
+      .toolbox-heading h2 {
+        margin: 0;
+        font-family: var(--font-display);
+        font-size: 27px;
+        font-weight: 950;
+        letter-spacing: -0.04em;
+      }
+
+      .toolbox-heading p {
+        margin: 7px 0 0;
+        color: var(--ink-secondary);
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.4;
+      }
+
+      .tool-filters {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        padding: 0 14px 12px;
+      }
+
+      .tool-filter {
+        min-height: 45px;
+        border: 1px solid var(--line-glow);
+        border-radius: 13px;
+        color: var(--ink-secondary);
+        background: rgba(255, 255, 255, 0.04);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .tool-filter:hover {
+        color: var(--ink-primary);
+        border-color: rgba(141, 115, 255, 0.48);
+      }
+
+      .tool-filter.is-active {
+        border-color: rgba(89, 231, 255, 0.48);
+        color: white;
+        background: rgba(89, 231, 255, 0.1);
+      }
+
+      .tool-list {
+        display: grid;
+        min-height: 0;
+        align-content: start;
+        gap: 9px;
+        overflow-y: auto;
+        padding: 3px 14px 15px;
+        scrollbar-width: thin;
+      }
+
+      .tool-card {
+        position: relative;
+        display: grid;
+        grid-template-columns: 52px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 10px;
+        min-height: 76px;
+        padding: 10px;
+        border: 1px solid rgba(202, 204, 255, 0.14);
+        border-radius: 19px;
+        background: rgba(255, 255, 255, 0.045);
+        transition:
+          order 220ms ease,
+          border-color 180ms ease,
+          background 180ms ease,
+          transform 180ms ease;
+      }
+
+      .tool-card.is-required {
+        border-color: rgba(255, 209, 102, 0.48);
+        background: linear-gradient(145deg, rgba(255, 209, 102, 0.08), rgba(141, 115, 255, 0.08));
+        box-shadow: 0 0 20px rgba(255, 209, 102, 0.07);
+      }
+
+      .tool-card.is-required::before {
+        position: absolute;
+        top: 7px;
+        right: 8px;
+        color: var(--warning-300);
+        content: "当前需要";
+        font-size: 9px;
+        font-weight: 950;
+        letter-spacing: 0.06em;
+      }
+
+      .tool-card.is-missing {
+        border-color: rgba(255, 117, 150, 0.5);
+      }
+
+      .tool-glyph {
+        display: grid;
+        width: 52px;
+        height: 52px;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 17px;
+        background: linear-gradient(145deg, rgba(89, 231, 255, 0.16), rgba(141, 115, 255, 0.2));
+        box-shadow: inset 0 1px rgba(255, 255, 255, 0.1);
+        font-family: var(--font-display);
+        font-size: 21px;
+        font-weight: 950;
+      }
+
+      .tool-card.is-missing .tool-glyph {
+        background: linear-gradient(145deg, rgba(255, 117, 150, 0.13), rgba(141, 115, 255, 0.16));
+      }
+
+      .tool-copy {
+        min-width: 0;
+      }
+
+      .tool-copy strong {
+        display: block;
+        font-size: 16px;
+        font-weight: 950;
+      }
+
+      .tool-copy span {
+        display: block;
+        margin-top: 3px;
+        color: var(--ink-secondary);
+        font-size: 11px;
+        font-weight: 750;
+      }
+
+      .tool-count {
+        display: inline-flex;
+        min-height: 27px;
+        align-items: center;
+        margin-top: 5px;
+        padding: 0 8px;
+        border-radius: 999px;
+        color: #c6c4e0;
+        background: rgba(255, 255, 255, 0.06);
+        font-size: 11px;
+        font-weight: 900;
+      }
+
+      .tool-count.ready {
+        color: #adf5d3;
+        background: rgba(76, 224, 163, 0.08);
+      }
+
+      .buy-tool {
+        min-width: 70px;
+        min-height: 48px;
+        margin-top: 14px;
+        padding: 0 9px;
+        border: 1px solid rgba(89, 231, 255, 0.34);
+        border-radius: 14px;
+        color: #effdff;
+        background: linear-gradient(145deg, rgba(89, 231, 255, 0.12), rgba(141, 115, 255, 0.2));
+        font-size: 11px;
+        font-weight: 950;
+      }
+
+      .buy-tool:hover:not(:disabled) {
+        border-color: rgba(89, 231, 255, 0.65);
+        filter: brightness(1.12);
+      }
+
+      .buy-tool:active:not(:disabled) {
+        transform: translateY(2px);
+      }
+
+      .buy-tool:disabled {
+        color: #86849f;
+        border-color: var(--line-glow);
+        background: rgba(255, 255, 255, 0.04);
+        cursor: not-allowed;
+      }
+
+      .toolbox-note {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin: 0 14px 14px;
+        padding: 12px;
+        border: 1px solid rgba(89, 231, 255, 0.16);
+        border-radius: 17px;
+        color: var(--ink-secondary);
+        background: rgba(89, 231, 255, 0.05);
+        font-size: 11px;
+        font-weight: 750;
+        line-height: 1.45;
+      }
+
+      .toolbox-note strong {
+        color: var(--cyan-300);
+        font-size: 18px;
+      }
+
+      .success-burst {
+        position: fixed;
+        z-index: 20;
+        top: 50%;
+        left: 50%;
+        display: grid;
+        width: 150px;
+        height: 150px;
+        place-items: center;
+        border-radius: 50%;
+        color: white;
+        background: radial-gradient(circle, rgba(89, 231, 255, 0.88), rgba(141, 115, 255, 0.56) 34%, transparent 70%);
+        font-family: var(--font-display);
+        font-size: 25px;
+        font-weight: 950;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+
+      .success-burst.is-playing {
+        animation: gentle-success 900ms ease-out;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      @keyframes gentle-success {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.5);
+        }
+        30% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.5);
+        }
+      }
+
+      @media (max-width: 1120px) {
+        body {
+          overflow: auto;
+        }
+
+        .topbar-center {
+          display: none;
+        }
+
+        .app-shell {
+          height: auto;
+          grid-template-columns: 1fr;
+        }
+
+        .tower-panel {
+          min-height: 780px;
+        }
+
+        .toolbox {
+          min-height: 520px;
+        }
+
+        .tool-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          overflow: visible;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .topbar {
+          width: min(100% - 18px, 1580px);
+          min-height: 70px;
+          grid-template-columns: 1fr auto;
+        }
+
+        .back-button,
+        .brand-copy span,
+        .resource-pill.discovery,
+        .icon-button {
+          display: none;
+        }
+
+        .brand {
+          gap: 9px;
+        }
+
+        .brand-mark {
+          width: 43px;
+          height: 43px;
+        }
+
+        .brand-copy strong {
+          font-size: 20px;
+        }
+
+        .resource-pill {
+          min-height: 43px;
+          padding-inline: 11px;
+        }
+
+        .app-shell {
+          width: min(100% - 18px, 1580px);
+          margin-bottom: 9px;
+        }
+
+        .tower-panel,
+        .toolbox {
+          border-radius: 24px;
+        }
+
+        .tower-panel {
+          min-height: 840px;
+        }
+
+        .tower-heading {
+          display: block;
+          padding: 18px 16px 14px;
+        }
+
+        .tower-heading h1 {
+          font-size: 34px;
+        }
+
+        .route-tabs {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          margin-top: 14px;
+        }
+
+        .route-tab {
+          padding: 0 7px;
+          font-size: 12px;
+        }
+
+        .focus-dock {
+          grid-template-columns: 1fr;
+          padding: 15px;
+        }
+
+        .path-strip {
+          width: 100%;
+        }
+
+        .primary-action {
+          width: 100%;
+        }
+
+        .tool-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <button class="back-button" type="button" aria-label="返回上一页">←</button>
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div class="brand-copy">
+          <strong>万物通天塔</strong>
+          <span>临时交互原型 · 不记录进度</span>
+        </div>
+      </div>
+      <div class="topbar-center">点击格子，看清它从哪里来、还缺什么</div>
+      <div class="resource-bar">
+        <div class="resource-pill" aria-label="拥有 168 枚星币">
+          <span aria-hidden="true">✦</span>
+          <strong id="coinCount">168</strong>
+          <span>星币</span>
+        </div>
+        <div class="resource-pill discovery">
+          <strong id="discoveryCount">11</strong>
+          <span>/ 18 点亮</span>
+        </div>
+        <button class="icon-button" type="button" aria-label="玩法说明">?</button>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section class="tower-panel glass-panel" aria-labelledby="towerTitle">
+        <div class="tower-heading">
+          <div class="tower-heading-copy">
+            <div class="eyebrow">正在观察组合关系</div>
+            <h1 id="towerTitle">从粒子一直搭到山河</h1>
+            <p>塔里保存结果，右侧工具池提供动作、条件和环境。</p>
+          </div>
+          <div class="route-tabs" aria-label="原型演示路线">
+            <button class="route-tab is-active" type="button" data-route="water">水的来路</button>
+            <button class="route-tab" type="button" data-route="volume">体量积累</button>
+            <button class="route-tab" type="button" data-route="flood">跨层洪水</button>
+          </div>
+        </div>
+
+        <div class="tower-viewport" id="towerViewport">
+          <div class="tower-map has-focus" id="towerMap">
+            <div class="tower-spine" aria-hidden="true"></div>
+            <div class="connector-layer" id="connectorLayer" aria-hidden="true"></div>
+
+            <section class="floor" aria-labelledby="floor-landform">
+              <div class="floor-label">
+                <span>第 9 层</span>
+                <strong id="floor-landform">山河大地</strong>
+                <small>地貌与大型环境</small>
+              </div>
+              <div class="floor-stage">
+                <button class="tower-node is-unknown" style="--x: 18%" type="button" data-node="yardang">
+                  <span class="node-icon">?</span>
+                  <span class="node-name">未解锁</span>
+                  <span class="node-state"></span>
+                </button>
+                <button class="tower-node is-unknown" style="--x: 50%" type="button" data-node="flood">
+                  <span class="node-icon">?</span>
+                  <span class="node-name">未解锁</span>
+                  <span class="node-state"></span>
+                </button>
+                <button class="tower-node is-unknown" style="--x: 82%" type="button" data-node="fjord">
+                  <span class="node-icon">?</span>
+                  <span class="node-name">未解锁</span>
+                  <span class="node-state"></span>
+                </button>
+              </div>
+            </section>
+
+            <section class="floor" aria-labelledby="floor-home">
+              <div class="floor-label">
+                <span>第 8 层</span>
+                <strong id="floor-home">共同家园</strong>
+                <small>局部环境与系统</small>
+              </div>
+              <div class="floor-stage">
+                <button class="tower-node is-unknown" style="--x: 18%" type="button" data-node="forest">
+                  <span class="node-icon">?</span>
+                  <span class="node-name">未解锁</span>
+                  <span class="node-state"></span>
+                </button>
+                <button class="tower-node is-discovered" style="--x: 50%; --node-color: var(--cyan-300)" type="button" data-node="pond">
+                  <span class="node-icon">池</span>
+                  <span class="node-name">池塘</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-unknown" style="--x: 82%" type="button" data-node="city">
+                  <span class="node-icon">?</span>
+                  <span class="node-name">未解锁</span>
+                  <span class="node-state"></span>
+                </button>
+              </div>
+            </section>
+
+            <section class="floor" aria-labelledby="floor-visible">
+              <div class="floor-label">
+                <span>第 7 层</span>
+                <strong id="floor-visible">身边万物</strong>
+                <small>肉眼可见的事物</small>
+              </div>
+              <div class="floor-stage">
+                <button class="tower-node is-discovered" style="--x: 18%; --node-color: var(--warning-300)" type="button" data-node="sediment">
+                  <span class="node-icon">沙</span>
+                  <span class="node-name">沉积物</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-unknown" style="--x: 50%" type="button" data-node="cupWater">
+                  <span class="node-icon">?</span>
+                  <span class="node-name">未解锁</span>
+                  <span class="node-state"></span>
+                </button>
+                <button class="tower-node is-discovered" style="--x: 82%; --node-color: #9ca5c8" type="button" data-node="rock">
+                  <span class="node-icon">岩</span>
+                  <span class="node-name">岩石</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="floor" aria-labelledby="floor-material">
+              <div class="floor-label">
+                <span>第 5 层</span>
+                <strong id="floor-material">材料小世界</strong>
+                <small>聚集与材料形态</small>
+              </div>
+              <div class="floor-stage">
+                <button class="tower-node is-revealed" style="--x: 18%; --node-color: #b8e8ff" type="button" data-node="ice">
+                  <span class="node-icon">冰</span>
+                  <span class="node-name">冰</span>
+                  <span class="node-state">◇ 线索已开</span>
+                </button>
+                <button class="tower-node is-discovered" style="--x: 50%; --node-color: var(--cyan-300)" type="button" data-node="liquidWater">
+                  <span class="node-icon">水</span>
+                  <span class="node-name">液态水</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-unknown" style="--x: 82%" type="button" data-node="metal">
+                  <span class="node-icon">?</span>
+                  <span class="node-name">未解锁</span>
+                  <span class="node-state"></span>
+                </button>
+              </div>
+            </section>
+
+            <section class="floor" aria-labelledby="floor-molecule">
+              <div class="floor-label">
+                <span>第 4 层</span>
+                <strong id="floor-molecule">分子工坊</strong>
+                <small>分子与化学变化</small>
+              </div>
+              <div class="floor-stage">
+                <button class="tower-node is-discovered" style="--x: 30%; --node-color: #b8e8ff" type="button" data-node="hydrogen">
+                  <span class="node-icon">H₂</span>
+                  <span class="node-name">氢气</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-discovered" style="--x: 50%; --node-color: var(--cyan-300)" type="button" data-node="water">
+                  <span class="node-icon">H₂O</span>
+                  <span class="node-name">水分子</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-discovered" style="--x: 70%; --node-color: var(--green-400)" type="button" data-node="oxygen">
+                  <span class="node-icon">O₂</span>
+                  <span class="node-name">氧气</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="floor" aria-labelledby="floor-atom">
+              <div class="floor-label">
+                <span>第 3 层</span>
+                <strong id="floor-atom">元素王国</strong>
+                <small>原子与元素</small>
+              </div>
+              <div class="floor-stage">
+                <button class="tower-node is-discovered" style="--x: 30%; --node-color: #b8e8ff" type="button" data-node="hydrogenAtom">
+                  <span class="node-icon">H</span>
+                  <span class="node-name">氢原子</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-discovered" style="--x: 70%; --node-color: var(--green-400)" type="button" data-node="oxygenAtom">
+                  <span class="node-icon">O</span>
+                  <span class="node-name">氧原子</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-revealed" style="--x: 88%; --node-color: #cfd1dc" type="button" data-node="carbonAtom">
+                  <span class="node-icon">C</span>
+                  <span class="node-name">碳原子</span>
+                  <span class="node-state">◇ 线索已开</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="floor" aria-labelledby="floor-particle">
+              <div class="floor-label">
+                <span>第 1–2 层</span>
+                <strong id="floor-particle">粒子小队</strong>
+                <small>超小世界的起点</small>
+              </div>
+              <div class="floor-stage">
+                <button class="tower-node is-discovered" style="--x: 30%; --node-color: var(--pink-400)" type="button" data-node="proton">
+                  <span class="node-icon">p⁺</span>
+                  <span class="node-name">质子</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-discovered" style="--x: 50%; --node-color: #a6a5c5" type="button" data-node="neutron">
+                  <span class="node-icon">n</span>
+                  <span class="node-name">中子</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+                <button class="tower-node is-discovered" style="--x: 70%; --node-color: var(--cyan-300)" type="button" data-node="electron">
+                  <span class="node-icon">e⁻</span>
+                  <span class="node-name">电子</span>
+                  <span class="node-state">✓ 已点亮</span>
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <section class="focus-dock" aria-labelledby="focusTitle">
+          <div class="focus-copy">
+            <div class="eyebrow">聚焦组合轨道</div>
+            <h2 id="focusTitle">水从哪里来？</h2>
+            <p id="focusDescription">跨层相关节点会在塔中加亮，并在这里被提到一起。</p>
+          </div>
+          <div class="path-strip" id="pathStrip" aria-label="当前组合路线"></div>
+          <button class="primary-action" id="routeAction" type="button" disabled>✓ 已经点亮</button>
+        </section>
+      </section>
+
+      <aside class="toolbox glass-panel" aria-labelledby="toolboxTitle">
+        <div class="toolbox-heading">
+          <div class="eyebrow">不属于任何楼层</div>
+          <h2 id="toolboxTitle">世界工具池</h2>
+          <p id="toolboxSummary">当前路线需要的工具会自动浮到最上面。</p>
+        </div>
+        <div class="tool-filters" role="group" aria-label="筛选工具">
+          <button class="tool-filter is-active" type="button" data-filter="all">全部</button>
+          <button class="tool-filter" type="button" data-filter="action">动作</button>
+          <button class="tool-filter" type="button" data-filter="condition">条件</button>
+          <button class="tool-filter" type="button" data-filter="environment">环境</button>
+        </div>
+        <div class="tool-list" id="toolList"></div>
+        <div class="toolbox-note">
+          <strong aria-hidden="true">i</strong>
+          <span>这是概念关系演示，不是现实实验步骤。环境通常不会被消耗，动作和条件可以按规则消耗。</span>
+        </div>
+      </aside>
+    </main>
+
+    <div class="success-burst" id="successBurst" aria-hidden="true">点亮啦！</div>
+    <div class="sr-only" id="liveRegion" aria-live="polite"></div>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var coins = 168;
+        var activeRouteId = "water";
+        var activeFilter = "all";
+
+        var nodes = {
+          yardang: { name: "雅丹地貌", icon: "风", state: "unknown", cost: 34, layer: "山河大地" },
+          flood: { name: "洪水", icon: "洪", state: "unknown", cost: 38, layer: "山河大地" },
+          fjord: { name: "峡湾", icon: "湾", state: "unknown", cost: 36, layer: "山河大地" },
+          forest: { name: "森林", icon: "林", state: "unknown", cost: 28, layer: "共同家园" },
+          pond: { name: "池塘", icon: "池", state: "discovered", layer: "共同家园" },
+          city: { name: "城市", icon: "城", state: "unknown", cost: 48, layer: "共同家园" },
+          sediment: { name: "沉积物", icon: "沙", state: "discovered", layer: "身边万物" },
+          cupWater: { name: "一杯水", icon: "杯", state: "unknown", cost: 26, layer: "身边万物" },
+          rock: { name: "岩石", icon: "岩", state: "discovered", layer: "身边万物" },
+          ice: { name: "冰", icon: "冰", state: "revealed", layer: "材料小世界" },
+          liquidWater: { name: "液态水", icon: "水", state: "discovered", layer: "材料小世界" },
+          metal: { name: "金属材料", icon: "金", state: "unknown", cost: 30, layer: "材料小世界" },
+          hydrogen: { name: "氢气", icon: "H₂", state: "discovered", layer: "分子工坊" },
+          water: { name: "水分子", icon: "H₂O", state: "discovered", layer: "分子工坊" },
+          oxygen: { name: "氧气", icon: "O₂", state: "discovered", layer: "分子工坊" },
+          hydrogenAtom: { name: "氢原子", icon: "H", state: "discovered", layer: "元素王国" },
+          oxygenAtom: { name: "氧原子", icon: "O", state: "discovered", layer: "元素王国" },
+          carbonAtom: { name: "碳原子", icon: "C", state: "revealed", layer: "元素王国" },
+          proton: { name: "质子", icon: "p⁺", state: "discovered", layer: "粒子小队" },
+          neutron: { name: "中子", icon: "n", state: "discovered", layer: "粒子小队" },
+          electron: { name: "电子", icon: "e⁻", state: "discovered", layer: "粒子小队" }
+        };
+
+        var tools = {
+          ignite: {
+            name: "点燃",
+            glyph: "火",
+            category: "action",
+            categoryName: "动作",
+            description: "启动一次燃烧变化",
+            quantity: 2,
+            cost: 12,
+            persistent: false
+          },
+          accumulate: {
+            name: "积累",
+            glyph: "＋",
+            category: "action",
+            categoryName: "动作",
+            description: "把许多小份聚成更大体量",
+            quantity: 0,
+            cost: 18,
+            persistent: false
+          },
+          electricity: {
+            name: "电能",
+            glyph: "电",
+            category: "condition",
+            categoryName: "条件",
+            description: "为变化提供电能",
+            quantity: 1,
+            cost: 20,
+            persistent: false
+          },
+          cold: {
+            name: "低温",
+            glyph: "冷",
+            category: "condition",
+            categoryName: "条件",
+            description: "让环境温度下降",
+            quantity: 1,
+            cost: 15,
+            persistent: false
+          },
+          storm: {
+            name: "持续暴雨",
+            glyph: "雨",
+            category: "condition",
+            categoryName: "条件",
+            description: "在一段时间里增加大量水",
+            quantity: 0,
+            cost: 26,
+            persistent: false
+          },
+          wind: {
+            name: "持续风力",
+            glyph: "风",
+            category: "condition",
+            categoryName: "条件",
+            description: "推动长期的风力作用",
+            quantity: 0,
+            cost: 18,
+            persistent: false
+          },
+          longTime: {
+            name: "漫长时间",
+            glyph: "久",
+            category: "condition",
+            categoryName: "条件",
+            description: "让缓慢变化持续发生",
+            quantity: 1,
+            cost: 22,
+            persistent: false
+          },
+          riverValley: {
+            name: "河谷环境",
+            glyph: "谷",
+            category: "environment",
+            categoryName: "环境",
+            description: "为水流汇集提供空间",
+            quantity: 1,
+            cost: 0,
+            persistent: true
+          },
+          arid: {
+            name: "干旱环境",
+            glyph: "旱",
+            category: "environment",
+            categoryName: "环境",
+            description: "干燥、植被较少的场域",
+            quantity: 1,
+            cost: 0,
+            persistent: true
+          },
+          glacier: {
+            name: "冰川环境",
+            glyph: "冰",
+            category: "environment",
+            categoryName: "环境",
+            description: "冰川可以长期流动和侵蚀",
+            quantity: 0,
+            cost: 24,
+            persistent: true
+          },
+          coast: {
+            name: "海岸环境",
+            glyph: "海",
+            category: "environment",
+            categoryName: "环境",
+            description: "冰川谷退却后可以被海水进入",
+            quantity: 1,
+            cost: 0,
+            persistent: true
+          }
+        };
+
+        var routes = {
+          water: {
+            label: "水的来路",
+            title: "水从哪里来？",
+            description: "同层物质配合一个动作，得到新的分子。",
+            target: "water",
+            nodes: ["hydrogen", "oxygen", "water"],
+            inputs: ["hydrogen", "oxygen"],
+            requirements: [{ id: "ignite", amount: 1 }],
+            edges: [["hydrogen", "water"], ["oxygen", "water"]]
+          },
+          volume: {
+            label: "体量积累",
+            title: "把水积累成一杯",
+            description: "“积累”把微小层级的水，桥接到肉眼可见的体量。",
+            target: "cupWater",
+            nodes: ["water", "liquidWater", "cupWater"],
+            inputs: ["liquidWater"],
+            requirements: [{ id: "accumulate", amount: 1 }],
+            edges: [["water", "liquidWater"], ["liquidWater", "cupWater"]]
+          },
+          flood: {
+            label: "跨层洪水",
+            title: "跨层级形成洪水",
+            description: "相关节点来自不同楼层，但会在聚焦轨道里被提到一起。",
+            target: "flood",
+            nodes: ["water", "liquidWater", "pond", "flood"],
+            inputs: ["pond"],
+            requirements: [
+              { id: "accumulate", amount: 2 },
+              { id: "storm", amount: 1 },
+              { id: "riverValley", amount: 1 }
+            ],
+            edges: [["water", "liquidWater"], ["liquidWater", "pond"], ["pond", "flood"]]
+          },
+          yardang: {
+            label: "雅丹地貌",
+            title: "风怎样塑造雅丹？",
+            description: "物质、环境、条件和漫长时间共同进入一条地貌路线。",
+            target: "yardang",
+            nodes: ["sediment", "yardang"],
+            inputs: ["sediment"],
+            requirements: [
+              { id: "arid", amount: 1 },
+              { id: "wind", amount: 1 },
+              { id: "longTime", amount: 1 }
+            ],
+            edges: [["sediment", "yardang"]]
+          },
+          fjord: {
+            label: "峡湾地貌",
+            title: "冰川怎样留下峡湾？",
+            description: "冰川长期侵蚀谷地，退却后海水进入，形成峡湾。",
+            target: "fjord",
+            nodes: ["ice", "rock", "fjord"],
+            inputs: ["ice", "rock"],
+            requirements: [
+              { id: "glacier", amount: 1 },
+              { id: "longTime", amount: 1 },
+              { id: "coast", amount: 1 }
+            ],
+            edges: [["ice", "fjord"], ["rock", "fjord"]]
+          }
+        };
+
+        var allConnections = [
+          ["proton", "hydrogenAtom"],
+          ["electron", "hydrogenAtom"],
+          ["proton", "oxygenAtom"],
+          ["neutron", "oxygenAtom"],
+          ["electron", "oxygenAtom"],
+          ["hydrogenAtom", "hydrogen"],
+          ["oxygenAtom", "oxygen"],
+          ["hydrogen", "water"],
+          ["oxygen", "water"],
+          ["water", "liquidWater"],
+          ["liquidWater", "ice"],
+          ["liquidWater", "cupWater"],
+          ["cupWater", "pond"],
+          ["liquidWater", "pond"],
+          ["pond", "flood"],
+          ["sediment", "yardang"],
+          ["ice", "fjord"],
+          ["rock", "fjord"]
+        ];
+
+        var nodeRouteMap = {
+          hydrogen: "water",
+          oxygen: "water",
+          water: "water",
+          liquidWater: "volume",
+          cupWater: "volume",
+          pond: "flood",
+          flood: "flood",
+          sediment: "yardang",
+          yardang: "yardang",
+          ice: "fjord",
+          rock: "fjord",
+          fjord: "fjord"
+        };
+
+        var coinCount = document.getElementById("coinCount");
+        var discoveryCount = document.getElementById("discoveryCount");
+        var towerMap = document.getElementById("towerMap");
+        var towerViewport = document.getElementById("towerViewport");
+        var connectorLayer = document.getElementById("connectorLayer");
+        var focusTitle = document.getElementById("focusTitle");
+        var focusDescription = document.getElementById("focusDescription");
+        var pathStrip = document.getElementById("pathStrip");
+        var routeAction = document.getElementById("routeAction");
+        var toolList = document.getElementById("toolList");
+        var toolboxSummary = document.getElementById("toolboxSummary");
+        var successBurst = document.getElementById("successBurst");
+        var liveRegion = document.getElementById("liveRegion");
+
+        function escapeHtml(value) {
+          return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function edgeKey(from, to) {
+          return from + ">" + to;
+        }
+
+        function activeRoute() {
+          return routes[activeRouteId];
+        }
+
+        function targetIsHidden(route) {
+          return nodes[route.target].state === "unknown";
+        }
+
+        function getMissingRequirements(route) {
+          if (targetIsHidden(route)) {
+            return [];
+          }
+
+          return route.requirements.filter(function (requirement) {
+            var tool = tools[requirement.id];
+            return tool.quantity < requirement.amount;
+          });
+        }
+
+        function allInputsReady(route) {
+          return route.inputs.every(function (nodeId) {
+            return nodes[nodeId].state === "discovered";
+          });
+        }
+
+        function requirementLabel(requirement) {
+          var tool = tools[requirement.id];
+          if (tool.persistent) {
+            return tool.quantity >= requirement.amount ? "环境已准备" : "环境未准备";
+          }
+          return "需要 " + requirement.amount + " · 拥有 " + tool.quantity;
+        }
+
+        function renderNode(nodeId) {
+          var data = nodes[nodeId];
+          var element = document.querySelector('[data-node="' + nodeId + '"]');
+          if (!element) {
+            return;
+          }
+
+          element.classList.remove("is-unknown", "is-revealed", "is-discovered");
+          element.classList.add("is-" + data.state);
+          element.setAttribute(
+            "aria-label",
+            data.state === "unknown"
+              ? "未解锁格子，点击查看"
+              : data.name + "，" + (data.state === "discovered" ? "已经点亮" : "线索已解锁，尚未点亮")
+          );
+
+          var icon = element.querySelector(".node-icon");
+          var name = element.querySelector(".node-name");
+          var state = element.querySelector(".node-state");
+
+          if (data.state === "unknown") {
+            icon.textContent = "?";
+            name.textContent = "未解锁";
+            state.textContent = "";
+          } else {
+            icon.textContent = data.icon;
+            name.textContent = data.name;
+            state.textContent = data.state === "discovered" ? "✓ 已点亮" : "◇ 线索已开";
+          }
+        }
+
+        function renderAllNodes() {
+          Object.keys(nodes).forEach(renderNode);
+          var discovered = Object.keys(nodes).filter(function (nodeId) {
+            return nodes[nodeId].state === "discovered";
+          }).length;
+          discoveryCount.textContent = String(discovered);
+        }
+
+        function drawConnectors() {
+          connectorLayer.innerHTML = "";
+          var mapRect = towerMap.getBoundingClientRect();
+          var routeEdges = new Set(activeRoute().edges.map(function (edge) {
+            return edgeKey(edge[0], edge[1]);
+          }));
+
+          allConnections.forEach(function (edge) {
+            var from = document.querySelector('[data-node="' + edge[0] + '"]');
+            var to = document.querySelector('[data-node="' + edge[1] + '"]');
+            if (!from || !to) {
+              return;
+            }
+
+            var fromRect = from.getBoundingClientRect();
+            var toRect = to.getBoundingClientRect();
+            var x1 = fromRect.left + fromRect.width / 2 - mapRect.left;
+            var y1 = fromRect.top + fromRect.height / 2 - mapRect.top;
+            var x2 = toRect.left + toRect.width / 2 - mapRect.left;
+            var y2 = toRect.top + toRect.height / 2 - mapRect.top;
+            var length = Math.hypot(x2 - x1, y2 - y1);
+            var angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            var line = document.createElement("span");
+            line.className = "connector";
+            if (routeEdges.has(edgeKey(edge[0], edge[1]))) {
+              line.classList.add("is-active");
+            }
+            line.style.left = x1 + "px";
+            line.style.top = y1 + "px";
+            line.style.width = length + "px";
+            line.style.transform = "rotate(" + angle + "deg)";
+            connectorLayer.appendChild(line);
+          });
+        }
+
+        function renderPath(route) {
+          var target = nodes[route.target];
+          var html = "";
+
+          if (target.state === "unknown") {
+            html += '<span class="path-chip target"><strong>?</strong><small>花星币解锁线索</small></span>';
+            pathStrip.innerHTML = html;
+            return;
+          }
+
+          route.inputs.forEach(function (nodeId, index) {
+            var node = nodes[nodeId];
+            if (index > 0) {
+              html += '<span class="path-plus" aria-hidden="true">+</span>';
+            }
+            html +=
+              '<span class="path-chip"><strong>' +
+              escapeHtml(node.name) +
+              "</strong><small>" +
+              escapeHtml(node.layer) +
+              "</small></span>";
+          });
+
+          route.requirements.forEach(function (requirement) {
+            var tool = tools[requirement.id];
+            var missing = tool.quantity < requirement.amount;
+            html += '<span class="path-plus" aria-hidden="true">+</span>';
+            html +=
+              '<span class="path-chip requirement' +
+              (missing ? " is-missing" : "") +
+              '"><strong>' +
+              escapeHtml(tool.name) +
+              "</strong><small>" +
+              escapeHtml(requirementLabel(requirement)) +
+              "</small></span>";
+          });
+
+          html += '<span class="path-arrow" aria-hidden="true">→</span>';
+          html +=
+            '<span class="path-chip target"><strong>' +
+            escapeHtml(target.name) +
+            "</strong><small>" +
+            escapeHtml(target.layer) +
+            "</small></span>";
+          pathStrip.innerHTML = html;
+        }
+
+        function renderAction(route) {
+          var target = nodes[route.target];
+          var missing = getMissingRequirements(route);
+
+          routeAction.disabled = false;
+          routeAction.dataset.action = "";
+
+          if (target.state === "unknown") {
+            routeAction.textContent = "✦ " + target.cost + " 解锁线索";
+            routeAction.dataset.action = "unlock";
+            return;
+          }
+
+          if (target.state === "discovered") {
+            routeAction.textContent = "✓ 已经点亮";
+            routeAction.disabled = true;
+            return;
+          }
+
+          if (!allInputsReady(route)) {
+            routeAction.textContent = "先点亮所需物质";
+            routeAction.disabled = true;
+            return;
+          }
+
+          if (missing.length > 0) {
+            var totalMissing = missing.reduce(function (sum, requirement) {
+              return sum + Math.max(0, requirement.amount - tools[requirement.id].quantity);
+            }, 0);
+            routeAction.textContent = "还缺 " + totalMissing + " 项工具";
+            routeAction.disabled = true;
+            return;
+          }
+
+          routeAction.textContent = "开始生成 " + target.name;
+          routeAction.dataset.action = "build";
+        }
+
+        function renderToolbox() {
+          var route = activeRoute();
+          var requirements = targetIsHidden(route) ? [] : route.requirements;
+          var requirementMap = {};
+          requirements.forEach(function (requirement) {
+            requirementMap[requirement.id] = requirement.amount;
+          });
+
+          var visibleTools = Object.keys(tools).filter(function (toolId) {
+            return activeFilter === "all" || tools[toolId].category === activeFilter;
+          });
+
+          visibleTools.sort(function (a, b) {
+            var aRequired = Object.prototype.hasOwnProperty.call(requirementMap, a) ? 0 : 1;
+            var bRequired = Object.prototype.hasOwnProperty.call(requirementMap, b) ? 0 : 1;
+            if (aRequired !== bRequired) {
+              return aRequired - bRequired;
+            }
+            return tools[a].name.localeCompare(tools[b].name, "zh-CN");
+          });
+
+          if (targetIsHidden(route)) {
+            toolboxSummary.textContent = "先解锁问号，所需工具才会浮现。";
+          } else {
+            var missingCount = getMissingRequirements(route).length;
+            toolboxSummary.textContent =
+              missingCount === 0
+                ? "这条路线的工具已经准备好。"
+                : "还缺 " + missingCount + " 类工具，可以在这里补齐。";
+          }
+
+          toolList.innerHTML = visibleTools.map(function (toolId) {
+            var tool = tools[toolId];
+            var requiredAmount = requirementMap[toolId] || 0;
+            var isRequired = requiredAmount > 0;
+            var isMissing = isRequired && tool.quantity < requiredAmount;
+            var countText = tool.persistent
+              ? tool.quantity > 0
+                ? "✓ 已准备"
+                : "尚未准备"
+              : "拥有 ×" + tool.quantity;
+            var buttonText = tool.persistent && tool.quantity > 0
+              ? "可重复用"
+              : tool.cost + " 星币";
+
+            return (
+              '<article class="tool-card' +
+              (isRequired ? " is-required" : "") +
+              (isMissing ? " is-missing" : "") +
+              '">' +
+              '<span class="tool-glyph" aria-hidden="true">' +
+              escapeHtml(tool.glyph) +
+              "</span>" +
+              '<div class="tool-copy"><strong>' +
+              escapeHtml(tool.name) +
+              "</strong><span>" +
+              escapeHtml(tool.categoryName + " · " + tool.description) +
+              '</span><span class="tool-count' +
+              (tool.quantity > 0 ? " ready" : "") +
+              '">' +
+              escapeHtml(countText) +
+              "</span></div>" +
+              '<button class="buy-tool" type="button" data-buy-tool="' +
+              escapeHtml(toolId) +
+              '"' +
+              (tool.persistent && tool.quantity > 0 ? " disabled" : "") +
+              ">" +
+              escapeHtml(buttonText) +
+              "</button></article>"
+            );
+          }).join("");
+        }
+
+        function updateNodeFocus(route) {
+          document.querySelectorAll(".tower-node").forEach(function (element) {
+            var nodeId = element.dataset.node;
+            element.classList.toggle("is-route-node", route.nodes.indexOf(nodeId) >= 0);
+            element.classList.toggle("is-route-target", route.target === nodeId);
+          });
+        }
+
+        function renderRoute() {
+          var route = activeRoute();
+          focusTitle.textContent = targetIsHidden(route) ? "这里藏着什么？" : route.title;
+          focusDescription.textContent = targetIsHidden(route)
+            ? "塔已经预留了位置。解锁后才会看到名字、来路和需要的工具。"
+            : route.description;
+
+          document.querySelectorAll(".route-tab").forEach(function (button) {
+            button.classList.toggle("is-active", button.dataset.route === activeRouteId);
+          });
+
+          updateNodeFocus(route);
+          renderPath(route);
+          renderAction(route);
+          renderToolbox();
+          drawConnectors();
+        }
+
+        function announce(message) {
+          liveRegion.textContent = "";
+          window.setTimeout(function () {
+            liveRegion.textContent = message;
+          }, 20);
+        }
+
+        function selectRoute(routeId, shouldScroll) {
+          if (!routes[routeId]) {
+            return;
+          }
+          activeRouteId = routeId;
+          renderRoute();
+
+          if (shouldScroll) {
+            var targetElement = document.querySelector('[data-node="' + routes[routeId].target + '"]');
+            if (targetElement) {
+              var viewportRect = towerViewport.getBoundingClientRect();
+              var targetRect = targetElement.getBoundingClientRect();
+              var desiredTop = towerViewport.scrollTop + targetRect.top - viewportRect.top - viewportRect.height / 2;
+              towerViewport.scrollTo({
+                top: Math.max(0, desiredTop),
+                behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+              });
+            }
+          }
+        }
+
+        function unlockTarget() {
+          var route = activeRoute();
+          var target = nodes[route.target];
+          if (target.state !== "unknown") {
+            return;
+          }
+          if (coins < target.cost) {
+            announce("星币还不够，可以先探索已经点亮的路线。");
+            return;
+          }
+
+          coins -= target.cost;
+          target.state = "revealed";
+          coinCount.textContent = String(coins);
+          renderNode(route.target);
+          renderRoute();
+          announce("线索解锁：" + target.name + "。需要的工具已经浮到右侧最上方。");
+        }
+
+        function buyTool(toolId) {
+          var tool = tools[toolId];
+          if (!tool || (tool.persistent && tool.quantity > 0)) {
+            return;
+          }
+          if (coins < tool.cost) {
+            announce("星币还不够，先看看别的路线吧。");
+            return;
+          }
+
+          coins -= tool.cost;
+          tool.quantity += 1;
+          coinCount.textContent = String(coins);
+          renderRoute();
+          announce("获得了一个“" + tool.name + "”，组合轨道已经更新。");
+        }
+
+        function playSuccess(targetName) {
+          successBurst.textContent = targetName + " 点亮啦！";
+          successBurst.classList.remove("is-playing");
+          void successBurst.offsetWidth;
+          successBurst.classList.add("is-playing");
+        }
+
+        function buildTarget() {
+          var route = activeRoute();
+          var target = nodes[route.target];
+          var missing = getMissingRequirements(route);
+          if (target.state !== "revealed" || missing.length > 0 || !allInputsReady(route)) {
+            return;
+          }
+
+          route.requirements.forEach(function (requirement) {
+            var tool = tools[requirement.id];
+            if (!tool.persistent) {
+              tool.quantity -= requirement.amount;
+            }
+          });
+
+          target.state = "discovered";
+          renderAllNodes();
+          renderRoute();
+          playSuccess(target.name);
+          announce(target.name + "已经点亮。它现在也能成为更高层路线的一部分。");
+        }
+
+        document.querySelectorAll(".route-tab").forEach(function (button) {
+          button.addEventListener("click", function () {
+            selectRoute(button.dataset.route, true);
+          });
+        });
+
+        document.querySelectorAll(".tower-node").forEach(function (button) {
+          button.addEventListener("click", function () {
+            var nodeId = button.dataset.node;
+            var routeId = nodeRouteMap[nodeId];
+            if (routeId) {
+              selectRoute(routeId, false);
+              return;
+            }
+
+            var data = nodes[nodeId];
+            announce(
+              data.state === "unknown"
+                ? "这是另一条尚未展开的支线。本原型先演示水、洪水、雅丹和峡湾路线。"
+                : data.name + "已经在塔中点亮。"
+            );
+          });
+        });
+
+        routeAction.addEventListener("click", function () {
+          if (routeAction.dataset.action === "unlock") {
+            unlockTarget();
+          } else if (routeAction.dataset.action === "build") {
+            buildTarget();
+          }
+        });
+
+        document.querySelectorAll(".tool-filter").forEach(function (button) {
+          button.addEventListener("click", function () {
+            activeFilter = button.dataset.filter;
+            document.querySelectorAll(".tool-filter").forEach(function (other) {
+              other.classList.toggle("is-active", other === button);
+            });
+            renderToolbox();
+          });
+        });
+
+        toolList.addEventListener("click", function (event) {
+          var buyButton = event.target.closest("[data-buy-tool]");
+          if (buyButton) {
+            buyTool(buyButton.dataset.buyTool);
+          }
+        });
+
+        document.querySelector(".back-button").addEventListener("click", function () {
+          announce("这是独立样稿，返回操作暂未接入正式页面。");
+        });
+
+        document.querySelector(".icon-button").addEventListener("click", function () {
+          announce("试玩提示：先切换顶部路线，再解锁问号，缺少的工具会自动浮到右侧。");
+        });
+
+        window.addEventListener("resize", drawConnectors);
+        renderAllNodes();
+        renderRoute();
+
+        window.setTimeout(function () {
+          var waterNode = document.querySelector('[data-node="water"]');
+          if (waterNode) {
+            waterNode.scrollIntoView({ block: "center", inline: "center" });
+          }
+          drawConnectors();
+        }, 80);
+      })();
+    </script>
+  </body>
+</html>

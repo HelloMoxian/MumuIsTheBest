@@ -46,6 +46,11 @@ const MoleculeFactoryPage = lazy(async () => {
   return { default: module.MoleculeFactoryPage };
 });
 
+const WorldTowerPage = lazy(async () => {
+  const module = await import("./features/world-tower/WorldTowerPage");
+  return { default: module.WorldTowerPage };
+});
+
 function ChemistryLoading({ label }: { label: string }) {
   return (
     <div className="app-shell" aria-live="polite">
@@ -204,6 +209,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "先预测，再解释实验现象",
         shape: "compact",
         href: "/chemistry/experiment-master",
+      },
+      {
+        title: "万物构成塔",
+        mark: "✦",
+        description: "从粒子一路搭到山河与宇宙",
+        shape: "wide",
+        href: "/world-tower",
       },
     ],
   },
@@ -795,6 +807,9 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/chemistry/molecule-factory") {
     return <Suspense fallback={<ChemistryLoading label="分子工厂" />}><MoleculeFactoryPage /></Suspense>;
+  }
+  if (window.location.pathname === "/world-tower") {
+    return <Suspense fallback={<ChemistryLoading label="万物构成塔" />}><WorldTowerPage /></Suspense>;
   }
   if (window.location.pathname === "/chinese/pinyin") {
     return (

@@ -10,6 +10,7 @@ import { z } from "zod";
 import { registerArithmeticBattleHistoryApi } from "./arithmetic-battle-history.js";
 import { registerCommonCharacterProgressApi } from "./common-character-progress.js";
 import { registerMultiplicationHistoryApi } from "./multiplication-history.js";
+import { registerWorldTowerApi } from "./world-tower.js";
 
 const defaultEndpoint =
   process.env.ASR_WEBSOCKET_URL ??
@@ -524,6 +525,7 @@ async function main() {
   registerArithmeticBattleHistoryApi(app, appDataDir);
   registerMultiplicationHistoryApi(app, appDataDir);
   registerCommonCharacterProgressApi(app, appDataDir);
+  registerWorldTowerApi(app, appDataDir, projectRoot);
 
   app.get("/api/health", async () => ({ status: "ok", service: "mumu-asr" }));
 
@@ -533,6 +535,7 @@ async function main() {
     app.get("/*", async (_request, reply) => reply.sendFile("index.html"));
   }
 
+  console.info(`Mumu 本机数据目录：${appDataDir}`);
   await app.listen({ port, host });
 }
 
