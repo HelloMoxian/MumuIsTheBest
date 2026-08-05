@@ -150,7 +150,14 @@ const iconManifestSchema = z.object({
   frameAssets: z.record(z.string(), z.string()),
   levelFallbacks: z.record(z.string(), z.string()),
   clusterFallbacks: z.record(z.string(), z.string()).default({}),
-  nodeAssets: z.record(z.string(), z.string()),
+  nodeAssets: z.record(z.string(), z.object({
+    path: z.string().min(1),
+    atlas: z.object({
+      columns: z.number().int().min(1).max(24),
+      rows: z.number().int().min(1).max(24),
+      index: z.number().int().min(0).max(600),
+    }).nullable(),
+  })),
   resourceAssets: z.record(z.string(), z.string()),
   placeholderTexture: z.string(),
 });
@@ -231,12 +238,20 @@ class WorldTowerError extends Error {
   }
 }
 
+function artworkForNode(node: GraphNode, iconManifest: IconManifest) {
+  const dedicatedAsset = iconManifest.nodeAssets[node.id];
+  if (dedicatedAsset) return dedicatedAsset;
+  const clusterPath = iconManifest.clusterFallbacks[node.clusterId];
+  return clusterPath ? { path: clusterPath, atlas: null } : null;
+}
+
 function nodeSummary(
   node: GraphNode,
   prices: ReadonlyMap<string, number>,
   unlocked: ReadonlySet<string>,
   iconManifest: IconManifest,
 ) {
+  const artwork = artworkForNode(node, iconManifest);
   return {
     id: node.id,
     name: node.name,
@@ -245,11 +260,8 @@ function nodeSummary(
     clusterId: node.clusterId,
     summary: node.summary,
     art: node.art,
-    imagePath:
-      iconManifest.nodeAssets[node.id]
-      ?? iconManifest.clusterFallbacks[node.clusterId]
-      ?? iconManifest.levelFallbacks[node.levelId]
-      ?? null,
+    imagePath: artwork?.path ?? null,
+    imageCrop: artwork?.atlas ?? null,
     unlockPriceCoins: prices.get(node.id) ?? null,
     isUnlocked: unlocked.has(node.id),
     recipeCount: node.recipes.length,
@@ -281,8 +293,10 @@ function buildGraphOverview(
 
   for (const rootId of rootIds) addNode(rootId, true);
   for (const nodeId of Object.keys(iconManifest.nodeAssets)) {
-    addNode(nodeId, true);
-    if (nodeById.has(nodeId)) preferredAncestors.push(nodeId);
+    const node = nodeById.get(nodeId);
+    if (!node || (countsByLevel.get(node.levelId) ?? 0) >= 2) continue;
+    addNode(nodeId);
+    preferredAncestors.push(nodeId);
   }
 
   for (let index = 0; index < preferredAncestors.length && selectedIds.size < maximumNodes; index += 1) {
@@ -690,14 +704,12 @@ export function registerWorldTowerApi(
       const unlocked = new Set(progress.unlockedNodeIds);
       const inputIds = [...new Set(node.recipes.flatMap((item) => item.inputs.map((value) => value.nodeId)))];
       const dependentIds = graph.indexes.dependentsByNodeId[node.id] ?? [];
+      const artwork = artworkForNode(node, icons);
       return {
         node: {
           ...node,
-          imagePath:
-            icons.nodeAssets[node.id]
-            ?? icons.clusterFallbacks[node.clusterId]
-            ?? icons.levelFallbacks[node.levelId]
-            ?? null,
+          imagePath: artwork?.path ?? null,
+          imageCrop: artwork?.atlas ?? null,
           unlockPriceCoins: nodePriceById.get(node.id) ?? null,
           isUnlocked: unlocked.has(node.id),
         },

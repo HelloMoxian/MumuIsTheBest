@@ -23,7 +23,8 @@
 | `content/world-tower/icon-manifest.v1.json` | 外框、背景、层级回退、核心节点和全部资源图标的运行时路径 |
 
 图谱由 `scripts/generate-world-graph.mjs` 生成；图标清单由
-`scripts/generate-world-icon-manifest.mjs` 生成。化合物继续读取
+`scripts/generate-world-icon-manifest.mjs` 生成，化合物结构图集由
+`scripts/generate-world-icon-assets.mjs` 生成。化合物继续读取
 `content/chemistry/compound-catalog.v1.json`，不得维护第二套化合物事实来源。
 
 ## 3. 图标资产
@@ -32,17 +33,23 @@
 
 - `frames/`：透明符文外框，不含内容、文字和交互状态；
 - `nodes/core/`：常见关键节点的专属内容图；
-- `nodes/levels/`：15 个层级回退图，保证新增节点立即可用；
+- `nodes/atlases/`：518 个化合物的结构准确发光分子 SVG 图集；
+- `nodes/levels/`：15 个层级主题图，只用于左侧尺度层导航；
 - `resources/{action,condition,environment,knowledge}/`：135 个动作、条件、环境与知识图标；电子包和质子包复用 `nodes/core/` 中对应粒子节点的内容图；
 - `placeholders/`：无专属图片时使用的星尘文字占位；
 - `source-atlases/`：生成原图集，用于追溯、重新裁切和保持后续生成质量；
 - `backgrounds/`：万物构成塔的深空主题背景。
 
 美术构图固定为“符文外框、内容图片、HTML 名称三层分离”。运行时优先级为：
-专属节点图 → 聚类图（预留）→ 层级回退图 → 星尘纹理与文字问号。
+专属节点图或精确图集格位 → 聚类图（预留）→ 星尘纹理与节点自身名称。层级主题图
+不得作为具体节点图片回退，避免新增节点显示与自身含义无关的图。
 
-新增专属图片时，将内容图放入 `nodes/core/`，再在图标清单生成器的
-`coreNodeArt` 中登记名称与文件名。新增资源图标使用资源 ID 冒号后的稳定部分作为文件名。
+118 个元素使用六张 AI 美术源图集；材料、生命、零件、生活用品、机器、房间、建筑、
+社会系统、地貌和行星按“基础语义图 + 同概念变体复用”绑定；518 个化合物根据统一化合物
+目录中的原子与化学键结构确定性绘制。当前清单覆盖 1508 个节点，未覆盖节点显示自身名称
+占位而不是错误图片。新增专属图片时，将内容图放入 `nodes/core/`，或把批量源图保存在
+`source-atlases/` 并在图标清单生成器登记格位。新增资源图标继续使用资源 ID 冒号后的稳定
+部分作为文件名。
 
 ## 4. 个人进度与安全
 

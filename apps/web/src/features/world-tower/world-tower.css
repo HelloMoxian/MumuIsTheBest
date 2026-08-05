@@ -559,6 +559,32 @@
   transition: opacity 180ms ease, filter 180ms ease, transform 180ms ease;
 }
 
+.wt-node-art {
+  background-repeat: no-repeat;
+}
+
+.wt-node-art.is-atlas {
+  display: block;
+}
+
+.wt-node-art.is-semantic-placeholder {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: rgba(235, 243, 255, 0.94);
+  text-align: center;
+  background-position: center;
+  background-size: cover;
+}
+
+.wt-node-art__placeholder-name {
+  max-width: 86%;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.05;
+  text-shadow: 0 2px 7px #050a24, 0 0 10px rgba(91, 222, 255, 0.62);
+}
+
 .wt-rune-node__frame {
   position: absolute;
   inset: -13%;
@@ -797,6 +823,21 @@
   flex: 0 0 auto;
   object-fit: cover;
   border-radius: 11px;
+}
+
+.wt-requirement-card__node-art {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 11px;
+  background-color: rgba(7, 15, 45, 0.86);
+}
+
+.wt-requirement-card__node-art .wt-node-art__placeholder-name {
+  font-size: 9px;
 }
 
 .wt-requirement span {

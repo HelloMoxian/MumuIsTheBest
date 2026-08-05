@@ -73,6 +73,49 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : "探索舱暂时没有回应，请稍后再试。";
 }
 
+function NodeArtwork({
+  node,
+  className,
+  placeholderTexture,
+}: {
+  node: WorldTowerNode;
+  className: string;
+  placeholderTexture: string;
+}) {
+  const crop = node.imageCrop;
+  if (node.imagePath && crop) {
+    const column = crop.index % crop.columns;
+    const row = Math.floor(crop.index / crop.columns);
+    const positionX = crop.columns === 1 ? 0 : column / (crop.columns - 1) * 100;
+    const positionY = crop.rows === 1 ? 0 : row / (crop.rows - 1) * 100;
+    return (
+      <span
+        className={className + " wt-node-art is-atlas"}
+        style={{
+          backgroundImage: "url(\"" + node.imagePath + "\")",
+          backgroundPosition: positionX + "% " + positionY + "%",
+          backgroundSize: crop.columns * 100 + "% " + crop.rows * 100 + "%",
+        }}
+        aria-hidden="true"
+      />
+    );
+  }
+  if (node.imagePath) {
+    return <img className={className + " wt-node-art"} src={node.imagePath} alt="" loading="lazy" />;
+  }
+  return (
+    <span
+      className={className + " wt-node-art is-semantic-placeholder"}
+      style={{ backgroundImage: "url(\"" + placeholderTexture + "\")" }}
+      aria-hidden="true"
+    >
+      {node.isUnlocked && (
+        <span className="wt-node-art__placeholder-name">{node.name.slice(0, 5)}</span>
+      )}
+    </span>
+  );
+}
+
 function RuneNode({
   node,
   levelOrder,
@@ -89,7 +132,6 @@ function RuneNode({
   onSelect: (nodeId: string) => void;
 }) {
   const quality = frameQualityForLevel(levelOrder);
-  const imagePath = node.imagePath ?? placeholderTexture;
   const label = visibleNodeName(node);
 
   return (
@@ -108,7 +150,11 @@ function RuneNode({
       }
     >
       <span className="wt-rune-node__orb" aria-hidden="true">
-        <img className="wt-rune-node__content" src={imagePath} alt="" loading="lazy" />
+        <NodeArtwork
+          node={node}
+          className="wt-rune-node__content"
+          placeholderTexture={placeholderTexture}
+        />
         {!node.isUnlocked && <span className="wt-rune-node__question">?</span>}
         <img className="wt-rune-node__frame" src={frames[quality]} alt="" />
       </span>
@@ -946,7 +992,11 @@ export function WorldTowerPage() {
               {visibleMissingInputs.map((inputNode) => (
                 <div className="wt-needed-item is-node is-missing" key={inputNode.id}>
                   <button type="button" onClick={() => chooseNode(inputNode.id)}>
-                    {inputNode.imagePath && <img src={inputNode.imagePath} alt="" />}
+                    <NodeArtwork
+                      node={inputNode}
+                      className="wt-requirement-card__node-art"
+                      placeholderTexture={manifest.placeholderTexture}
+                    />
                     <span>
                       <b>{visibleNodeName(inputNode)}</b>
                       <small>缺少来路 · 点击前往</small>

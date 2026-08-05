@@ -87,6 +87,11 @@ export type WorldTowerNode = {
   clusterId: string;
   summary: string;
   imagePath: string | null;
+  imageCrop?: {
+    columns: number;
+    rows: number;
+    index: number;
+  } | null;
   unlockPriceCoins: number | null;
   isUnlocked: boolean;
   recipeCount: number;

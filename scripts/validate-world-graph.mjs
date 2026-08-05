@@ -93,16 +93,27 @@ assert(catalog.resourcePrices.every((item) => resourceIds.has(item.targetId)), "
 
 assert(Object.keys(icons.levelFallbacks).length === graph.levels.length, "层级回退图片不完整。");
 assert(Object.keys(icons.resourceAssets).length === resourceList.length, "资源图标不完整。");
-assert(Object.keys(icons.nodeAssets).length >= 40, "一期核心节点专属图片不能少于 40 个。");
+assert(Object.keys(icons.nodeAssets).length >= 1_400, "语义节点图片覆盖不能少于 1,400 个节点。");
+for (const [nodeId, asset] of Object.entries(icons.nodeAssets)) {
+  assert(nodeById.has(nodeId), "图标清单引用了不存在的节点：" + nodeId);
+  assert(typeof asset.path === "string" && asset.path.startsWith("/"), "节点图片路径无效：" + nodeId);
+  if (asset.atlas) {
+    assert(asset.atlas.columns > 0 && asset.atlas.rows > 0, "图集行列无效：" + nodeId);
+    assert(
+      asset.atlas.index >= 0 && asset.atlas.index < asset.atlas.columns * asset.atlas.rows,
+      "图集格位越界：" + nodeId,
+    );
+  }
+}
 const assetPaths = [
   icons.backgroundAsset,
   icons.placeholderTexture,
   ...Object.values(icons.frameAssets),
   ...Object.values(icons.levelFallbacks),
-  ...Object.values(icons.nodeAssets),
+  ...Object.values(icons.nodeAssets).map((asset) => asset.path),
   ...Object.values(icons.resourceAssets),
 ];
-for (const assetPath of assetPaths) {
+for (const assetPath of new Set(assetPaths)) {
   const localPath = path.join(repositoryRoot, "apps", "web", "public", assetPath.replace(/^\//, ""));
   assert(fs.existsSync(localPath), `图标清单中的文件不存在：${assetPath}`);
 }
