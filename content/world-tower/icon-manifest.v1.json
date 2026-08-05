@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "assetPackId": "mumu-world-tower-cosmic-runes-v2",
+  "assetPackId": "mumu-world-tower-cosmic-runes-v3",
   "generatedAt": "2026-08-05T00:00:00.000Z",
   "artDirection": {
     "style": "premium-fantasy-science-cosmic-runes",
@@ -5217,6 +5217,30 @@
         "index": 4
       }
     },
+    "material:silk-fiber": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "material:silk-fiber-form-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "material:silk-fiber-form-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
     "material:flax-fiber": {
       "path": "/images/world-tower/nodes/atlases/nodes-materials-01-v2.webp",
       "atlas": {
@@ -5643,6 +5667,30 @@
         "columns": 5,
         "rows": 4,
         "index": 3
+      }
+    },
+    "material:brick": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "material:brick-form-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "material:brick-form-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
       }
     },
     "material:cement": {
@@ -6121,6 +6169,30 @@
         "index": 4
       }
     },
+    "material:mortar": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "material:mortar-form-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "material:mortar-form-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
     "material:asphalt": {
       "path": "/images/world-tower/nodes/atlases/nodes-materials-03-v2.webp",
       "atlas": {
@@ -6191,6 +6263,30 @@
         "columns": 5,
         "rows": 4,
         "index": 7
+      }
+    },
+    "material:soap-base": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "material:soap-base-form-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "material:soap-base-form-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
       }
     },
     "material:liquid-water": {
@@ -6299,6 +6395,30 @@
         "columns": 5,
         "rows": 4,
         "index": 12
+      }
+    },
+    "material:salt": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "material:salt-form-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "material:salt-form-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
       }
     },
     "material:soil-mixture": {
@@ -6517,6 +6637,30 @@
         "index": 4
       }
     },
+    "plant:wheat": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "plant:wheat-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "plant:wheat-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
     "plant:corn": {
       "path": "/images/world-tower/nodes/atlases/nodes-life-01-v2.webp",
       "atlas": {
@@ -6613,6 +6757,30 @@
         "index": 8
       }
     },
+    "plant:potato": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "plant:potato-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "plant:potato-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
     "plant:tomato": {
       "path": "/images/world-tower/nodes/atlases/nodes-life-01-v2.webp",
       "atlas": {
@@ -6707,6 +6875,30 @@
         "columns": 5,
         "rows": 4,
         "index": 12
+      }
+    },
+    "plant:pear-tree": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "plant:pear-tree-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "plant:pear-tree-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
       }
     },
     "plant:orange-tree": {
@@ -6899,6 +7091,30 @@
         "columns": 5,
         "rows": 4,
         "index": 3
+      }
+    },
+    "plant:sunflower": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "plant:sunflower-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "plant:sunflower-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
       }
     },
     "plant:lotus": {
@@ -7117,6 +7333,30 @@
         "index": 12
       }
     },
+    "animal:chicken": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "animal:chicken-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "animal:chicken-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
     "animal:duck": {
       "path": "/images/world-tower/nodes/atlases/nodes-life-02-v2.webp",
       "atlas": {
@@ -7235,6 +7475,246 @@
         "columns": 5,
         "rows": 4,
         "index": 17
+      }
+    },
+    "animal:bee": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "animal:bee-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "animal:bee-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "animal:fish": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "animal:fish-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "animal:fish-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "animal:shrimp": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "animal:shrimp-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "animal:shrimp-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "animal:crab": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "animal:crab-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "animal:crab-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "animal:earthworm": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "animal:earthworm-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "animal:earthworm-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "microbe:yeast": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "microbe:yeast-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "microbe:yeast-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-01-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "microbe:lactic-bacteria": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "microbe:lactic-bacteria-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "microbe:lactic-bacteria-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "microbe:cyanobacteria": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "microbe:cyanobacteria-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "microbe:cyanobacteria-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "microbe:mold": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "microbe:mold-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "microbe:mold-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "microbe:plankton": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "microbe:plankton-part-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "microbe:plankton-part-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
       }
     },
     "component:screw-1": {
@@ -7523,6 +8003,38 @@
         "columns": 5,
         "rows": 4,
         "index": 8
+      }
+    },
+    "component:pulley-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "component:pulley-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "component:pulley-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "component:pulley-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
       }
     },
     "component:chain-1": {
@@ -8197,6 +8709,38 @@
         "index": 8
       }
     },
+    "component:mirror-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "component:mirror-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "component:mirror-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "component:mirror-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
     "component:prism-1": {
       "path": "/images/world-tower/nodes/atlases/nodes-components-02-v2.webp",
       "atlas": {
@@ -8323,6 +8867,614 @@
         "columns": 4,
         "rows": 4,
         "index": 12
+      }
+    },
+    "component:fabric-panel-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "component:fabric-panel-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "component:fabric-panel-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "component:fabric-panel-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "component:zipper-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "component:zipper-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "component:zipper-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "component:zipper-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "component:strap-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "component:strap-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "component:strap-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "component:strap-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "component:buckle-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "component:buckle-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "component:buckle-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "component:buckle-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "component:cushion-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "component:cushion-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "component:cushion-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "component:cushion-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "component:brush-head-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "component:brush-head-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "component:brush-head-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "component:brush-head-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "component:frame-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "component:frame-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "component:frame-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "component:frame-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "component:panel-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "component:panel-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "component:panel-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "component:panel-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "component:beam-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "component:beam-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "component:beam-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "component:beam-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "component:column-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "component:column-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "component:column-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "component:column-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-02-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "component:pipe-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "component:pipe-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "component:pipe-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "component:pipe-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "component:valve-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "component:valve-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "component:valve-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "component:valve-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "component:tank-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "component:tank-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "component:tank-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "component:tank-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "component:seal-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "component:seal-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "component:seal-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "component:seal-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "component:window-unit-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "component:window-unit-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "component:window-unit-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "component:window-unit-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "component:door-unit-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "component:door-unit-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "component:door-unit-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "component:door-unit-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "component:shelf-unit-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "component:shelf-unit-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "component:shelf-unit-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "component:shelf-unit-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "component:container-shell-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "component:container-shell-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "component:container-shell-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "component:container-shell-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "component:connector-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "component:connector-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "component:connector-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "component:connector-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
       }
     },
     "object:537f7221-1": {
@@ -9585,6 +10737,1110 @@
         "index": 16
       }
     },
+    "object:35cf384a-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:35cf384a-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:35cf384a-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:35cf384a-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:52931c43-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:52931c43-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:52931c43-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:52931c43-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:57585706-1": {
+      "path": "/images/world-tower/nodes/core/soap.webp",
+      "atlas": null
+    },
+    "object:57585706-2": {
+      "path": "/images/world-tower/nodes/core/soap.webp",
+      "atlas": null
+    },
+    "object:57585706-3": {
+      "path": "/images/world-tower/nodes/core/soap.webp",
+      "atlas": null
+    },
+    "object:57585706-4": {
+      "path": "/images/world-tower/nodes/core/soap.webp",
+      "atlas": null
+    },
+    "object:d58f2099-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "object:d58f2099-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "object:d58f2099-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "object:d58f2099-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "object:4e10f381-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "object:4e10f381-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "object:4e10f381-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "object:4e10f381-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "object:2e067d63-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "object:2e067d63-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "object:2e067d63-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "object:2e067d63-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "object:112cd3d9-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "object:112cd3d9-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "object:112cd3d9-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "object:112cd3d9-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "object:9f85d9d0-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "object:9f85d9d0-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "object:9f85d9d0-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "object:9f85d9d0-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-03-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "object:1bcea30f-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "object:1bcea30f-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "object:1bcea30f-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "object:1bcea30f-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "object:336ae6d6-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "object:336ae6d6-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "object:336ae6d6-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "object:336ae6d6-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "object:3d8cae65-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "object:3d8cae65-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "object:3d8cae65-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "object:3d8cae65-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "object:ede6da20-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "object:ede6da20-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "object:ede6da20-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "object:ede6da20-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "object:16975b99-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "object:16975b99-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "object:16975b99-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "object:16975b99-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "object:d9068b0c-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "object:d9068b0c-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "object:d9068b0c-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "object:d9068b0c-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "object:dab6d95a-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "object:dab6d95a-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "object:dab6d95a-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "object:dab6d95a-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "object:d1910428-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "object:d1910428-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "object:d1910428-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "object:d1910428-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "object:ca48cb6e-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "object:ca48cb6e-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "object:ca48cb6e-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "object:ca48cb6e-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "object:e79db611-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:e79db611-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:e79db611-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:e79db611-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:2c746ae7-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:2c746ae7-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:2c746ae7-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:2c746ae7-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:437894e7-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "object:437894e7-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "object:437894e7-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "object:437894e7-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "object:d6144002-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "object:d6144002-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "object:d6144002-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "object:d6144002-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "object:c4a21c9f-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "object:c4a21c9f-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "object:c4a21c9f-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "object:c4a21c9f-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "object:10d7ff76-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "object:10d7ff76-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "object:10d7ff76-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "object:10d7ff76-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "object:b55be3e4-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "object:b55be3e4-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "object:b55be3e4-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "object:b55be3e4-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-04-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "object:f7cf56d3-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "object:f7cf56d3-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "object:f7cf56d3-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "object:f7cf56d3-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "object:e98f0b36-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "object:e98f0b36-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "object:e98f0b36-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "object:e98f0b36-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "object:9fafc2c9-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "object:9fafc2c9-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "object:9fafc2c9-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "object:9fafc2c9-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "object:68639c63-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "object:68639c63-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "object:68639c63-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "object:68639c63-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "object:261be1b9-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "object:261be1b9-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "object:261be1b9-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "object:261be1b9-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "object:34ef020a-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "object:34ef020a-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "object:34ef020a-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "object:34ef020a-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "object:56e842f6-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "object:56e842f6-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "object:56e842f6-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "object:56e842f6-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "object:99a955c3-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "object:99a955c3-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "object:99a955c3-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "object:99a955c3-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "object:151876e2-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "object:151876e2-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "object:151876e2-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "object:151876e2-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "object:6f1ed353-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:6f1ed353-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:6f1ed353-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:6f1ed353-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "object:7b7c0b6a-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:7b7c0b6a-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:7b7c0b6a-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "object:7b7c0b6a-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
     "machine:transport-32a1941f-1": {
       "path": "/images/world-tower/nodes/atlases/nodes-machines-01-v2.webp",
       "atlas": {
@@ -10029,6 +12285,22 @@
         "index": 11
       }
     },
+    "machine:transport-95c25061-1": {
+      "path": "/images/world-tower/nodes/core/airplane.webp",
+      "atlas": null
+    },
+    "machine:transport-95c25061-2": {
+      "path": "/images/world-tower/nodes/core/airplane.webp",
+      "atlas": null
+    },
+    "machine:transport-95c25061-3": {
+      "path": "/images/world-tower/nodes/core/airplane.webp",
+      "atlas": null
+    },
+    "machine:transport-95c25061-4": {
+      "path": "/images/world-tower/nodes/core/airplane.webp",
+      "atlas": null
+    },
     "machine:appliance-f666ccc7-1": {
       "path": "/images/world-tower/nodes/atlases/nodes-machines-01-v2.webp",
       "atlas": {
@@ -10311,6 +12583,38 @@
         "columns": 5,
         "rows": 4,
         "index": 3
+      }
+    },
+    "machine:appliance-9e21c648-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "machine:appliance-9e21c648-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "machine:appliance-9e21c648-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "machine:appliance-9e21c648-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
       }
     },
     "machine:appliance-d7476207-1": {
@@ -10777,6 +13081,454 @@
         "index": 17
       }
     },
+    "machine:industrial-998f86db-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "machine:industrial-998f86db-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "machine:industrial-998f86db-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "machine:industrial-998f86db-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "machine:industrial-a3668686-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "machine:industrial-a3668686-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "machine:industrial-a3668686-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "machine:industrial-a3668686-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "machine:industrial-e95904ae-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "machine:industrial-e95904ae-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "machine:industrial-e95904ae-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "machine:industrial-e95904ae-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "machine:industrial-0eb4bea5-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "machine:industrial-0eb4bea5-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "machine:industrial-0eb4bea5-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "machine:industrial-0eb4bea5-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-05-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "machine:industrial-4f5a76b9-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "machine:industrial-4f5a76b9-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "machine:industrial-4f5a76b9-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "machine:industrial-4f5a76b9-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "machine:industrial-1f47dec6-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "machine:industrial-1f47dec6-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "machine:industrial-1f47dec6-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "machine:industrial-1f47dec6-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "machine:industrial-fb6c8906-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "machine:industrial-fb6c8906-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "machine:industrial-fb6c8906-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "machine:industrial-fb6c8906-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "machine:defense-ad2ac796-1": {
+      "path": "/images/world-tower/nodes/core/tank.webp",
+      "atlas": null
+    },
+    "machine:defense-ad2ac796-2": {
+      "path": "/images/world-tower/nodes/core/tank.webp",
+      "atlas": null
+    },
+    "machine:defense-ad2ac796-3": {
+      "path": "/images/world-tower/nodes/core/tank.webp",
+      "atlas": null
+    },
+    "machine:defense-ad2ac796-4": {
+      "path": "/images/world-tower/nodes/core/tank.webp",
+      "atlas": null
+    },
+    "machine:defense-e44a7070-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "machine:defense-e44a7070-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "machine:defense-e44a7070-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "machine:defense-e44a7070-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "machine:defense-61e5f0b8-1": {
+      "path": "/images/world-tower/nodes/core/cannon.webp",
+      "atlas": null
+    },
+    "machine:defense-61e5f0b8-2": {
+      "path": "/images/world-tower/nodes/core/cannon.webp",
+      "atlas": null
+    },
+    "machine:defense-61e5f0b8-3": {
+      "path": "/images/world-tower/nodes/core/cannon.webp",
+      "atlas": null
+    },
+    "machine:defense-61e5f0b8-4": {
+      "path": "/images/world-tower/nodes/core/cannon.webp",
+      "atlas": null
+    },
+    "machine:defense-c8a358da-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "machine:defense-c8a358da-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "machine:defense-c8a358da-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "machine:defense-c8a358da-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "machine:defense-5ebd3ccd-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "machine:defense-5ebd3ccd-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "machine:defense-5ebd3ccd-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "machine:defense-5ebd3ccd-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "machine:defense-7b4461f6-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "machine:defense-7b4461f6-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "machine:defense-7b4461f6-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "machine:defense-7b4461f6-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "machine:defense-2959b0aa-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "machine:defense-2959b0aa-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "machine:defense-2959b0aa-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "machine:defense-2959b0aa-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "machine:defense-0fff0b22-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "machine:defense-0fff0b22-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "machine:defense-0fff0b22-3": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "machine:defense-0fff0b22-4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
     "space:982a1652-1": {
       "path": "/images/world-tower/nodes/atlases/nodes-spaces-01-v2.webp",
       "atlas": {
@@ -10933,6 +13685,22 @@
         "index": 8
       }
     },
+    "space:8069e144-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "space:8069e144-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
     "space:6da051b0-1": {
       "path": "/images/world-tower/nodes/atlases/nodes-spaces-01-v2.webp",
       "atlas": {
@@ -10979,6 +13747,22 @@
         "columns": 5,
         "rows": 4,
         "index": 11
+      }
+    },
+    "space:780abd90-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "space:780abd90-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
       }
     },
     "space:5df335f3-1": {
@@ -11061,6 +13845,326 @@
         "index": 16
       }
     },
+    "space:8156a497-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "space:8156a497-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "space:7a124816-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "space:7a124816-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "space:4c701760-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "space:4c701760-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "space:1176656f-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "space:1176656f-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "space:478b32e7-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "space:478b32e7-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-06-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "space:e3a0a5ca-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "space:e3a0a5ca-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "space:810f1b1c-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "space:810f1b1c-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "space:f4a6a93e-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "space:f4a6a93e-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "space:9a00acec-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "space:9a00acec-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "space:abf43dc3-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "space:abf43dc3-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "space:90892f74-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "space:90892f74-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "space:6f85626b-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "space:6f85626b-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "space:24e479ea-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "space:24e479ea-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "space:f7162f66-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "space:f7162f66-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "space:8b1834fa-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "space:8b1834fa-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "space:c6f93259-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "space:c6f93259-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "space:a5d4064d-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "space:a5d4064d-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "space:d58b925f-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "space:d58b925f-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "space:c62ea54c-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "space:c62ea54c-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "space:6f49d66b-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "space:6f49d66b-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
     "building:3263b47a-1": {
       "path": "/images/world-tower/nodes/core/house.webp",
       "atlas": null
@@ -11119,6 +14223,22 @@
         "columns": 5,
         "rows": 4,
         "index": 3
+      }
+    },
+    "building:42465286-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "building:42465286-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-07-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
       }
     },
     "building:89fc4fa8-1": {
@@ -11201,6 +14321,22 @@
         "index": 8
       }
     },
+    "building:fbb20d14-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "building:fbb20d14-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
     "building:c3c14869-1": {
       "path": "/images/world-tower/nodes/atlases/nodes-buildings-01-v2.webp",
       "atlas": {
@@ -11247,6 +14383,22 @@
         "columns": 5,
         "rows": 4,
         "index": 11
+      }
+    },
+    "building:20279802-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "building:20279802-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
       }
     },
     "building:3155962e-1": {
@@ -11327,6 +14479,326 @@
         "columns": 5,
         "rows": 4,
         "index": 16
+      }
+    },
+    "building:79d867b9-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "building:79d867b9-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "building:463dcf1f-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "building:463dcf1f-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "building:dbf131a7-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "building:dbf131a7-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "building:c9783372-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "building:c9783372-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "building:0bfb2276-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "building:0bfb2276-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "building:5ac68a87-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "building:5ac68a87-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "building:d1e96a89-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "building:d1e96a89-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "building:8ddf2469-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "building:8ddf2469-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "building:36ae7740-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "building:36ae7740-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "building:7f1109b2-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "building:7f1109b2-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "building:fbf7d942-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "building:fbf7d942-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "building:01ff4bfe-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "building:01ff4bfe-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "building:6a1b56c6-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "building:6a1b56c6-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "building:2a415c23-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "building:2a415c23-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-08-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "building:ebe902b6-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "building:ebe902b6-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "building:e78f5933-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "building:e78f5933-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "building:1121f04c-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "building:1121f04c-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "building:6010b3cd-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "building:6010b3cd-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "building:94421d3f-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "building:94421d3f-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "building:d86ab81b-1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "building:d86ab81b-2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
       }
     },
     "system:f8fd06d9": {
@@ -11449,6 +14921,14 @@
         "index": 12
       }
     },
+    "system:0c6a354c": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
     "system:e9ec0b4f": {
       "path": "/images/world-tower/nodes/atlases/nodes-systems-01-v2.webp",
       "atlas": {
@@ -11481,6 +14961,206 @@
         "index": 16
       }
     },
+    "system:5ebafc0b": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "system:a33fab02": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "system:6122cb69": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "system:e6bfc286": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "system:e58a3779": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "system:22b9cce2": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "system:968ea37e": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "system:34c8d4c4": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "system:5cd67bdf": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-09-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "system:988d3f44": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
+      }
+    },
+    "system:57ce4d34": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
+    "system:ec5ea1c5": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
+      }
+    },
+    "system:8373ed66": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "system:3ec554ec": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "system:ef6f1a37": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "system:576b358e": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "system:4bac2b94": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "system:c05d585c": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "system:3fdc3eae": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "system:d2348a39": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
+    "system:816d974a": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
+    "system:d9f80dcb": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
+      }
+    },
+    "system:18e77f9d": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "system:571c0797": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "system:dac35182": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-10-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
     "geography:de8a1f4e": {
       "path": "/images/world-tower/nodes/core/red-soil.webp",
       "atlas": null
@@ -11503,6 +15183,14 @@
         "columns": 5,
         "rows": 4,
         "index": 4
+      }
+    },
+    "geography:76c9b407": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 0
       }
     },
     "geography:58df2a78": {
@@ -11537,6 +15225,14 @@
         "index": 8
       }
     },
+    "geography:d9cf2935": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 1
+      }
+    },
     "geography:47f8c64b": {
       "path": "/images/world-tower/nodes/atlases/nodes-geography-01-v2.webp",
       "atlas": {
@@ -11567,6 +15263,14 @@
         "columns": 5,
         "rows": 4,
         "index": 12
+      }
+    },
+    "geography:d6c9492c": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 2
       }
     },
     "geography:8f368283": {
@@ -11757,6 +15461,70 @@
         "index": 18
       }
     },
+    "geography:4247c824": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 3
+      }
+    },
+    "geography:34725350": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 4
+      }
+    },
+    "geography:a76f53ab": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 5
+      }
+    },
+    "geography:b55e510d": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 6
+      }
+    },
+    "geography:5049f7fc": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 7
+      }
+    },
+    "geography:aa681f5f": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 8
+      }
+    },
+    "geography:1ef59001": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 9
+      }
+    },
+    "geography:679b8ff6": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 10
+      }
+    },
     "planetary:7fc4f5e9": {
       "path": "/images/world-tower/nodes/atlases/nodes-planets-01-v2.webp",
       "atlas": {
@@ -11837,6 +15605,14 @@
         "index": 8
       }
     },
+    "planetary:79aa4480": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 11
+      }
+    },
     "planetary:135bbf07": {
       "path": "/images/world-tower/nodes/atlases/nodes-planets-01-v2.webp",
       "atlas": {
@@ -11859,6 +15635,14 @@
         "columns": 5,
         "rows": 4,
         "index": 11
+      }
+    },
+    "planetary:551cb4ba": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 12
       }
     },
     "planetary:d93f75b7": {
@@ -11897,6 +15681,126 @@
         "index": 16
       }
     },
+    "stellar:7eb4aa4e": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 13
+      }
+    },
+    "stellar:6abadf59": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 14
+      }
+    },
+    "stellar:4d469457": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-11-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 4,
+        "index": 15
+      }
+    },
+    "stellar:46b949dd": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 0
+      }
+    },
+    "stellar:7e66fc79": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 1
+      }
+    },
+    "stellar:201b219e": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 2
+      }
+    },
+    "stellar:4f8588ce": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 3
+      }
+    },
+    "stellar:2e27cb7e": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 4
+      }
+    },
+    "stellar:6ceb8211": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 5
+      }
+    },
+    "stellar:a9362ead": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 6
+      }
+    },
+    "universe:35634774": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 7
+      }
+    },
+    "universe:6156c02a": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 8
+      }
+    },
+    "universe:9002b043": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 9
+      }
+    },
+    "universe:3a23ae2c": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 10
+      }
+    },
+    "universe:720d5df1": {
+      "path": "/images/world-tower/nodes/atlases/nodes-expansion-12-v3.webp",
+      "atlas": {
+        "columns": 4,
+        "rows": 3,
+        "index": 11
+      }
+    },
     "particle:electron": {
       "path": "/images/world-tower/nodes/core/electron.webp",
       "atlas": null
@@ -11907,22 +15811,6 @@
     },
     "particle:neutron": {
       "path": "/images/world-tower/nodes/core/neutron.webp",
-      "atlas": null
-    },
-    "object:57585706-1": {
-      "path": "/images/world-tower/nodes/core/soap.webp",
-      "atlas": null
-    },
-    "machine:transport-95c25061-1": {
-      "path": "/images/world-tower/nodes/core/airplane.webp",
-      "atlas": null
-    },
-    "machine:defense-ad2ac796-1": {
-      "path": "/images/world-tower/nodes/core/tank.webp",
-      "atlas": null
-    },
-    "machine:defense-61e5f0b8-1": {
-      "path": "/images/world-tower/nodes/core/cannon.webp",
       "atlas": null
     },
     "geography:3d023c1e": {
@@ -11965,7 +15853,6 @@
     "action:compress": "/images/world-tower/resources/action/compress.webp",
     "action:freeze-thaw": "/images/world-tower/resources/action/freeze-thaw.webp",
     "action:orbit-aggregate": "/images/world-tower/resources/action/orbit-aggregate.webp",
-    "condition:stable-combination": "/images/world-tower/resources/condition/stable-combination.webp",
     "condition:enough-quantity": "/images/world-tower/resources/condition/enough-quantity.webp",
     "condition:suitable-temperature": "/images/world-tower/resources/condition/suitable-temperature.webp",
     "condition:suitable-moisture": "/images/world-tower/resources/condition/suitable-moisture.webp",
@@ -11974,7 +15861,6 @@
     "condition:energy-supply": "/images/world-tower/resources/condition/energy-supply.webp",
     "condition:long-time": "/images/world-tower/resources/condition/long-time.webp",
     "condition:repeated-cycles": "/images/world-tower/resources/condition/repeated-cycles.webp",
-    "condition:low-risk-demo": "/images/world-tower/resources/condition/low-risk-demo.webp",
     "condition:compatible-parts": "/images/world-tower/resources/condition/compatible-parts.webp",
     "condition:gravitational-balance": "/images/world-tower/resources/condition/gravitational-balance.webp",
     "environment:virtual-lab": "/images/world-tower/resources/environment/virtual-lab.webp",

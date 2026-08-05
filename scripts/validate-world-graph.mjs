@@ -93,7 +93,13 @@ assert(catalog.resourcePrices.every((item) => resourceIds.has(item.targetId)), "
 
 assert(Object.keys(icons.levelFallbacks).length === graph.levels.length, "层级回退图片不完整。");
 assert(Object.keys(icons.resourceAssets).length === resourceList.length, "资源图标不完整。");
-assert(Object.keys(icons.nodeAssets).length >= 1_400, "语义节点图片覆盖不能少于 1,400 个节点。");
+assert(
+  Object.keys(icons.nodeAssets).length === graph.nodes.length,
+  `节点图片必须完整覆盖图谱，当前缺少 ${graph.nodes.length - Object.keys(icons.nodeAssets).length} 个。`,
+);
+for (const node of graph.nodes) {
+  assert(icons.nodeAssets[node.id], "节点缺少语义图片：" + node.id + "（" + node.name + "）");
+}
 for (const [nodeId, asset] of Object.entries(icons.nodeAssets)) {
   assert(nodeById.has(nodeId), "图标清单引用了不存在的节点：" + nodeId);
   assert(typeof asset.path === "string" && asset.path.startsWith("/"), "节点图片路径无效：" + nodeId);

@@ -240,6 +240,113 @@ const semanticAtlasSources = [
       "气态巨行星", "宜居行星模型",
     ],
   },
+  {
+    path: "nodes/atlases/nodes-expansion-01-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "丝纤维", "砖材", "砂浆", "肥皂基",
+      "食盐材料", "小麦", "马铃薯植株", "梨树",
+      "向日葵", "鸡", "蜜蜂", "鱼",
+      "虾", "螃蟹", "蚯蚓", "酵母菌",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-02-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "乳酸菌", "蓝细菌", "霉菌", "浮游微生物",
+      "滑轮", "反射镜", "织物片", "拉链",
+      "带子", "搭扣", "软垫", "刷头",
+      "框架", "面板", "梁", "柱",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-03-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "管道", "阀门", "容器罐", "密封圈",
+      "窗户单元", "门单元", "搁板", "容器外壳",
+      "连接器", "画笔", "文具盒", "牙刷",
+      "牙膏", "洗发水", "拖把", "扫帚",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-04-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "水桶", "垃圾桶", "T恤", "衬衫",
+      "裤子", "裙子", "外套", "帽子",
+      "鞋子", "袜子", "手套", "围巾",
+      "积木", "拼图", "玩偶", "风筝",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-05-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "足球", "篮球", "羽毛球拍", "跳绳",
+      "滑板", "望远镜", "吉他", "钢琴",
+      "鼓", "显微镜", "地球仪", "电视机",
+      "挖掘机", "推土机", "拖拉机", "机床",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-06-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "3D打印机", "风力发电机", "太阳能发电站", "装甲车",
+      "雷达车", "运输直升机", "巡逻艇", "工程保障车",
+      "无人侦察机", "储藏室", "教室", "车间",
+      "机房", "温室", "展厅", "录音室",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-07-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "演播室", "控制室", "观察室", "天文台观测室",
+      "电影院", "剧场", "餐馆", "商店",
+      "超市", "咖啡馆", "车站候车室", "机场候机厅",
+      "船舱", "驾驶舱", "安全避难室", "酒店",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-08-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "美术馆", "体育馆", "商场", "超市建筑",
+      "餐厅建筑", "消防站", "警察局", "火车站",
+      "地铁站", "汽车站", "机场航站楼", "港口码头",
+      "电视塔", "灯塔", "工厂", "仓库",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-09-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "发电站", "水厂", "污水处理厂", "温室大棚",
+      "谷仓", "数据中心", "铁路网络", "污水处理网络",
+      "垃圾回收系统", "通信网络", "互联网", "数据中心集群",
+      "物流网络", "公共交通系统", "消防救援系统", "医疗急救系统",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-10-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "气象监测系统", "农田灌溉系统", "农场系统", "牧场系统",
+      "果园系统", "森林管理系统", "矿区系统", "钢铁生产系统",
+      "化工生产系统", "汽车制造系统", "飞机制造系统", "船舶制造系统",
+      "建筑工地系统", "航天发射中心", "天文台阵列", "科学考察基地",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-11-v3.webp", columns: 4, rows: 4,
+    cells: [
+      "黏质土", "紫色土", "森林生态系统", "沙丘",
+      "三角洲", "冲积扇", "海滩", "海蚀崖",
+      "岛屿", "火山", "冰川", "大陆",
+      "大气圈", "行星系统", "卫星系统", "小行星带",
+    ],
+  },
+  {
+    path: "nodes/atlases/nodes-expansion-12-v3.webp", columns: 4, rows: 3,
+    cells: [
+      "彗星群", "原行星盘", "恒星", "双星系统",
+      "疏散星团", "球状星团", "星云", "类太阳恒星系统",
+      "类银河系", "旋涡星系", "椭圆星系", "星系群",
+    ],
+  },
 ];
 
 const semanticAssetsByName = new Map();
@@ -299,6 +406,12 @@ const groupedLevelSizes = new Map([
   ["level:09-spaces", 2],
   ["level:10-buildings", 2],
 ]);
+const groupedCoreAssets = new Map([
+  ["level:07-daily|肥皂", "soap"],
+  ["level:08-machines|飞机", "airplane"],
+  ["level:08-machines|坦克", "tank"],
+  ["level:08-machines|大炮", "cannon"],
+]);
 for (const [levelId, groupSize] of groupedLevelSizes) {
   const nodeIds = graph.indexes.nodeIdsByLevel[levelId] ?? [];
   for (const [index, nodeId] of nodeIds.entries()) {
@@ -306,7 +419,12 @@ for (const [levelId, groupSize] of groupedLevelSizes) {
     const lookupName = levelId === "level:06-components"
       ? baseNode?.name.replace(/^微型/u, "")
       : baseNode?.name;
-    const asset = lookupName ? semanticAssetsByName.get(lookupName) : null;
+    const groupedCoreAsset = lookupName
+      ? groupedCoreAssets.get(`${levelId}|${lookupName}`)
+      : null;
+    const asset = groupedCoreAsset
+      ? directAsset(`nodes/core/${groupedCoreAsset}.webp`)
+      : lookupName ? semanticAssetsByName.get(lookupName) : null;
     if (asset) nodeAssets[nodeId] = asset;
   }
 }
@@ -341,7 +459,7 @@ for (const group of Object.values(graph.resources)) {
 
 const manifest = {
   schemaVersion: 1,
-  assetPackId: "mumu-world-tower-cosmic-runes-v2",
+  assetPackId: "mumu-world-tower-cosmic-runes-v3",
   generatedAt: "2026-08-05T00:00:00.000Z",
   artDirection: {
     style: "premium-fantasy-science-cosmic-runes",

@@ -18,8 +18,39 @@ export const WORLD_MAP_NODES_PER_ROW = 6;
 export const WORLD_MAP_GRAPH_CENTER_X = 670;
 export const WORLD_MAP_GRAPH_COLUMN_GAP = 148;
 
-function nodeXInCenteredRow(rowLength: number, columnIndex: number) {
-  return WORLD_MAP_GRAPH_CENTER_X
+export type AtlasCellPlacement = {
+  widthPercent: number;
+  heightPercent: number;
+  translateXPercent: number;
+  translateYPercent: number;
+};
+
+export function atlasCellPlacement(crop: {
+  columns: number;
+  rows: number;
+  index: number;
+}): AtlasCellPlacement {
+  const columns = Math.max(1, Math.floor(crop.columns));
+  const rows = Math.max(1, Math.floor(crop.rows));
+  const maxIndex = columns * rows - 1;
+  const index = Math.min(maxIndex, Math.max(0, Math.floor(crop.index)));
+  const column = index % columns;
+  const row = Math.floor(index / columns);
+
+  return {
+    widthPercent: columns * 100,
+    heightPercent: rows * 100,
+    translateXPercent: -(column / columns) * 100,
+    translateYPercent: -(row / rows) * 100,
+  };
+}
+
+function nodeXInCenteredRow(
+  rowLength: number,
+  columnIndex: number,
+  graphCenterX: number,
+) {
+  return graphCenterX
     + (columnIndex - (rowLength - 1) / 2) * WORLD_MAP_GRAPH_COLUMN_GAP;
 }
 
@@ -100,6 +131,17 @@ export function recipeRequirements(
   );
 }
 
+export function shouldDisplayRecipeRequirement(
+  group: ResourceGroupKey,
+  requirement: RecipeRequirement,
+  resource: WorldTowerResource | null,
+  progress: WorldTowerProgress,
+) {
+  return group !== "knowledge"
+    || !resource
+    || !hasRequirement(resource, requirement, progress);
+}
+
 export function buildResourceMap(manifest: WorldTowerManifest) {
   return new Map(
     Object.values(manifest.resources)
@@ -116,7 +158,10 @@ export function layoutWorldTowerMap(
     levelId: string;
     groups: WorldTowerLevelGroup[];
   } | null,
+  availableWidth = WORLD_MAP_WIDTH,
 ) {
+  const mapWidth = Math.max(WORLD_MAP_WIDTH, availableWidth);
+  const graphCenterX = WORLD_MAP_GRAPH_CENTER_X + (mapWidth - WORLD_MAP_WIDTH) / 2;
   const positions = new Map<string, WorldMapPosition>();
   const bands = new Map<string, WorldMapBand>();
   const groupLayouts: WorldMapGroupLayout[] = [];
@@ -168,7 +213,7 @@ export function layoutWorldTowerMap(
             (rowIndex + 1) * WORLD_MAP_NODES_PER_ROW,
           );
           rowNodes.forEach((node, columnIndex) => {
-            const x = nodeXInCenteredRow(rowNodes.length, columnIndex);
+            const x = nodeXInCenteredRow(rowNodes.length, columnIndex, graphCenterX);
             const y = groupTop + 78 + rowIndex * WORLD_MAP_NODE_ROW_HEIGHT + 105;
             positions.set(node.id, { x, y });
           });
@@ -203,14 +248,14 @@ export function layoutWorldTowerMap(
       const rowStart = rowIndex * WORLD_MAP_NODES_PER_ROW;
       const rowLength = Math.min(WORLD_MAP_NODES_PER_ROW, levelNodes.length - rowStart);
       const columnIndex = index - rowStart;
-      const x = nodeXInCenteredRow(rowLength, columnIndex);
+      const x = nodeXInCenteredRow(rowLength, columnIndex, graphCenterX);
       const y = band.top + 215 + rowIndex * WORLD_MAP_NODE_ROW_HEIGHT;
       positions.set(node.id, { x, y });
     });
   }
 
   return {
-    width: WORLD_MAP_WIDTH,
+    width: mapWidth,
     height: mapTop + 40,
     positions,
     bands,

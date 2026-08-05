@@ -2,10 +2,12 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   WORLD_MAP_GRAPH_CENTER_X,
+  atlasCellPlacement,
   frameQualityForLevel,
   hasRequirement,
   layoutWorldTowerMap,
   resourceCount,
+  shouldDisplayRecipeRequirement,
   traceWorldTowerRelations,
   visibleNodeName,
 } from "./logic";
@@ -46,6 +48,21 @@ function resource(
 }
 
 describe("world tower presentation logic", () => {
+  it("positions a non-square atlas cell without depending on the display frame ratio", () => {
+    assert.deepEqual(atlasCellPlacement({ columns: 24, rows: 21, index: 458 }), {
+      widthPercent: 2_400,
+      heightPercent: 2_100,
+      translateXPercent: -(2 / 24) * 100,
+      translateYPercent: -(19 / 21) * 100,
+    });
+    assert.deepEqual(atlasCellPlacement({ columns: 4, rows: 3, index: 99 }), {
+      widthPercent: 400,
+      heightPercent: 300,
+      translateXPercent: -75,
+      translateYPercent: -(2 / 3) * 100,
+    });
+  });
+
   it("maps all fifteen levels into four stable frame qualities", () => {
     assert.equal(frameQualityForLevel(1), "common");
     assert.equal(frameQualityForLevel(3), "common");
@@ -81,6 +98,31 @@ describe("world tower presentation logic", () => {
     assert.equal(hasRequirement(action, { resourceId: action.id, amount: 3 }, progress), false);
     assert.equal(hasRequirement(knowledge, { resourceId: knowledge.id, amount: 1 }, progress), true);
     assert.equal(hasRequirement(environment, { resourceId: environment.id, amount: 1 }, progress), true);
+  });
+
+  it("hides learned knowledge while keeping missing knowledge and other preparations visible", () => {
+    const learnedKnowledge = resource("knowledge:mechanics", "permanent-unlock");
+    const missingKnowledge = resource("knowledge:astronomy", "permanent-unlock");
+    const action = resource("action:assemble", "charge");
+
+    assert.equal(shouldDisplayRecipeRequirement(
+      "knowledge",
+      { resourceId: learnedKnowledge.id, amount: 1 },
+      learnedKnowledge,
+      progress,
+    ), false);
+    assert.equal(shouldDisplayRecipeRequirement(
+      "knowledge",
+      { resourceId: missingKnowledge.id, amount: 1 },
+      missingKnowledge,
+      progress,
+    ), true);
+    assert.equal(shouldDisplayRecipeRequirement(
+      "actions",
+      { resourceId: action.id, amount: 1 },
+      action,
+      progress,
+    ), true);
   });
 
   it("lays every level into one continuous map from macro top to particle bottom", () => {
@@ -178,5 +220,28 @@ describe("world tower presentation logic", () => {
         / rowNodes.length;
       assert.equal(center, WORLD_MAP_GRAPH_CENTER_X);
     }
+  });
+
+  it("fills a wider viewport while keeping each node row centered", () => {
+    const levels = [
+      { id: "one", order: 1, name: "元素", description: "", imagePath: "" },
+    ] satisfies WorldTowerLevel[];
+    const nodes = Array.from({ length: 6 }, (_, index) => ({
+      id: "wide:" + String(index),
+      levelId: "one",
+      clusterId: "wide",
+    })) as WorldTowerNode[];
+    const availableWidth = 1_600;
+    const layout = layoutWorldTowerMap(nodes, [], levels, null, availableWidth);
+    const center = nodes.reduce(
+      (sum, node) => sum + layout.positions.get(node.id)!.x,
+      0,
+    ) / nodes.length;
+
+    assert.equal(layout.width, availableWidth);
+    assert.equal(
+      center,
+      WORLD_MAP_GRAPH_CENTER_X + (availableWidth - 1_120) / 2,
+    );
   });
 });

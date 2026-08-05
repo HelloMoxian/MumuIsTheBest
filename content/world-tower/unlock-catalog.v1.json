@@ -10170,12 +10170,6 @@
       "grantQuantity": 1
     },
     {
-      "targetId": "condition:stable-combination",
-      "priceCoins": 0,
-      "grantMode": "permanent-unlock",
-      "grantQuantity": null
-    },
-    {
       "targetId": "condition:enough-quantity",
       "priceCoins": 0,
       "grantMode": "permanent-unlock",
@@ -10219,12 +10213,6 @@
     },
     {
       "targetId": "condition:repeated-cycles",
-      "priceCoins": 0,
-      "grantMode": "permanent-unlock",
-      "grantQuantity": null
-    },
-    {
-      "targetId": "condition:low-risk-demo",
       "priceCoins": 0,
       "grantMode": "permanent-unlock",
       "grantQuantity": null

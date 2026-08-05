@@ -109,19 +109,24 @@ describe("world tower API", () => {
         levels: Array<{ imagePath: string }>;
         resources: {
           particlePacks: Array<{ id: string; shop: { coinCost: number | null } }>;
+          conditions: Array<{ id: string }>;
           knowledge: unknown[];
         };
         progress: { coinBalance: number; unlockedNodeIds: string[] };
         backgroundAsset: string;
       };
       assert.equal(manifest.counts.nodes, 2_000);
-      assert.equal(manifest.counts.resources, 137);
+      assert.equal(manifest.counts.resources, 135);
       assert.deepEqual(
         manifest.resources.particlePacks.map((resource) => [resource.id, resource.shop.coinCost]),
         [["particle-pack:electron", 10], ["particle-pack:proton", 10]],
       );
       assert.equal(manifest.levels.length, 15);
       assert.equal(manifest.resources.knowledge.length, 79);
+      assert.equal(manifest.resources.conditions.some((resource) => (
+        resource.id === "condition:stable-combination"
+        || resource.id === "condition:low-risk-demo"
+      )), false);
       assert.match(manifest.backgroundAsset, /world-tower/);
       assert.equal(manifest.progress.coinBalance, 100_000);
       assert.deepEqual(
@@ -236,7 +241,7 @@ describe("world tower API", () => {
       const conditionPurchase = await post(
         baseUrl,
         "/api/world-tower/purchase-resource",
-        "condition:stable-combination",
+        "condition:enough-quantity",
       );
       assert.equal(conditionPurchase.status, 409);
 

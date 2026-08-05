@@ -31,7 +31,7 @@
 - `backgrounds/`：页面背景；
 - `frames/`：普通、稀有、史诗、传说四种透明外框；
 - `nodes/core/`：40 个一期核心节点专属内容图；
-- `nodes/atlases/`：518 个化合物的结构准确 SVG 图集；
+- `nodes/atlases/`：118 个元素、518 个化合物和宏观节点的运行时图集；
 - `nodes/levels/`：15 个左侧层级导航主题图；
 - `resources/action/`：24 个动作；
 - `resources/condition/`：12 个条件；
@@ -55,8 +55,11 @@
 
 每批在提示词末尾追加固定网格和严格的 row-major 主体清单。生成后必须人工核对实际格位；
 模型偶尔会合并相近概念或留下空格，清单只能登记肉眼确认语义一致的格位，不能盲信提示顺序。
-元素层保存在 `nodes-elements-01-v2.png` 至 `nodes-elements-06-v2.png`；其余图集按
-`nodes-{level}-{batch}-v2.png` 命名。本轮源图保留在 `source-atlases/`，后续新页面可复用。
+元素层保存在 `nodes-elements-01-v2.png` 至 `nodes-elements-06-v2.png`；本轮补图使用
+12 张严格固定网格的 `nodes-expansion-01-v3.png` 至 `nodes-expansion-12-v3.png`，共增加
+188 个基础语义格位，覆盖材料、生命、构件、日用品、机器、房间、建筑、系统、地貌和宇宙。
+同一概念的尺寸、型号和款式变体继续复用基础格位，不重复生成近似图片。高清源图保留在
+`source-atlases/`，网页使用对应的 WebP 图集，后续新页面也可复用。
 
 ## 扩展流程
 
@@ -66,5 +69,6 @@
 4. 化合物结构变化时运行 `node scripts/generate-world-icon-assets.mjs`，始终从统一化合物目录重建。
 5. 运行 `pnpm content:world-tower:validate`，确认覆盖率、格位边界和所有文件都有效。
 
-当前资产包 ID：`mumu-world-tower-cosmic-runes-v2`，覆盖 118 个元素、518 个化合物和
-872 个核心/宏观语义节点，共 1508 个节点图标映射。
+当前资产包 ID：`mumu-world-tower-cosmic-runes-v3`，覆盖 118 个元素、518 个化合物和
+1364 个核心/宏观节点，共 2000 个节点图标映射。内容校验要求节点图片与图谱完整一一覆盖，
+以后新增节点但未登记语义图时会直接报出节点 ID 和名称。
