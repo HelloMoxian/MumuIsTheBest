@@ -79,6 +79,17 @@ async function post(baseUrl: string, path: string, targetId: string) {
   });
 }
 
+async function postProgressAction(
+  baseUrl: string,
+  action: "unlock-all" | "clear-all" | "add-1000-coins",
+) {
+  return fetch(`${baseUrl}/api/world-tower/manage-progress`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action }),
+  });
+}
+
 after(async () => {
   await Promise.all(children.map((child) => stopServer(child)));
   await Promise.all(cleanupPaths.map((path) => rm(path, { recursive: true, force: true })));
@@ -383,6 +394,87 @@ describe("world tower API", () => {
     }
   });
 
+  it("persists unlock-all, clear-all and knowledge coin grants", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-world-tower-manage-"));
+    cleanupPaths.push(dataDirectory);
+    const { baseUrl, child } = await startServer(dataDirectory);
+
+    try {
+      const coinResponse = await postProgressAction(baseUrl, "add-1000-coins");
+      assert.equal(coinResponse.status, 201);
+      assert.equal(
+        (await coinResponse.json() as { progress: { coinBalance: number } }).progress.coinBalance,
+        101_000,
+      );
+
+      assert.equal((await post(
+        baseUrl,
+        "/api/world-tower/purchase-resource",
+        "knowledge:atomic-structure",
+      )).status, 201);
+      assert.equal((await post(
+        baseUrl,
+        "/api/world-tower/purchase-resource",
+        "action:chemical-bonding",
+      )).status, 201);
+
+      const unlockAllResponse = await postProgressAction(baseUrl, "unlock-all");
+      assert.equal(unlockAllResponse.status, 201);
+      const unlockAll = await unlockAllResponse.json() as {
+        affectedNodes: number;
+        progress: { unlockedNodeIds: string[] };
+      };
+      assert.equal(unlockAll.affectedNodes, 1_997);
+      assert.equal(unlockAll.progress.unlockedNodeIds.length, 2_000);
+
+      const clearAllResponse = await postProgressAction(baseUrl, "clear-all");
+      assert.equal(clearAllResponse.status, 201);
+      const clearAll = await clearAllResponse.json() as {
+        affectedNodes: number;
+        progress: {
+          coinBalance: number;
+          unlockedNodeIds: string[];
+          permanentResourceIds: string[];
+          resourceInventory: Record<string, number>;
+        };
+      };
+      assert.equal(clearAll.affectedNodes, 1_997);
+      assert.equal(clearAll.progress.coinBalance, 100_995);
+      assert.deepEqual(
+        clearAll.progress.unlockedNodeIds.sort(),
+        ["particle:electron", "particle:neutron", "particle:proton"],
+      );
+      assert.deepEqual(clearAll.progress.permanentResourceIds, []);
+      assert.deepEqual(clearAll.progress.resourceInventory, {});
+
+      const reloadedManifest = await fetch(`${baseUrl}/api/world-tower/manifest`);
+      assert.equal(reloadedManifest.status, 200);
+      const persisted = await reloadedManifest.json() as {
+        progress: { coinBalance: number; unlockedNodeIds: string[] };
+      };
+      assert.equal(persisted.progress.coinBalance, 100_995);
+      assert.equal(persisted.progress.unlockedNodeIds.length, 3);
+
+      const progressPath = resolve(dataDirectory, "learning", "world-tower", "progress.json");
+      const stored = JSON.parse(await readFile(progressPath, "utf8")) as {
+        transactions: Array<{ kind: string }>;
+      };
+      assert.deepEqual(
+        stored.transactions.map((transaction) => transaction.kind),
+        ["coin-grant", "resource-unlock", "resource-charge", "admin-unlock-all", "admin-clear-all"],
+      );
+
+      const invalidResponse = await fetch(`${baseUrl}/api/world-tower/manage-progress`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "erase-the-universe" }),
+      });
+      assert.equal(invalidResponse.status, 400);
+    } finally {
+      await stopServer(child);
+    }
+  });
+
   it("does not report an unlock when the configured data path cannot be written", async () => {
     const parentDirectory = await mkdtemp(resolve(tmpdir(), "mumu-world-tower-write-failure-"));
     cleanupPaths.push(parentDirectory);
@@ -399,6 +491,13 @@ describe("world tower API", () => {
       assert.equal(response.status, 500);
       assert.equal(
         (await response.json() as { code: string }).code,
+        "WORLD_TOWER_STORAGE_FAILED",
+      );
+
+      const manageResponse = await postProgressAction(baseUrl, "add-1000-coins");
+      assert.equal(manageResponse.status, 500);
+      assert.equal(
+        (await manageResponse.json() as { code: string }).code,
         "WORLD_TOWER_STORAGE_FAILED",
       );
     } finally {

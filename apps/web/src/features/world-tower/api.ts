@@ -13,6 +13,15 @@ type ProgressMutationResponse = {
   progress: WorldTowerProgress;
 };
 
+export type WorldTowerProgressAction = "unlock-all" | "clear-all" | "add-1000-coins";
+
+type ProgressManagementResponse = {
+  action: WorldTowerProgressAction;
+  affectedNodes: number;
+  coinDelta: number;
+  progress: WorldTowerProgress;
+};
+
 export class WorldTowerApiError extends Error {
   constructor(
     message: string,
@@ -94,5 +103,13 @@ export function purchaseWorldTowerResource(targetId: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ targetId }),
+  });
+}
+
+export function manageWorldTowerProgress(action: WorldTowerProgressAction) {
+  return requestJson<ProgressManagementResponse>("/api/world-tower/manage-progress", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action }),
   });
 }

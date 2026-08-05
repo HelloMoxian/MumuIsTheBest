@@ -11,8 +11,10 @@ import {
   loadWorldTowerManifest,
   loadWorldTowerMap,
   loadWorldTowerNode,
+  manageWorldTowerProgress,
   purchaseWorldTowerResource,
   unlockWorldTowerNode,
+  type WorldTowerProgressAction,
 } from "./api";
 import {
   buildResourceMap,
@@ -211,6 +213,7 @@ export function WorldTowerPage() {
   const [detail, setDetail] = useState<WorldTowerNodeDetail | null>(null);
   const [activeResource, setActiveResource] = useState<WorldTowerResource | null>(null);
   const [busyTarget, setBusyTarget] = useState<string | null>(null);
+  const [clearAllArmed, setClearAllArmed] = useState(false);
   const [notice, setNotice] = useState("");
   const [fatalError, setFatalError] = useState("");
   const [detailLoading, setDetailLoading] = useState(false);
@@ -285,6 +288,12 @@ export function WorldTowerPage() {
       .finally(() => setDetailLoading(false));
     return () => controller.abort();
   }, [selectedId]);
+
+  useEffect(() => {
+    if (!clearAllArmed) return undefined;
+    const timeout = window.setTimeout(() => setClearAllArmed(false), 5_000);
+    return () => window.clearTimeout(timeout);
+  }, [clearAllArmed]);
 
   const displayedMap = useMemo(() => {
     if (!worldMap || !levelMap) return worldMap;
@@ -475,6 +484,56 @@ export function WorldTowerPage() {
     setManifest((current) => current ? { ...current, progress } : current);
   }
 
+  async function refreshProgressViews(progress: WorldTowerProgress) {
+    updateProgress(progress);
+    const [nextWorldMap, nextLevelMap, nextDetail] = await Promise.all([
+      loadWorldTowerMap(),
+      expandedLevelId
+        ? loadWorldTowerLevelMap(expandedLevelId, loadStrategy)
+        : Promise.resolve(null),
+      selectedId ? loadWorldTowerNode(selectedId) : Promise.resolve(null),
+    ]);
+    setWorldMap(nextWorldMap);
+    setLevelMap(nextLevelMap);
+    setDetail(nextDetail);
+  }
+
+  async function handleProgressAction(action: WorldTowerProgressAction) {
+    if (busyTarget) return;
+    if (action === "clear-all" && !clearAllArmed) {
+      setClearAllArmed(true);
+      setNotice("清空会保留知识币，但会移除所有发现、知识和背包道具。请在 5 秒内再点一次确认。");
+      return;
+    }
+    setClearAllArmed(false);
+    setBusyTarget("progress:" + action);
+    setNotice(
+      action === "unlock-all"
+        ? "正在点亮整座万物构成塔…"
+        : action === "clear-all"
+          ? "正在安全清空发现与背包…"
+          : "正在增加 1,000 知识币…",
+    );
+    try {
+      const result = await manageWorldTowerProgress(action);
+      if (action === "add-1000-coins") {
+        updateProgress(result.progress);
+        setNotice("已增加 1,000 知识币。");
+      } else {
+        await refreshProgressViews(result.progress);
+        setNotice(
+          action === "unlock-all"
+            ? "全部 2,000 个节点已经点亮。"
+            : "已经清空，电子、质子和中子三个起点仍然保留。",
+        );
+      }
+    } catch (error) {
+      setNotice(errorMessage(error));
+    } finally {
+      setBusyTarget(null);
+    }
+  }
+
   async function handleUnlock() {
     if (!detail || detail.node.isUnlocked || busyTarget) return;
     if (!canUnlock) {
@@ -590,7 +649,36 @@ export function WorldTowerPage() {
           </div>
         </div>
         <div className="wt-topbar__stats">
-          <span><b>{manifest.counts.nodes.toLocaleString("zh-CN")}</b> 个发现</span>
+          <div className="wt-progress-actions" role="group" aria-label="进度快捷操作">
+            <button
+              className="is-unlock-all"
+              type="button"
+              disabled={busyTarget !== null}
+              onClick={() => handleProgressAction("unlock-all")}
+            >
+              {busyTarget === "progress:unlock-all" ? "点亮中…" : "点亮全部"}
+            </button>
+            <button
+              className={"is-clear-all" + (clearAllArmed ? " is-armed" : "")}
+              type="button"
+              disabled={busyTarget !== null}
+              aria-pressed={clearAllArmed}
+              onClick={() => handleProgressAction("clear-all")}
+            >
+              {busyTarget === "progress:clear-all"
+                ? "清空中…"
+                : clearAllArmed ? "再点确认" : "清空全部"}
+            </button>
+            <button
+              className="is-add-coins"
+              type="button"
+              disabled={busyTarget !== null}
+              onClick={() => handleProgressAction("add-1000-coins")}
+            >
+              {busyTarget === "progress:add-1000-coins" ? "增加中…" : "金币 +1000"}
+            </button>
+          </div>
+          <span className="wt-discovery-count"><b>{manifest.counts.nodes.toLocaleString("zh-CN")}</b> 个发现</span>
           <span className="wt-coin"><i aria-hidden="true">✦</i> <b>{manifest.progress.coinBalance.toLocaleString("zh-CN")}</b> 知识币</span>
         </div>
       </header>

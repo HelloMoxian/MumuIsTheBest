@@ -157,11 +157,18 @@ const iconManifestSchema = z.object({
 
 const transactionSchema = z.object({
   id: z.string().uuid(),
-  kind: z.enum(["node-unlock", "resource-unlock", "resource-charge"]),
+  kind: z.enum([
+    "node-unlock",
+    "resource-unlock",
+    "resource-charge",
+    "admin-unlock-all",
+    "admin-clear-all",
+    "coin-grant",
+  ]),
   targetId: z.string().min(1).max(160),
-  quantity: z.number().int().min(1).max(10_000),
-  coinDelta: z.number().int().max(0),
-  balanceAfter: z.number().int().min(0).max(1_000_000),
+  quantity: z.number().int().min(0).max(10_000),
+  coinDelta: z.number().int().min(-1_000_000_000).max(1_000_000_000),
+  balanceAfter: z.number().int().min(0).max(1_000_000_000),
   createdAt: z.string().datetime(),
 });
 
@@ -171,7 +178,7 @@ const progressSchema = z.object({
   graphId: z.string().min(1).max(160),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  coinBalance: z.number().int().min(0).max(1_000_000),
+  coinBalance: z.number().int().min(0).max(1_000_000_000),
   unlockedNodeIds: z.array(z.string().min(1).max(160)).max(2_000),
   permanentResourceIds: z.array(z.string().min(1).max(160)).max(500),
   resourceInventory: z.record(z.string(), z.number().int().min(0).max(100_000)),
@@ -200,6 +207,10 @@ const levelMapQuerySchema = z.object({
 
 const targetInputSchema = z.object({
   targetId: z.string().min(1).max(160),
+});
+
+const progressActionSchema = z.object({
+  action: z.enum(["unlock-all", "clear-all", "add-1000-coins"]),
 });
 
 type WorldGraph = z.infer<typeof graphSchema>;
@@ -826,6 +837,87 @@ export function registerWorldTowerApi(
       });
       return reply.code(alreadyUnlocked ? 200 : 201).send({
         alreadyUnlocked,
+        progress: publicProgress(progress),
+      });
+    } catch (error) {
+      return sendKnownError(error, reply);
+    }
+  });
+
+  app.post("/api/world-tower/manage-progress", async (request, reply) => {
+    const parsed = progressActionSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        code: "INVALID_WORLD_TOWER_PROGRESS_ACTION",
+        message: "需要选择点亮全部、清空全部或增加知识币。",
+      });
+    }
+    try {
+      const { graph } = await loadContent();
+      const rootNodeIds = [...graph.semantics.rootNodeIds as string[]];
+      let affectedNodes = 0;
+      let coinDelta = 0;
+      const progress = await updateProgress((current) => {
+        const now = new Date().toISOString();
+        if (parsed.data.action === "unlock-all") {
+          const allNodeIds = graph.nodes.map((node) => node.id);
+          affectedNodes = allNodeIds.length - current.unlockedNodeIds.length;
+          return {
+            ...current,
+            updatedAt: now,
+            unlockedNodeIds: allNodeIds,
+            transactions: [...current.transactions, {
+              id: randomUUID(),
+              kind: "admin-unlock-all" as const,
+              targetId: "world-tower:all-nodes",
+              quantity: affectedNodes,
+              coinDelta: 0,
+              balanceAfter: current.coinBalance,
+              createdAt: now,
+            }],
+          };
+        }
+        if (parsed.data.action === "clear-all") {
+          const rootNodeIdSet = new Set(rootNodeIds);
+          affectedNodes = current.unlockedNodeIds.filter((id) => !rootNodeIdSet.has(id)).length;
+          return {
+            ...current,
+            updatedAt: now,
+            unlockedNodeIds: rootNodeIds,
+            permanentResourceIds: [],
+            resourceInventory: {},
+            transactions: [...current.transactions, {
+              id: randomUUID(),
+              kind: "admin-clear-all" as const,
+              targetId: "world-tower:all-progress",
+              quantity: affectedNodes,
+              coinDelta: 0,
+              balanceAfter: current.coinBalance,
+              createdAt: now,
+            }],
+          };
+        }
+        coinDelta = 1_000;
+        const balanceAfter = current.coinBalance + coinDelta;
+        return {
+          ...current,
+          updatedAt: now,
+          coinBalance: balanceAfter,
+          transactions: [...current.transactions, {
+            id: randomUUID(),
+            kind: "coin-grant" as const,
+            targetId: "currency:knowledge-coin",
+            quantity: coinDelta,
+            coinDelta,
+            balanceAfter,
+            createdAt: now,
+          }],
+        };
+      });
+      return reply.code(201).send({
+        action: parsed.data.action,
+        affectedNodes,
+        coinDelta,
         progress: publicProgress(progress),
       });
     } catch (error) {
