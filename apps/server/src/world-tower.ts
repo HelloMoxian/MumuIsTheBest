@@ -23,6 +23,7 @@ const recipeSchema = z.object({
   logic: z.literal("ALL"),
   inputs: z.array(graphInputSchema).max(40),
   requirements: z.object({
+    particlePacks: z.array(requirementSchema).max(20),
     actions: z.array(requirementSchema).max(20),
     conditions: z.array(requirementSchema).max(20),
     environments: z.array(requirementSchema).max(20),
@@ -75,7 +76,7 @@ const clusterSchema = z.object({
 
 const resourceSchema = z.object({
   id: z.string().min(1).max(160),
-  kind: z.enum(["action", "condition", "environment", "knowledge"]),
+  kind: z.enum(["particle", "action", "condition", "environment", "knowledge"]),
   name: z.string().min(1).max(120),
   description: z.string().min(1).max(600),
   inventoryMode: z.enum(["charge", "state", "permanent-unlock"]),
@@ -104,6 +105,7 @@ const graphSchema = z.object({
   levels: z.array(levelSchema).min(1),
   clusters: z.array(clusterSchema).min(1),
   resources: z.object({
+    particlePacks: z.array(resourceSchema),
     actions: z.array(resourceSchema),
     conditions: z.array(resourceSchema),
     environments: z.array(resourceSchema),
@@ -173,6 +175,7 @@ const progressSchema = z.object({
   unlockedNodeIds: z.array(z.string().min(1).max(160)).max(2_000),
   permanentResourceIds: z.array(z.string().min(1).max(160)).max(500),
   resourceInventory: z.record(z.string(), z.number().int().min(0).max(100_000)),
+  appliedGrantIds: z.array(z.string().min(1).max(160)).max(100).default([]),
   transactions: z.array(transactionSchema).max(20_000),
 }).superRefine((progress, context) => {
   if (new Set(progress.unlockedNodeIds).size !== progress.unlockedNodeIds.length) {
@@ -190,6 +193,11 @@ const nodeListQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(60).default(36),
 });
 
+const levelMapQuerySchema = z.object({
+  levelId: z.string().min(1).max(120),
+  visibility: z.enum(["all", "locked", "unlocked"]).default("all"),
+});
+
 const targetInputSchema = z.object({
   targetId: z.string().min(1).max(160),
 });
@@ -199,6 +207,8 @@ type UnlockCatalog = z.infer<typeof priceSchema>;
 type IconManifest = z.infer<typeof iconManifestSchema>;
 type Progress = z.infer<typeof progressSchema>;
 type GraphNode = z.infer<typeof graphNodeSchema>;
+
+const KNOWLEDGE_COIN_PREVIEW_GRANT_ID = "knowledge-coin-preview-100000-v1";
 
 class WorldTowerError extends Error {
   constructor(
@@ -233,6 +243,133 @@ function nodeSummary(
     isUnlocked: unlocked.has(node.id),
     recipeCount: node.recipes.length,
   };
+}
+
+function buildGraphOverview(
+  graph: WorldGraph,
+  iconManifest: IconManifest,
+  maximumNodes = 160,
+) {
+  const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
+  const selectedIds = new Set<string>();
+  const countsByLevel = new Map<string, number>();
+  const rootIds = new Set(graph.semantics.rootNodeIds as string[]);
+  const preferredAncestors: string[] = [];
+  const maximumPerLevel = 10;
+  const minimumPerLevel = 6;
+
+  function addNode(nodeId: string, ignoreLevelLimit = false) {
+    const node = nodeById.get(nodeId);
+    if (!node || selectedIds.has(nodeId) || selectedIds.size >= maximumNodes) return false;
+    const levelCount = countsByLevel.get(node.levelId) ?? 0;
+    if (!ignoreLevelLimit && levelCount >= maximumPerLevel) return false;
+    selectedIds.add(nodeId);
+    countsByLevel.set(node.levelId, levelCount + 1);
+    return true;
+  }
+
+  for (const rootId of rootIds) addNode(rootId, true);
+  for (const nodeId of Object.keys(iconManifest.nodeAssets)) {
+    addNode(nodeId, true);
+    if (nodeById.has(nodeId)) preferredAncestors.push(nodeId);
+  }
+
+  for (let index = 0; index < preferredAncestors.length && selectedIds.size < maximumNodes; index += 1) {
+    const node = nodeById.get(preferredAncestors[index]);
+    for (const input of node?.recipes[0]?.inputs ?? []) {
+      if (addNode(input.nodeId, rootIds.has(input.nodeId))) {
+        preferredAncestors.push(input.nodeId);
+      }
+    }
+  }
+
+  for (const level of graph.levels) {
+    const levelNodeIds = graph.indexes.nodeIdsByLevel[level.id] ?? [];
+    const sampleSize = Math.min(levelNodeIds.length, minimumPerLevel * 2);
+    const sampleIds = Array.from({ length: sampleSize }, (_, index) => (
+      levelNodeIds[Math.floor(index * levelNodeIds.length / sampleSize)]
+    ));
+    const candidates = [...new Set([...sampleIds, ...levelNodeIds])];
+    for (const nodeId of candidates) {
+      if ((countsByLevel.get(level.id) ?? 0) >= minimumPerLevel || selectedIds.size >= maximumNodes) break;
+      addNode(nodeId, true);
+    }
+  }
+
+  const edgeKeys = new Set<string>();
+  const edges: Array<{ sourceId: string; targetId: string; recipeId: string }> = [];
+  for (const targetId of selectedIds) {
+    const node = nodeById.get(targetId);
+    for (const recipe of node?.recipes ?? []) {
+      for (const input of recipe.inputs) {
+        if (!selectedIds.has(input.nodeId)) continue;
+        const edgeKey = `${input.nodeId}\u0000${targetId}`;
+        if (edgeKeys.has(edgeKey)) continue;
+        edgeKeys.add(edgeKey);
+        edges.push({ sourceId: input.nodeId, targetId, recipeId: recipe.id });
+      }
+    }
+  }
+
+  return {
+    nodeIds: [...selectedIds],
+    edges,
+    levelNodeCounts: Object.fromEntries(graph.levels.map((level) => [
+      level.id,
+      countsByLevel.get(level.id) ?? 0,
+    ])),
+  };
+}
+
+function graphEdgesForIds(
+  nodeIds: ReadonlySet<string>,
+  nodeById: ReadonlyMap<string, GraphNode>,
+) {
+  const edgeKeys = new Set<string>();
+  const edges: Array<{ sourceId: string; targetId: string; recipeId: string }> = [];
+  for (const targetId of nodeIds) {
+    const node = nodeById.get(targetId);
+    for (const recipe of node?.recipes ?? []) {
+      for (const input of recipe.inputs) {
+        if (!nodeIds.has(input.nodeId)) continue;
+        const edgeKey = `${input.nodeId}\u0000${targetId}`;
+        if (edgeKeys.has(edgeKey)) continue;
+        edgeKeys.add(edgeKey);
+        edges.push({ sourceId: input.nodeId, targetId, recipeId: recipe.id });
+      }
+    }
+  }
+  return edges;
+}
+
+function buildLevelGroups(
+  graph: WorldGraph,
+  nodeIds: string[],
+) {
+  const selectedIds = new Set(nodeIds);
+  const clusterNameById = new Map(graph.clusters.map((cluster) => [cluster.id, cluster.name]));
+  const groups: Array<{ id: string; name: string; clusterId: string; nodeIds: string[] }> = [];
+  const clusterIds = [...new Set(nodeIds.map((nodeId) => (
+    graph.nodes.find((node) => node.id === nodeId)?.clusterId
+  )).filter((clusterId): clusterId is string => Boolean(clusterId)))];
+
+  for (const clusterId of clusterIds) {
+    const clusterNodeIds = (graph.indexes.nodeIdsByCluster[clusterId] ?? [])
+      .filter((nodeId) => selectedIds.has(nodeId));
+    const chunkCount = Math.ceil(clusterNodeIds.length / 30);
+    for (let index = 0; index < chunkCount; index += 1) {
+      const chunkNodeIds = clusterNodeIds.slice(index * 30, (index + 1) * 30);
+      if (chunkNodeIds.length === 0) continue;
+      groups.push({
+        id: clusterId + ":section:" + String(index + 1),
+        name: (clusterNameById.get(clusterId) ?? "其他发现")
+          + (chunkCount > 1 ? " · 第" + String(index + 1) + "组" : ""),
+        clusterId,
+        nodeIds: chunkNodeIds,
+      });
+    }
+  }
+  return groups;
 }
 
 function sendKnownError(error: unknown, reply: FastifyReply) {
@@ -303,6 +440,7 @@ export function registerWorldTowerApi(
       unlockedNodeIds: [...graph.semantics.rootNodeIds as string[]],
       permanentResourceIds: [],
       resourceInventory: {},
+      appliedGrantIds: [KNOWLEDGE_COIN_PREVIEW_GRANT_ID],
       transactions: [],
     };
   }
@@ -319,7 +457,15 @@ export function registerWorldTowerApi(
       ) {
         throw new Error("WORLD_TOWER_PROGRESS_REFERENCE_MISMATCH");
       }
-      return progress;
+      if (progress.appliedGrantIds.includes(KNOWLEDGE_COIN_PREVIEW_GRANT_ID)) {
+        return progress;
+      }
+      return {
+        ...progress,
+        updatedAt: new Date().toISOString(),
+        coinBalance: Math.max(progress.coinBalance, catalog.currency.startingBalance),
+        appliedGrantIds: [...progress.appliedGrantIds, KNOWLEDGE_COIN_PREVIEW_GRANT_ID],
+      };
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === "ENOENT") {
         return emptyProgress(graph, catalog);
@@ -402,6 +548,79 @@ export function registerWorldTowerApi(
           ]),
         ),
         progress: publicProgress(progress),
+      };
+    } catch (error) {
+      return sendKnownError(error, reply);
+    }
+  });
+
+  app.get("/api/world-tower/map", async (_request, reply) => {
+    try {
+      const [{ graph, nodeById, nodePriceById, icons }, progress] = await Promise.all([
+        loadContent(),
+        readProgress(),
+      ]);
+      const overview = buildGraphOverview(graph, icons);
+      const unlocked = new Set(progress.unlockedNodeIds);
+      return {
+        schemaVersion: 1,
+        graphId: graph.graphId,
+        totalNodes: graph.counts.nodes,
+        isTruncated: overview.nodeIds.length < graph.counts.nodes,
+        levelNodeCounts: overview.levelNodeCounts,
+        items: overview.nodeIds.map((nodeId) => (
+          nodeSummary(nodeById.get(nodeId)!, nodePriceById, unlocked, icons)
+        )),
+        edges: overview.edges,
+      };
+    } catch (error) {
+      return sendKnownError(error, reply);
+    }
+  });
+
+  app.get("/api/world-tower/level-map", async (request, reply) => {
+    const query = levelMapQuerySchema.safeParse(request.query);
+    if (!query.success) {
+      return reply.code(400).send({
+        code: "INVALID_WORLD_TOWER_LEVEL_MAP_QUERY",
+        message: "请选择要展开的尺度层和加载方式。",
+      });
+    }
+    try {
+      const [{ graph, nodeById, nodePriceById, icons }, progress] = await Promise.all([
+        loadContent(),
+        readProgress(),
+      ]);
+      if (!graph.levels.some((level) => level.id === query.data.levelId)) {
+        return reply.code(404).send({
+          code: "WORLD_TOWER_LEVEL_NOT_FOUND",
+          message: "没有找到这个图谱层级。",
+        });
+      }
+      const unlocked = new Set(progress.unlockedNodeIds);
+      const allLevelNodeIds = graph.indexes.nodeIdsByLevel[query.data.levelId] ?? [];
+      const levelNodeIds = allLevelNodeIds.filter((nodeId) => (
+        query.data.visibility === "all"
+        || (query.data.visibility === "unlocked" && unlocked.has(nodeId))
+        || (query.data.visibility === "locked" && !unlocked.has(nodeId))
+      ));
+      const overview = buildGraphOverview(graph, icons);
+      const visibleNodeIds = new Set([
+        ...overview.nodeIds.filter((nodeId) => nodeById.get(nodeId)?.levelId !== query.data.levelId),
+        ...levelNodeIds,
+      ]);
+      return {
+        schemaVersion: 1,
+        graphId: graph.graphId,
+        levelId: query.data.levelId,
+        visibility: query.data.visibility,
+        totalInLevel: allLevelNodeIds.length,
+        matchedTotal: levelNodeIds.length,
+        groups: buildLevelGroups(graph, levelNodeIds),
+        items: levelNodeIds.map((nodeId) => (
+          nodeSummary(nodeById.get(nodeId)!, nodePriceById, unlocked, icons)
+        )),
+        edges: graphEdgesForIds(visibleNodeIds, nodeById),
       };
     } catch (error) {
       return sendKnownError(error, reply);
@@ -500,7 +719,7 @@ export function registerWorldTowerApi(
         const permanentResources = new Set(current.permanentResourceIds);
         const usableRecipe = targetNode.recipes.find((recipe) => (
           recipe.inputs.every((input) => unlocked.has(input.nodeId))
-          && recipe.requirements.actions.every(
+          && [...recipe.requirements.particlePacks, ...recipe.requirements.actions].every(
             (requirement) =>
               (current.resourceInventory[requirement.resourceId] ?? 0) >= requirement.amount,
           )
@@ -512,12 +731,12 @@ export function registerWorldTowerApi(
           throw new WorldTowerError(
             "WORLD_TOWER_REQUIREMENTS_MISSING",
             409,
-            "还缺少来路节点、动作数量或知识点，请先把配方需要的星格准备好。",
+            "还缺少来路节点、粒子包、动作数量或知识点，请先把配方需要的星格准备好。",
           );
         }
         const price = nodePriceById.get(parsed.data.targetId);
         if (price === undefined) throw new WorldTowerError("WORLD_TOWER_PRICE_NOT_FOUND", 500, "这个节点还没有配置点亮价格。 ");
-        if (current.coinBalance < price) throw new WorldTowerError("WORLD_TOWER_INSUFFICIENT_COINS", 409, "发现币还不够，先完成更多学习任务再回来看看。 ");
+        if (current.coinBalance < price) throw new WorldTowerError("WORLD_TOWER_INSUFFICIENT_COINS", 409, "知识币还不够，先完成更多学习任务再回来看看。 ");
         const now = new Date().toISOString();
         const balanceAfter = current.coinBalance - price;
         return {
@@ -525,7 +744,7 @@ export function registerWorldTowerApi(
           updatedAt: now,
           coinBalance: balanceAfter,
           unlockedNodeIds: [...current.unlockedNodeIds, parsed.data.targetId],
-          resourceInventory: usableRecipe.requirements.actions.reduce(
+          resourceInventory: [...usableRecipe.requirements.particlePacks, ...usableRecipe.requirements.actions].reduce(
             (inventory, requirement) => ({
               ...inventory,
               [requirement.resourceId]:
@@ -556,7 +775,7 @@ export function registerWorldTowerApi(
   app.post("/api/world-tower/purchase-resource", async (request, reply) => {
     const parsed = targetInputSchema.safeParse(request.body);
     if (!parsed.success) {
-      return reply.code(400).send({ code: "INVALID_WORLD_TOWER_RESOURCE", message: "需要选择一种动作、条件、环境或知识。" });
+      return reply.code(400).send({ code: "INVALID_WORLD_TOWER_RESOURCE", message: "需要选择一种粒子包、动作、条件、环境或知识。" });
     }
     try {
       const { resourceById, resourcePriceById } = await loadContent();
@@ -578,7 +797,7 @@ export function registerWorldTowerApi(
           alreadyUnlocked = true;
           return current;
         }
-        if (current.coinBalance < price.priceCoins) throw new WorldTowerError("WORLD_TOWER_INSUFFICIENT_COINS", 409, "发现币还不够，先完成更多学习任务再回来看看。 ");
+        if (current.coinBalance < price.priceCoins) throw new WorldTowerError("WORLD_TOWER_INSUFFICIENT_COINS", 409, "知识币还不够，先完成更多学习任务再回来看看。 ");
         const now = new Date().toISOString();
         const balanceAfter = current.coinBalance - price.priceCoins;
         return {

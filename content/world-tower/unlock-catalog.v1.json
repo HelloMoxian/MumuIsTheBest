@@ -5,9 +5,9 @@
   "generatedAt": "2026-08-04T00:00:00.000Z",
   "currency": {
     "id": "currency:discovery-coin",
-    "name": "发现币",
+    "name": "知识币",
     "symbol": "✦",
-    "startingBalance": 240,
+    "startingBalance": 100000,
     "earningRulesStatus": "reserved-for-future"
   },
   "nodePrices": [
@@ -10013,6 +10013,18 @@
     }
   ],
   "resourcePrices": [
+    {
+      "targetId": "particle-pack:electron",
+      "priceCoins": 10,
+      "grantMode": "inventory-charge",
+      "grantQuantity": 1
+    },
+    {
+      "targetId": "particle-pack:proton",
+      "priceCoins": 10,
+      "grantMode": "inventory-charge",
+      "grantQuantity": 1
+    },
     {
       "targetId": "action:chemical-bonding",
       "priceCoins": 2,

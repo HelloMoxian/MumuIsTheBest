@@ -1,12 +1,21 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  WORLD_MAP_GRAPH_CENTER_X,
   frameQualityForLevel,
   hasRequirement,
+  layoutWorldTowerMap,
   resourceCount,
+  traceWorldTowerRelations,
   visibleNodeName,
 } from "./logic";
-import type { WorldTowerNode, WorldTowerProgress, WorldTowerResource } from "./types";
+import type {
+  WorldTowerLevel,
+  WorldTowerMapEdge,
+  WorldTowerNode,
+  WorldTowerProgress,
+  WorldTowerResource,
+} from "./types";
 
 const progress: WorldTowerProgress = {
   schemaVersion: 1,
@@ -15,7 +24,7 @@ const progress: WorldTowerProgress = {
   coinBalance: 10,
   unlockedNodeIds: [],
   permanentResourceIds: ["knowledge:mechanics"],
-  resourceInventory: { "action:assemble": 2 },
+  resourceInventory: { "action:assemble": 2, "particle-pack:electron": 1 },
 };
 
 function resource(
@@ -24,7 +33,9 @@ function resource(
 ): WorldTowerResource {
   return {
     id,
-    kind: id.split(":")[0] as WorldTowerResource["kind"],
+    kind: id.startsWith("particle-pack:")
+      ? "particle"
+      : id.split(":")[0] as WorldTowerResource["kind"],
     name: id,
     description: id,
     inventoryMode,
@@ -55,16 +66,117 @@ describe("world tower presentation logic", () => {
   });
 
   it("distinguishes charges, permanent knowledge and state requirements", () => {
+    const electronPack = resource("particle-pack:electron", "charge");
     const action = resource("action:assemble", "charge");
     const knowledge = resource("knowledge:mechanics", "permanent-unlock");
     const environment = resource("environment:workbench", "state");
 
+    assert.equal(resourceCount(electronPack, progress), 1);
     assert.equal(resourceCount(action, progress), 2);
     assert.equal(resourceCount(knowledge, progress), "permanent");
     assert.equal(resourceCount(environment, progress), "state");
+    assert.equal(hasRequirement(electronPack, { resourceId: electronPack.id, amount: 1 }, progress), true);
+    assert.equal(hasRequirement(electronPack, { resourceId: electronPack.id, amount: 2 }, progress), false);
     assert.equal(hasRequirement(action, { resourceId: action.id, amount: 2 }, progress), true);
     assert.equal(hasRequirement(action, { resourceId: action.id, amount: 3 }, progress), false);
     assert.equal(hasRequirement(knowledge, { resourceId: knowledge.id, amount: 1 }, progress), true);
     assert.equal(hasRequirement(environment, { resourceId: environment.id, amount: 1 }, progress), true);
+  });
+
+  it("lays every level into one continuous map from macro top to particle bottom", () => {
+    const levels = [
+      { id: "low", order: 1, name: "粒子", description: "", imagePath: "" },
+      { id: "middle", order: 2, name: "元素", description: "", imagePath: "" },
+      { id: "high", order: 3, name: "物质", description: "", imagePath: "" },
+    ] satisfies WorldTowerLevel[];
+    const nodes = [
+      { id: "a", levelId: "low", clusterId: "a" },
+      { id: "b", levelId: "low", clusterId: "b" },
+      { id: "c", levelId: "middle", clusterId: "c" },
+      { id: "d", levelId: "high", clusterId: "d" },
+    ] as WorldTowerNode[];
+    const edges = [
+      { sourceId: "a", targetId: "c", recipeId: "one" },
+      { sourceId: "c", targetId: "d", recipeId: "two" },
+    ] satisfies WorldTowerMapEdge[];
+    const layout = layoutWorldTowerMap(nodes, edges, levels);
+    assert.ok(layout.positions.get("d")!.y < layout.positions.get("c")!.y);
+    assert.ok(layout.positions.get("c")!.y < layout.positions.get("a")!.y);
+    assert.notEqual(layout.positions.get("a")!.x, layout.positions.get("b")!.x);
+  });
+
+  it("traces only the selected node's direct inputs and outputs", () => {
+    const edges = [
+      { sourceId: "root", targetId: "water", recipeId: "one" },
+      { sourceId: "water", targetId: "flood", recipeId: "two" },
+      { sourceId: "flood", targetId: "landform", recipeId: "three" },
+      { sourceId: "other", targetId: "landform", recipeId: "four" },
+    ] satisfies WorldTowerMapEdge[];
+    const relation = traceWorldTowerRelations("flood", edges);
+    assert.deepEqual([...relation.ancestors], ["water"]);
+    assert.deepEqual([...relation.descendants], ["landform"]);
+    assert.equal(relation.ancestors.has("root"), false);
+    assert.equal(relation.ancestors.has("other"), false);
+  });
+
+  it("expands one scale into groups of at most six nodes per row", () => {
+    const levels = [
+      { id: "low", order: 1, name: "粒子", description: "", imagePath: "" },
+      { id: "high", order: 2, name: "元素", description: "", imagePath: "" },
+    ] satisfies WorldTowerLevel[];
+    const nodes = Array.from({ length: 25 }, (_, index) => ({
+      id: "element:" + String(index),
+      levelId: "high",
+      clusterId: "elements",
+    })) as WorldTowerNode[];
+    const group = {
+      id: "elements:one",
+      name: "化学元素",
+      clusterId: "elements",
+      nodeIds: nodes.map((node) => node.id),
+    };
+    const layout = layoutWorldTowerMap(nodes, [], levels, {
+      levelId: "high",
+      groups: [group],
+    });
+    assert.ok(layout.bands.get("high")!.height > 1_300);
+    assert.equal(layout.groupLayouts[0].nodeCount, 25);
+    const rows = new Map<number, number>();
+    for (const node of nodes) {
+      const y = layout.positions.get(node.id)!.y;
+      rows.set(y, (rows.get(y) ?? 0) + 1);
+    }
+    assert.deepEqual([...rows.values()], [6, 6, 6, 6, 1]);
+    for (const y of rows.keys()) {
+      const rowNodes = nodes.filter((node) => layout.positions.get(node.id)!.y === y);
+      const center = rowNodes.reduce((sum, node) => sum + layout.positions.get(node.id)!.x, 0)
+        / rowNodes.length;
+      assert.equal(center, WORLD_MAP_GRAPH_CENTER_X);
+    }
+  });
+
+  it("wraps overview layers after six nodes instead of widening the map", () => {
+    const levels = [
+      { id: "one", order: 1, name: "元素", description: "", imagePath: "" },
+    ] satisfies WorldTowerLevel[];
+    const nodes = Array.from({ length: 10 }, (_, index) => ({
+      id: "overview:" + String(index),
+      levelId: "one",
+      clusterId: "overview",
+    })) as WorldTowerNode[];
+    const layout = layoutWorldTowerMap(nodes, [], levels);
+    const rows = new Map<number, number>();
+    for (const node of nodes) {
+      const y = layout.positions.get(node.id)!.y;
+      rows.set(y, (rows.get(y) ?? 0) + 1);
+    }
+    assert.equal(layout.width, 1_120);
+    assert.deepEqual([...rows.values()], [6, 4]);
+    for (const y of rows.keys()) {
+      const rowNodes = nodes.filter((node) => layout.positions.get(node.id)!.y === y);
+      const center = rowNodes.reduce((sum, node) => sum + layout.positions.get(node.id)!.x, 0)
+        / rowNodes.length;
+      assert.equal(center, WORLD_MAP_GRAPH_CENTER_X);
+    }
   });
 });

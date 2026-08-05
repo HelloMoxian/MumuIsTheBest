@@ -107,6 +107,18 @@ const clusters = [
   parentClusterId,
 }));
 
+const particlePacks = [
+  ["particle-pack:electron", "电子包", "合成元素时使用的电子学习资源；电子节点永久保留，电子包会被消耗。"],
+  ["particle-pack:proton", "质子包", "合成元素时使用的质子学习资源；质子节点永久保留，质子包会被消耗。"],
+].map(([id, name, description]) => ({
+  id,
+  kind: "particle",
+  name,
+  description,
+  inventoryMode: "charge",
+  shop: { purchasable: true, coinCost: 10 },
+}));
+
 const actions = [
   ["action:chemical-bonding", "形成化学键", "让原子以概念化方式形成稳定结构。", 2],
   ["action:accumulate", "积累", "把微小份量逐步变成可观察的宏观体量。", 1],
@@ -245,6 +257,7 @@ const knowledge = knowledgeNames.map(([key, name], index) => ({
 }));
 
 const resources = {
+  particlePacks,
   actions,
   conditions,
   environments,
@@ -286,13 +299,14 @@ function input(nodeId, amount = 1, unit = "conceptual-part", role = "material") 
   return { nodeId, amount, unit, role, consumed: true };
 }
 
-function recipe({ id, type, outputId, inputs, actions: actionIds = [], conditions: conditionIds = [], environments: environmentIds = [], knowledge: knowledgeIds = [], explanation, safety = "child-friendly-conceptual-model" }) {
+function recipe({ id, type, outputId, inputs, particlePacks: particlePackIds = [], actions: actionIds = [], conditions: conditionIds = [], environments: environmentIds = [], knowledge: knowledgeIds = [], explanation, safety = "child-friendly-conceptual-model" }) {
   return {
     id,
     type,
     logic: "ALL",
     inputs,
     requirements: {
+      particlePacks: particlePackIds.map((value) => requirement(value)),
       actions: actionIds.map((value) => requirement(value)),
       conditions: conditionIds.map((value) => requirement(value)),
       environments: environmentIds.map((value) => requirement(value)),
@@ -399,6 +413,7 @@ for (const element of elements) {
           input("particle:electron", element.atomicNumber, "particle"),
           input("particle:neutron", representativeNeutrons, "representative-particle"),
         ],
+        particlePacks: ["particle-pack:electron", "particle-pack:proton"],
         environments: ["environment:virtual-lab"],
         knowledge: ["knowledge:atomic-structure", "knowledge:periodic-table"],
         explanation: `${element.atomicNumber} 个质子决定它是${element.chineseName}；中子数采用常见质量数的概念近似，同位素会不同。`,
@@ -1320,6 +1335,7 @@ const graph = {
     nodeCountIncludesResources: false,
     recipeRule: "同一配方中的 inputs 与 requirements 全部为 AND；一个节点拥有多个配方时，配方之间为 OR。",
     requirementRoles: {
+      particlePacks: "电子、质子等节点对应的可消耗学习资源；节点永久保留，粒子包在元素合成时消耗。",
       actions: "可拥有数量、执行时消耗的工具或动作次数。",
       conditions: "必须满足但通常不消耗的状态。",
       environments: "过程发生所需的场景或自然环境，不属于物质层级。",
@@ -1382,9 +1398,9 @@ const unlockCatalog = {
   generatedAt: graph.generatedAt,
   currency: {
     id: "currency:discovery-coin",
-    name: "发现币",
+    name: "知识币",
     symbol: "✦",
-    startingBalance: 240,
+    startingBalance: 100000,
     earningRulesStatus: "reserved-for-future",
   },
   nodePrices: nodes.map((node) => ({

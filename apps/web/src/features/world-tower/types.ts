@@ -1,5 +1,5 @@
-export type ResourceKind = "action" | "condition" | "environment" | "knowledge";
-export type ResourceGroupKey = "actions" | "conditions" | "environments" | "knowledge";
+export type ResourceKind = "particle" | "action" | "condition" | "environment" | "knowledge";
+export type ResourceGroupKey = "particlePacks" | "actions" | "conditions" | "environments" | "knowledge";
 
 export type WorldTowerProgress = {
   schemaVersion: 1;
@@ -138,4 +138,41 @@ export type NodePage = {
   limit: number;
   total: number;
   items: WorldTowerNode[];
+};
+
+export type WorldTowerMapEdge = {
+  sourceId: string;
+  targetId: string;
+  recipeId: string;
+};
+
+export type WorldTowerMap = {
+  schemaVersion: 1;
+  graphId: string;
+  totalNodes: number;
+  isTruncated: boolean;
+  levelNodeCounts: Record<string, number>;
+  items: WorldTowerNode[];
+  edges: WorldTowerMapEdge[];
+};
+
+export type WorldTowerLoadStrategy = "all" | "locked" | "unlocked";
+
+export type WorldTowerLevelGroup = {
+  id: string;
+  name: string;
+  clusterId: string;
+  nodeIds: string[];
+};
+
+export type WorldTowerLevelMap = {
+  schemaVersion: 1;
+  graphId: string;
+  levelId: string;
+  visibility: WorldTowerLoadStrategy;
+  totalInLevel: number;
+  matchedTotal: number;
+  groups: WorldTowerLevelGroup[];
+  items: WorldTowerNode[];
+  edges: WorldTowerMapEdge[];
 };

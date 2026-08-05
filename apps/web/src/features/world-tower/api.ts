@@ -1,5 +1,8 @@
 import type {
   NodePage,
+  WorldTowerLevelMap,
+  WorldTowerLoadStrategy,
+  WorldTowerMap,
   WorldTowerManifest,
   WorldTowerNodeDetail,
   WorldTowerProgress,
@@ -37,6 +40,22 @@ async function requestJson<T>(input: RequestInfo | URL, init?: RequestInit): Pro
 
 export function loadWorldTowerManifest(signal?: AbortSignal) {
   return requestJson<WorldTowerManifest>("/api/world-tower/manifest", { signal });
+}
+
+export function loadWorldTowerMap(signal?: AbortSignal) {
+  return requestJson<WorldTowerMap>("/api/world-tower/map", { signal });
+}
+
+export function loadWorldTowerLevelMap(
+  levelId: string,
+  visibility: WorldTowerLoadStrategy,
+  signal?: AbortSignal,
+) {
+  const search = new URLSearchParams({ levelId, visibility });
+  return requestJson<WorldTowerLevelMap>(
+    "/api/world-tower/level-map?" + search.toString(),
+    { signal },
+  );
 }
 
 export function loadWorldTowerNodes(

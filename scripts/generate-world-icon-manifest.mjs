@@ -91,10 +91,14 @@ for (const [nodeName, assetName] of coreNodeArt) {
 }
 
 const resourceAssets = {};
+const particlePackAssets = {
+  "particle-pack:electron": publicAsset("nodes/core/electron.webp"),
+  "particle-pack:proton": publicAsset("nodes/core/proton.webp"),
+};
 for (const group of Object.values(graph.resources)) {
   for (const resource of group) {
     const assetName = resource.id.slice(resource.id.indexOf(":") + 1);
-    resourceAssets[resource.id] = publicAsset(
+    resourceAssets[resource.id] = particlePackAssets[resource.id] ?? publicAsset(
       `resources/${resource.kind}/${assetName}.webp`,
     );
   }

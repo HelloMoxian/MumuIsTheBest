@@ -96,19 +96,75 @@ describe("world tower API", () => {
       const manifest = await manifestResponse.json() as {
         counts: { nodes: number; resources: number };
         levels: Array<{ imagePath: string }>;
-        resources: { knowledge: unknown[] };
+        resources: {
+          particlePacks: Array<{ id: string; shop: { coinCost: number | null } }>;
+          knowledge: unknown[];
+        };
         progress: { coinBalance: number; unlockedNodeIds: string[] };
         backgroundAsset: string;
       };
       assert.equal(manifest.counts.nodes, 2_000);
-      assert.equal(manifest.counts.resources, 135);
+      assert.equal(manifest.counts.resources, 137);
+      assert.deepEqual(
+        manifest.resources.particlePacks.map((resource) => [resource.id, resource.shop.coinCost]),
+        [["particle-pack:electron", 10], ["particle-pack:proton", 10]],
+      );
       assert.equal(manifest.levels.length, 15);
       assert.equal(manifest.resources.knowledge.length, 79);
       assert.match(manifest.backgroundAsset, /world-tower/);
-      assert.equal(manifest.progress.coinBalance, 240);
+      assert.equal(manifest.progress.coinBalance, 100_000);
       assert.deepEqual(
         manifest.progress.unlockedNodeIds.sort(),
         ["particle:electron", "particle:neutron", "particle:proton"],
+      );
+
+      const mapResponse = await fetch(`${baseUrl}/api/world-tower/map`);
+      assert.equal(mapResponse.status, 200);
+      const map = await mapResponse.json() as {
+        totalNodes: number;
+        isTruncated: boolean;
+        levelNodeCounts: Record<string, number>;
+        items: Array<{ id: string; levelId: string; isUnlocked: boolean }>;
+        edges: Array<{ sourceId: string; targetId: string }>;
+      };
+      assert.equal(map.totalNodes, 2_000);
+      assert.equal(map.isTruncated, true);
+      assert.ok(map.items.length >= 100 && map.items.length <= 160);
+      assert.equal(Object.keys(map.levelNodeCounts).length, 15);
+      assert.ok(Object.values(map.levelNodeCounts).every((count) => count > 0));
+      assert.ok(map.edges.length >= 120);
+      const mapNodeIds = new Set(map.items.map((node) => node.id));
+      assert.ok(["particle:electron", "particle:proton", "particle:neutron"].every((id) => mapNodeIds.has(id)));
+      assert.ok(map.edges.every((edge) => mapNodeIds.has(edge.sourceId) && mapNodeIds.has(edge.targetId)));
+
+      const fullElementMapResponse = await fetch(
+        `${baseUrl}/api/world-tower/level-map?levelId=level%3A02-elements&visibility=all`,
+      );
+      assert.equal(fullElementMapResponse.status, 200);
+      const fullElementMap = await fullElementMapResponse.json() as {
+        totalInLevel: number;
+        matchedTotal: number;
+        groups: Array<{ nodeIds: string[] }>;
+        items: Array<{ id: string }>;
+        edges: Array<{ sourceId: string; targetId: string }>;
+      };
+      assert.equal(fullElementMap.totalInLevel, 118);
+      assert.equal(fullElementMap.matchedTotal, 118);
+      assert.equal(fullElementMap.items.length, 118);
+      assert.equal(fullElementMap.groups.length, 4);
+      assert.ok(fullElementMap.groups.every((group) => group.nodeIds.length >= 1 && group.nodeIds.length <= 30));
+      assert.equal(
+        fullElementMap.groups.reduce((sum, group) => sum + group.nodeIds.length, 0),
+        118,
+      );
+
+      const unlockedElementMapResponse = await fetch(
+        `${baseUrl}/api/world-tower/level-map?levelId=level%3A02-elements&visibility=unlocked`,
+      );
+      assert.equal(unlockedElementMapResponse.status, 200);
+      assert.equal(
+        (await unlockedElementMapResponse.json() as { matchedTotal: number }).matchedTotal,
+        0,
       );
 
       const pageResponse = await fetch(
@@ -150,6 +206,22 @@ describe("world tower API", () => {
         assert.equal(response.status, 201);
       }
 
+      const missingParticlePacks = await post(
+        baseUrl,
+        "/api/world-tower/unlock-node",
+        "element:H",
+      );
+      assert.equal(missingParticlePacks.status, 409);
+
+      for (const particlePackId of ["particle-pack:electron", "particle-pack:proton"]) {
+        const response = await post(
+          baseUrl,
+          "/api/world-tower/purchase-resource",
+          particlePackId,
+        );
+        assert.equal(response.status, 201);
+      }
+
       const conditionPurchase = await post(
         baseUrl,
         "/api/world-tower/purchase-resource",
@@ -165,11 +237,17 @@ describe("world tower API", () => {
       assert.equal(unlockResponse.status, 201);
       const unlocked = await unlockResponse.json() as {
         alreadyUnlocked: boolean;
-        progress: { coinBalance: number; unlockedNodeIds: string[] };
+        progress: {
+          coinBalance: number;
+          unlockedNodeIds: string[];
+          resourceInventory: Record<string, number>;
+        };
       };
       assert.equal(unlocked.alreadyUnlocked, false);
-      assert.equal(unlocked.progress.coinBalance, 230);
+      assert.equal(unlocked.progress.coinBalance, 99_970);
       assert.ok(unlocked.progress.unlockedNodeIds.includes("element:H"));
+      assert.equal(unlocked.progress.resourceInventory["particle-pack:electron"], 0);
+      assert.equal(unlocked.progress.resourceInventory["particle-pack:proton"], 0);
 
       const duplicateUnlock = await post(
         baseUrl,
@@ -180,8 +258,33 @@ describe("world tower API", () => {
       assert.equal(
         (await duplicateUnlock.json() as { progress: { coinBalance: number } })
           .progress.coinBalance,
-        230,
+        99_970,
       );
+
+      const learnedElementMapResponse = await fetch(
+        `${baseUrl}/api/world-tower/level-map?levelId=level%3A02-elements&visibility=unlocked`,
+      );
+      assert.equal(learnedElementMapResponse.status, 200);
+      assert.equal(
+        (await learnedElementMapResponse.json() as { matchedTotal: number }).matchedTotal,
+        1,
+      );
+
+      const oxygenWithoutPacks = await post(
+        baseUrl,
+        "/api/world-tower/unlock-node",
+        "element:O",
+      );
+      assert.equal(oxygenWithoutPacks.status, 409);
+
+      for (const particlePackId of ["particle-pack:electron", "particle-pack:proton"]) {
+        const response = await post(
+          baseUrl,
+          "/api/world-tower/purchase-resource",
+          particlePackId,
+        );
+        assert.equal(response.status, 201);
+      }
 
       const oxygenUnlock = await post(
         baseUrl,
@@ -189,6 +292,11 @@ describe("world tower API", () => {
         "element:O",
       );
       assert.equal(oxygenUnlock.status, 201);
+      const oxygenProgress = await oxygenUnlock.json() as {
+        progress: { resourceInventory: Record<string, number> };
+      };
+      assert.equal(oxygenProgress.progress.resourceInventory["particle-pack:electron"], 0);
+      assert.equal(oxygenProgress.progress.resourceInventory["particle-pack:proton"], 0);
 
       const bondingCharge = await post(
         baseUrl,
@@ -217,7 +325,7 @@ describe("world tower API", () => {
           resourceInventory: Record<string, number>;
         };
       };
-      assert.equal(waterProgress.progress.coinBalance, 209);
+      assert.equal(waterProgress.progress.coinBalance, 99_929);
       assert.ok(waterProgress.progress.unlockedNodeIds.includes("compound:compound-pubchem-962"));
       assert.equal(waterProgress.progress.resourceInventory["action:chemical-bonding"], 0);
 
@@ -241,7 +349,7 @@ describe("world tower API", () => {
         progress: { coinBalance: number; resourceInventory: Record<string, number> };
       };
       assert.equal(duplicateKnowledgeBody.alreadyUnlocked, true);
-      assert.equal(duplicateKnowledgeBody.progress.coinBalance, 205);
+      assert.equal(duplicateKnowledgeBody.progress.coinBalance, 99_925);
       assert.equal(
         duplicateKnowledgeBody.progress.resourceInventory["action:chemical-bonding"],
         2,
@@ -258,11 +366,13 @@ describe("world tower API", () => {
         id: string;
         updatedAt: string;
         transactions: unknown[];
+        appliedGrantIds: string[];
       };
       assert.equal(stored.schemaVersion, 1);
       assert.match(stored.id, /^[0-9a-f-]{36}$/);
       assert.match(stored.updatedAt, /^\d{4}-\d{2}-\d{2}T/);
-      assert.equal(stored.transactions.length, 10);
+      assert.equal(stored.transactions.length, 14);
+      assert.deepEqual(stored.appliedGrantIds, ["knowledge-coin-preview-100000-v1"]);
       assert.equal((await stat(progressPath)).mode & 0o777, 0o600);
 
       await writeFile(progressPath, '{"schemaVersion":999}\n', { mode: 0o600 });

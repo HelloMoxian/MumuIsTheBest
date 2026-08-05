@@ -75,6 +75,8 @@
     "universe:3d1681a5": "/images/world-tower/nodes/core/observable-universe.webp"
   },
   "resourceAssets": {
+    "particle-pack:electron": "/images/world-tower/nodes/core/electron.webp",
+    "particle-pack:proton": "/images/world-tower/nodes/core/proton.webp",
     "action:chemical-bonding": "/images/world-tower/resources/action/chemical-bonding.webp",
     "action:accumulate": "/images/world-tower/resources/action/accumulate.webp",
     "action:mix": "/images/world-tower/resources/action/mix.webp",
