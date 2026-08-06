@@ -565,6 +565,11 @@
   background-repeat: no-repeat;
 }
 
+.wt-rune-node__content.wt-node-art {
+  position: absolute;
+  display: block;
+}
+
 .wt-node-art.is-atlas {
   display: block;
 }
