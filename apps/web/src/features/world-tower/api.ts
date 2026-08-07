@@ -13,7 +13,7 @@ type ProgressMutationResponse = {
   progress: WorldTowerProgress;
 };
 
-export type WorldTowerProgressAction = "unlock-all" | "clear-all" | "add-1000-coins";
+export type WorldTowerProgressAction = "unlock-all" | "clear-all";
 
 type ProgressManagementResponse = {
   action: WorldTowerProgressAction;

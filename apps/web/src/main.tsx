@@ -11,6 +11,16 @@ const FindNumberGame = lazy(async () => {
   return { default: module.FindNumberGame };
 });
 
+const CatMouseGame = lazy(async () => {
+  const module = await import("./features/cat-mouse-game/CatMouseGame");
+  return { default: module.CatMouseGame };
+});
+
+const CoinResetPage = lazy(async () => {
+  const module = await import("./features/coin-reset/CoinResetPage");
+  return { default: module.CoinResetPage };
+});
+
 const CommonCharactersGame = lazy(async () => {
   const module = await import("./features/chinese-characters/CommonCharactersGame");
   return { default: module.CommonCharactersGame };
@@ -173,6 +183,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "问问大小，缩小数字范围",
         shape: "wide",
         href: "/math/find-number",
+      },
+      {
+        title: "猫鼠游戏",
+        mark: "x?",
+        description: "观察动画场景，列式解开谜题",
+        shape: "compact",
+        href: "/math/cat-mouse-game",
       },
     ],
   },
@@ -589,6 +606,10 @@ function App() {
                   <span aria-hidden="true">🎙️</span>
                   <span><strong>语音识别测试</strong><small>边说边出字</small></span>
                 </a>
+                <a href="/parent/coin-reset" role="menuitem" onClick={() => setMenuOpen(false)}>
+                  <span aria-hidden="true">✦</span>
+                  <span><strong>知识币管理</strong><small>密码重置余额</small></span>
+                </a>
               </div>
             )}
           </div>
@@ -789,6 +810,20 @@ function CurrentPage() {
         )}
       >
         <FindNumberGame />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname === "/math/cat-mouse-game") {
+    return (
+      <Suspense fallback={<ChemistryLoading label="猫鼠游戏" />}>
+        <CatMouseGame />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname === "/parent/coin-reset") {
+    return (
+      <Suspense fallback={<ChemistryLoading label="知识币管理" />}>
+        <CoinResetPage />
       </Suspense>
     );
   }

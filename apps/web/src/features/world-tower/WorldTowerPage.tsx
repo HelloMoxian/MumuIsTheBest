@@ -631,23 +631,16 @@ export function WorldTowerPage() {
     setNotice(
       action === "unlock-all"
         ? "正在点亮整座万物构成塔…"
-        : action === "clear-all"
-          ? "正在安全清空发现与背包…"
-          : "正在增加 1,000 知识币…",
+        : "正在安全清空发现与背包…",
     );
     try {
       const result = await manageWorldTowerProgress(action);
-      if (action === "add-1000-coins") {
-        updateProgress(result.progress);
-        setNotice("已增加 1,000 知识币。");
-      } else {
-        await refreshProgressViews(result.progress);
-        setNotice(
-          action === "unlock-all"
-            ? "全部 2,000 个节点已经点亮。"
-            : "已经清空，电子、质子和中子三个起点仍然保留。",
-        );
-      }
+      await refreshProgressViews(result.progress);
+      setNotice(
+        action === "unlock-all"
+          ? "全部 2,000 个节点已经点亮。"
+          : "已经清空，电子、质子和中子三个起点仍然保留。",
+      );
     } catch (error) {
       setNotice(errorMessage(error));
     } finally {
@@ -789,14 +782,6 @@ export function WorldTowerPage() {
               {busyTarget === "progress:clear-all"
                 ? "清空中…"
                 : clearAllArmed ? "再点确认" : "清空全部"}
-            </button>
-            <button
-              className="is-add-coins"
-              type="button"
-              disabled={busyTarget !== null}
-              onClick={() => handleProgressAction("add-1000-coins")}
-            >
-              {busyTarget === "progress:add-1000-coins" ? "增加中…" : "金币 +1000"}
             </button>
           </div>
           <span className="wt-discovery-count"><b>{manifest.counts.nodes.toLocaleString("zh-CN")}</b> 个发现</span>

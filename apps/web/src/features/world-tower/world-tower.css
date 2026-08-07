@@ -193,12 +193,6 @@
   box-shadow: 0 0 18px rgba(255, 103, 199, 0.3);
 }
 
-.wt-progress-actions .is-add-coins {
-  color: #fff2bf;
-  border-color: rgba(255, 215, 122, 0.4);
-  background: rgba(105, 71, 24, 0.56);
-}
-
 .wt-topbar__stats > span {
   display: inline-flex;
   align-items: center;

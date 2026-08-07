@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { browserTts } from "../../shared/speech";
+import { awardLearningCoins } from "../../shared/learning-coins";
 import { AsrRecognitionSession, readAsrConfiguration, type RecognitionState } from "./asr-client";
 import {
   aggregateHistory,
@@ -238,6 +239,9 @@ export function AddSubtractGame() {
       setFeedback({ kind: "correct", answer });
       setPhase("feedback");
       playSuccessChime();
+      void awardLearningCoins("math:add-subtract").catch(() => {
+        setSaveWarning("答案已经记录，但知识币暂时没有加上；下次答题时可以继续获得。");
+      });
       await stopRecognition();
 
       feedbackTimerRef.current = window.setTimeout(() => {
@@ -580,7 +584,7 @@ export function AddSubtractGame() {
                 </span>
               </div>
               <div className="answer-guide" aria-live="assertive">
-                {feedback?.kind === "correct" && <strong>答对啦！下一颗数字星正在飞来</strong>}
+                {feedback?.kind === "correct" && <strong>答对啦！+1 知识币，下一颗数字星正在飞来</strong>}
                 {feedback?.kind === "retry" && <strong>再想一想，继续说“等于……”</strong>}
                 {!feedback && <span>先想一想，再说“等于 + 答案”</span>}
               </div>

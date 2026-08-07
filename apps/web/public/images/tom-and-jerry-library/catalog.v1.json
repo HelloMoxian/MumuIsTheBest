@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "libraryId": "tom-and-jerry-library-v1",
+  "createdAt": "2026-08-07T03:28:02Z",
+  "description": "经典手绘赛璐璐风格的横版角色动作、场景与恶搞道具图集。",
+  "gridConvention": {
+    "indexOrder": "row-major-zero-based",
+    "characterAndPropGrid": {
+      "columns": 4,
+      "rows": 4,
+      "itemCount": 16,
+      "sourceWidth": 1254,
+      "sourceHeight": 1254
+    },
+    "backgroundGrid": {
+      "columns": 2,
+      "rows": 2,
+      "itemCount": 4,
+      "sourceWidth": 1536,
+      "sourceHeight": 1024
+    }
+  },
+  "renderConvention": {
+    "characterFacing": "right",
+    "mirrorForLeftFacing": true,
+    "chromaKey": "#00FF00",
+    "chromaAppliesTo": ["character", "prop"],
+    "backgroundsAreCompleteScenes": true,
+    "runtimeCharacterHeightRatio": {
+      "tom": 1,
+      "jerry": 0.3,
+      "spike": 1.1
+    }
+  },
+  "socketProfiles": {
+    "g1": {
+      "name": "单手短柄横握",
+      "propNominalAnchor": [0.32, 0.65],
+      "axisDegrees": 0
+    },
+    "g2": {
+      "name": "单手长柄斜握",
+      "propNominalAnchor": [0.42, 0.68],
+      "axisDegrees": -60
+    },
+    "g3": {
+      "name": "双手长杆",
+      "propNominalAnchors": [[0.28, 0.64], [0.43, 0.56]],
+      "axisDegrees": -28
+    },
+    "g4": {
+      "name": "双手举起或托举",
+      "placement": "align-object-bottom-center-above-palms"
+    },
+    "t1": {
+      "name": "掌心投掷物",
+      "placement": "align-object-pivot-to-curled-palm"
+    },
+    "f1": {
+      "name": "地面道具",
+      "placement": "align-bottom-center-to-stage-baseline"
+    },
+    "r1": {
+      "name": "绳索或钓线连接点",
+      "placement": "align-free-end-to-runtime-connector"
+    }
+  },
+  "atlases": [
+    {
+      "id": "tom-actions-01",
+      "category": "character",
+      "character": "tom",
+      "imagePath": "/images/tom-and-jerry-library/atlases/characters/tom-actions-01.webp",
+      "sourceImagePath": "/images/tom-and-jerry-library/source-atlases/characters/tom-actions-01.png",
+      "items": [
+        { "id": "tom-alert-idle", "name": "警觉站立" },
+        { "id": "tom-tiptoe-sneak", "name": "踮脚潜行" },
+        { "id": "tom-chase-run", "name": "全速追逐" },
+        { "id": "tom-skid-brake", "name": "急刹后仰" },
+        { "id": "tom-grip-g1", "name": "单手水平握持", "socket": "g1" },
+        { "id": "tom-grip-g2", "name": "单手长柄斜握", "socket": "g2" },
+        { "id": "tom-grip-g3", "name": "双手长杆握持", "socket": "g3" },
+        { "id": "tom-lift-g4", "name": "双手过头托举", "socket": "g4" },
+        { "id": "tom-throw-t1", "name": "蓄力投掷", "socket": "t1" },
+        { "id": "tom-push", "name": "向前推" },
+        { "id": "tom-pull", "name": "后仰拉拽" },
+        { "id": "tom-pounce", "name": "腾空扑抓" },
+        { "id": "tom-startled", "name": "惊吓拉长" },
+        { "id": "tom-angry-point", "name": "愤怒指责" },
+        { "id": "tom-dizzy", "name": "眩晕摇晃" },
+        { "id": "tom-flattened", "name": "压扁恢复" }
+      ]
+    },
+    {
+      "id": "jerry-actions-01",
+      "category": "character",
+      "character": "jerry",
+      "imagePath": "/images/tom-and-jerry-library/atlases/characters/jerry-actions-01.webp",
+      "sourceImagePath": "/images/tom-and-jerry-library/source-atlases/characters/jerry-actions-01.png",
+      "items": [
+        { "id": "jerry-clever-idle", "name": "机灵站立" },
+        { "id": "jerry-tiptoe-sneak", "name": "踮脚潜行" },
+        { "id": "jerry-escape-run", "name": "快速逃跑" },
+        { "id": "jerry-skid-brake", "name": "急刹后仰" },
+        { "id": "jerry-grip-g1", "name": "单手水平握持", "socket": "g1" },
+        { "id": "jerry-grip-g2", "name": "单手长柄斜握", "socket": "g2" },
+        { "id": "jerry-grip-g3", "name": "双手长杆握持", "socket": "g3" },
+        { "id": "jerry-lift-g4", "name": "双手过头托举", "socket": "g4" },
+        { "id": "jerry-throw-t1", "name": "蓄力投掷", "socket": "t1" },
+        { "id": "jerry-push", "name": "向前推" },
+        { "id": "jerry-pull", "name": "后仰拉拽" },
+        { "id": "jerry-dodge-jump", "name": "腾空闪避" },
+        { "id": "jerry-laugh", "name": "得意大笑" },
+        { "id": "jerry-tease", "name": "指向挑衅" },
+        { "id": "jerry-surprised", "name": "突然受惊" },
+        { "id": "jerry-dizzy-spin", "name": "旋转眩晕" }
+      ]
+    },
+    {
+      "id": "spike-actions-01",
+      "category": "character",
+      "character": "spike",
+      "imagePath": "/images/tom-and-jerry-library/atlases/characters/spike-actions-01.webp",
+      "sourceImagePath": "/images/tom-and-jerry-library/source-atlases/characters/spike-actions-01.png",
+      "items": [
+        { "id": "spike-guard-idle", "name": "警戒守卫" },
+        { "id": "spike-patrol-walk", "name": "缓慢巡逻" },
+        { "id": "spike-charge-run", "name": "愤怒冲锋" },
+        { "id": "spike-skid-brake", "name": "急停后仰" },
+        { "id": "spike-grip-g1", "name": "单爪水平握持", "socket": "g1" },
+        { "id": "spike-grip-g2", "name": "单爪长柄斜握", "socket": "g2" },
+        { "id": "spike-grip-g3", "name": "双爪长杆握持", "socket": "g3" },
+        { "id": "spike-lift-g4", "name": "双爪过头托举", "socket": "g4" },
+        { "id": "spike-throw-t1", "name": "蓄力投掷", "socket": "t1" },
+        { "id": "spike-push", "name": "向前猛推" },
+        { "id": "spike-pull", "name": "后仰拉拽" },
+        { "id": "spike-intercept", "name": "飞扑拦截" },
+        { "id": "spike-angry-bark", "name": "愤怒吼叫" },
+        { "id": "spike-warning", "name": "举爪警告" },
+        { "id": "spike-startled", "name": "突然受惊" },
+        { "id": "spike-dizzy-sit", "name": "坐地眩晕" }
+      ]
+    },
+    {
+      "id": "backgrounds-house-01",
+      "category": "background",
+      "imagePath": "/images/tom-and-jerry-library/atlases/backgrounds/backgrounds-house-01.webp",
+      "sourceImagePath": "/images/tom-and-jerry-library/source-atlases/backgrounds/backgrounds-house-01.png",
+      "items": [
+        { "id": "background-living-room", "name": "经典客厅" },
+        { "id": "background-kitchen", "name": "经典厨房" },
+        { "id": "background-dining-room", "name": "正式餐厅" },
+        { "id": "background-hallway-stairs", "name": "走廊与楼梯" }
+      ]
+    },
+    {
+      "id": "backgrounds-world-02",
+      "category": "background",
+      "imagePath": "/images/tom-and-jerry-library/atlases/backgrounds/backgrounds-world-02.webp",
+      "sourceImagePath": "/images/tom-and-jerry-library/source-atlases/backgrounds/backgrounds-world-02.png",
+      "items": [
+        { "id": "background-basement-boiler", "name": "地下室与锅炉房" },
+        { "id": "background-backyard", "name": "后院花园" },
+        { "id": "background-city-alley", "name": "城市后巷" },
+        { "id": "background-harbor-dock", "name": "港口仓库与木码头" }
+      ]
+    },
+    {
+      "id": "props-handheld-01",
+      "category": "prop",
+      "imagePath": "/images/tom-and-jerry-library/atlases/props/props-handheld-01.webp",
+      "sourceImagePath": "/images/tom-and-jerry-library/source-atlases/props/props-handheld-01.png",
+      "spriteManifestPath": "/images/tom-and-jerry-library/sprites/props/handheld/manifest.json",
+      "items": [
+        { "id": "prop-frying-pan", "name": "木柄平底锅", "socket": "g1" },
+        { "id": "prop-fly-swatter", "name": "苍蝇拍", "socket": "g1" },
+        { "id": "prop-tennis-racket", "name": "网球拍", "socket": "g1" },
+        { "id": "prop-plunger", "name": "橡胶皮搋子", "socket": "g1" },
+        { "id": "prop-mallet", "name": "超大木槌", "socket": "g2" },
+        { "id": "prop-broom", "name": "长柄扫帚", "socket": "g2" },
+        { "id": "prop-mop", "name": "长柄拖把", "socket": "g2" },
+        { "id": "prop-umbrella", "name": "收拢雨伞", "socket": "g2" },
+        { "id": "prop-baseball-bat", "name": "木制棒球棍", "socket": "g3" },
+        { "id": "prop-shovel", "name": "圆头铁铲", "socket": "g3" },
+        { "id": "prop-catching-net", "name": "长柄捕捉网", "socket": "g3" },
+        { "id": "prop-fishing-rod", "name": "弯曲钓鱼竿", "socket": "g3", "connector": "r1" },
+        { "id": "prop-rolling-pin", "name": "双柄擀面杖", "socket": "g1" },
+        { "id": "prop-soup-ladle", "name": "长柄汤勺", "socket": "g1" },
+        { "id": "prop-fireplace-bellows", "name": "壁炉风箱", "socket": "g3" },
+        { "id": "prop-horseshoe-magnet", "name": "马蹄磁铁", "socket": "g1" }
+      ]
+    },
+    {
+      "id": "props-gags-02",
+      "category": "prop",
+      "imagePath": "/images/tom-and-jerry-library/atlases/props/props-gags-02.webp",
+      "sourceImagePath": "/images/tom-and-jerry-library/source-atlases/props/props-gags-02.png",
+      "items": [
+        { "id": "prop-cheese-wedge", "name": "三角奶酪", "socket": "t1" },
+        { "id": "prop-cream-pie", "name": "奶油派", "socket": "t1" },
+        { "id": "prop-banana-peel", "name": "香蕉皮", "socket": "f1" },
+        { "id": "prop-dog-bone", "name": "大号狗骨头", "socket": "t1" },
+        { "id": "prop-mousetrap", "name": "弹簧捕鼠夹", "socket": "f1" },
+        { "id": "prop-alarm-clock", "name": "双铃闹钟", "socket": "f1" },
+        { "id": "prop-clothes-iron", "name": "老式扁铁熨斗", "socket": "g1" },
+        { "id": "prop-roller-skates", "name": "四轮旱冰鞋", "socket": "f1" },
+        { "id": "prop-bowling-ball", "name": "黑色保龄球", "socket": "t1" },
+        { "id": "prop-anvil", "name": "卡通铁砧", "socket": "g4" },
+        { "id": "prop-water-bucket", "name": "金属水桶", "socket": "g4" },
+        { "id": "prop-trash-can", "name": "垃圾桶与桶盖", "socket": "f1" },
+        { "id": "prop-boxing-glove-trap", "name": "弹簧拳击手套", "socket": "f1" },
+        { "id": "prop-lasso", "name": "绳圈", "socket": "r1" },
+        { "id": "prop-cartoon-bomb", "name": "圆形卡通炸弹", "socket": "t1" },
+        { "id": "prop-firecrackers", "name": "成束卡通大爆竹", "socket": "t1" }
+      ]
+    },
+    {
+      "id": "props-measurement-03",
+      "category": "prop",
+      "imagePath": "/images/tom-and-jerry-library/atlases/props/props-measurement-03.webp",
+      "sourceImagePath": "/images/tom-and-jerry-library/source-atlases/props/props-measurement-03.png",
+      "spriteManifestPath": "/images/tom-and-jerry-library/sprites/props/measurement/manifest.json",
+      "items": [
+        { "id": "measure-rock-tall", "name": "高石柱" },
+        { "id": "measure-rock-short", "name": "矮石块" },
+        { "id": "measure-boulder", "name": "圆形巨石" },
+        { "id": "measure-stone-pedestal", "name": "双层石台" },
+        { "id": "measure-post-tall", "name": "高木桩" },
+        { "id": "measure-post-short", "name": "矮木桩" },
+        { "id": "measure-plank-long", "name": "长木板" },
+        { "id": "measure-plank-short", "name": "短木板" },
+        { "id": "measure-crate-one", "name": "单个木箱" },
+        { "id": "measure-crates-two", "name": "两层木箱" },
+        { "id": "measure-crates-three", "name": "三层木箱" },
+        { "id": "measure-barrel", "name": "木桶" },
+        { "id": "measure-ladder", "name": "木梯" },
+        { "id": "measure-bench", "name": "矮木凳" },
+        { "id": "measure-table", "name": "木桌" },
+        { "id": "measure-stone-steps", "name": "三级石阶" }
+      ]
+    }
+  ]
+}

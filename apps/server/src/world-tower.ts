@@ -128,7 +128,7 @@ const priceSchema = z.object({
     name: z.string().min(1).max(40),
     symbol: z.string().min(1).max(8),
     startingBalance: z.number().int().min(0).max(1_000_000),
-    earningRulesStatus: z.literal("reserved-for-future"),
+    earningRulesStatus: z.literal("active"),
   }),
   nodePrices: z.array(z.object({
     targetId: z.string().min(1).max(160),
@@ -170,7 +170,9 @@ const transactionSchema = z.object({
     "resource-charge",
     "admin-unlock-all",
     "admin-clear-all",
+    "admin-coin-reset",
     "coin-grant",
+    "learning-reward",
   ]),
   targetId: z.string().min(1).max(160),
   quantity: z.number().int().min(0).max(10_000),
@@ -217,7 +219,21 @@ const targetInputSchema = z.object({
 });
 
 const progressActionSchema = z.object({
-  action: z.enum(["unlock-all", "clear-all", "add-1000-coins"]),
+  action: z.enum(["unlock-all", "clear-all"]),
+});
+
+const learningRewardSchema = z.object({
+  eventId: z.string().uuid(),
+  source: z.enum([
+    "math:add-subtract",
+    "math:arithmetic-battle",
+    "math:multiplication",
+    "math:cat-mouse-game",
+  ]),
+});
+
+const coinResetSchema = z.object({
+  password: z.string().min(1).max(64),
 });
 
 type WorldGraph = z.infer<typeof graphSchema>;
@@ -226,7 +242,14 @@ type IconManifest = z.infer<typeof iconManifestSchema>;
 type Progress = z.infer<typeof progressSchema>;
 type GraphNode = z.infer<typeof graphNodeSchema>;
 
-const KNOWLEDGE_COIN_PREVIEW_GRANT_ID = "knowledge-coin-preview-100000-v1";
+const LEARNING_COIN_RESET_GRANT_ID = "learning-coins-reset-to-zero-v1";
+const COIN_RESET_PASSWORD = "123456";
+const LEARNING_REWARDS = {
+  "math:add-subtract": 1,
+  "math:arithmetic-battle": 5,
+  "math:multiplication": 5,
+  "math:cat-mouse-game": 20,
+} as const;
 
 class WorldTowerError extends Error {
   constructor(
@@ -465,7 +488,7 @@ export function registerWorldTowerApi(
       unlockedNodeIds: [...graph.semantics.rootNodeIds as string[]],
       permanentResourceIds: [],
       resourceInventory: {},
-      appliedGrantIds: [KNOWLEDGE_COIN_PREVIEW_GRANT_ID],
+      appliedGrantIds: [LEARNING_COIN_RESET_GRANT_ID],
       transactions: [],
     };
   }
@@ -482,14 +505,14 @@ export function registerWorldTowerApi(
       ) {
         throw new Error("WORLD_TOWER_PROGRESS_REFERENCE_MISMATCH");
       }
-      if (progress.appliedGrantIds.includes(KNOWLEDGE_COIN_PREVIEW_GRANT_ID)) {
+      if (progress.appliedGrantIds.includes(LEARNING_COIN_RESET_GRANT_ID)) {
         return progress;
       }
       return {
         ...progress,
         updatedAt: new Date().toISOString(),
-        coinBalance: Math.max(progress.coinBalance, catalog.currency.startingBalance),
-        appliedGrantIds: [...progress.appliedGrantIds, KNOWLEDGE_COIN_PREVIEW_GRANT_ID],
+        coinBalance: 0,
+        appliedGrantIds: [...progress.appliedGrantIds, LEARNING_COIN_RESET_GRANT_ID],
       };
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === "ENOENT") {
@@ -574,6 +597,100 @@ export function registerWorldTowerApi(
         ),
         progress: publicProgress(progress),
       };
+    } catch (error) {
+      return sendKnownError(error, reply);
+    }
+  });
+
+  app.get("/api/world-tower/coins", async (_request, reply) => {
+    try {
+      const progress = await readProgress();
+      return {
+        schemaVersion: 1,
+        coinBalance: progress.coinBalance,
+        updatedAt: progress.updatedAt,
+      };
+    } catch (error) {
+      return sendKnownError(error, reply);
+    }
+  });
+
+  app.post("/api/world-tower/coins/earn", async (request, reply) => {
+    const parsed = learningRewardSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        code: "INVALID_LEARNING_REWARD",
+        message: "这次学习奖励无法确认，请重新完成一道题。",
+      });
+    }
+    try {
+      let alreadyAwarded = false;
+      const rewardCoins = LEARNING_REWARDS[parsed.data.source];
+      const progress = await updateProgress((current) => {
+        if (current.transactions.some((transaction) => transaction.id === parsed.data.eventId)) {
+          alreadyAwarded = true;
+          return current;
+        }
+        const now = new Date().toISOString();
+        const balanceAfter = current.coinBalance + rewardCoins;
+        return {
+          ...current,
+          updatedAt: now,
+          coinBalance: balanceAfter,
+          transactions: [...current.transactions, {
+            id: parsed.data.eventId,
+            kind: "learning-reward" as const,
+            targetId: parsed.data.source,
+            quantity: rewardCoins,
+            coinDelta: rewardCoins,
+            balanceAfter,
+            createdAt: now,
+          }].slice(-20_000),
+        };
+      });
+      return reply.code(alreadyAwarded ? 200 : 201).send({
+        alreadyAwarded,
+        rewardCoins: alreadyAwarded ? 0 : rewardCoins,
+        source: parsed.data.source,
+        progress: publicProgress(progress),
+      });
+    } catch (error) {
+      return sendKnownError(error, reply);
+    }
+  });
+
+  app.post("/api/world-tower/coins/reset", async (request, reply) => {
+    const parsed = coinResetSchema.safeParse(request.body);
+    if (!parsed.success || parsed.data.password !== COIN_RESET_PASSWORD) {
+      return reply.code(403).send({
+        code: "INVALID_COIN_RESET_PASSWORD",
+        message: "密码不正确，知识币没有改变。",
+      });
+    }
+    try {
+      let coinDelta = 0;
+      const progress = await updateProgress((current) => {
+        const now = new Date().toISOString();
+        coinDelta = -current.coinBalance;
+        return {
+          ...current,
+          updatedAt: now,
+          coinBalance: 0,
+          transactions: [...current.transactions, {
+            id: randomUUID(),
+            kind: "admin-coin-reset" as const,
+            targetId: "currency:discovery-coin",
+            quantity: 0,
+            coinDelta,
+            balanceAfter: 0,
+            createdAt: now,
+          }].slice(-20_000),
+        };
+      });
+      return reply.code(201).send({
+        coinDelta,
+        progress: publicProgress(progress),
+      });
     } catch (error) {
       return sendKnownError(error, reply);
     }
@@ -861,14 +978,13 @@ export function registerWorldTowerApi(
     if (!parsed.success) {
       return reply.code(400).send({
         code: "INVALID_WORLD_TOWER_PROGRESS_ACTION",
-        message: "需要选择点亮全部、清空全部或增加知识币。",
+        message: "需要选择点亮全部或清空全部。",
       });
     }
     try {
       const { graph } = await loadContent();
       const rootNodeIds = [...graph.semantics.rootNodeIds as string[]];
       let affectedNodes = 0;
-      let coinDelta = 0;
       const progress = await updateProgress((current) => {
         const now = new Date().toISOString();
         if (parsed.data.action === "unlock-all") {
@@ -889,39 +1005,21 @@ export function registerWorldTowerApi(
             }],
           };
         }
-        if (parsed.data.action === "clear-all") {
-          const rootNodeIdSet = new Set(rootNodeIds);
-          affectedNodes = current.unlockedNodeIds.filter((id) => !rootNodeIdSet.has(id)).length;
-          return {
-            ...current,
-            updatedAt: now,
-            unlockedNodeIds: rootNodeIds,
-            permanentResourceIds: [],
-            resourceInventory: {},
-            transactions: [...current.transactions, {
-              id: randomUUID(),
-              kind: "admin-clear-all" as const,
-              targetId: "world-tower:all-progress",
-              quantity: affectedNodes,
-              coinDelta: 0,
-              balanceAfter: current.coinBalance,
-              createdAt: now,
-            }],
-          };
-        }
-        coinDelta = 1_000;
-        const balanceAfter = current.coinBalance + coinDelta;
+        const rootNodeIdSet = new Set(rootNodeIds);
+        affectedNodes = current.unlockedNodeIds.filter((id) => !rootNodeIdSet.has(id)).length;
         return {
           ...current,
           updatedAt: now,
-          coinBalance: balanceAfter,
+          unlockedNodeIds: rootNodeIds,
+          permanentResourceIds: [],
+          resourceInventory: {},
           transactions: [...current.transactions, {
             id: randomUUID(),
-            kind: "coin-grant" as const,
-            targetId: "currency:knowledge-coin",
-            quantity: coinDelta,
-            coinDelta,
-            balanceAfter,
+            kind: "admin-clear-all" as const,
+            targetId: "world-tower:all-progress",
+            quantity: affectedNodes,
+            coinDelta: 0,
+            balanceAfter: current.coinBalance,
             createdAt: now,
           }],
         };
@@ -929,7 +1027,7 @@ export function registerWorldTowerApi(
       return reply.code(201).send({
         action: parsed.data.action,
         affectedNodes,
-        coinDelta,
+        coinDelta: 0,
         progress: publicProgress(progress),
       });
     } catch (error) {

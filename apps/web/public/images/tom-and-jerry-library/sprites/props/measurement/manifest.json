@@ -1,0 +1,481 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/tom-and-jerry-library/source-atlases/props/props-measurement-03.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 4,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 4,
+  "trimmed": true,
+  "backgroundRemoved": true,
+  "keyColor": "#09ED0F",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "measure-rock-tall",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "measure-rock-tall.png",
+      "sourceBox": [
+        4,
+        4,
+        310,
+        310
+      ],
+      "trimBox": [
+        105,
+        16,
+        207,
+        272
+      ],
+      "outputWidth": 102,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.688764,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-rock-short",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "measure-rock-short.png",
+      "sourceBox": [
+        318,
+        4,
+        623,
+        310
+      ],
+      "trimBox": [
+        73,
+        126,
+        226,
+        271
+      ],
+      "outputWidth": 153,
+      "outputHeight": 145,
+      "opaqueCoverage": 0.761821,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-boulder",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "measure-boulder.png",
+      "sourceBox": [
+        631,
+        4,
+        936,
+        310
+      ],
+      "trimBox": [
+        30,
+        76,
+        271,
+        271
+      ],
+      "outputWidth": 241,
+      "outputHeight": 195,
+      "opaqueCoverage": 0.712246,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-stone-pedestal",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "measure-stone-pedestal.png",
+      "sourceBox": [
+        944,
+        4,
+        1250,
+        310
+      ],
+      "trimBox": [
+        26,
+        126,
+        281,
+        271
+      ],
+      "outputWidth": 255,
+      "outputHeight": 145,
+      "opaqueCoverage": 0.71478,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-post-tall",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "measure-post-tall.png",
+      "sourceBox": [
+        4,
+        318,
+        310,
+        623
+      ],
+      "trimBox": [
+        108,
+        4,
+        185,
+        286
+      ],
+      "outputWidth": 77,
+      "outputHeight": 282,
+      "opaqueCoverage": 0.793774,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-post-short",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "measure-post-short.png",
+      "sourceBox": [
+        318,
+        318,
+        623,
+        623
+      ],
+      "trimBox": [
+        107,
+        128,
+        177,
+        281
+      ],
+      "outputWidth": 70,
+      "outputHeight": 153,
+      "opaqueCoverage": 0.741643,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-plank-long",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "measure-plank-long.png",
+      "sourceBox": [
+        631,
+        318,
+        936,
+        623
+      ],
+      "trimBox": [
+        1,
+        184,
+        298,
+        257
+      ],
+      "outputWidth": 297,
+      "outputHeight": 73,
+      "opaqueCoverage": 0.790923,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-plank-short",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "measure-plank-short.png",
+      "sourceBox": [
+        944,
+        318,
+        1250,
+        623
+      ],
+      "trimBox": [
+        52,
+        197,
+        234,
+        261
+      ],
+      "outputWidth": 182,
+      "outputHeight": 64,
+      "opaqueCoverage": 0.730426,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-crate-one",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "measure-crate-one.png",
+      "sourceBox": [
+        4,
+        631,
+        310,
+        936
+      ],
+      "trimBox": [
+        65,
+        80,
+        253,
+        255
+      ],
+      "outputWidth": 188,
+      "outputHeight": 175,
+      "opaqueCoverage": 0.804316,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-crates-two",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "measure-crates-two.png",
+      "sourceBox": [
+        318,
+        631,
+        623,
+        936
+      ],
+      "trimBox": [
+        70,
+        30,
+        228,
+        277
+      ],
+      "outputWidth": 158,
+      "outputHeight": 247,
+      "opaqueCoverage": 0.819787,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-crates-three",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "measure-crates-three.png",
+      "sourceBox": [
+        631,
+        631,
+        936,
+        936
+      ],
+      "trimBox": [
+        70,
+        0,
+        218,
+        287
+      ],
+      "outputWidth": 148,
+      "outputHeight": 287,
+      "opaqueCoverage": 0.832988,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-barrel",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "measure-barrel.png",
+      "sourceBox": [
+        944,
+        631,
+        1250,
+        936
+      ],
+      "trimBox": [
+        54,
+        48,
+        227,
+        270
+      ],
+      "outputWidth": 173,
+      "outputHeight": 222,
+      "opaqueCoverage": 0.785528,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-ladder",
+      "index": 12,
+      "row": 3,
+      "column": 0,
+      "filename": "measure-ladder.png",
+      "sourceBox": [
+        4,
+        944,
+        310,
+        1250
+      ],
+      "trimBox": [
+        100,
+        7,
+        192,
+        280
+      ],
+      "outputWidth": 92,
+      "outputHeight": 273,
+      "opaqueCoverage": 0.51505,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-bench",
+      "index": 13,
+      "row": 3,
+      "column": 1,
+      "filename": "measure-bench.png",
+      "sourceBox": [
+        318,
+        944,
+        623,
+        1250
+      ],
+      "trimBox": [
+        10,
+        170,
+        279,
+        277
+      ],
+      "outputWidth": 269,
+      "outputHeight": 107,
+      "opaqueCoverage": 0.489872,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-table",
+      "index": 14,
+      "row": 3,
+      "column": 2,
+      "filename": "measure-table.png",
+      "sourceBox": [
+        631,
+        944,
+        936,
+        1250
+      ],
+      "trimBox": [
+        0,
+        104,
+        298,
+        275
+      ],
+      "outputWidth": 298,
+      "outputHeight": 171,
+      "opaqueCoverage": 0.587288,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "measure-stone-steps",
+      "index": 15,
+      "row": 3,
+      "column": 3,
+      "filename": "measure-stone-steps.png",
+      "sourceBox": [
+        944,
+        944,
+        1250,
+        1250
+      ],
+      "trimBox": [
+        22,
+        117,
+        268,
+        260
+      ],
+      "outputWidth": 246,
+      "outputHeight": 143,
+      "opaqueCoverage": 0.678833,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

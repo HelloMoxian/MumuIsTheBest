@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/tom-and-jerry-library/source-atlases/characters/spike-actions-01.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 4,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 4,
+  "trimmed": false,
+  "backgroundRemoved": true,
+  "keyColor": "#08ED0A",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "spike-guard-idle",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "spike-guard-idle.png",
+      "sourceBox": [
+        4,
+        4,
+        310,
+        310
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.256119,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-patrol-walk",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "spike-patrol-walk.png",
+      "sourceBox": [
+        318,
+        4,
+        623,
+        310
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.238123,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-charge-run",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "spike-charge-run.png",
+      "sourceBox": [
+        631,
+        4,
+        936,
+        310
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.213179,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-skid-brake",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "spike-skid-brake.png",
+      "sourceBox": [
+        944,
+        4,
+        1250,
+        310
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.25063,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-grip-g1",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "spike-grip-g1.png",
+      "sourceBox": [
+        4,
+        318,
+        310,
+        623
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.205925,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-grip-g2",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "spike-grip-g2.png",
+      "sourceBox": [
+        318,
+        318,
+        623,
+        623
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.222424,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-grip-g3",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "spike-grip-g3.png",
+      "sourceBox": [
+        631,
+        318,
+        936,
+        623
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.231411,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-lift-g4",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "spike-lift-g4.png",
+      "sourceBox": [
+        944,
+        318,
+        1250,
+        623
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.242816,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-throw-t1",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "spike-throw-t1.png",
+      "sourceBox": [
+        4,
+        631,
+        310,
+        936
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.269056,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-push",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "spike-push.png",
+      "sourceBox": [
+        318,
+        631,
+        623,
+        936
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.228379,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-pull",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "spike-pull.png",
+      "sourceBox": [
+        631,
+        631,
+        936,
+        936
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.215996,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-intercept",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "spike-intercept.png",
+      "sourceBox": [
+        944,
+        631,
+        1250,
+        936
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.212965,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-angry-bark",
+      "index": 12,
+      "row": 3,
+      "column": 0,
+      "filename": "spike-angry-bark.png",
+      "sourceBox": [
+        4,
+        944,
+        310,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.318126,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-warning",
+      "index": 13,
+      "row": 3,
+      "column": 1,
+      "filename": "spike-warning.png",
+      "sourceBox": [
+        318,
+        944,
+        623,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.280092,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-startled",
+      "index": 14,
+      "row": 3,
+      "column": 2,
+      "filename": "spike-startled.png",
+      "sourceBox": [
+        631,
+        944,
+        936,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.292253,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "spike-dizzy-sit",
+      "index": 15,
+      "row": 3,
+      "column": 3,
+      "filename": "spike-dizzy-sit.png",
+      "sourceBox": [
+        944,
+        944,
+        1250,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.230349,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

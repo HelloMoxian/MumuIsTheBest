@@ -7,8 +7,8 @@
     "id": "currency:discovery-coin",
     "name": "知识币",
     "symbol": "✦",
-    "startingBalance": 100000,
-    "earningRulesStatus": "reserved-for-future"
+    "startingBalance": 0,
+    "earningRulesStatus": "active"
   },
   "nodePrices": [
     {

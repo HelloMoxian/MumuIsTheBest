@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { awardLearningCoins } from "../../shared/learning-coins";
 import {
   AsrRecognitionSession,
   readAsrConfiguration,
@@ -266,12 +267,25 @@ export function ArithmeticBattleGame({
       solvedByIdRef.current.set(question.id, solved);
       const completed = [...solvedByIdRef.current.values()];
       setSolvedQuestions(completed);
-      setResultBubble(null);
+      setResultBubble({
+        answer: question.answer,
+        message: "+5 知识币，已经存进万物构成塔",
+      });
+      if (bubbleHideTimerRef.current !== null) window.clearTimeout(bubbleHideTimerRef.current);
+      bubbleHideTimerRef.current = window.setTimeout(
+        () => setResultBubble(null),
+        BUBBLE_VISIBLE_MS,
+      );
+      void awardLearningCoins(
+        isMultiplication ? "math:multiplication" : "math:arithmetic-battle",
+      ).catch(() => {
+        setSaveWarning("答案已经记录，但知识币暂时没有加上；下次答题时可以继续获得。");
+      });
       if (completed.length === questionsRef.current.length) {
         void saveCompletedBattle(completed);
       }
     },
-    [saveCompletedBattle],
+    [isMultiplication, saveCompletedBattle],
   );
 
   const beginAnswerChecking = useCallback(() => {
@@ -626,7 +640,7 @@ export function ArithmeticBattleGame({
                   ? `${parallelDifficultyLabel(difficulty)}挑战！`
                   : `${parallelDifficultyLabel(difficulty)}${gameTitle}！`}
               </h1>
-              <p>每一颗答案星都靠认真计算点亮，正确率 100%。</p>
+              <p>每一颗答案星都靠认真计算点亮，正确率 100%，每题获得 5 个知识币。</p>
               <div className="battle-result-list">
                 {[...solvedQuestions]
                   .sort((a, b) => a.solvedOrder - b.solvedOrder)

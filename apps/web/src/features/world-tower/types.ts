@@ -73,7 +73,7 @@ export type WorldTowerManifest = {
     name: string;
     symbol: string;
     startingBalance: number;
-    earningRulesStatus: "reserved-for-future";
+    earningRulesStatus: "active";
   };
   resources: Record<ResourceGroupKey, WorldTowerResource[]>;
   progress: WorldTowerProgress;

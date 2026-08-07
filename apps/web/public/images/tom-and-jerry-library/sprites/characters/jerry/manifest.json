@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/tom-and-jerry-library/source-atlases/characters/jerry-actions-01.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 4,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 4,
+  "trimmed": false,
+  "backgroundRemoved": true,
+  "keyColor": "#09E90E",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "jerry-clever-idle",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "jerry-clever-idle.png",
+      "sourceBox": [
+        4,
+        4,
+        310,
+        310
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.17646,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-tiptoe-sneak",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "jerry-tiptoe-sneak.png",
+      "sourceBox": [
+        318,
+        4,
+        623,
+        310
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.185149,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-escape-run",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "jerry-escape-run.png",
+      "sourceBox": [
+        631,
+        4,
+        936,
+        310
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.215343,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-skid-brake",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "jerry-skid-brake.png",
+      "sourceBox": [
+        944,
+        4,
+        1250,
+        310
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.18997,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-grip-g1",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "jerry-grip-g1.png",
+      "sourceBox": [
+        4,
+        318,
+        310,
+        623
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.193164,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-grip-g2",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "jerry-grip-g2.png",
+      "sourceBox": [
+        318,
+        318,
+        623,
+        623
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.212061,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-grip-g3",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "jerry-grip-g3.png",
+      "sourceBox": [
+        631,
+        318,
+        936,
+        623
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.219597,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-lift-g4",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "jerry-lift-g4.png",
+      "sourceBox": [
+        944,
+        318,
+        1250,
+        623
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.194964,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-throw-t1",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "jerry-throw-t1.png",
+      "sourceBox": [
+        4,
+        631,
+        310,
+        936
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.237769,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-push",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "jerry-push.png",
+      "sourceBox": [
+        318,
+        631,
+        623,
+        936
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.204859,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-pull",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "jerry-pull.png",
+      "sourceBox": [
+        631,
+        631,
+        936,
+        936
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.217597,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-dodge-jump",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "jerry-dodge-jump.png",
+      "sourceBox": [
+        944,
+        631,
+        1250,
+        936
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 305,
+      "opaqueCoverage": 0.198821,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-laugh",
+      "index": 12,
+      "row": 3,
+      "column": 0,
+      "filename": "jerry-laugh.png",
+      "sourceBox": [
+        4,
+        944,
+        310,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.212205,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-tease",
+      "index": 13,
+      "row": 3,
+      "column": 1,
+      "filename": "jerry-tease.png",
+      "sourceBox": [
+        318,
+        944,
+        623,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.213725,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-surprised",
+      "index": 14,
+      "row": 3,
+      "column": 2,
+      "filename": "jerry-surprised.png",
+      "sourceBox": [
+        631,
+        944,
+        936,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 305,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.22504,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "jerry-dizzy-spin",
+      "index": 15,
+      "row": 3,
+      "column": 3,
+      "filename": "jerry-dizzy-spin.png",
+      "sourceBox": [
+        944,
+        944,
+        1250,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 306,
+      "outputHeight": 306,
+      "opaqueCoverage": 0.269373,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

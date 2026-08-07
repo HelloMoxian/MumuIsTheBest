@@ -1,0 +1,212 @@
+.coin-reset-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--ink-primary);
+  background:
+    radial-gradient(circle at 16% 10%, rgba(89, 231, 255, .16), transparent 27%),
+    radial-gradient(circle at 86% 78%, rgba(255, 103, 199, .15), transparent 25%),
+    var(--space-950);
+}
+
+.coin-reset-stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .55;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, .84) 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(89, 231, 255, .6) 1px, transparent 1.5px);
+  background-position: 0 0, 61px 47px;
+  background-size: 137px 137px, 211px 211px;
+}
+
+.coin-reset-topbar,
+.coin-reset-main {
+  position: relative;
+  z-index: 1;
+  width: min(960px, calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.coin-reset-topbar {
+  display: flex;
+  min-height: 88px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.coin-reset-topbar a,
+.coin-reset-topbar strong {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 16px;
+  border: 1px solid var(--line-glow);
+  border-radius: 16px;
+  color: var(--ink-primary);
+  background: rgba(28, 28, 66, .72);
+  text-decoration: none;
+  box-shadow: var(--small-shadow);
+}
+
+.coin-reset-topbar strong span { color: var(--warning-300); }
+
+.coin-reset-main {
+  display: grid;
+  min-height: calc(100vh - 128px);
+  place-items: center;
+  padding: 28px 0 72px;
+}
+
+.coin-reset-card {
+  display: grid;
+  width: min(680px, 100%);
+  gap: 24px;
+  padding: clamp(24px, 5vw, 48px);
+  border: 1px solid var(--line-glow);
+  border-radius: 32px;
+  background: linear-gradient(145deg, rgba(32, 32, 79, .94), rgba(20, 20, 57, .96));
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+}
+
+.coin-reset-heading { text-align: center; }
+
+.coin-reset-chip {
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: var(--cyan-300);
+  background: rgba(89, 231, 255, .1);
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: .08em;
+}
+
+.coin-reset-heading h1 {
+  margin-top: 14px;
+  font-size: clamp(42px, 8vw, 66px);
+}
+
+.coin-reset-heading p {
+  max-width: 540px;
+  margin: 14px auto 0;
+  color: var(--ink-secondary);
+  font-weight: 700;
+}
+
+.coin-balance-panel {
+  display: grid;
+  min-height: 175px;
+  place-items: center;
+  padding: 22px;
+  border: 1px solid rgba(255, 209, 102, .28);
+  border-radius: 25px;
+  background: radial-gradient(circle at 50% 32%, rgba(255, 209, 102, .15), transparent 62%), rgba(10, 13, 42, .56);
+}
+
+.coin-balance-panel span,
+.coin-balance-panel small { color: var(--ink-secondary); font-weight: 800; }
+.coin-balance-panel strong {
+  color: var(--warning-300);
+  font: 950 clamp(48px, 10vw, 78px)/1 var(--font-display);
+  text-shadow: 0 0 34px rgba(255, 209, 102, .25);
+}
+
+.coin-reset-form { display: grid; gap: 10px; }
+.coin-reset-form label { color: #e7e6fa; font-weight: 900; }
+.coin-reset-form input {
+  min-height: 62px;
+  padding: 0 18px;
+  border: 2px solid rgba(202, 204, 255, .2);
+  border-radius: 17px;
+  color: var(--ink-primary);
+  background: rgba(8, 12, 38, .66);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-align: center;
+}
+.coin-reset-form input:focus {
+  border-color: var(--cyan-300);
+  box-shadow: 0 0 0 5px rgba(89, 231, 255, .12);
+  outline: none;
+}
+.coin-reset-form button {
+  min-height: 58px;
+  margin-top: 4px;
+  border: 0;
+  border-radius: 17px;
+  color: white;
+  background: linear-gradient(90deg, var(--violet-400), var(--pink-400));
+  box-shadow: 0 7px 0 var(--violet-600);
+  font-weight: 950;
+}
+.coin-reset-form button:active:not(:disabled) {
+  box-shadow: 0 3px 0 var(--violet-600);
+  transform: translateY(3px);
+}
+
+.coin-reset-message {
+  min-height: 56px;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line-glow);
+  border-radius: 16px;
+  color: var(--ink-secondary);
+  background: rgba(255, 255, 255, .045);
+  font-weight: 750;
+  text-align: center;
+}
+.coin-reset-message.state-success {
+  border-color: rgba(76, 224, 163, .4);
+  color: #baffdf;
+  background: rgba(76, 224, 163, .09);
+}
+.coin-reset-message.state-error {
+  border-color: rgba(255, 117, 150, .4);
+  color: #ffd3de;
+  background: rgba(255, 117, 150, .09);
+}
+
+.coin-reward-rules {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.coin-reward-rules span {
+  display: grid;
+  min-height: 78px;
+  place-items: center;
+  padding: 10px;
+  border: 1px solid var(--line-glow);
+  border-radius: 16px;
+  color: var(--ink-secondary);
+  background: rgba(255, 255, 255, .035);
+  font-size: 13px;
+  font-weight: 850;
+  text-align: center;
+}
+.coin-reward-rules b { color: var(--warning-300); font-size: 24px; }
+
+@media (max-width: 620px) {
+  .coin-reset-topbar,
+  .coin-reset-main { width: min(100% - 24px, 960px); }
+  .coin-reset-topbar strong { padding: 0 11px; font-size: 14px; }
+  .coin-reset-card { gap: 18px; border-radius: 25px; }
+  .coin-reward-rules { grid-template-columns: 1fr; }
+  .coin-reward-rules span { min-height: 58px; grid-template-columns: auto 1fr; gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coin-reset-page *,
+  .coin-reset-page *::before,
+  .coin-reset-page *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

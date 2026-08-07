@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawn, type ChildProcess } from "node:child_process";
-import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
@@ -81,12 +82,38 @@ async function post(baseUrl: string, path: string, targetId: string) {
 
 async function postProgressAction(
   baseUrl: string,
-  action: "unlock-all" | "clear-all" | "add-1000-coins",
+  action: "unlock-all" | "clear-all",
 ) {
   return fetch(`${baseUrl}/api/world-tower/manage-progress`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ action }),
+  });
+}
+
+type LearningRewardSource =
+  | "math:add-subtract"
+  | "math:arithmetic-battle"
+  | "math:multiplication"
+  | "math:cat-mouse-game";
+
+async function postLearningReward(
+  baseUrl: string,
+  source: LearningRewardSource,
+  eventId: string = randomUUID(),
+) {
+  return fetch(`${baseUrl}/api/world-tower/coins/earn`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ eventId, source }),
+  });
+}
+
+async function resetLearningCoins(baseUrl: string, password: string) {
+  return fetch(`${baseUrl}/api/world-tower/coins/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password }),
   });
 }
 
@@ -128,11 +155,18 @@ describe("world tower API", () => {
         || resource.id === "condition:low-risk-demo"
       )), false);
       assert.match(manifest.backgroundAsset, /world-tower/);
-      assert.equal(manifest.progress.coinBalance, 100_000);
+      assert.equal(manifest.progress.coinBalance, 0);
       assert.deepEqual(
         manifest.progress.unlockedNodeIds.sort(),
         ["particle:electron", "particle:neutron", "particle:proton"],
       );
+
+      for (let index = 0; index < 5; index += 1) {
+        assert.equal(
+          (await postLearningReward(baseUrl, "math:cat-mouse-game")).status,
+          201,
+        );
+      }
 
       const mapResponse = await fetch(`${baseUrl}/api/world-tower/map`);
       assert.equal(mapResponse.status, 200);
@@ -260,7 +294,7 @@ describe("world tower API", () => {
         };
       };
       assert.equal(unlocked.alreadyUnlocked, false);
-      assert.equal(unlocked.progress.coinBalance, 99_970);
+      assert.equal(unlocked.progress.coinBalance, 70);
       assert.ok(unlocked.progress.unlockedNodeIds.includes("element:H"));
       assert.equal(unlocked.progress.resourceInventory["particle-pack:electron"], 0);
       assert.equal(unlocked.progress.resourceInventory["particle-pack:proton"], 0);
@@ -274,7 +308,7 @@ describe("world tower API", () => {
       assert.equal(
         (await duplicateUnlock.json() as { progress: { coinBalance: number } })
           .progress.coinBalance,
-        99_970,
+        70,
       );
 
       const learnedElementMapResponse = await fetch(
@@ -341,7 +375,7 @@ describe("world tower API", () => {
           resourceInventory: Record<string, number>;
         };
       };
-      assert.equal(waterProgress.progress.coinBalance, 99_929);
+      assert.equal(waterProgress.progress.coinBalance, 29);
       assert.ok(waterProgress.progress.unlockedNodeIds.includes("compound:compound-pubchem-962"));
       assert.equal(waterProgress.progress.resourceInventory["action:chemical-bonding"], 0);
 
@@ -365,7 +399,7 @@ describe("world tower API", () => {
         progress: { coinBalance: number; resourceInventory: Record<string, number> };
       };
       assert.equal(duplicateKnowledgeBody.alreadyUnlocked, true);
-      assert.equal(duplicateKnowledgeBody.progress.coinBalance, 99_925);
+      assert.equal(duplicateKnowledgeBody.progress.coinBalance, 25);
       assert.equal(
         duplicateKnowledgeBody.progress.resourceInventory["action:chemical-bonding"],
         2,
@@ -387,8 +421,8 @@ describe("world tower API", () => {
       assert.equal(stored.schemaVersion, 1);
       assert.match(stored.id, /^[0-9a-f-]{36}$/);
       assert.match(stored.updatedAt, /^\d{4}-\d{2}-\d{2}T/);
-      assert.equal(stored.transactions.length, 14);
-      assert.deepEqual(stored.appliedGrantIds, ["knowledge-coin-preview-100000-v1"]);
+      assert.equal(stored.transactions.length, 19);
+      assert.deepEqual(stored.appliedGrantIds, ["learning-coins-reset-to-zero-v1"]);
       assert.equal((await stat(progressPath)).mode & 0o777, 0o600);
 
       await writeFile(progressPath, '{"schemaVersion":999}\n', { mode: 0o600 });
@@ -399,18 +433,14 @@ describe("world tower API", () => {
     }
   });
 
-  it("persists unlock-all, clear-all and knowledge coin grants", async () => {
+  it("persists unlock-all and clear-all without changing earned knowledge coins", async () => {
     const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-world-tower-manage-"));
     cleanupPaths.push(dataDirectory);
     const { baseUrl, child } = await startServer(dataDirectory);
 
     try {
-      const coinResponse = await postProgressAction(baseUrl, "add-1000-coins");
-      assert.equal(coinResponse.status, 201);
-      assert.equal(
-        (await coinResponse.json() as { progress: { coinBalance: number } }).progress.coinBalance,
-        101_000,
-      );
+      assert.equal((await postLearningReward(baseUrl, "math:cat-mouse-game")).status, 201);
+      assert.equal((await postLearningReward(baseUrl, "math:cat-mouse-game")).status, 201);
 
       assert.equal((await post(
         baseUrl,
@@ -444,7 +474,7 @@ describe("world tower API", () => {
         };
       };
       assert.equal(clearAll.affectedNodes, 1_997);
-      assert.equal(clearAll.progress.coinBalance, 100_995);
+      assert.equal(clearAll.progress.coinBalance, 35);
       assert.deepEqual(
         clearAll.progress.unlockedNodeIds.sort(),
         ["particle:electron", "particle:neutron", "particle:proton"],
@@ -457,7 +487,7 @@ describe("world tower API", () => {
       const persisted = await reloadedManifest.json() as {
         progress: { coinBalance: number; unlockedNodeIds: string[] };
       };
-      assert.equal(persisted.progress.coinBalance, 100_995);
+      assert.equal(persisted.progress.coinBalance, 35);
       assert.equal(persisted.progress.unlockedNodeIds.length, 3);
 
       const progressPath = resolve(dataDirectory, "learning", "world-tower", "progress.json");
@@ -466,7 +496,14 @@ describe("world tower API", () => {
       };
       assert.deepEqual(
         stored.transactions.map((transaction) => transaction.kind),
-        ["coin-grant", "resource-unlock", "resource-charge", "admin-unlock-all", "admin-clear-all"],
+        [
+          "learning-reward",
+          "learning-reward",
+          "resource-unlock",
+          "resource-charge",
+          "admin-unlock-all",
+          "admin-clear-all",
+        ],
       );
 
       const invalidResponse = await fetch(`${baseUrl}/api/world-tower/manage-progress`, {
@@ -475,6 +512,124 @@ describe("world tower API", () => {
         body: JSON.stringify({ action: "erase-the-universe" }),
       });
       assert.equal(invalidResponse.status, 400);
+    } finally {
+      await stopServer(child);
+    }
+  });
+
+  it("awards the configured amount once per solved-question event and requires the reset password", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-learning-coins-"));
+    cleanupPaths.push(dataDirectory);
+    const { baseUrl, child } = await startServer(dataDirectory);
+
+    try {
+      const rewards: Array<[LearningRewardSource, number]> = [
+        ["math:add-subtract", 1],
+        ["math:arithmetic-battle", 5],
+        ["math:multiplication", 5],
+        ["math:cat-mouse-game", 20],
+      ];
+      let expectedBalance = 0;
+      let firstEventId = "";
+      for (const [source, rewardCoins] of rewards) {
+        const eventId = randomUUID();
+        if (!firstEventId) firstEventId = eventId;
+        const response = await postLearningReward(baseUrl, source, eventId);
+        assert.equal(response.status, 201);
+        expectedBalance += rewardCoins;
+        const body = await response.json() as {
+          alreadyAwarded: boolean;
+          rewardCoins: number;
+          progress: { coinBalance: number };
+        };
+        assert.equal(body.alreadyAwarded, false);
+        assert.equal(body.rewardCoins, rewardCoins);
+        assert.equal(body.progress.coinBalance, expectedBalance);
+      }
+
+      const duplicate = await postLearningReward(
+        baseUrl,
+        "math:add-subtract",
+        firstEventId,
+      );
+      assert.equal(duplicate.status, 200);
+      const duplicateBody = await duplicate.json() as {
+        alreadyAwarded: boolean;
+        rewardCoins: number;
+        progress: { coinBalance: number };
+      };
+      assert.equal(duplicateBody.alreadyAwarded, true);
+      assert.equal(duplicateBody.rewardCoins, 0);
+      assert.equal(duplicateBody.progress.coinBalance, 31);
+
+      const invalidReward = await fetch(`${baseUrl}/api/world-tower/coins/earn`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId: randomUUID(), source: "math:unknown" }),
+      });
+      assert.equal(invalidReward.status, 400);
+
+      const wrongPassword = await resetLearningCoins(baseUrl, "654321");
+      assert.equal(wrongPassword.status, 403);
+      assert.equal(
+        (await fetch(`${baseUrl}/api/world-tower/coins`).then((response) => response.json()) as {
+          coinBalance: number;
+        }).coinBalance,
+        31,
+      );
+
+      const resetResponse = await resetLearningCoins(baseUrl, "123456");
+      assert.equal(resetResponse.status, 201);
+      const resetBody = await resetResponse.json() as {
+        coinDelta: number;
+        progress: { coinBalance: number };
+      };
+      assert.equal(resetBody.coinDelta, -31);
+      assert.equal(resetBody.progress.coinBalance, 0);
+    } finally {
+      await stopServer(child);
+    }
+  });
+
+  it("migrates the old preview balance to zero before the first learning reward", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-learning-coins-migration-"));
+    cleanupPaths.push(dataDirectory);
+    const progressDirectory = resolve(dataDirectory, "learning", "world-tower");
+    await mkdir(progressDirectory, { recursive: true });
+    const progressPath = resolve(progressDirectory, "progress.json");
+    const timestamp = "2026-08-07T00:00:00.000Z";
+    await writeFile(progressPath, `${JSON.stringify({
+      schemaVersion: 1,
+      id: "00000000-0000-4000-8000-000000000001",
+      graphId: "mumu-world-composition-graph-v1",
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      coinBalance: 100_000,
+      unlockedNodeIds: ["particle:electron", "particle:proton", "particle:neutron"],
+      permanentResourceIds: [],
+      resourceInventory: {},
+      appliedGrantIds: ["knowledge-coin-preview-100000-v1"],
+      transactions: [],
+    }, null, 2)}\n`, { mode: 0o600 });
+    const { baseUrl, child } = await startServer(dataDirectory);
+
+    try {
+      const beforeReward = await fetch(`${baseUrl}/api/world-tower/coins`);
+      assert.equal(beforeReward.status, 200);
+      assert.equal(
+        (await beforeReward.json() as { coinBalance: number }).coinBalance,
+        0,
+      );
+      assert.equal((await postLearningReward(baseUrl, "math:add-subtract")).status, 201);
+      const stored = JSON.parse(await readFile(progressPath, "utf8")) as {
+        coinBalance: number;
+        appliedGrantIds: string[];
+      };
+      assert.equal(stored.coinBalance, 1);
+      assert.deepEqual(stored.appliedGrantIds, [
+        "knowledge-coin-preview-100000-v1",
+        "learning-coins-reset-to-zero-v1",
+      ]);
     } finally {
       await stopServer(child);
     }
@@ -499,7 +654,7 @@ describe("world tower API", () => {
         "WORLD_TOWER_STORAGE_FAILED",
       );
 
-      const manageResponse = await postProgressAction(baseUrl, "add-1000-coins");
+      const manageResponse = await postProgressAction(baseUrl, "unlock-all");
       assert.equal(manageResponse.status, 500);
       assert.equal(
         (await manageResponse.json() as { code: string }).code,

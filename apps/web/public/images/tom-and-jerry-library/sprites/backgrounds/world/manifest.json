@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/tom-and-jerry-library/source-atlases/backgrounds/backgrounds-world-02.png",
+  "sourceWidth": 1536,
+  "sourceHeight": 1024,
+  "columns": 2,
+  "rows": 2,
+  "indexOrder": "row-major-zero-based",
+  "inset": 3,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "background-basement-boiler",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "background-basement-boiler.png",
+      "sourceBox": [
+        3,
+        3,
+        765,
+        509
+      ],
+      "trimBox": null,
+      "outputWidth": 762,
+      "outputHeight": 506,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "background-backyard",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "background-backyard.png",
+      "sourceBox": [
+        771,
+        3,
+        1533,
+        509
+      ],
+      "trimBox": null,
+      "outputWidth": 762,
+      "outputHeight": 506,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "background-city-alley",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "background-city-alley.png",
+      "sourceBox": [
+        3,
+        515,
+        765,
+        1021
+      ],
+      "trimBox": null,
+      "outputWidth": 762,
+      "outputHeight": 506,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "background-harbor-dock",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "background-harbor-dock.png",
+      "sourceBox": [
+        771,
+        515,
+        1533,
+        1021
+      ],
+      "trimBox": null,
+      "outputWidth": 762,
+      "outputHeight": 506,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

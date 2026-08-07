@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/tom-and-jerry-library/source-atlases/props/props-handheld-01.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 4,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 6,
+  "trimmed": false,
+  "backgroundRemoved": true,
+  "keyColor": "#07F903",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "prop-frying-pan",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "prop-frying-pan.png",
+      "sourceBox": [
+        6,
+        6,
+        308,
+        308
+      ],
+      "trimBox": null,
+      "outputWidth": 302,
+      "outputHeight": 302,
+      "opaqueCoverage": 0.166758,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-fly-swatter",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "prop-fly-swatter.png",
+      "sourceBox": [
+        320,
+        6,
+        621,
+        308
+      ],
+      "trimBox": null,
+      "outputWidth": 301,
+      "outputHeight": 302,
+      "opaqueCoverage": 0.093276,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-tennis-racket",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "prop-tennis-racket.png",
+      "sourceBox": [
+        633,
+        6,
+        934,
+        308
+      ],
+      "trimBox": null,
+      "outputWidth": 301,
+      "outputHeight": 302,
+      "opaqueCoverage": 0.167499,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-plunger",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "prop-plunger.png",
+      "sourceBox": [
+        946,
+        6,
+        1248,
+        308
+      ],
+      "trimBox": null,
+      "outputWidth": 302,
+      "outputHeight": 302,
+      "opaqueCoverage": 0.103318,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-mallet",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "prop-mallet.png",
+      "sourceBox": [
+        6,
+        320,
+        308,
+        621
+      ],
+      "trimBox": null,
+      "outputWidth": 302,
+      "outputHeight": 301,
+      "opaqueCoverage": 0.168797,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-broom",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "prop-broom.png",
+      "sourceBox": [
+        320,
+        320,
+        621,
+        621
+      ],
+      "trimBox": null,
+      "outputWidth": 301,
+      "outputHeight": 301,
+      "opaqueCoverage": 0.133475,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-mop",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "prop-mop.png",
+      "sourceBox": [
+        633,
+        320,
+        934,
+        621
+      ],
+      "trimBox": null,
+      "outputWidth": 301,
+      "outputHeight": 301,
+      "opaqueCoverage": 0.130771,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-umbrella",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "prop-umbrella.png",
+      "sourceBox": [
+        946,
+        320,
+        1248,
+        621
+      ],
+      "trimBox": null,
+      "outputWidth": 302,
+      "outputHeight": 301,
+      "opaqueCoverage": 0.114233,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-baseball-bat",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "prop-baseball-bat.png",
+      "sourceBox": [
+        6,
+        633,
+        308,
+        934
+      ],
+      "trimBox": null,
+      "outputWidth": 302,
+      "outputHeight": 301,
+      "opaqueCoverage": 0.118116,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-shovel",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "prop-shovel.png",
+      "sourceBox": [
+        320,
+        633,
+        621,
+        934
+      ],
+      "trimBox": null,
+      "outputWidth": 301,
+      "outputHeight": 301,
+      "opaqueCoverage": 0.154468,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-catching-net",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "prop-catching-net.png",
+      "sourceBox": [
+        633,
+        633,
+        934,
+        934
+      ],
+      "trimBox": null,
+      "outputWidth": 301,
+      "outputHeight": 301,
+      "opaqueCoverage": 0.105584,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-fishing-rod",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "prop-fishing-rod.png",
+      "sourceBox": [
+        946,
+        633,
+        1248,
+        934
+      ],
+      "trimBox": null,
+      "outputWidth": 302,
+      "outputHeight": 301,
+      "opaqueCoverage": 0.092583,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-rolling-pin",
+      "index": 12,
+      "row": 3,
+      "column": 0,
+      "filename": "prop-rolling-pin.png",
+      "sourceBox": [
+        6,
+        946,
+        308,
+        1248
+      ],
+      "trimBox": null,
+      "outputWidth": 302,
+      "outputHeight": 302,
+      "opaqueCoverage": 0.15712,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-soup-ladle",
+      "index": 13,
+      "row": 3,
+      "column": 1,
+      "filename": "prop-soup-ladle.png",
+      "sourceBox": [
+        320,
+        946,
+        621,
+        1248
+      ],
+      "trimBox": null,
+      "outputWidth": 301,
+      "outputHeight": 302,
+      "opaqueCoverage": 0.117467,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-fireplace-bellows",
+      "index": 14,
+      "row": 3,
+      "column": 2,
+      "filename": "prop-fireplace-bellows.png",
+      "sourceBox": [
+        633,
+        946,
+        934,
+        1248
+      ],
+      "trimBox": null,
+      "outputWidth": 301,
+      "outputHeight": 302,
+      "opaqueCoverage": 0.247706,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-horseshoe-magnet",
+      "index": 15,
+      "row": 3,
+      "column": 3,
+      "filename": "prop-horseshoe-magnet.png",
+      "sourceBox": [
+        946,
+        946,
+        1248,
+        1248
+      ],
+      "trimBox": null,
+      "outputWidth": 302,
+      "outputHeight": 302,
+      "opaqueCoverage": 0.267433,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

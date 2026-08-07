@@ -1,0 +1,481 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/tom-and-jerry-library/source-atlases/props/props-gags-02.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 4,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 4,
+  "trimmed": true,
+  "backgroundRemoved": true,
+  "keyColor": "#04F803",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "prop-cheese-wedge",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "prop-cheese-wedge.png",
+      "sourceBox": [
+        4,
+        4,
+        310,
+        310
+      ],
+      "trimBox": [
+        26,
+        37,
+        282,
+        260
+      ],
+      "outputWidth": 256,
+      "outputHeight": 223,
+      "opaqueCoverage": 0.632672,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-cream-pie",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "prop-cream-pie.png",
+      "sourceBox": [
+        318,
+        4,
+        623,
+        310
+      ],
+      "trimBox": [
+        14,
+        63,
+        297,
+        254
+      ],
+      "outputWidth": 283,
+      "outputHeight": 191,
+      "opaqueCoverage": 0.643184,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-banana-peel",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "prop-banana-peel.png",
+      "sourceBox": [
+        631,
+        4,
+        936,
+        310
+      ],
+      "trimBox": [
+        12,
+        48,
+        290,
+        261
+      ],
+      "outputWidth": 278,
+      "outputHeight": 213,
+      "opaqueCoverage": 0.358378,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-dog-bone",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "prop-dog-bone.png",
+      "sourceBox": [
+        944,
+        4,
+        1250,
+        310
+      ],
+      "trimBox": [
+        10,
+        56,
+        295,
+        254
+      ],
+      "outputWidth": 285,
+      "outputHeight": 198,
+      "opaqueCoverage": 0.358497,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-mousetrap",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "prop-mousetrap.png",
+      "sourceBox": [
+        4,
+        318,
+        310,
+        623
+      ],
+      "trimBox": [
+        6,
+        60,
+        306,
+        259
+      ],
+      "outputWidth": 300,
+      "outputHeight": 199,
+      "opaqueCoverage": 0.49732,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-alarm-clock",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "prop-alarm-clock.png",
+      "sourceBox": [
+        318,
+        318,
+        623,
+        623
+      ],
+      "trimBox": [
+        54,
+        2,
+        253,
+        269
+      ],
+      "outputWidth": 199,
+      "outputHeight": 267,
+      "opaqueCoverage": 0.644101,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-clothes-iron",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "prop-clothes-iron.png",
+      "sourceBox": [
+        631,
+        318,
+        936,
+        623
+      ],
+      "trimBox": [
+        9,
+        27,
+        286,
+        257
+      ],
+      "outputWidth": 277,
+      "outputHeight": 230,
+      "opaqueCoverage": 0.582373,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-roller-skates",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "prop-roller-skates.png",
+      "sourceBox": [
+        944,
+        318,
+        1250,
+        623
+      ],
+      "trimBox": [
+        5,
+        37,
+        295,
+        270
+      ],
+      "outputWidth": 290,
+      "outputHeight": 233,
+      "opaqueCoverage": 0.655187,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-bowling-ball",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "prop-bowling-ball.png",
+      "sourceBox": [
+        4,
+        631,
+        310,
+        936
+      ],
+      "trimBox": [
+        40,
+        24,
+        270,
+        258
+      ],
+      "outputWidth": 230,
+      "outputHeight": 234,
+      "opaqueCoverage": 0.708956,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-anvil",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "prop-anvil.png",
+      "sourceBox": [
+        318,
+        631,
+        623,
+        936
+      ],
+      "trimBox": [
+        6,
+        57,
+        294,
+        254
+      ],
+      "outputWidth": 288,
+      "outputHeight": 197,
+      "opaqueCoverage": 0.542495,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-water-bucket",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "prop-water-bucket.png",
+      "sourceBox": [
+        631,
+        631,
+        936,
+        936
+      ],
+      "trimBox": [
+        38,
+        0,
+        244,
+        277
+      ],
+      "outputWidth": 206,
+      "outputHeight": 277,
+      "opaqueCoverage": 0.550927,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-trash-can",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "prop-trash-can.png",
+      "sourceBox": [
+        944,
+        631,
+        1250,
+        936
+      ],
+      "trimBox": [
+        11,
+        11,
+        280,
+        275
+      ],
+      "outputWidth": 269,
+      "outputHeight": 264,
+      "opaqueCoverage": 0.746423,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-boxing-glove-trap",
+      "index": 12,
+      "row": 3,
+      "column": 0,
+      "filename": "prop-boxing-glove-trap.png",
+      "sourceBox": [
+        4,
+        944,
+        310,
+        1250
+      ],
+      "trimBox": [
+        13,
+        7,
+        277,
+        283
+      ],
+      "outputWidth": 264,
+      "outputHeight": 276,
+      "opaqueCoverage": 0.458951,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-lasso",
+      "index": 13,
+      "row": 3,
+      "column": 1,
+      "filename": "prop-lasso.png",
+      "sourceBox": [
+        318,
+        944,
+        623,
+        1250
+      ],
+      "trimBox": [
+        4,
+        15,
+        297,
+        273
+      ],
+      "outputWidth": 293,
+      "outputHeight": 258,
+      "opaqueCoverage": 0.441662,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-cartoon-bomb",
+      "index": 14,
+      "row": 3,
+      "column": 2,
+      "filename": "prop-cartoon-bomb.png",
+      "sourceBox": [
+        631,
+        944,
+        936,
+        1250
+      ],
+      "trimBox": [
+        38,
+        9,
+        251,
+        276
+      ],
+      "outputWidth": 213,
+      "outputHeight": 267,
+      "opaqueCoverage": 0.61163,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "prop-firecrackers",
+      "index": 15,
+      "row": 3,
+      "column": 3,
+      "filename": "prop-firecrackers.png",
+      "sourceBox": [
+        944,
+        944,
+        1250,
+        1250
+      ],
+      "trimBox": [
+        5,
+        40,
+        293,
+        260
+      ],
+      "outputWidth": 288,
+      "outputHeight": 220,
+      "opaqueCoverage": 0.565136,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}
