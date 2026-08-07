@@ -1,0 +1,4 @@
+interface:
+  display_name: "绿幕图集切分"
+  short_description: "将网格图集切成透明单图并生成稳定格位清单"
+  default_prompt: "Use $chroma-atlas-extractor to split this sprite atlas and remove its green-screen background."
