@@ -22,11 +22,18 @@ const outputPath = path.join(
   "world-tower",
   "icon-manifest.v1.json",
 );
+const generatedArtPlanPath = path.join(
+  repositoryRoot,
+  "content",
+  "world-tower",
+  "generated-art-plan.v1.json",
+);
 const publicRoot = path.join(repositoryRoot, "apps", "web", "public");
 const assetRoot = "/images/world-tower";
 
 const graph = JSON.parse(fs.readFileSync(graphPath, "utf8"));
 const compoundCatalog = JSON.parse(fs.readFileSync(compoundCatalogPath, "utf8"));
+const generatedArtPlan = JSON.parse(fs.readFileSync(generatedArtPlanPath, "utf8"));
 const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
 
 const coreNodeArt = new Map([
@@ -365,13 +372,13 @@ for (const source of semanticAtlasSources) {
 const levelFallbacks = Object.fromEntries(
   graph.levels.map((level) => [
     level.id,
-    publicAsset(`nodes/levels/${level.id.replace("level:", "")}.webp`),
+    publicAsset("placeholders/stardust.webp"),
   ]),
 );
 
 const nodeAssets = {};
 
-const elementNodes = graph.nodes.filter((node) => node.levelId === "level:02-elements");
+const elementNodes = graph.nodes.filter((node) => node.kind === "chemical-element");
 for (const [index, node] of elementNodes.entries()) {
   const pageIndex = index < 100 ? Math.floor(index / 20) : 5;
   const localIndex = index < 100 ? index % 20 : index - 100;
@@ -387,7 +394,9 @@ for (const [index, node] of elementNodes.entries()) {
 
 for (const [index, compound] of compoundCatalog.records.entries()) {
   const pageIndex = Math.floor(index / 100);
-  nodeAssets["compound:" + compound.id] = atlasAsset(
+  const nodeId = "compound:" + compound.id;
+  if (!nodeById.has(nodeId)) continue;
+  nodeAssets[nodeId] = atlasAsset(
     "nodes/atlases/compounds-"
       + String(pageIndex + 1).padStart(2, "0")
       + "-v2.svg",
@@ -435,12 +444,44 @@ for (const node of graph.nodes) {
 
 for (const [nodeName, assetName] of coreNodeArt) {
   const matches = graph.nodes.filter((node) => node.name === nodeName);
-  if (matches.length !== 1) {
+  if (matches.length > 1) {
     throw new Error(
       `核心节点“${nodeName}”应唯一匹配，实际得到 ${matches.length} 个。`,
     );
   }
+  if (matches.length === 0) continue;
   nodeAssets[matches[0].id] = directAsset("nodes/core/" + assetName + ".webp");
+}
+
+if (generatedArtPlan.graphId !== graph.graphId) {
+  throw new Error("生成图片计划与物质塔图谱 ID 不一致。");
+}
+if (
+  generatedArtPlan.grid.columns !== 5
+  || generatedArtPlan.grid.rows !== 4
+  || generatedArtPlan.grid.cellsPerAtlas !== 20
+  || generatedArtPlan.grid.cutPolicy !== "equal-width-and-height-grid-with-24px-inset"
+) {
+  throw new Error("生成图片计划必须固定为 5×4、20 格和 24px 安全内缩。");
+}
+
+let generatedNodeAssetCount = 0;
+for (const batch of generatedArtPlan.batches) {
+  if (batch.columns !== 5 || batch.rows !== 4 || batch.items.length !== 20) {
+    throw new Error(`生成图集 ${batch.id} 不是固定的 5×4、20 格。`);
+  }
+  for (const item of batch.items) {
+    if (item.reserved) continue;
+    const node = nodeById.get(item.nodeId);
+    if (!node || node.name !== item.name) {
+      throw new Error(`生成图集 ${batch.id} 的格位 ${item.slot} 与节点清单不一致。`);
+    }
+    nodeAssets[item.nodeId] = {
+      path: `${batch.outputDirectory}/${item.assetId}.png`,
+      atlas: null,
+    };
+    generatedNodeAssetCount += 1;
+  }
 }
 
 const resourceAssets = {};
@@ -459,12 +500,13 @@ for (const group of Object.values(graph.resources)) {
 
 const manifest = {
   schemaVersion: 1,
-  assetPackId: "mumu-world-tower-cosmic-runes-v3",
-  generatedAt: "2026-08-05T00:00:00.000Z",
+  assetPackId: "mumu-world-tower-cosmic-runes-v4",
+  generatedAt: "2026-08-09T00:00:00.000Z",
   artDirection: {
     style: "premium-fantasy-science-cosmic-runes",
     composition: "separate-frame-content-image-and-html-label",
-    fallbackPolicy: "semantic-image-then-stardust-name-never-unrelated-level-art",
+    fallbackPolicy: "every-node-has-a-semantic-image-stardust-is-emergency-only",
+    generatedAtlasProtocol: "fixed-5x4-row-major-24px-inset-transparent-png",
   },
   backgroundAsset: publicAsset("backgrounds/cosmic-tower-v2.webp"),
   frameAssets: {
@@ -497,7 +539,7 @@ fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, `${JSON.stringify(manifest, null, 2)}\n`);
 
 console.log(
-  `已生成图标清单：${Object.keys(nodeAssets).length} 个核心节点、`
+  `已生成图标清单：${Object.keys(nodeAssets).length} 个语义图片节点（其中 ${generatedNodeAssetCount} 个为本轮生成）、`
   + `${Object.keys(resourceAssets).length} 个资源、`
   + `${Object.keys(levelFallbacks).length} 个层级占位。`,
 );

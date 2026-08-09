@@ -111,6 +111,8 @@ export type RecipeRequirement = {
 export type WorldTowerRecipe = {
   id: string;
   type: string;
+  relationLabel: string;
+  knowledgeTopic: string;
   logic: "ALL";
   inputs: Array<{
     nodeId: string;

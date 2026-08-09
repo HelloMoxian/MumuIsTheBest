@@ -95,17 +95,42 @@ type LearningRewardSource =
   | "math:add-subtract"
   | "math:arithmetic-battle"
   | "math:multiplication"
+  | "math:find-number"
   | "math:cat-mouse-game";
+type LearningRewardKey =
+  | "easy"
+  | "medium"
+  | "hard"
+  | "facts"
+  | "reverse"
+  | "advanced"
+  | "100"
+  | "1000"
+  | "10000"
+  | "100000";
 
 async function postLearningReward(
   baseUrl: string,
   source: LearningRewardSource,
   eventId: string = randomUUID(),
+  options: { sessionId?: string; rewardKey?: LearningRewardKey } = {},
 ) {
   return fetch(`${baseUrl}/api/world-tower/coins/earn`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ eventId, source }),
+    body: JSON.stringify({ eventId, source, ...options }),
+  });
+}
+
+async function startRewardSession(
+  baseUrl: string,
+  source: LearningRewardSource,
+  promotionId?: string,
+) {
+  return fetch(`${baseUrl}/api/world-tower/reward-sessions`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ source, promotionId }),
   });
 }
 
@@ -117,14 +142,22 @@ async function resetLearningCoins(baseUrl: string, password: string) {
   });
 }
 
+async function setLearningCoinBalance(baseUrl: string, password: string, balance: number) {
+  return fetch(`${baseUrl}/api/world-tower/coins/set`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password, balance }),
+  });
+}
+
 after(async () => {
   await Promise.all(children.map((child) => stopServer(child)));
   await Promise.all(cleanupPaths.map((path) => rm(path, { recursive: true, force: true })));
 });
 
 describe("world tower API", () => {
-  it("pages 2000 nodes and persists unlocks and resources as a private atomic file", async () => {
-    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-world-tower-"));
+  it("serves every curated node and persists the simplified particle-to-matter route", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-material-tower-"));
     cleanupPaths.push(dataDirectory);
     const { baseUrl, child } = await startServer(dataDirectory);
 
@@ -132,41 +165,25 @@ describe("world tower API", () => {
       const manifestResponse = await fetch(`${baseUrl}/api/world-tower/manifest`);
       assert.equal(manifestResponse.status, 200);
       const manifest = await manifestResponse.json() as {
-        counts: { nodes: number; resources: number };
-        levels: Array<{ imagePath: string }>;
-        resources: {
-          particlePacks: Array<{ id: string; shop: { coinCost: number | null } }>;
-          conditions: Array<{ id: string }>;
-          knowledge: unknown[];
-        };
+        graphId: string;
+        counts: { nodes: number; recipes: number; levels: number; resources: number };
+        levels: Array<{ id: string; order: number; name: string }>;
+        resources: Record<string, unknown[]>;
         progress: { coinBalance: number; unlockedNodeIds: string[] };
-        backgroundAsset: string;
       };
-      assert.equal(manifest.counts.nodes, 2_000);
-      assert.equal(manifest.counts.resources, 135);
-      assert.deepEqual(
-        manifest.resources.particlePacks.map((resource) => [resource.id, resource.shop.coinCost]),
-        [["particle-pack:electron", 10], ["particle-pack:proton", 10]],
-      );
-      assert.equal(manifest.levels.length, 15);
-      assert.equal(manifest.resources.knowledge.length, 79);
-      assert.equal(manifest.resources.conditions.some((resource) => (
-        resource.id === "condition:stable-combination"
-        || resource.id === "condition:low-risk-demo"
-      )), false);
-      assert.match(manifest.backgroundAsset, /world-tower/);
+      assert.equal(manifest.graphId, "mumu-material-tower-graph-v2");
+      assert.deepEqual(manifest.counts, {
+        ...manifest.counts,
+        nodes: 479,
+        recipes: 469,
+        levels: 16,
+        resources: 0,
+      });
+      assert.equal(Object.values(manifest.resources).flat().length, 0);
+      assert.equal(manifest.levels[0].name, "宇宙级");
+      assert.equal(manifest.levels.at(-1)?.name, "基本粒子");
       assert.equal(manifest.progress.coinBalance, 0);
-      assert.deepEqual(
-        manifest.progress.unlockedNodeIds.sort(),
-        ["particle:electron", "particle:neutron", "particle:proton"],
-      );
-
-      for (let index = 0; index < 5; index += 1) {
-        assert.equal(
-          (await postLearningReward(baseUrl, "math:cat-mouse-game")).status,
-          201,
-        );
-      }
+      assert.deepEqual(manifest.progress.unlockedNodeIds, []);
 
       const mapResponse = await fetch(`${baseUrl}/api/world-tower/map`);
       assert.equal(mapResponse.status, 200);
@@ -174,267 +191,107 @@ describe("world tower API", () => {
         totalNodes: number;
         isTruncated: boolean;
         levelNodeCounts: Record<string, number>;
-        items: Array<{ id: string; levelId: string; isUnlocked: boolean }>;
+        items: Array<{ id: string; name: string; isUnlocked: boolean; unlockPriceCoins: number }>;
         edges: Array<{ sourceId: string; targetId: string }>;
       };
-      assert.equal(map.totalNodes, 2_000);
-      assert.equal(map.isTruncated, true);
-      assert.ok(map.items.length >= 100 && map.items.length <= 160);
-      assert.equal(Object.keys(map.levelNodeCounts).length, 15);
+      assert.equal(map.totalNodes, 479);
+      assert.equal(map.isTruncated, false);
+      assert.equal(map.items.length, 479);
+      assert.equal(map.edges.length, 1_186);
+      assert.equal(Object.keys(map.levelNodeCounts).length, 16);
       assert.ok(Object.values(map.levelNodeCounts).every((count) => count > 0));
-      assert.ok(map.edges.length >= 120);
-      const mapNodeIds = new Set(map.items.map((node) => node.id));
-      assert.ok(["particle:electron", "particle:proton", "particle:neutron"].every((id) => mapNodeIds.has(id)));
+      assert.ok(map.items.every((item) => item.name.length > 0));
+      const mapNodeIds = new Set(map.items.map((item) => item.id));
       assert.ok(map.edges.every((edge) => mapNodeIds.has(edge.sourceId) && mapNodeIds.has(edge.targetId)));
 
-      const fullElementMapResponse = await fetch(
-        `${baseUrl}/api/world-tower/level-map?levelId=level%3A02-elements&visibility=all`,
+      const elementMapResponse = await fetch(
+        `${baseUrl}/api/world-tower/level-map?levelId=level%3A15-elements&visibility=all`,
       );
-      assert.equal(fullElementMapResponse.status, 200);
-      const fullElementMap = await fullElementMapResponse.json() as {
+      assert.equal(elementMapResponse.status, 200);
+      const elementMap = await elementMapResponse.json() as {
         totalInLevel: number;
         matchedTotal: number;
-        groups: Array<{ nodeIds: string[] }>;
-        items: Array<{ id: string }>;
-        edges: Array<{ sourceId: string; targetId: string }>;
+        items: Array<{ id: string; unlockPriceCoins: number; imagePath: string | null }>;
       };
-      assert.equal(fullElementMap.totalInLevel, 118);
-      assert.equal(fullElementMap.matchedTotal, 118);
-      assert.equal(fullElementMap.items.length, 118);
-      assert.equal(fullElementMap.groups.length, 4);
-      assert.ok(fullElementMap.groups.every((group) => group.nodeIds.length >= 1 && group.nodeIds.length <= 30));
-      assert.equal(
-        fullElementMap.groups.reduce((sum, group) => sum + group.nodeIds.length, 0),
-        118,
-      );
-
-      const unlockedElementMapResponse = await fetch(
-        `${baseUrl}/api/world-tower/level-map?levelId=level%3A02-elements&visibility=unlocked`,
-      );
-      assert.equal(unlockedElementMapResponse.status, 200);
-      assert.equal(
-        (await unlockedElementMapResponse.json() as { matchedTotal: number }).matchedTotal,
-        0,
-      );
-
-      const pageResponse = await fetch(
-        `${baseUrl}/api/world-tower/nodes?levelId=level%3A02-elements&offset=0&limit=12`,
-      );
-      assert.equal(pageResponse.status, 200);
-      const page = await pageResponse.json() as {
-        total: number;
-        items: Array<{ id: string; imagePath: string; unlockPriceCoins: number }>;
-      };
-      assert.equal(page.total, 118);
-      assert.equal(page.items.length, 12);
-      assert.equal(page.items[0].id, "element:H");
-      assert.equal(page.items[0].unlockPriceCoins, 3);
-      assert.match(page.items[0].imagePath, /nodes\/core\/hydrogen/);
-
-      const oversizedPage = await fetch(
-        `${baseUrl}/api/world-tower/nodes?levelId=level%3A02-elements&limit=61`,
-      );
-      assert.equal(oversizedPage.status, 400);
-
-      const earlyUnlock = await post(
-        baseUrl,
-        "/api/world-tower/unlock-node",
-        "element:H",
-      );
-      assert.equal(earlyUnlock.status, 409);
-      assert.equal(
-        (await earlyUnlock.json() as { code: string }).code,
-        "WORLD_TOWER_REQUIREMENTS_MISSING",
-      );
-
-      for (const knowledgeId of ["knowledge:atomic-structure", "knowledge:periodic-table"]) {
-        const response = await post(
-          baseUrl,
-          "/api/world-tower/purchase-resource",
-          knowledgeId,
-        );
-        assert.equal(response.status, 201);
-      }
-
-      const missingParticlePacks = await post(
-        baseUrl,
-        "/api/world-tower/unlock-node",
-        "element:H",
-      );
-      assert.equal(missingParticlePacks.status, 409);
-
-      for (const particlePackId of ["particle-pack:electron", "particle-pack:proton"]) {
-        const response = await post(
-          baseUrl,
-          "/api/world-tower/purchase-resource",
-          particlePackId,
-        );
-        assert.equal(response.status, 201);
-      }
-
-      const conditionPurchase = await post(
-        baseUrl,
-        "/api/world-tower/purchase-resource",
-        "condition:enough-quantity",
-      );
-      assert.equal(conditionPurchase.status, 409);
-
-      const unlockResponse = await post(
-        baseUrl,
-        "/api/world-tower/unlock-node",
-        "element:H",
-      );
-      assert.equal(unlockResponse.status, 201);
-      const unlocked = await unlockResponse.json() as {
-        alreadyUnlocked: boolean;
-        progress: {
-          coinBalance: number;
-          unlockedNodeIds: string[];
-          resourceInventory: Record<string, number>;
-        };
-      };
-      assert.equal(unlocked.alreadyUnlocked, false);
-      assert.equal(unlocked.progress.coinBalance, 70);
-      assert.ok(unlocked.progress.unlockedNodeIds.includes("element:H"));
-      assert.equal(unlocked.progress.resourceInventory["particle-pack:electron"], 0);
-      assert.equal(unlocked.progress.resourceInventory["particle-pack:proton"], 0);
-
-      const duplicateUnlock = await post(
-        baseUrl,
-        "/api/world-tower/unlock-node",
-        "element:H",
-      );
-      assert.equal(duplicateUnlock.status, 200);
-      assert.equal(
-        (await duplicateUnlock.json() as { progress: { coinBalance: number } })
-          .progress.coinBalance,
-        70,
-      );
-
-      const learnedElementMapResponse = await fetch(
-        `${baseUrl}/api/world-tower/level-map?levelId=level%3A02-elements&visibility=unlocked`,
-      );
-      assert.equal(learnedElementMapResponse.status, 200);
-      assert.equal(
-        (await learnedElementMapResponse.json() as { matchedTotal: number }).matchedTotal,
-        1,
-      );
-
-      const oxygenWithoutPacks = await post(
-        baseUrl,
-        "/api/world-tower/unlock-node",
-        "element:O",
-      );
-      assert.equal(oxygenWithoutPacks.status, 409);
-
-      for (const particlePackId of ["particle-pack:electron", "particle-pack:proton"]) {
-        const response = await post(
-          baseUrl,
-          "/api/world-tower/purchase-resource",
-          particlePackId,
-        );
-        assert.equal(response.status, 201);
-      }
-
-      const oxygenUnlock = await post(
-        baseUrl,
-        "/api/world-tower/unlock-node",
-        "element:O",
-      );
-      assert.equal(oxygenUnlock.status, 201);
-      const oxygenProgress = await oxygenUnlock.json() as {
-        progress: { resourceInventory: Record<string, number> };
-      };
-      assert.equal(oxygenProgress.progress.resourceInventory["particle-pack:electron"], 0);
-      assert.equal(oxygenProgress.progress.resourceInventory["particle-pack:proton"], 0);
-
-      const bondingCharge = await post(
-        baseUrl,
-        "/api/world-tower/purchase-resource",
-        "action:chemical-bonding",
-      );
-      assert.equal(bondingCharge.status, 201);
-      for (const knowledgeId of ["knowledge:chemical-bonds", "knowledge:molecular-geometry"]) {
-        const response = await post(
-          baseUrl,
-          "/api/world-tower/purchase-resource",
-          knowledgeId,
-        );
-        assert.equal(response.status, 201);
-      }
-      const waterUnlock = await post(
-        baseUrl,
-        "/api/world-tower/unlock-node",
-        "compound:compound-pubchem-962",
-      );
-      assert.equal(waterUnlock.status, 201);
-      const waterProgress = await waterUnlock.json() as {
-        progress: {
-          coinBalance: number;
-          unlockedNodeIds: string[];
-          resourceInventory: Record<string, number>;
-        };
-      };
-      assert.equal(waterProgress.progress.coinBalance, 29);
-      assert.ok(waterProgress.progress.unlockedNodeIds.includes("compound:compound-pubchem-962"));
-      assert.equal(waterProgress.progress.resourceInventory["action:chemical-bonding"], 0);
+      assert.equal(elementMap.totalInLevel, 118);
+      assert.equal(elementMap.matchedTotal, 118);
+      assert.equal(elementMap.items.length, 118);
+      const hydrogen = elementMap.items.find((item) => item.id === "element:H");
+      assert.equal(hydrogen?.unlockPriceCoins, 5);
+      assert.match(hydrogen?.imagePath ?? "", /nodes\/core\/hydrogen/);
 
       for (let index = 0; index < 2; index += 1) {
-        const response = await post(
-          baseUrl,
-          "/api/world-tower/purchase-resource",
-          "action:chemical-bonding",
-        );
+        assert.equal((await postLearningReward(baseUrl, "math:cat-mouse-game")).status, 201);
+      }
+
+      const earlyHydrogen = await post(baseUrl, "/api/world-tower/unlock-node", "element:H");
+      assert.equal(earlyHydrogen.status, 409);
+      assert.equal((await earlyHydrogen.json() as { code: string }).code, "WORLD_TOWER_REQUIREMENTS_MISSING");
+
+      for (const particleId of ["particle:proton", "particle:electron", "particle:neutron"]) {
+        const response = await post(baseUrl, "/api/world-tower/unlock-node", particleId);
         assert.equal(response.status, 201);
       }
 
-      const duplicateKnowledge = await post(
+      assert.equal((await post(baseUrl, "/api/world-tower/unlock-node", "element:H")).status, 201);
+      assert.equal((await post(baseUrl, "/api/world-tower/unlock-node", "element:O")).status, 201);
+      const waterResponse = await post(baseUrl, "/api/world-tower/unlock-node", "node:水");
+      assert.equal(waterResponse.status, 201);
+      const water = await waterResponse.json() as {
+        progress: { coinBalance: number; unlockedNodeIds: string[]; resourceInventory: Record<string, number> };
+      };
+      assert.equal(water.progress.coinBalance, 17);
+      assert.ok(water.progress.unlockedNodeIds.includes("node:水"));
+      assert.deepEqual(water.progress.resourceInventory, {});
+
+      const duplicate = await post(baseUrl, "/api/world-tower/unlock-node", "node:水");
+      assert.equal(duplicate.status, 200);
+      assert.equal(
+        (await duplicate.json() as { progress: { coinBalance: number } }).progress.coinBalance,
+        17,
+      );
+
+      const resourcePurchase = await post(
         baseUrl,
         "/api/world-tower/purchase-resource",
         "knowledge:atomic-structure",
       );
-      assert.equal(duplicateKnowledge.status, 200);
-      const duplicateKnowledgeBody = await duplicateKnowledge.json() as {
-        alreadyUnlocked: boolean;
-        progress: { coinBalance: number; resourceInventory: Record<string, number> };
-      };
-      assert.equal(duplicateKnowledgeBody.alreadyUnlocked, true);
-      assert.equal(duplicateKnowledgeBody.progress.coinBalance, 25);
-      assert.equal(
-        duplicateKnowledgeBody.progress.resourceInventory["action:chemical-bonding"],
-        2,
-      );
+      assert.equal(resourcePurchase.status, 404);
 
-      const progressPath = resolve(
-        dataDirectory,
-        "learning",
-        "world-tower",
-        "progress.json",
-      );
+      const detailResponse = await fetch(`${baseUrl}/api/world-tower/nodes/${encodeURIComponent("node:水")}`);
+      assert.equal(detailResponse.status, 200);
+      const detail = await detailResponse.json() as {
+        node: { recipes: Array<{ relationLabel: string; knowledgeTopic: string; inputs: unknown[] }> };
+        inputs: Array<{ name: string }>;
+      };
+      assert.equal(detail.node.recipes[0].relationLabel, "组成");
+      assert.ok(detail.node.recipes[0].knowledgeTopic.length > 0);
+      assert.deepEqual(detail.inputs.map((item) => item.name).sort(), ["氢", "氧"]);
+
+      const progressPath = resolve(dataDirectory, "learning", "world-tower", "progress.json");
       const stored = JSON.parse(await readFile(progressPath, "utf8")) as {
         schemaVersion: number;
         id: string;
-        updatedAt: string;
+        graphId: string;
         transactions: unknown[];
         appliedGrantIds: string[];
       };
       assert.equal(stored.schemaVersion, 1);
+      assert.equal(stored.graphId, "mumu-material-tower-graph-v2");
       assert.match(stored.id, /^[0-9a-f-]{36}$/);
-      assert.match(stored.updatedAt, /^\d{4}-\d{2}-\d{2}T/);
-      assert.equal(stored.transactions.length, 19);
+      assert.equal(stored.transactions.length, 8);
       assert.deepEqual(stored.appliedGrantIds, ["learning-coins-reset-to-zero-v1"]);
       assert.equal((await stat(progressPath)).mode & 0o777, 0o600);
 
       await writeFile(progressPath, '{"schemaVersion":999}\n', { mode: 0o600 });
-      const corruptResponse = await fetch(`${baseUrl}/api/world-tower/manifest`);
-      assert.equal(corruptResponse.status, 500);
+      assert.equal((await fetch(`${baseUrl}/api/world-tower/manifest`)).status, 500);
     } finally {
       await stopServer(child);
     }
   });
 
   it("persists unlock-all and clear-all without changing earned knowledge coins", async () => {
-    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-world-tower-manage-"));
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-material-tower-manage-"));
     cleanupPaths.push(dataDirectory);
     const { baseUrl, child } = await startServer(dataDirectory);
 
@@ -442,25 +299,15 @@ describe("world tower API", () => {
       assert.equal((await postLearningReward(baseUrl, "math:cat-mouse-game")).status, 201);
       assert.equal((await postLearningReward(baseUrl, "math:cat-mouse-game")).status, 201);
 
-      assert.equal((await post(
-        baseUrl,
-        "/api/world-tower/purchase-resource",
-        "knowledge:atomic-structure",
-      )).status, 201);
-      assert.equal((await post(
-        baseUrl,
-        "/api/world-tower/purchase-resource",
-        "action:chemical-bonding",
-      )).status, 201);
-
       const unlockAllResponse = await postProgressAction(baseUrl, "unlock-all");
       assert.equal(unlockAllResponse.status, 201);
       const unlockAll = await unlockAllResponse.json() as {
         affectedNodes: number;
-        progress: { unlockedNodeIds: string[] };
+        progress: { coinBalance: number; unlockedNodeIds: string[] };
       };
-      assert.equal(unlockAll.affectedNodes, 1_997);
-      assert.equal(unlockAll.progress.unlockedNodeIds.length, 2_000);
+      assert.equal(unlockAll.affectedNodes, 479);
+      assert.equal(unlockAll.progress.unlockedNodeIds.length, 479);
+      assert.equal(unlockAll.progress.coinBalance, 40);
 
       const clearAllResponse = await postProgressAction(baseUrl, "clear-all");
       assert.equal(clearAllResponse.status, 201);
@@ -473,38 +320,30 @@ describe("world tower API", () => {
           resourceInventory: Record<string, number>;
         };
       };
-      assert.equal(clearAll.affectedNodes, 1_997);
-      assert.equal(clearAll.progress.coinBalance, 35);
-      assert.deepEqual(
-        clearAll.progress.unlockedNodeIds.sort(),
-        ["particle:electron", "particle:neutron", "particle:proton"],
-      );
+      assert.equal(clearAll.affectedNodes, 479);
+      assert.equal(clearAll.progress.coinBalance, 40);
+      assert.deepEqual(clearAll.progress.unlockedNodeIds, []);
       assert.deepEqual(clearAll.progress.permanentResourceIds, []);
       assert.deepEqual(clearAll.progress.resourceInventory, {});
 
-      const reloadedManifest = await fetch(`${baseUrl}/api/world-tower/manifest`);
-      assert.equal(reloadedManifest.status, 200);
-      const persisted = await reloadedManifest.json() as {
+      const reloaded = await fetch(`${baseUrl}/api/world-tower/manifest`);
+      assert.equal(reloaded.status, 200);
+      const persisted = await reloaded.json() as {
         progress: { coinBalance: number; unlockedNodeIds: string[] };
       };
-      assert.equal(persisted.progress.coinBalance, 35);
-      assert.equal(persisted.progress.unlockedNodeIds.length, 3);
+      assert.equal(persisted.progress.coinBalance, 40);
+      assert.deepEqual(persisted.progress.unlockedNodeIds, []);
 
       const progressPath = resolve(dataDirectory, "learning", "world-tower", "progress.json");
       const stored = JSON.parse(await readFile(progressPath, "utf8")) as {
         transactions: Array<{ kind: string }>;
       };
-      assert.deepEqual(
-        stored.transactions.map((transaction) => transaction.kind),
-        [
-          "learning-reward",
-          "learning-reward",
-          "resource-unlock",
-          "resource-charge",
-          "admin-unlock-all",
-          "admin-clear-all",
-        ],
-      );
+      assert.deepEqual(stored.transactions.map((transaction) => transaction.kind), [
+        "learning-reward",
+        "learning-reward",
+        "admin-unlock-all",
+        "admin-clear-all",
+      ]);
 
       const invalidResponse = await fetch(`${baseUrl}/api/world-tower/manage-progress`, {
         method: "POST",
@@ -516,25 +355,33 @@ describe("world tower API", () => {
       await stopServer(child);
     }
   });
-
-  it("awards the configured amount once per solved-question event and requires the reset password", async () => {
+  it("awards each event once and requires the parent password to set the balance", async () => {
     const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-learning-coins-"));
     cleanupPaths.push(dataDirectory);
     const { baseUrl, child } = await startServer(dataDirectory);
 
     try {
-      const rewards: Array<[LearningRewardSource, number]> = [
-        ["math:add-subtract", 1],
-        ["math:arithmetic-battle", 5],
-        ["math:multiplication", 5],
-        ["math:cat-mouse-game", 20],
+      const rewards: Array<[LearningRewardSource, LearningRewardKey | undefined, number]> = [
+        ["math:add-subtract", undefined, 2],
+        ["math:arithmetic-battle", "easy", 4],
+        ["math:arithmetic-battle", "medium", 6],
+        ["math:arithmetic-battle", "hard", 8],
+        ["math:multiplication", "facts", 2],
+        ["math:multiplication", "reverse", 3],
+        ["math:multiplication", "advanced", 5],
+        ["math:cat-mouse-game", undefined, 20],
       ];
       let expectedBalance = 0;
       let firstEventId = "";
-      for (const [source, rewardCoins] of rewards) {
+      for (const [source, rewardKey, rewardCoins] of rewards) {
         const eventId = randomUUID();
         if (!firstEventId) firstEventId = eventId;
-        const response = await postLearningReward(baseUrl, source, eventId);
+        const response = await postLearningReward(
+          baseUrl,
+          source,
+          eventId,
+          rewardKey ? { rewardKey } : {},
+        );
         assert.equal(response.status, 201);
         expectedBalance += rewardCoins;
         const body = await response.json() as {
@@ -560,7 +407,13 @@ describe("world tower API", () => {
       };
       assert.equal(duplicateBody.alreadyAwarded, true);
       assert.equal(duplicateBody.rewardCoins, 0);
-      assert.equal(duplicateBody.progress.coinBalance, 31);
+      assert.equal(duplicateBody.progress.coinBalance, 50);
+
+      const missingDifficulty = await postLearningReward(
+        baseUrl,
+        "math:arithmetic-battle",
+      );
+      assert.equal(missingDifficulty.status, 400);
 
       const invalidReward = await fetch(`${baseUrl}/api/world-tower/coins/earn`, {
         method: "POST",
@@ -575,7 +428,7 @@ describe("world tower API", () => {
         (await fetch(`${baseUrl}/api/world-tower/coins`).then((response) => response.json()) as {
           coinBalance: number;
         }).coinBalance,
-        31,
+        50,
       );
 
       const resetResponse = await resetLearningCoins(baseUrl, "123456");
@@ -584,8 +437,157 @@ describe("world tower API", () => {
         coinDelta: number;
         progress: { coinBalance: number };
       };
-      assert.equal(resetBody.coinDelta, -31);
+      assert.equal(resetBody.coinDelta, -50);
       assert.equal(resetBody.progress.coinBalance, 0);
+
+      const setResponse = await setLearningCoinBalance(baseUrl, "123456", 12_345);
+      assert.equal(setResponse.status, 201);
+      const setBody = await setResponse.json() as {
+        coinDelta: number;
+        progress: { coinBalance: number };
+      };
+      assert.equal(setBody.coinDelta, 12_345);
+      assert.equal(setBody.progress.coinBalance, 12_345);
+
+      const rejectedSet = await setLearningCoinBalance(baseUrl, "654321", 77);
+      assert.equal(rejectedSet.status, 403);
+      assert.equal(
+        (await fetch(`${baseUrl}/api/world-tower/coins`).then((response) => response.json()) as {
+          coinBalance: number;
+        }).coinBalance,
+        12_345,
+      );
+
+      const invalidSet = await fetch(`${baseUrl}/api/world-tower/coins/set`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: "123456", balance: -1 }),
+      });
+      assert.equal(invalidSet.status, 403);
+    } finally {
+      await stopServer(child);
+    }
+  });
+
+  it("locks the ten-minute triple promotion on entry and awards all find-number ranges", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-learning-promotions-"));
+    cleanupPaths.push(dataDirectory);
+    const { baseUrl, child } = await startServer(dataDirectory);
+
+    try {
+      const statusResponse = await fetch(`${baseUrl}/api/world-tower/coins`);
+      assert.equal(statusResponse.status, 200);
+      const status = await statusResponse.json() as {
+        coinBalance: number;
+        promotion: {
+          id: string;
+          source: LearningRewardSource;
+          multiplier: 3;
+          startsAt: string;
+          endsAt: string;
+        };
+      };
+      assert.equal(status.coinBalance, 0);
+      assert.equal(status.promotion.multiplier, 3);
+      assert.ok(Date.parse(status.promotion.endsAt) - Date.parse(status.promotion.startsAt) === 10 * 60 * 1_000);
+
+      const tripleSessionResponse = await startRewardSession(
+        baseUrl,
+        status.promotion.source,
+        status.promotion.id,
+      );
+      assert.equal(tripleSessionResponse.status, 201);
+      const tripleSession = await tripleSessionResponse.json() as {
+        id: string;
+        source: LearningRewardSource;
+        multiplier: 1 | 3;
+        promotionId: string | null;
+      };
+      assert.equal(tripleSession.multiplier, 3);
+      assert.equal(tripleSession.promotionId, status.promotion.id);
+
+      const promotedRewardKey: LearningRewardKey | undefined =
+        status.promotion.source === "math:find-number"
+          ? "100"
+          : status.promotion.source === "math:arithmetic-battle"
+            ? "easy"
+            : status.promotion.source === "math:multiplication"
+              ? "facts"
+              : undefined;
+      const promotedBase = status.promotion.source === "math:add-subtract"
+        ? 2
+        : status.promotion.source === "math:cat-mouse-game"
+          ? 20
+          : status.promotion.source === "math:find-number"
+            ? 10
+            : status.promotion.source === "math:arithmetic-battle" ? 4 : 2;
+      const promotedAwardResponse = await postLearningReward(
+        baseUrl,
+        status.promotion.source,
+        randomUUID(),
+        { sessionId: tripleSession.id, rewardKey: promotedRewardKey },
+      );
+      assert.equal(promotedAwardResponse.status, 201);
+      const promotedAward = await promotedAwardResponse.json() as {
+        baseRewardCoins: number;
+        multiplier: 1 | 3;
+        rewardCoins: number;
+        progress: { coinBalance: number };
+      };
+      assert.equal(promotedAward.baseRewardCoins, promotedBase);
+      assert.equal(promotedAward.multiplier, 3);
+      assert.equal(promotedAward.rewardCoins, promotedBase * 3);
+
+      const findSessionResponse = await startRewardSession(
+        baseUrl,
+        "math:find-number",
+        "expired-or-unrelated-promotion",
+      );
+      assert.equal(findSessionResponse.status, 201);
+      const findSession = await findSessionResponse.json() as { id: string; multiplier: 1 | 3 };
+      assert.equal(findSession.multiplier, 1);
+
+      let expectedBalance = promotedBase * 3;
+      for (const [rewardKey, expectedReward] of [
+        ["100", 10],
+        ["1000", 30],
+        ["10000", 60],
+        ["100000", 150],
+      ] as const) {
+        const response = await postLearningReward(
+          baseUrl,
+          "math:find-number",
+          randomUUID(),
+          { sessionId: findSession.id, rewardKey },
+        );
+        assert.equal(response.status, 201);
+        expectedBalance += expectedReward;
+        const award = await response.json() as {
+          baseRewardCoins: number;
+          multiplier: 1 | 3;
+          rewardCoins: number;
+          progress: { coinBalance: number };
+        };
+        assert.equal(award.baseRewardCoins, expectedReward);
+        assert.equal(award.multiplier, 1);
+        assert.equal(award.rewardCoins, expectedReward);
+        assert.equal(award.progress.coinBalance, expectedBalance);
+      }
+
+      const missingRange = await postLearningReward(
+        baseUrl,
+        "math:find-number",
+        randomUUID(),
+        { sessionId: findSession.id },
+      );
+      assert.equal(missingRange.status, 400);
+
+      const progressPath = resolve(dataDirectory, "learning", "world-tower", "progress.json");
+      const stored = JSON.parse(await readFile(progressPath, "utf8")) as {
+        rewardSessions: Array<{ id: string; multiplier: number }>;
+      };
+      assert.equal(stored.rewardSessions.length, 2);
+      assert.equal(stored.rewardSessions.find((session) => session.id === tripleSession.id)?.multiplier, 3);
     } finally {
       await stopServer(child);
     }
@@ -625,7 +627,7 @@ describe("world tower API", () => {
         coinBalance: number;
         appliedGrantIds: string[];
       };
-      assert.equal(stored.coinBalance, 1);
+      assert.equal(stored.coinBalance, 2);
       assert.deepEqual(stored.appliedGrantIds, [
         "knowledge-coin-preview-100000-v1",
         "learning-coins-reset-to-zero-v1",
@@ -635,7 +637,7 @@ describe("world tower API", () => {
     }
   });
 
-  it("does not report an unlock when the configured data path cannot be written", async () => {
+  it("does not report progress or balance changes when the data path cannot be written", async () => {
     const parentDirectory = await mkdtemp(resolve(tmpdir(), "mumu-world-tower-write-failure-"));
     cleanupPaths.push(parentDirectory);
     const unusableDataPath = resolve(parentDirectory, "not-a-directory");
@@ -645,8 +647,8 @@ describe("world tower API", () => {
     try {
       const response = await post(
         baseUrl,
-        "/api/world-tower/purchase-resource",
-        "knowledge:atomic-structure",
+        "/api/world-tower/unlock-node",
+        "particle:electron",
       );
       assert.equal(response.status, 500);
       assert.equal(
@@ -658,6 +660,13 @@ describe("world tower API", () => {
       assert.equal(manageResponse.status, 500);
       assert.equal(
         (await manageResponse.json() as { code: string }).code,
+        "WORLD_TOWER_STORAGE_FAILED",
+      );
+
+      const setBalanceResponse = await setLearningCoinBalance(baseUrl, "123456", 888);
+      assert.equal(setBalanceResponse.status, 500);
+      assert.equal(
+        (await setBalanceResponse.json() as { code: string }).code,
         "WORLD_TOWER_STORAGE_FAILED",
       );
     } finally {

@@ -1,75 +1,37 @@
 import {
+  useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
-  type PointerEvent as ReactPointerEvent,
 } from "react";
 import {
-  loadWorldTowerLevelMap,
   loadWorldTowerManifest,
   loadWorldTowerMap,
   loadWorldTowerNode,
   manageWorldTowerProgress,
-  purchaseWorldTowerResource,
   unlockWorldTowerNode,
   type WorldTowerProgressAction,
 } from "./api";
 import {
+  activeLevelAtViewport,
   atlasCellPlacement,
-  buildResourceMap,
+  bottomAlignedScrollTop,
   frameQualityForLevel,
-  hasRequirement,
+  initialWorldTowerTarget,
   layoutWorldTowerMap,
-  recipeRequirements,
-  resourceCount,
-  shouldDisplayRecipeRequirement,
   traceWorldTowerRelations,
   visibleNodeName,
 } from "./logic";
 import type {
-  ResourceGroupKey,
-  WorldTowerLevelMap,
-  WorldTowerLoadStrategy,
   WorldTowerManifest,
   WorldTowerMap,
-  WorldTowerMapEdge,
   WorldTowerNode,
   WorldTowerNodeDetail,
-  WorldTowerProgress,
-  WorldTowerResource,
 } from "./types";
 import "./world-tower.css";
-
-const DISCOVERY_PHRASES = [
-  "从最小的粒子，搭出最大的宇宙",
-  "点亮万物之间看不见的来路",
-  "从一束微光，发现山河与星海",
-  "每一个为什么，都是新世界的入口",
-  "看看桌椅、飞机和星球从哪里来",
-] as const;
-
-const RESOURCE_GROUPS: Array<{
-  key: ResourceGroupKey;
-  label: string;
-  shortLabel: string;
-}> = [
-  { key: "particlePacks", label: "粒子包", shortLabel: "粒子包" },
-  { key: "actions", label: "动作背包", shortLabel: "动作" },
-  { key: "conditions", label: "成立条件", shortLabel: "条件" },
-  { key: "environments", label: "环境场", shortLabel: "环境" },
-  { key: "knowledge", label: "知识星图", shortLabel: "知识" },
-];
-
-const LOAD_STRATEGIES: Array<{
-  value: WorldTowerLoadStrategy;
-  label: string;
-}> = [
-  { value: "all", label: "全部加载" },
-  { value: "locked", label: "加载未合成" },
-  { value: "unlocked", label: "加载已合成" },
-];
 
 function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : "探索舱暂时没有回应，请稍后再试。";
@@ -77,1236 +39,533 @@ function errorMessage(error: unknown) {
 
 function NodeArtwork({
   node,
-  className,
   placeholderTexture,
 }: {
   node: WorldTowerNode;
-  className: string;
   placeholderTexture: string;
 }) {
-  const crop = node.imageCrop;
-  if (node.imagePath && crop) {
-    const placement = atlasCellPlacement(crop);
+  if (!node.isUnlocked) {
+    return <span className="mt-node-art is-mystery" aria-hidden="true">？</span>;
+  }
+  if (node.imagePath && node.imageCrop) {
+    const placement = atlasCellPlacement(node.imageCrop);
     return (
-      <span className={className + " wt-node-art is-atlas"} aria-hidden="true">
+      <span className="mt-node-art is-atlas" aria-hidden="true">
         <img
-          className="wt-node-art__atlas-image"
           src={node.imagePath}
           alt=""
           loading="lazy"
           style={{
-            width: placement.widthPercent + "%",
-            height: placement.heightPercent + "%",
-            transform: "translate(" + placement.translateXPercent + "%, "
-              + placement.translateYPercent + "%)",
+            width: `${placement.widthPercent}%`,
+            height: `${placement.heightPercent}%`,
+            transform: `translate(${placement.translateXPercent}%, ${placement.translateYPercent}%)`,
           }}
         />
       </span>
     );
   }
   if (node.imagePath) {
-    return <img className={className + " wt-node-art"} src={node.imagePath} alt="" loading="lazy" />;
+    return <img className="mt-node-art" src={node.imagePath} alt="" loading="lazy" />;
   }
   return (
     <span
-      className={className + " wt-node-art is-semantic-placeholder"}
-      style={{ backgroundImage: "url(\"" + placeholderTexture + "\")" }}
+      className="mt-node-art is-placeholder"
+      style={{ backgroundImage: `url("${placeholderTexture}")` }}
       aria-hidden="true"
     >
-      {node.isUnlocked && (
-        <span className="wt-node-art__placeholder-name">{node.name.slice(0, 5)}</span>
-      )}
+      <span>{node.name.slice(0, 4)}</span>
     </span>
   );
 }
 
-function RuneNode({
+function MaterialNode({
   node,
   levelOrder,
-  frames,
-  placeholderTexture,
-  relation = "normal",
+  manifest,
+  relation,
   onSelect,
+  buttonRef,
 }: {
   node: WorldTowerNode;
   levelOrder: number;
-  frames: Record<string, string>;
-  placeholderTexture: string;
-  relation?: "normal" | "input" | "current" | "output";
+  manifest: WorldTowerManifest;
+  relation: "normal" | "input" | "current" | "output";
   onSelect: (nodeId: string) => void;
+  buttonRef: (element: HTMLButtonElement | null) => void;
 }) {
   const quality = frameQualityForLevel(levelOrder);
-  const label = visibleNodeName(node);
-
   return (
     <button
-      className={[
-        "wt-rune-node",
-        "is-" + relation,
-        node.isUnlocked ? "is-unlocked" : "is-locked",
-      ].join(" ")}
       type="button"
+      ref={buttonRef}
+      className={`mt-node is-${relation} ${node.isUnlocked ? "is-unlocked" : "is-locked"}`}
       onClick={() => onSelect(node.id)}
-      aria-label={
-        node.isUnlocked
-          ? "查看" + node.name + "的构成关系"
-          : "未发现节点，需要" + (node.unlockPriceCoins ?? 0) + "知识币点亮"
-      }
+      aria-label={node.isUnlocked
+        ? `${node.name}，已经点亮`
+        : `未点亮的神秘节点，需要 ${node.unlockPriceCoins ?? 0} 知识币`}
     >
-      <span className="wt-rune-node__orb" aria-hidden="true">
-        <NodeArtwork
-          node={node}
-          className="wt-rune-node__content"
-          placeholderTexture={placeholderTexture}
-        />
-        {!node.isUnlocked && <span className="wt-rune-node__question">?</span>}
-        <img className="wt-rune-node__frame" src={frames[quality]} alt="" />
+      <span className="mt-node__orb">
+        <NodeArtwork node={node} placeholderTexture={manifest.placeholderTexture} />
+        <img className="mt-node__frame" src={manifest.frames[quality]} alt="" aria-hidden="true" />
+        <span className="mt-node__state" aria-hidden="true">{node.isUnlocked ? "✓" : "·"}</span>
       </span>
-      <span className="wt-rune-node__label">{label}</span>
-      {!node.isUnlocked && (
-        <span className="wt-rune-node__price">
-          <span aria-hidden="true">✦</span> {node.unlockPriceCoins ?? "—"}
-        </span>
-      )}
+      <span className="mt-node__name">{visibleNodeName(node)}</span>
+      <span className="mt-node__price">{node.isUnlocked ? "已点亮" : `✦ ${node.unlockPriceCoins ?? "—"}`}</span>
     </button>
   );
-}
-
-function ResourceSlot({
-  resource,
-  progress,
-  active,
-  onInspect,
-}: {
-  resource: WorldTowerResource;
-  progress: WorldTowerProgress;
-  active: boolean;
-  onInspect: (resource: WorldTowerResource) => void;
-}) {
-  const count = resourceCount(resource, progress);
-  const badge = count === "permanent"
-    ? "✓"
-    : count === "state"
-      ? "◇"
-      : resource.inventoryMode === "permanent-unlock"
-        ? "·"
-        : String(count);
-  return (
-    <button
-      className={"wt-resource-slot" + (active ? " is-active" : "")}
-      type="button"
-      onMouseEnter={() => onInspect(resource)}
-      onFocus={() => onInspect(resource)}
-      onClick={() => onInspect(resource)}
-      aria-label={
-        resource.name + "，" + (
-          count === "permanent"
-            ? "已经学会"
-            : count === "state"
-              ? "过程状态"
-              : resource.inventoryMode === "permanent-unlock"
-                ? "尚未学会"
-                : "现有" + count + "个"
-        )
-      }
-    >
-      {resource.imagePath
-        ? <img src={resource.imagePath} alt="" loading="lazy" />
-        : <span className="wt-resource-slot__fallback" aria-hidden="true">?</span>}
-      <span className="wt-resource-slot__count" aria-hidden="true">{badge}</span>
-    </button>
-  );
-}
-
-function ReadinessMark({ ready }: { ready: boolean }) {
-  return (
-    <span
-      className={"wt-readiness-mark " + (ready ? "is-ready" : "is-missing")}
-      role="img"
-      aria-label={ready ? "已具备" : "尚未具备"}
-    >
-      {ready ? "✓" : <span className="wt-readiness-mark__lock" aria-hidden="true" />}
-    </span>
-  );
-}
-
-function WorldTowerLoading() {
-  return (
-    <main className="wt-page is-loading" aria-live="polite">
-      <div className="wt-loading-card">
-        <span className="wt-loading-orbit" aria-hidden="true" />
-        <strong>正在铺开万物星图…</strong>
-        <span>把 15 个尺度接进同一张图里</span>
-      </div>
-    </main>
-  );
-}
-
-function edgePath(
-  edge: WorldTowerMapEdge,
-  positions: ReadonlyMap<string, { x: number; y: number }>,
-) {
-  const source = positions.get(edge.sourceId);
-  const target = positions.get(edge.targetId);
-  if (!source || !target) return "";
-  if (Math.abs(source.y - target.y) < 8) {
-    const arch = 70 + Math.min(110, Math.abs(source.x - target.x) * 0.18);
-    return "M " + source.x + " " + source.y
-      + " C " + source.x + " " + (source.y - arch)
-      + ", " + target.x + " " + (target.y - arch)
-      + ", " + target.x + " " + target.y;
-  }
-  const sourceY = source.y - 42;
-  const targetY = target.y + 42;
-  const curve = Math.max(65, Math.abs(sourceY - targetY) * 0.42);
-  return "M " + source.x + " " + sourceY
-    + " C " + source.x + " " + (sourceY - curve)
-    + ", " + target.x + " " + (targetY + curve)
-    + ", " + target.x + " " + targetY;
 }
 
 export function WorldTowerPage() {
   const [manifest, setManifest] = useState<WorldTowerManifest | null>(null);
   const [worldMap, setWorldMap] = useState<WorldTowerMap | null>(null);
-  const [levelMap, setLevelMap] = useState<WorldTowerLevelMap | null>(null);
-  const [expandedLevelId, setExpandedLevelId] = useState<string | null>(null);
-  const [loadStrategy, setLoadStrategy] = useState<WorldTowerLoadStrategy>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<WorldTowerNodeDetail | null>(null);
-  const [activeResource, setActiveResource] = useState<WorldTowerResource | null>(null);
+  const [activeLevelId, setActiveLevelId] = useState<string | null>(null);
+  const [viewportWidth, setViewportWidth] = useState(980);
+  const [isViewportMeasured, setIsViewportMeasured] = useState(false);
+  const [zoom, setZoom] = useState(1);
   const [busyTarget, setBusyTarget] = useState<string | null>(null);
-  const [clearAllArmed, setClearAllArmed] = useState(false);
+  const [manageBusy, setManageBusy] = useState<WorldTowerProgressAction | null>(null);
+  const [clearArmed, setClearArmed] = useState(false);
   const [notice, setNotice] = useState("");
   const [fatalError, setFatalError] = useState("");
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [levelLoading, setLevelLoading] = useState(false);
-  const [zoom, setZoom] = useState(0.84);
-  const [viewportWidth, setViewportWidth] = useState(0);
-  const [previewNode, setPreviewNode] = useState<WorldTowerNode | null>(null);
-  const [phrase] = useState(
-    () => DISCOVERY_PHRASES[Math.floor(Math.random() * DISCOVERY_PHRASES.length)],
-  );
-  const viewportRef = useRef<HTMLDivElement | null>(null);
-  const previewCloseRef = useRef<HTMLButtonElement | null>(null);
-  const previewReturnFocusRef = useRef<HTMLElement | null>(null);
-  const centeredOnceRef = useRef(false);
-  const focusedExpansionRef = useRef("");
-  const dragRef = useRef<{
-    pointerId: number;
-    startX: number;
-    startY: number;
-    scrollLeft: number;
-    scrollTop: number;
-  } | null>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const railButtonsRef = useRef(new Map<string, HTMLButtonElement>());
+  const nodeButtonsRef = useRef(new Map<string, HTMLButtonElement>());
+  const selectionRequestRef = useRef(0);
+  const didInitialPositionRef = useRef(false);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    Promise.all([
-      loadWorldTowerManifest(controller.signal),
-      loadWorldTowerMap(controller.signal),
-    ])
-      .then(([nextManifest, nextMap]) => {
-        setManifest(nextManifest);
-        setWorldMap(nextMap);
-        setActiveResource(nextManifest.resources.actions[0] ?? null);
-      })
-      .catch((error) => {
-        if ((error as Error).name !== "AbortError") setFatalError(errorMessage(error));
-      });
-    return () => controller.abort();
+  const refreshData = useCallback(async (signal?: AbortSignal) => {
+    const [nextManifest, nextMap] = await Promise.all([
+      loadWorldTowerManifest(signal),
+      loadWorldTowerMap(signal),
+    ]);
+    setManifest(nextManifest);
+    setWorldMap(nextMap);
+    const bottomLevel = [...nextManifest.levels].sort((left, right) => right.order - left.order)[0];
+    setActiveLevelId((current) => current ?? bottomLevel?.id ?? null);
+    return { nextManifest, nextMap };
   }, []);
 
   useEffect(() => {
-    if (!expandedLevelId) {
-      setLevelMap(null);
-      return;
-    }
     const controller = new AbortController();
-    setLevelMap(null);
-    setLevelLoading(true);
-    loadWorldTowerLevelMap(expandedLevelId, loadStrategy, controller.signal)
-      .then((nextLevelMap) => {
-        setLevelMap(nextLevelMap);
-        setNotice("");
-      })
-      .catch((error) => {
-        if ((error as Error).name !== "AbortError") setNotice(errorMessage(error));
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLevelLoading(false);
-      });
+    refreshData(controller.signal).catch((error) => {
+      if (!controller.signal.aborted) setFatalError(errorMessage(error));
+    });
     return () => controller.abort();
-  }, [expandedLevelId, loadStrategy]);
+  }, [refreshData]);
 
   useEffect(() => {
-    if (!selectedId) {
-      setDetail(null);
-      return;
-    }
-    const controller = new AbortController();
-    setDetail(null);
-    setDetailLoading(true);
-    loadWorldTowerNode(selectedId, controller.signal)
-      .then(setDetail)
-      .catch((error) => {
-        if ((error as Error).name !== "AbortError") setNotice(errorMessage(error));
-      })
-      .finally(() => setDetailLoading(false));
-    return () => controller.abort();
-  }, [selectedId]);
-
-  useEffect(() => {
-    if (!clearAllArmed) return undefined;
-    const timeout = window.setTimeout(() => setClearAllArmed(false), 5_000);
-    return () => window.clearTimeout(timeout);
-  }, [clearAllArmed]);
-
-  useEffect(() => {
-    if (!previewNode) return undefined;
-    previewCloseRef.current?.focus();
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeArtworkPreview();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [previewNode]);
-
-  useEffect(() => {
-    if (!manifest || !worldMap) return undefined;
     const viewport = viewportRef.current;
-    if (!viewport) return undefined;
-    const measure = () => setViewportWidth(viewport.clientWidth);
-    measure();
-    const observer = new ResizeObserver(measure);
+    if (!viewport) return;
+    const updateWidth = () => {
+      setViewportWidth(Math.max(720, viewport.clientWidth - 24));
+      setIsViewportMeasured(true);
+    };
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
     observer.observe(viewport);
     return () => observer.disconnect();
-  }, [manifest?.graphId, worldMap?.graphId]);
+  }, [manifest]);
 
-  const displayedMap = useMemo(() => {
-    if (!worldMap || !levelMap) return worldMap;
-    return {
-      ...worldMap,
-      items: [
-        ...worldMap.items.filter((node) => node.levelId !== levelMap.levelId),
-        ...levelMap.items,
-      ],
-      edges: levelMap.edges,
-      levelNodeCounts: {
-        ...worldMap.levelNodeCounts,
-        [levelMap.levelId]: levelMap.matchedTotal,
-      },
-    };
-  }, [worldMap, levelMap]);
-  const layout = useMemo(
-    () => (
-      manifest && displayedMap
-        ? layoutWorldTowerMap(
-            displayedMap.items,
-            displayedMap.edges,
-            manifest.levels,
-            levelMap
-              ? { levelId: levelMap.levelId, groups: levelMap.groups }
-              : null,
-            viewportWidth > 0
-              ? viewportWidth / zoom + (selectedId ? 360 : 0)
-              : undefined,
-          )
-        : null
-    ),
-    [manifest, displayedMap, levelMap, viewportWidth, zoom, selectedId],
-  );
-  const relations = useMemo(
-    () => traceWorldTowerRelations(selectedId, displayedMap?.edges ?? []),
-    [selectedId, displayedMap],
-  );
-  const visibleRelationEdges = useMemo(
-    () => selectedId && displayedMap
-      ? displayedMap.edges.filter((edge) => (
-          edge.sourceId === selectedId || edge.targetId === selectedId
-        ))
-      : [],
-    [selectedId, displayedMap],
-  );
-  const resourceById = useMemo(
-    () => manifest ? buildResourceMap(manifest) : new Map<string, WorldTowerResource>(),
-    [manifest],
-  );
-  const selectedNode = detail?.node
-    ?? displayedMap?.items.find((node) => node.id === selectedId)
-    ?? null;
-  const selectedRecipe = detail?.node.recipes[0];
-  const allRequirements = useMemo(
-    () => recipeRequirements(selectedRecipe, resourceById),
-    [selectedRecipe, resourceById],
-  );
-  const missingInputs = detail?.inputs.filter((node) => !node.isUnlocked) ?? [];
-  const missingInputCount = missingInputs.length;
-  const missingResources = manifest
-    ? allRequirements.filter(({ requirement, resource }) => (
-        resource ? !hasRequirement(resource, requirement, manifest.progress) : true
-      ))
-    : [];
-  const missingResourceIds = new Set(
-    missingResources.map(({ requirement }) => requirement.resourceId),
-  );
-  const displayRequirements = manifest
-    ? allRequirements.filter(({ group, requirement, resource }) => (
-        shouldDisplayRecipeRequirement(group, requirement, resource, manifest.progress)
-      ))
-    : [];
-  const orderedRequirements = [
-    ...missingResources,
-    ...displayRequirements.filter(({ requirement }) => !missingResourceIds.has(requirement.resourceId)),
-  ];
-  const visibleMissingInputs = missingInputs.slice(0, 4);
-  const visibleRequirements = orderedRequirements.slice(0, 4 - visibleMissingInputs.length);
-  const canUnlock = Boolean(
-    manifest
-    && selectedNode
-    && detail
-    && !selectedNode.isUnlocked
-    && missingInputCount === 0
-    && missingResources.length === 0
-    && manifest.progress.coinBalance >= (selectedNode.unlockPriceCoins ?? Number.POSITIVE_INFINITY),
-  );
+  const layout = useMemo(() => (
+    manifest && worldMap
+      ? layoutWorldTowerMap(worldMap.items, worldMap.edges, manifest.levels, viewportWidth)
+      : null
+  ), [manifest, viewportWidth, worldMap]);
 
-  function focusAt(x: number, y: number, behavior: ScrollBehavior = "smooth") {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
-    viewport.scrollTo({
-      left: Math.max(0, x * zoom - viewport.clientWidth / 2),
-      top: Math.max(0, y * zoom - viewport.clientHeight / 2),
-      behavior,
-    });
-  }
+  const relation = useMemo(() => (
+    traceWorldTowerRelations(selectedId, worldMap?.edges ?? [])
+  ), [selectedId, worldMap?.edges]);
 
-  function focusNode(nodeId: string, behavior: ScrollBehavior = "smooth") {
-    const position = layout?.positions.get(nodeId);
-    if (position) focusAt(position.x, position.y, behavior);
-  }
+  const nodeById = useMemo(() => new Map(
+    (worldMap?.items ?? []).map((node) => [node.id, node]),
+  ), [worldMap]);
 
-  useEffect(() => {
-    if (!layout || !selectedId || centeredOnceRef.current) return;
-    centeredOnceRef.current = true;
-    requestAnimationFrame(() => focusNode(selectedId, "auto"));
-  }, [layout, selectedId]);
+  const levelById = useMemo(() => new Map(
+    (manifest?.levels ?? []).map((level) => [level.id, level]),
+  ), [manifest]);
 
-  useEffect(() => {
-    if (!layout || !levelMap) return;
-    const focusKey = levelMap.levelId + ":" + levelMap.visibility;
-    if (focusedExpansionRef.current === focusKey) return;
-    const band = layout.bands.get(levelMap.levelId);
-    if (!band) return;
-    focusedExpansionRef.current = focusKey;
-    requestAnimationFrame(() => focusAt(layout.width / 2, band.top + 190));
-  }, [layout, levelMap]);
-
-  function chooseNode(nodeId: string) {
+  const selectNode = useCallback(async (nodeId: string) => {
+    const requestId = selectionRequestRef.current + 1;
+    selectionRequestRef.current = requestId;
     setSelectedId(nodeId);
-    setNotice("");
-    requestAnimationFrame(() => focusNode(nodeId));
-  }
-
-  function chooseLevel(levelId: string) {
-    if (!layout) return;
-    if (expandedLevelId === levelId && levelMap) {
-      const band = layout.bands.get(levelId);
-      if (band) focusAt(layout.width / 2, band.top + 190);
-      return;
+    setDetail(null);
+    try {
+      const nextDetail = await loadWorldTowerNode(nodeId);
+      if (selectionRequestRef.current === requestId) setDetail(nextDetail);
+    } catch (error) {
+      setNotice(errorMessage(error));
     }
-    focusedExpansionRef.current = "";
-    setExpandedLevelId(levelId);
-    setNotice("正在按“" + (LOAD_STRATEGIES.find((item) => item.value === loadStrategy)?.label ?? "全部加载") + "”展开这个尺度层…");
-  }
+  }, []);
 
-  function chooseLoadStrategy(strategy: WorldTowerLoadStrategy) {
-    focusedExpansionRef.current = "";
-    setLoadStrategy(strategy);
-    if (!expandedLevelId) {
-      setExpandedLevelId(selectedNode?.levelId ?? manifest?.levels[0]?.id ?? null);
-    }
-  }
-
-  function changeZoom(nextZoom: number) {
+  useLayoutEffect(() => {
+    if (
+      didInitialPositionRef.current
+      || !isViewportMeasured
+      || !layout
+      || !manifest
+      || !worldMap
+      || !viewportRef.current
+    ) return;
+    const target = initialWorldTowerTarget(worldMap.items, manifest.levels);
     const viewport = viewportRef.current;
-    const next = Math.max(0.62, Math.min(1.16, nextZoom));
-    if (!viewport) {
-      setZoom(next);
-      return;
+    didInitialPositionRef.current = true;
+    const previousScrollBehavior = viewport.style.scrollBehavior;
+    viewport.style.scrollBehavior = "auto";
+    viewport.scrollTop = bottomAlignedScrollTop(layout.height, viewport.clientHeight, zoom);
+    viewport.style.scrollBehavior = previousScrollBehavior;
+    setActiveLevelId(target.levelId);
+    if (target.nodeId) {
+      void selectNode(target.nodeId);
+      nodeButtonsRef.current.get(target.nodeId)?.focus({ preventScroll: true });
     }
-    const centerX = (viewport.scrollLeft + viewport.clientWidth / 2) / zoom;
-    const centerY = (viewport.scrollTop + viewport.clientHeight / 2) / zoom;
-    setZoom(next);
-    requestAnimationFrame(() => {
-      viewport.scrollTo({
-        left: centerX * next - viewport.clientWidth / 2,
-        top: centerY * next - viewport.clientHeight / 2,
-        behavior: "auto",
-      });
-    });
-  }
+  }, [isViewportMeasured, layout, manifest, selectNode, worldMap, zoom]);
 
-  function handlePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
-    if (event.button !== 0 || (event.target as Element).closest("button, a")) return;
+  useEffect(() => {
+    if (!clearArmed) return;
+    const timeout = window.setTimeout(() => setClearArmed(false), 5_000);
+    return () => window.clearTimeout(timeout);
+  }, [clearArmed]);
+
+  const syncActiveLevel = useCallback(() => {
+    if (!layout || !manifest || !viewportRef.current) return;
     const viewport = viewportRef.current;
-    if (!viewport) return;
-    dragRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      scrollLeft: viewport.scrollLeft,
-      scrollTop: viewport.scrollTop,
-    };
-    viewport.setPointerCapture(event.pointerId);
-    viewport.classList.add("is-panning");
-  }
-
-  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
-    const drag = dragRef.current;
-    const viewport = viewportRef.current;
-    if (!drag || drag.pointerId !== event.pointerId || !viewport) return;
-    viewport.scrollLeft = drag.scrollLeft - (event.clientX - drag.startX);
-    viewport.scrollTop = drag.scrollTop - (event.clientY - drag.startY);
-  }
-
-  function endPointerPan(
-    event: ReactPointerEvent<HTMLDivElement>,
-    clearSelectionOnClick = false,
-  ) {
-    const viewport = viewportRef.current;
-    const drag = dragRef.current;
-    if (drag?.pointerId === event.pointerId) {
-      const isBlankClick = clearSelectionOnClick
-        && Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) < 7
-        && !(event.target as Element).closest("button, a");
-      dragRef.current = null;
-      if (isBlankClick) {
-        setSelectedId(null);
-        setNotice("");
-      }
-    }
-    viewport?.classList.remove("is-panning");
-  }
-
-  function updateProgress(progress: WorldTowerProgress) {
-    setManifest((current) => current ? { ...current, progress } : current);
-  }
-
-  function openArtworkPreview(node: WorldTowerNode) {
-    if (!node.isUnlocked || !node.imagePath) return;
-    previewReturnFocusRef.current = document.activeElement instanceof HTMLElement
-      ? document.activeElement
-      : null;
-    setPreviewNode(node);
-  }
-
-  function closeArtworkPreview() {
-    setPreviewNode(null);
-    requestAnimationFrame(() => previewReturnFocusRef.current?.focus());
-  }
-
-  async function refreshProgressViews(progress: WorldTowerProgress) {
-    updateProgress(progress);
-    const [nextWorldMap, nextLevelMap, nextDetail] = await Promise.all([
-      loadWorldTowerMap(),
-      expandedLevelId
-        ? loadWorldTowerLevelMap(expandedLevelId, loadStrategy)
-        : Promise.resolve(null),
-      selectedId ? loadWorldTowerNode(selectedId) : Promise.resolve(null),
-    ]);
-    setWorldMap(nextWorldMap);
-    setLevelMap(nextLevelMap);
-    setDetail(nextDetail);
-  }
-
-  async function handleProgressAction(action: WorldTowerProgressAction) {
-    if (busyTarget) return;
-    if (action === "clear-all" && !clearAllArmed) {
-      setClearAllArmed(true);
-      setNotice("清空会保留知识币，但会移除所有发现、知识和背包道具。请在 5 秒内再点一次确认。");
-      return;
-    }
-    setClearAllArmed(false);
-    setBusyTarget("progress:" + action);
-    setNotice(
-      action === "unlock-all"
-        ? "正在点亮整座万物构成塔…"
-        : "正在安全清空发现与背包…",
+    const next = activeLevelAtViewport(
+      layout.bands,
+      manifest.levels,
+      viewport.scrollTop,
+      viewport.clientHeight,
+      zoom,
     );
+    if (next) setActiveLevelId(next);
+  }, [layout, manifest, zoom]);
+
+  useEffect(() => {
+    const activeButton = activeLevelId ? railButtonsRef.current.get(activeLevelId) : null;
+    activeButton?.scrollIntoView({ block: "nearest" });
+  }, [activeLevelId]);
+
+  const goToLevel = (levelId: string) => {
+    if (!layout || !viewportRef.current) return;
+    const band = layout.bands.get(levelId);
+    if (!band) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    viewportRef.current.scrollTo({
+      top: Math.max(0, band.top * zoom - 8),
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+    setActiveLevelId(levelId);
+  };
+
+  const handleUnlock = async () => {
+    if (!detail || detail.node.isUnlocked) return;
+    setBusyTarget(detail.node.id);
+    try {
+      await unlockWorldTowerNode(detail.node.id);
+      await refreshData();
+      setDetail(await loadWorldTowerNode(detail.node.id));
+      setNotice(`${detail.node.name}已经点亮，知识路线又向前一步！`);
+    } catch (error) {
+      setNotice(errorMessage(error));
+    } finally {
+      setBusyTarget(null);
+    }
+  };
+
+  const handleManage = async (action: WorldTowerProgressAction) => {
+    if (action === "clear-all" && !clearArmed) {
+      setClearArmed(true);
+      setNotice("再点一次“确认清空”，所有节点会回到未点亮状态，知识币余额会保留。");
+      return;
+    }
+    setManageBusy(action);
     try {
       const result = await manageWorldTowerProgress(action);
-      await refreshProgressViews(result.progress);
-      setNotice(
-        action === "unlock-all"
-          ? "全部 2,000 个节点已经点亮。"
-          : "已经清空，电子、质子和中子三个起点仍然保留。",
-      );
+      await refreshData();
+      if (selectedId) setDetail(await loadWorldTowerNode(selectedId));
+      setNotice(action === "unlock-all"
+        ? `整座物质塔已点亮，共处理 ${result.affectedNodes} 个节点。`
+        : `已经清空 ${result.affectedNodes} 个节点，知识币余额保持不变。`);
     } catch (error) {
       setNotice(errorMessage(error));
     } finally {
-      setBusyTarget(null);
+      setManageBusy(null);
+      setClearArmed(false);
     }
-  }
-
-  async function handleUnlock() {
-    if (!detail || detail.node.isUnlocked || busyTarget) return;
-    if (!canUnlock) {
-      setNotice("先沿着青色来路点亮输入，再把右侧缺少的动作或知识准备好。");
-      return;
-    }
-    setBusyTarget(detail.node.id);
-    setNotice("正在把这次发现安全地写入本机进度…");
-    try {
-      const result = await unlockWorldTowerNode(detail.node.id);
-      updateProgress(result.progress);
-      setWorldMap((current) => current ? {
-        ...current,
-        items: current.items.map((node) => (
-          node.id === detail.node.id ? { ...node, isUnlocked: true } : node
-        )),
-      } : current);
-      setLevelMap((current) => {
-        if (!current || current.levelId !== detail.node.levelId) return current;
-        const unlockedItems = current.items.map((node) => (
-          node.id === detail.node.id ? { ...node, isUnlocked: true } : node
-        ));
-        const keepNode = current.visibility !== "locked";
-        return {
-          ...current,
-          matchedTotal: keepNode ? current.matchedTotal : current.matchedTotal - 1,
-          items: keepNode
-            ? unlockedItems
-            : unlockedItems.filter((node) => node.id !== detail.node.id),
-          groups: current.groups
-            .map((group) => ({
-              ...group,
-              nodeIds: keepNode
-                ? group.nodeIds
-                : group.nodeIds.filter((nodeId) => nodeId !== detail.node.id),
-            }))
-            .filter((group) => group.nodeIds.length > 0),
-        };
-      });
-      setDetail((current) => current ? {
-        ...current,
-        node: { ...current.node, isUnlocked: true },
-      } : current);
-      setNotice(result.alreadyUnlocked ? "这个发现已经亮着了。" : "发现成功！它已经永久点亮。");
-    } catch (error) {
-      setNotice(errorMessage(error));
-    } finally {
-      setBusyTarget(null);
-    }
-  }
-
-  async function handlePurchase(resource: WorldTowerResource) {
-    if (!resource.shop.purchasable || busyTarget) return;
-    setBusyTarget(resource.id);
-    setNotice("正在准备“" + resource.name + "”…");
-    try {
-      const result = await purchaseWorldTowerResource(resource.id);
-      updateProgress(result.progress);
-      setNotice(
-        result.alreadyUnlocked
-          ? "“" + resource.name + "”已经永久点亮。"
-          : resource.inventoryMode === "charge"
-            ? "背包里增加了一个“" + resource.name + "”。"
-            : "“" + resource.name + "”已经永久点亮。",
-      );
-    } catch (error) {
-      setNotice(errorMessage(error));
-    } finally {
-      setBusyTarget(null);
-    }
-  }
+  };
 
   if (fatalError) {
     return (
-      <main className="wt-page is-loading">
-        <div className="wt-loading-card is-error">
-          <strong>万物星图暂时没有展开</strong>
-          <span>{fatalError}</span>
-          <button type="button" onClick={() => window.location.reload()}>再试一次</button>
-          <a href="/">返回学习岛</a>
-        </div>
+      <main className="mt-page mt-page--message">
+        <section className="mt-message" role="alert">
+          <span aria-hidden="true">◇</span>
+          <h1>物质塔暂时没有打开</h1>
+          <p>{fatalError}</p>
+          <a href="/">返回学习大厅</a>
+        </section>
       </main>
     );
   }
-  if (!manifest || !worldMap || !displayedMap || !layout) return <WorldTowerLoading />;
 
-  const selectedLevelOrder = selectedNode
-    ? manifest.levels.find((level) => level.id === selectedNode.levelId)?.order ?? 1
-    : 1;
-  const selectedLabel = selectedNode ? visibleNodeName(selectedNode) : "还没有选择";
-  const backgroundStyle = {
-    "--wt-background": "url(\"" + manifest.backgroundAsset + "\")",
-  } as CSSProperties;
-  const scalerStyle = {
-    width: layout.width * zoom,
-    height: layout.height * zoom,
-  };
-  const surfaceStyle = {
-    width: layout.width,
-    height: layout.height,
-    transform: "scale(" + zoom + ")",
-  };
+  if (!manifest || !worldMap || !layout) {
+    return (
+      <main className="mt-page mt-page--message" aria-live="polite">
+        <section className="mt-message is-loading"><span aria-hidden="true">✦</span><h1>正在搭建物质塔…</h1></section>
+      </main>
+    );
+  }
+
+  const unlockedCount = manifest.progress.unlockedNodeIds.length;
+  const currentLevel = levelById.get(activeLevelId ?? "");
+  const recipe = detail?.node.recipes[0];
+  const missingInputs = detail?.inputs.filter((input) => !input.isUnlocked) ?? [];
+  const unlockPrice = detail?.node.unlockPriceCoins ?? 0;
+  const canUnlock = Boolean(
+    detail
+    && !detail.node.isUnlocked
+    && missingInputs.length === 0
+    && manifest.progress.coinBalance >= unlockPrice,
+  );
+  const visibleEdges = selectedId
+    ? worldMap.edges.filter((edge) => edge.sourceId === selectedId || edge.targetId === selectedId)
+    : [];
 
   return (
-    <main className="wt-page" style={backgroundStyle}>
-      <header className="wt-topbar">
-        <a className="wt-back" href="/" aria-label="返回学习岛">← <span>学习岛</span></a>
-        <div className="wt-title">
-          <span className="wt-title__mark" aria-hidden="true">✦</span>
-          <div>
-            <h1>万物构成塔</h1>
-            <p>{phrase}</p>
-          </div>
+    <main className="mt-page">
+      <header className="mt-topbar">
+        <a className="mt-back" href="/" aria-label="返回学习大厅">‹ <span>学习大厅</span></a>
+        <div className="mt-title">
+          <span className="mt-title__mark" aria-hidden="true">◇</span>
+          <div><p>十六层知识构成图</p><h1>物质塔</h1></div>
         </div>
-        <div className="wt-topbar__stats">
-          <div className="wt-progress-actions" role="group" aria-label="进度快捷操作">
-            <button
-              className="is-unlock-all"
-              type="button"
-              disabled={busyTarget !== null}
-              onClick={() => handleProgressAction("unlock-all")}
-            >
-              {busyTarget === "progress:unlock-all" ? "点亮中…" : "点亮全部"}
-            </button>
-            <button
-              className={"is-clear-all" + (clearAllArmed ? " is-armed" : "")}
-              type="button"
-              disabled={busyTarget !== null}
-              aria-pressed={clearAllArmed}
-              onClick={() => handleProgressAction("clear-all")}
-            >
-              {busyTarget === "progress:clear-all"
-                ? "清空中…"
-                : clearAllArmed ? "再点确认" : "清空全部"}
-            </button>
-          </div>
-          <span className="wt-discovery-count"><b>{manifest.counts.nodes.toLocaleString("zh-CN")}</b> 个发现</span>
-          <span className="wt-coin"><i aria-hidden="true">✦</i> <b>{manifest.progress.coinBalance.toLocaleString("zh-CN")}</b> 知识币</span>
+        <div className="mt-topbar__stats" aria-label="物质塔进度">
+          <span><b>16</b> 层</span>
+          <span><b>{unlockedCount}</b> / {manifest.counts.nodes} 已点亮</span>
+          <span className="mt-coin"><i aria-hidden="true">✦</i><b>{manifest.progress.coinBalance}</b> 知识币</span>
+        </div>
+        <div className="mt-admin">
+          <button type="button" disabled={manageBusy !== null} onClick={() => handleManage("unlock-all")}>
+            {manageBusy === "unlock-all" ? "点亮中…" : "点亮全部"}
+          </button>
+          <button
+            type="button"
+            className={clearArmed ? "is-armed" : ""}
+            disabled={manageBusy !== null}
+            onClick={() => handleManage("clear-all")}
+          >
+            {manageBusy === "clear-all" ? "清空中…" : clearArmed ? "确认清空" : "清空进度"}
+          </button>
         </div>
       </header>
 
-      <div className="wt-graph-layout">
-        <section className="wt-graph-stage" aria-label="从粒子到宇宙的万物关系图">
-          <div className="wt-graph-toolbar">
-            <div className="wt-graph-toolbar__summary">
-              <span>{levelLoading ? "正在展开尺度层" : levelMap ? "已展开尺度层" : "全塔关系骨架"}</span>
-              <b>
-                {levelMap
-                  ? (manifest.levels.find((level) => level.id === levelMap.levelId)?.name ?? "尺度层")
-                    + " · " + levelMap.matchedTotal + " / " + levelMap.totalInLevel
-                  : displayedMap.items.length + " 个节点 · " + (selectedId ? "显示一跳关系" : "暂不显示连线")}
-              </b>
-              <small>{levelMap ? levelMap.groups.length + " 个二级组，每行最多 6 个" : "点节点才显示上下各一层关系"}</small>
-            </div>
-            <div className="wt-load-strategy" role="group" aria-label="尺度层加载策略">
-              {LOAD_STRATEGIES.map((strategy) => (
-                <button
-                  className={strategy.value === loadStrategy ? "is-active" : ""}
-                  key={strategy.value}
-                  type="button"
-                  aria-pressed={strategy.value === loadStrategy}
-                  onClick={() => chooseLoadStrategy(strategy.value)}
-                >
-                  {strategy.label}
-                </button>
-              ))}
-            </div>
-            <div className="wt-graph-toolbar__legend" aria-label="关系高亮图例">
-              <span className="is-input">来路</span>
-              <span className="is-current">当前</span>
-              <span className="is-output">去向</span>
-            </div>
-            <div className="wt-graph-toolbar__controls" aria-label="图谱缩放与定位">
-              <button type="button" onClick={() => changeZoom(zoom - 0.1)} aria-label="缩小图谱">−</button>
-              <span>{Math.round(zoom * 100)}%</span>
-              <button type="button" onClick={() => changeZoom(zoom + 0.1)} aria-label="放大图谱">＋</button>
-              <button
-                className="is-labeled"
-                type="button"
-                disabled={!selectedId}
-                onClick={() => selectedId && focusNode(selectedId)}
-              >
-                ◎ 定位当前
-              </button>
-            </div>
+      <div className="mt-workspace">
+        <aside className="mt-level-rail" aria-label="物质塔层级导航">
+          <div className="mt-level-rail__heading">
+            <span>当前层级</span>
+            <strong>{currentLevel?.name ?? "宇宙级"}</strong>
           </div>
-          {levelLoading && (
-            <div className="wt-level-map-loading" aria-live="polite">
-              <span />
-              正在整理这个尺度层…
-            </div>
-          )}
-
-          <div
-            className="wt-graph-viewport"
-            ref={viewportRef}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={(event) => endPointerPan(event, true)}
-            onPointerCancel={(event) => endPointerPan(event)}
-          >
-            <div className="wt-graph-scaler" style={scalerStyle}>
-              <div className="wt-graph-surface" style={surfaceStyle}>
-                {[...manifest.levels].sort((left, right) => right.order - left.order).map((level) => {
-                  const band = layout.bands.get(level.id);
-                  if (!band) return null;
-                  const isExpanded = expandedLevelId === level.id;
-                  return (
-                    <section
-                      className={"wt-world-band" + (isExpanded ? " is-expanded" : "")}
-                      key={level.id}
-                      style={{ top: band.top, height: band.height }}
-                      aria-label={"第" + level.order + "层：" + level.name}
-                    >
-                      <span className="wt-world-band__watermark" aria-hidden="true">
-                        {String(level.order).padStart(2, "0")} · {level.name}
-                      </span>
-                      <button
-                        className="wt-world-band__label"
-                        type="button"
-                        onClick={() => chooseLevel(level.id)}
-                        title={level.description}
-                      >
-                        <img src={level.imagePath} alt="" loading="lazy" />
-                        <span>
-                          <small>{String(level.order).padStart(2, "0")} · 尺度层</small>
-                          <b>{level.name}</b>
-                          <i>
-                            {isExpanded
-                              ? levelLoading
-                                ? "正在加载完整内容…"
-                                : "已加载 " + (levelMap?.matchedTotal ?? 0) + " / " + (manifest.counts.levelCounts[level.id] ?? 0)
-                              : "图上 " + (worldMap.levelNodeCounts[level.id] ?? 0)
-                                + " / 共 " + (manifest.counts.levelCounts[level.id] ?? 0)
-                                + " · 点击展开"}
-                          </i>
-                        </span>
-                      </button>
-                    </section>
-                  );
-                })}
-
-                {layout.groupLayouts.map((group) => (
-                  <section
-                    className="wt-world-subgroup"
-                    key={group.id}
-                    style={{ top: group.top, height: group.height }}
-                    aria-label={group.name + "，" + group.nodeCount + "个节点"}
-                  >
-                    <header>
-                      <span>二级组</span>
-                      <b>{group.name}</b>
-                      <i>{group.nodeCount} 个 · 每行最多 6 个</i>
-                    </header>
-                  </section>
-                ))}
-
-                <svg
-                  className="wt-world-edges"
-                  viewBox={"0 0 " + layout.width + " " + layout.height}
-                  aria-hidden="true"
+          <nav>
+            {[...manifest.levels].sort((left, right) => left.order - right.order).map((level) => {
+              const active = level.id === activeLevelId;
+              return (
+                <button
+                  key={level.id}
+                  ref={(element) => {
+                    if (element) railButtonsRef.current.set(level.id, element);
+                    else railButtonsRef.current.delete(level.id);
+                  }}
+                  type="button"
+                  className={active ? "is-active" : ""}
+                  aria-current={active ? "location" : undefined}
+                  onClick={() => goToLevel(level.id)}
                 >
-                  <defs>
-                    <marker id="wt-arrow-input" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                      <path d="M 0 0 L 10 5 L 0 10 z" />
-                    </marker>
-                    <marker id="wt-arrow-output" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                      <path d="M 0 0 L 10 5 L 0 10 z" />
-                    </marker>
-                  </defs>
-                  {visibleRelationEdges.map((edge) => {
-                    const edgeRelation = edge.targetId === selectedId ? "input" : "output";
+                  <span className="mt-level-rail__number">{String(level.order).padStart(2, "0")}</span>
+                  <span className="mt-level-rail__name">{level.name}</span>
+                  <span className="mt-level-rail__count">{worldMap.levelNodeCounts[level.id] ?? 0}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        <section className="mt-stage">
+          <div className="mt-graph-pane">
+            <div className="mt-toolbar">
+              <div>
+                <strong>{currentLevel?.name ?? "宇宙级"}</strong>
+                <span>{currentLevel?.description}</span>
+              </div>
+              <div className="mt-zoom" aria-label="缩放物质塔">
+                <button type="button" onClick={() => setZoom((value) => Math.max(0.65, value - 0.1))} aria-label="缩小">−</button>
+                <output>{Math.round(zoom * 100)}%</output>
+                <button type="button" onClick={() => setZoom((value) => Math.min(1.2, value + 0.1))} aria-label="放大">＋</button>
+                <button
+                  type="button"
+                  className="mt-zoom__fit"
+                  onClick={() => setZoom(Math.max(0.65, Math.min(1, (viewportRef.current?.clientWidth ?? 980) / layout.width)))}
+                >适合宽度</button>
+              </div>
+            </div>
+
+            <div className="mt-viewport" ref={viewportRef} onScroll={syncActiveLevel} tabIndex={0}>
+              <div className="mt-scaled-space" style={{ width: layout.width * zoom, height: layout.height * zoom }}>
+                <div
+                  className="mt-map"
+                  style={{
+                    width: layout.width,
+                    height: layout.height,
+                    transform: `scale(${zoom})`,
+                  }}
+                >
+                  {manifest.levels.map((level) => {
+                    const band = layout.bands.get(level.id)!;
                     return (
-                      <path
-                        key={edge.sourceId + ":" + edge.targetId}
-                        className={"is-" + edgeRelation}
-                        d={edgePath(edge, layout.positions)}
-                        markerEnd={"url(#wt-arrow-" + edgeRelation + ")"}
-                      />
+                      <section
+                        key={level.id}
+                        className={`mt-band mt-band--${(level.order - 1) % 4}`}
+                        style={{ top: band.top, height: band.height }}
+                        aria-label={`${level.name}，${worldMap.levelNodeCounts[level.id] ?? 0} 个节点`}
+                      >
+                        <header><b>{String(level.order).padStart(2, "0")}</b><span>{level.name}</span><small>{worldMap.levelNodeCounts[level.id] ?? 0} 个节点</small></header>
+                      </section>
                     );
                   })}
-                </svg>
 
-                {displayedMap.items.map((node) => {
-                  const position = layout.positions.get(node.id);
-                  if (!position) return null;
-                  const relation = node.id === selectedId
-                    ? "current"
-                    : relations.ancestors.has(node.id)
-                      ? "input"
-                      : relations.descendants.has(node.id)
-                        ? "output"
-                        : "normal";
-                  const levelOrder = manifest.levels.find((level) => level.id === node.levelId)?.order ?? 1;
-                  return (
-                    <div
-                      className={[
-                        "wt-map-node",
-                        "is-" + relation,
-                        node.id === selectedId ? "is-selected" : "",
-                      ].join(" ")}
-                      key={node.id}
-                      style={{ left: position.x, top: position.y }}
-                    >
-                      <span className="wt-map-node__relation" aria-hidden="true">
-                        {relation === "current"
-                          ? "当前"
-                          : relation === "input"
-                            ? "来路"
-                            : relation === "output"
-                              ? "去向"
-                              : ""}
-                      </span>
-                      <RuneNode
-                        node={node}
-                        levelOrder={levelOrder}
-                        frames={manifest.frames}
-                        placeholderTexture={manifest.placeholderTexture}
-                        relation={relation}
-                        onSelect={chooseNode}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+                  <svg className="mt-relations" width={layout.width} height={layout.height} aria-hidden="true">
+                    {visibleEdges.map((edge) => {
+                      const source = layout.positions.get(edge.sourceId);
+                      const target = layout.positions.get(edge.targetId);
+                      if (!source || !target) return null;
+                      const middleY = (source.y + target.y) / 2;
+                      return (
+                        <path
+                          key={`${edge.recipeId}:${edge.sourceId}:${edge.targetId}`}
+                          className={edge.targetId === selectedId ? "is-input" : "is-output"}
+                          d={`M ${source.x} ${source.y} C ${source.x} ${middleY}, ${target.x} ${middleY}, ${target.x} ${target.y}`}
+                        />
+                      );
+                    })}
+                  </svg>
 
-          {selectedNode && (
-            <section
-              className={"wt-graph-inspector" + (selectedNode.isUnlocked ? " is-unlocked" : "")}
-              aria-live="polite"
-            >
-              <button
-                className={"wt-graph-inspector__art" + (selectedNode.isUnlocked ? "" : " is-locked")}
-                type="button"
-                disabled={!selectedNode.isUnlocked || !selectedNode.imagePath}
-                onClick={() => openArtworkPreview(selectedNode)}
-                aria-label={selectedNode.isUnlocked && selectedNode.imagePath
-                  ? "放大查看" + selectedNode.name + "的精细图片"
-                  : undefined}
-              >
-                <NodeArtwork
-                  node={selectedNode}
-                  className="wt-graph-inspector__image"
-                  placeholderTexture={manifest.placeholderTexture}
-                />
-                {!selectedNode.isUnlocked && (
-                  <span className="wt-graph-inspector__question" aria-hidden="true">?</span>
-                )}
-                {selectedNode.isUnlocked && selectedNode.imagePath && (
-                  <span className="wt-graph-inspector__zoom-hint" aria-hidden="true">
-                    查看大图
-                  </span>
-                )}
-              </button>
-              <div className="wt-graph-inspector__body">
-                <div className="wt-graph-inspector__copy">
-                  <span>
-                    第 {selectedLevelOrder} 层 ·
-                    {" "}{detailLoading ? "正在连接来路…" : "来路 " + (detail?.inputs.length ?? 0) + " · 去向 " + (detail?.dependents.length ?? 0)}
-                  </span>
-                  <div>
-                    <h2>{selectedLabel}</h2>
-                    <p>
-                      {selectedNode.isUnlocked
-                        ? selectedNode.summary
-                        : "把来路、动作与知识准备齐，就能点亮这个发现。"}
-                    </p>
-                  </div>
-                </div>
-                <div className="wt-graph-inspector__formula">
-                  <span>合成公式</span>
-                  <div className="wt-formula-flow">
-                    {detailLoading ? (
-                      <p>正在整理构成关系…</p>
-                    ) : selectedRecipe ? (
-                      <>
-                        <div className="wt-formula-steps">
-                          {(detail?.inputs.length ?? 0) > 0 && (
-                            <div className="wt-formula-section is-inputs">
-                              <span className="wt-formula-section__label">组成节点</span>
-                              <div className="wt-formula-terms">
-                                {detail?.inputs.map((inputNode) => (
-                                  <button
-                                    className={"wt-formula-term is-node" + (inputNode.isUnlocked ? " is-ready" : " is-locked")}
-                                    key={inputNode.id}
-                                    type="button"
-                                    onClick={() => chooseNode(inputNode.id)}
-                                  >
-                                    <NodeArtwork
-                                      node={inputNode}
-                                      className="wt-formula-term__art"
-                                      placeholderTexture={manifest.placeholderTexture}
-                                    />
-                                    <span>
-                                      <b>{visibleNodeName(inputNode)}</b>
-                                      <small className="wt-formula-term__meta">
-                                        <span>来路</span>
-                                        <ReadinessMark ready={inputNode.isUnlocked} />
-                                      </small>
-                                    </span>
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          {displayRequirements.length > 0 && (
-                            <div className="wt-formula-section is-requirements">
-                              <span className="wt-formula-section__label">过程准备</span>
-                              <div className="wt-formula-terms">
-                                {displayRequirements.map(({ group, requirement, resource }) => {
-                                  if (!resource) return null;
-                                  const ready = hasRequirement(resource, requirement, manifest.progress);
-                                  return (
-                                    <button
-                                      className={"wt-formula-term is-resource" + (ready ? " is-ready" : " is-missing")}
-                                      key={resource.id}
-                                      type="button"
-                                      onClick={() => setActiveResource(resource)}
-                                    >
-                                      {resource.imagePath && <img src={resource.imagePath} alt="" />}
-                                      <span>
-                                        <b>{resource.name}{requirement.amount > 1 ? " ×" + requirement.amount : ""}</b>
-                                        <small className="wt-formula-term__meta">
-                                          <span>{RESOURCE_GROUPS.find((item) => item.key === group)?.shortLabel ?? "准备"}</span>
-                                          <ReadinessMark ready={ready} />
-                                        </small>
-                                      </span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          )}
-                          {(detail?.inputs.length ?? 0) === 0 && displayRequirements.length === 0 && (
-                            <span className="wt-formula-origin">探索起点</span>
-                          )}
-                        </div>
-                        <span className="wt-formula-arrow" aria-hidden="true">→</span>
-                        <strong className="wt-formula-result">{selectedLabel}</strong>
-                      </>
-                    ) : (
-                      <p>这是探索起点，不需要额外的构成材料。</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-              {!selectedNode.isUnlocked && (
-                <div className="wt-graph-inspector__action">
-                  <button
-                    className="wt-unlock-button"
-                    type="button"
-                    disabled={!canUnlock || busyTarget !== null}
-                    onClick={handleUnlock}
-                  >
-                    {busyTarget === selectedNode.id
-                      ? "正在保存…"
-                      : <>点亮节点 <span>✦ {selectedNode.unlockPriceCoins ?? "—"}</span></>}
-                  </button>
-                  <small>
-                    {missingInputCount > 0
-                      ? "还缺 " + missingInputCount + " 个来路节点"
-                      : missingResources.length > 0
-                        ? "还缺 " + missingResources.length + " 项准备"
-                        : manifest.progress.coinBalance < (selectedNode.unlockPriceCoins ?? 0)
-                          ? "知识币还不够"
-                          : "已经可以点亮"}
-                  </small>
-                </div>
-              )}
-            </section>
-          )}
-        </section>
-
-        <aside className="wt-backpack" aria-label="粒子包、动作、条件、环境和知识背包">
-          <header>
-            <div>
-              <span>探索工具箱</span>
-              <h2>星格背包</h2>
-            </div>
-            <span className="wt-backpack__capacity">{manifest.counts.resources} 种</span>
-          </header>
-
-          <section className="wt-needed-dock" aria-label="当前节点的构成准备">
-            <header>
-              <div>
-                <span>当前构成需要</span>
-                <h3>{selectedLabel}</h3>
-              </div>
-              {missingInputCount > 0 && <b>缺 {missingInputCount} 个来路</b>}
-            </header>
-            <div className="wt-needed-dock__items">
-              {visibleMissingInputs.map((inputNode) => (
-                <div className="wt-needed-item is-node is-missing" key={inputNode.id}>
-                  <button type="button" onClick={() => chooseNode(inputNode.id)}>
-                    <NodeArtwork
-                      node={inputNode}
-                      className="wt-requirement-card__node-art"
-                      placeholderTexture={manifest.placeholderTexture}
-                    />
-                    <span>
-                      <b>{visibleNodeName(inputNode)}</b>
-                      <small className="wt-needed-item__state">
-                        <ReadinessMark ready={false} />
-                        <span>点击前往</span>
-                      </small>
-                    </span>
-                  </button>
-                </div>
-              ))}
-              {visibleRequirements.map(({ requirement, resource }) => {
-                if (!resource) return null;
-                const ready = hasRequirement(resource, requirement, manifest.progress);
-                return (
-                  <div
-                    className={[
-                      "wt-needed-item",
-                      ready ? "is-ready" : "is-missing",
-                      !ready && resource.shop.purchasable ? "has-buy" : "",
-                    ].join(" ")}
-                    key={resource.id}
-                  >
-                    <button type="button" onClick={() => setActiveResource(resource)}>
-                      {resource.imagePath && <img src={resource.imagePath} alt="" />}
-                      <span>
-                        <b>{resource.name}</b>
-                        <small className="wt-needed-item__state">
-                          <ReadinessMark ready={ready} />
-                          {!ready && (
-                            <span>
-                              {resource.shop.purchasable
-                                ? "✦ " + (resource.price?.priceCoins ?? 0)
-                                : "需要满足"}
-                            </span>
-                          )}
-                        </small>
-                      </span>
-                    </button>
-                    {!ready && resource.shop.purchasable && (
-                      <button
-                        className="wt-needed-item__buy"
-                        type="button"
-                        disabled={busyTarget !== null}
-                        onClick={() => handlePurchase(resource)}
+                  {worldMap.items.map((node) => {
+                    const position = layout.positions.get(node.id);
+                    const levelOrder = levelById.get(node.levelId)?.order ?? 16;
+                    if (!position) return null;
+                    const nodeRelation = node.id === selectedId
+                      ? "current"
+                      : relation.ancestors.has(node.id)
+                        ? "input"
+                        : relation.descendants.has(node.id)
+                          ? "output"
+                          : "normal";
+                    return (
+                      <div
+                        key={node.id}
+                        className="mt-node-position"
+                        style={{ "--node-x": `${position.x}px`, "--node-y": `${position.y}px` } as CSSProperties}
                       >
-                        补充
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-              {visibleMissingInputs.length === 0 && visibleRequirements.length === 0 && (
-                <p>{detail?.node.recipes.length === 0 ? "这是探索起点，不需要额外准备。" : "来路与准备都已经齐全，可以点亮这个节点。"}</p>
-              )}
-            </div>
-          </section>
-
-          <div className="wt-backpack__groups">
-            {RESOURCE_GROUPS.map((group) => (
-              <section
-                className={"wt-resource-group is-" + group.key}
-                key={group.key}
-                aria-labelledby={"wt-resource-" + group.key}
-              >
-                <header>
-                  <h3 id={"wt-resource-" + group.key}>{group.label}</h3>
-                  <span>{manifest.resources[group.key].length}</span>
-                </header>
-                <div className="wt-resource-grid">
-                  {manifest.resources[group.key].map((resource) => (
-                    <ResourceSlot
-                      key={resource.id}
-                      resource={resource}
-                      progress={manifest.progress}
-                      active={activeResource?.id === resource.id}
-                      onInspect={setActiveResource}
-                    />
-                  ))}
+                        <MaterialNode
+                          node={node}
+                          levelOrder={levelOrder}
+                          manifest={manifest}
+                          relation={nodeRelation}
+                          onSelect={selectNode}
+                          buttonRef={(element) => {
+                            if (element) nodeButtonsRef.current.set(node.id, element);
+                            else nodeButtonsRef.current.delete(node.id);
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
-              </section>
-            ))}
+              </div>
+            </div>
           </div>
 
-          <section className="wt-resource-inspector" aria-live="polite">
-            {activeResource ? (
+          <aside className="mt-inspector" aria-label="节点构成详情" aria-live="polite">
+            {detail ? (
               <>
-                <div className="wt-resource-inspector__title">
-                  {activeResource.imagePath && <img src={activeResource.imagePath} alt="" />}
+                <div className="mt-inspector__eyebrow">
+                  <span>{levelById.get(detail.node.levelId)?.name}</span>
+                  <span className={detail.node.isUnlocked ? "is-unlocked" : ""}>{detail.node.isUnlocked ? "✓ 已点亮" : "尚未点亮"}</span>
+                </div>
+                <div className="mt-inspector__hero">
+                  <NodeArtwork node={detail.node} placeholderTexture={manifest.placeholderTexture} />
                   <div>
-                    <span>{RESOURCE_GROUPS.find((group) => group.key.startsWith(activeResource.kind))?.shortLabel ?? "资源"}</span>
-                    <h3>{activeResource.name}</h3>
+                    <h2>{visibleNodeName(detail.node)}</h2>
+                    <p>{detail.node.isUnlocked ? detail.node.summary : "点亮后，就能看到它的名字和图片。"}</p>
                   </div>
                 </div>
-                <p>{activeResource.description}</p>
-                <div className="wt-resource-inspector__status">
-                  <span>
-                    {resourceCount(activeResource, manifest.progress) === "permanent"
-                      ? "✓ 已永久学会"
-                      : resourceCount(activeResource, manifest.progress) === "state"
-                        ? "◇ 配方状态"
-                        : activeResource.inventoryMode === "permanent-unlock"
-                          ? "尚未学会"
-                          : "背包数量：" + resourceCount(activeResource, manifest.progress)}
-                  </span>
-                  {activeResource.shop.purchasable && (
-                    <button
-                      type="button"
-                      disabled={busyTarget !== null}
-                      onClick={() => handlePurchase(activeResource)}
-                    >
-                      {busyTarget === activeResource.id
-                        ? "正在保存…"
-                        : activeResource.inventoryMode === "permanent-unlock"
-                          && resourceCount(activeResource, manifest.progress) === "permanent"
-                          ? "已经点亮"
-                          : <>准备一个 <b>✦ {activeResource.price?.priceCoins ?? 0}</b></>}
-                    </button>
-                  )}
-                </div>
+
+                <section className="mt-knowledge-card">
+                  <span>{detail.node.isUnlocked ? `知识关系 · ${recipe?.relationLabel ?? "直接认识"}` : "等待发现"}</span>
+                  <strong>{detail.node.isUnlocked
+                    ? recipe?.knowledgeTopic ?? "先认识基本粒子，再从它们出发探索万物。"
+                    : "准备好前置节点，点亮后再揭开这里的知识。"}</strong>
+                </section>
+
+                <section className="mt-recipe">
+                  <h3>{recipe ? `${recipe.relationLabel}路线` : "直接点亮"}</h3>
+                  {detail.inputs.length > 0 ? (
+                    <div className="mt-input-list">
+                      {detail.inputs.map((input) => (
+                        <button type="button" key={input.id} onClick={() => selectNode(input.id)} className={input.isUnlocked ? "is-ready" : ""}>
+                          <span aria-hidden="true">{input.isUnlocked ? "✓" : "○"}</span>
+                          <strong>{visibleNodeName(input)}</strong>
+                          <small>{input.isUnlocked ? "已准备" : "需先点亮"}</small>
+                        </button>
+                      ))}
+                    </div>
+                  ) : <p className="mt-direct-note">这是探索的起点，不需要其他前置节点。</p>}
+                </section>
+
+                <button
+                  type="button"
+                  className="mt-unlock"
+                  disabled={detail.node.isUnlocked || !canUnlock || busyTarget !== null}
+                  onClick={handleUnlock}
+                >
+                  {busyTarget === detail.node.id
+                    ? "正在点亮…"
+                    : detail.node.isUnlocked
+                      ? "✓ 已经点亮"
+                      : missingInputs.length > 0
+                        ? `还缺 ${missingInputs.length} 个前置节点`
+                        : manifest.progress.coinBalance < unlockPrice
+                          ? `还缺 ${unlockPrice - manifest.progress.coinBalance} 知识币`
+                          : `点亮这个节点 · ✦ ${unlockPrice}`}
+                </button>
+
+                {detail.dependents.length > 0 && (
+                  <section className="mt-next-list">
+                    <h3>点亮后可以继续发现</h3>
+                    <div>{detail.dependents.map((item) => (
+                      <button type="button" key={item.id} onClick={() => selectNode(item.id)}>{visibleNodeName(item)}</button>
+                    ))}</div>
+                  </section>
+                )}
               </>
-            ) : <p>把指针移到一个星格上，看看它能做什么。</p>}
-          </section>
-        </aside>
+            ) : (
+              <div className="mt-inspector__empty">
+                <span aria-hidden="true">◇</span>
+                <h2>选择一个节点</h2>
+                <p>所有节点都已经陈列在图上。点一下问号，准备好前置节点，就能逐步揭开它的名字和图片。</p>
+                <ul>
+                  <li><i className="is-input" /> 青色：它从哪里来</li>
+                  <li><i className="is-output" /> 粉色：它还能通向哪里</li>
+                </ul>
+              </div>
+            )}
+          </aside>
+        </section>
       </div>
 
-      <div className={"wt-notice" + (notice ? " is-visible" : "")} role="status" aria-live="polite">
+      <div className={`mt-notice ${notice ? "is-visible" : ""}`} role="status" aria-live="polite">
         {notice}
+        {notice && <button type="button" onClick={() => setNotice("")} aria-label="关闭提示">×</button>}
       </div>
-
-      {previewNode && (
-        <div
-          className="wt-art-preview"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="wt-art-preview-title"
-          onClick={closeArtworkPreview}
-        >
-          <div className="wt-art-preview__panel">
-            <button
-              ref={previewCloseRef}
-              className="wt-art-preview__close"
-              type="button"
-              aria-label="关闭大图"
-            >
-              ×
-            </button>
-            <div className="wt-art-preview__image-frame">
-              <NodeArtwork
-                node={previewNode}
-                className="wt-art-preview__image"
-                placeholderTexture={manifest.placeholderTexture}
-              />
-            </div>
-            <h2 id="wt-art-preview-title">{previewNode.name}</h2>
-            <p>点击任意位置关闭</p>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

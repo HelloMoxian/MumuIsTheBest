@@ -7,6 +7,7 @@ import {
 } from "react";
 import characterAsset from "../../../../../content/chinese/common-characters.v1.json";
 import {
+  ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
   type RecognitionState,
@@ -47,7 +48,7 @@ function voiceLabel(state: VoiceDisplayState) {
     connecting: "正在连接",
     listening: "识别中",
     finishing: "正在结束",
-    limited: "已到 2 分钟",
+    limited: `已到 ${ASR_SESSION_LIMIT_MINUTES} 分钟`,
     stopped: "语音已暂停",
     error: "语音需要检查",
   };
@@ -472,7 +473,7 @@ export function CommonCharactersGame() {
           {voiceState === "limited"
             ? "点击继续识别"
             : voiceState === "listening"
-              ? "每段最多 2 分钟"
+              ? `每段最多 ${ASR_SESSION_LIMIT_MINUTES} 分钟`
               : "点击开启"}
         </small>
       </span>

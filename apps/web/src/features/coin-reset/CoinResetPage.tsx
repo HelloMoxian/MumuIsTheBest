@@ -1,16 +1,18 @@
 import { type FormEvent, useEffect, useState } from "react";
 import {
   loadLearningCoinBalance,
-  resetLearningCoins,
+  setLearningCoinBalance,
 } from "../../shared/learning-coins";
+import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
 import "./coin-reset.css";
 
-type ResetStatus = "idle" | "loading" | "resetting" | "success" | "error";
+type ManagementStatus = "idle" | "loading" | "saving" | "success" | "error";
 
 export function CoinResetPage() {
   const [coinBalance, setCoinBalance] = useState<number | null>(null);
   const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<ResetStatus>("loading");
+  const [targetBalance, setTargetBalance] = useState("");
+  const [status, setStatus] = useState<ManagementStatus>("loading");
   const [message, setMessage] = useState("正在读取万物构成塔的知识币余额…");
 
   useEffect(() => {
@@ -18,8 +20,9 @@ export function CoinResetPage() {
     loadLearningCoinBalance(controller.signal)
       .then((result) => {
         setCoinBalance(result.coinBalance);
+        setTargetBalance(String(result.coinBalance));
         setStatus("idle");
-        setMessage("输入家长密码后，可以把知识币余额重置为 0。");
+        setMessage("输入家长密码和目标余额，可以清零，也可以设置为指定整数。");
       })
       .catch((error) => {
         if (controller.signal.aborted) return;
@@ -29,24 +32,41 @@ export function CoinResetPage() {
     return () => controller.abort();
   }, []);
 
-  async function submitReset(event: FormEvent) {
+  useNumericKeypadSubmission(({ value }) => {
+    setTargetBalance(String(value));
+    setStatus("idle");
+    setMessage(`数字键盘已经放入目标余额 ${value.toLocaleString("zh-CN")}，输入家长密码后确认保存。`);
+  });
+
+  async function submitBalance(event: FormEvent) {
     event.preventDefault();
-    if (!password.trim() || status === "resetting") return;
-    setStatus("resetting");
-    setMessage("正在安全重置知识币…");
+    const parsedBalance = Number(targetBalance);
+    if (
+      !password.trim()
+      || status === "saving"
+      || !Number.isInteger(parsedBalance)
+      || parsedBalance < 0
+      || parsedBalance > 1_000_000_000
+    ) {
+      setStatus("error");
+      setMessage("请输入家长密码，以及 0 至 10 亿之间的整数余额。");
+      return;
+    }
+    setStatus("saving");
+    setMessage("正在安全保存知识币余额…");
     try {
-      const result = await resetLearningCoins(password.trim());
+      const result = await setLearningCoinBalance(password.trim(), parsedBalance);
       setCoinBalance(result.progress.coinBalance);
       setPassword("");
       setStatus("success");
-      setMessage("知识币已经重置为 0，万物构成塔的解锁进度没有改变。");
+      setMessage(`知识币余额已经设置为 ${parsedBalance.toLocaleString("zh-CN")}，万物构成塔的解锁进度没有改变。`);
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "知识币暂时没有重置成功。");
+      setMessage(error instanceof Error ? error.message : "知识币余额暂时没有设置成功。");
     }
   }
 
-  const busy = status === "loading" || status === "resetting";
+  const busy = status === "loading" || status === "saving";
 
   return (
     <div className="coin-reset-page">
@@ -60,7 +80,7 @@ export function CoinResetPage() {
         <section className="coin-reset-card" aria-labelledby="coin-reset-title">
           <div className="coin-reset-heading">
             <span className="coin-reset-chip">万物构成塔 · 知识币管理</span>
-            <h1 id="coin-reset-title">重置知识币</h1>
+            <h1 id="coin-reset-title">设置知识币</h1>
             <p>这里只调整知识币余额，不会清除已经点亮的节点、知识或背包道具。</p>
           </div>
 
@@ -70,28 +90,60 @@ export function CoinResetPage() {
             <small>答对数学题获得的币会汇总到这里</small>
           </div>
 
-          <form className="coin-reset-form" onSubmit={(event) => void submitReset(event)}>
-            <label htmlFor="coin-reset-password">家长密码</label>
-            <input
-              id="coin-reset-password"
-              type="password"
-              inputMode="numeric"
-              value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                if (status === "error") {
-                  setStatus("idle");
-                  setMessage("输入家长密码后，可以把知识币余额重置为 0。");
-                }
-              }}
-              maxLength={64}
-              autoComplete="off"
-              placeholder="请输入 6 位密码"
+          <form className="coin-reset-form" onSubmit={(event) => void submitBalance(event)}>
+            <div className="coin-reset-fields">
+              <label htmlFor="coin-reset-password">
+                <span>家长密码</span>
+                <input
+                  id="coin-reset-password"
+                  type="password"
+                  inputMode="numeric"
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                    if (status === "error") setStatus("idle");
+                  }}
+                  maxLength={64}
+                  autoComplete="off"
+                  placeholder="请输入 6 位密码"
+                  disabled={busy}
+                  aria-describedby="coin-reset-message"
+                />
+              </label>
+              <label htmlFor="coin-target-balance">
+                <span>目标余额</span>
+                <input
+                  id="coin-target-balance"
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  max={1_000_000_000}
+                  step={1}
+                  value={targetBalance}
+                  onChange={(event) => {
+                    setTargetBalance(event.target.value);
+                    if (status === "error") setStatus("idle");
+                  }}
+                  placeholder="输入 0 或指定余额"
+                  disabled={busy}
+                  aria-describedby="coin-reset-message"
+                />
+              </label>
+            </div>
+            <button
+              className="coin-zero-button"
+              type="button"
               disabled={busy}
-              aria-describedby="coin-reset-message"
-            />
-            <button type="submit" disabled={busy || !password.trim()}>
-              {status === "resetting" ? "正在重置…" : "确认重置为 0"}
+              onClick={() => {
+                setTargetBalance("0");
+                setStatus("idle");
+                setMessage("目标余额已填为 0，输入家长密码后确认保存即可清零。");
+              }}
+            >
+              快速填入 0（清零）
+            </button>
+            <button type="submit" disabled={busy || !password.trim() || !targetBalance.trim()}>
+              {status === "saving" ? "正在保存…" : "确认设置余额"}
             </button>
           </form>
 
@@ -104,9 +156,12 @@ export function CoinResetPage() {
           </p>
 
           <div className="coin-reward-rules" aria-label="数学题知识币规则">
-            <span><b>+1</b> 基础加减法</span>
-            <span><b>+5</b> 复杂运算</span>
+            <span><b>+2</b> 加减练习 · 每题</span>
+            <span><b>+4 / +6 / +8</b> 算术大战 · 简单 / 中等 / 超难</span>
+            <span><b>+2 / +3 / +5</b> 乘法小能手 · 乘法 / 逆向除法 / 进阶</span>
+            <span><b>+10 / +30 / +60 / +150</b> 找数字 · 百 / 千 / 万 / 十万</span>
             <span><b>+20</b> 猫鼠游戏</span>
+            <span className="is-triple"><b>×3</b> 三倍玩法 · 按对应基础分乘三</span>
           </div>
         </section>
       </main>

@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { awardLearningCoins } from "../../shared/learning-coins";
+import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
 import {
+  ARITHMETIC_BATTLE_COIN_REWARDS,
+  MULTIPLICATION_COIN_REWARDS,
+} from "../../shared/learning-coins";
+import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
+import {
+  ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
   type RecognitionState,
@@ -92,7 +98,7 @@ function recognitionLabel(state: RecognitionDisplayState) {
     connecting: "连接中",
     listening: "识别中",
     finishing: "结束中",
-    limited: "本段已到 2 分钟",
+    limited: `本段已到 ${ASR_SESSION_LIMIT_MINUTES} 分钟`,
     stopped: "语音已停止",
     unconfigured: "需要配置 ASR",
     error: "连接失败",
@@ -107,12 +113,22 @@ function parallelDifficultyLabel(difficulty: ParallelDifficulty) {
   return difficultyLabel(difficulty);
 }
 
+function baseRewardCoinsForDifficulty(difficulty: ParallelDifficulty) {
+  if (difficulty === "facts" || difficulty === "reverse" || difficulty === "advanced") {
+    return MULTIPLICATION_COIN_REWARDS[difficulty];
+  }
+  return ARITHMETIC_BATTLE_COIN_REWARDS[difficulty];
+}
+
 export function ArithmeticBattleGame({
   variant = "arithmetic-battle",
 }: {
   variant?: GameVariant;
 } = {}) {
   const isMultiplication = variant === "multiplication";
+  const learningRewards = useLearningRewardSession(
+    isMultiplication ? "math:multiplication" : "math:arithmetic-battle",
+  );
   const gameTitle = isMultiplication ? "乘法小能手" : "算数大战";
   const historyEndpoint = isMultiplication
     ? "/api/math/multiplication/history"
@@ -152,6 +168,8 @@ export function ArithmeticBattleGame({
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState("");
   const [historySessions, setHistorySessions] = useState<ParallelStoredSession[]>([]);
+  const baseRewardCoins = baseRewardCoinsForDifficulty(difficulty);
+  const effectiveRewardCoins = baseRewardCoins * (learningRewards.session?.multiplier ?? 1);
 
   const recognitionRef = useRef<AsrRecognitionSession | null>(null);
   const questionsRef = useRef<BattleQuestion[]>([]);
@@ -269,24 +287,36 @@ export function ArithmeticBattleGame({
       setSolvedQuestions(completed);
       setResultBubble({
         answer: question.answer,
-        message: "+5 知识币，已经存进万物构成塔",
+        message: "答对啦，知识币正在飞向顶部",
       });
       if (bubbleHideTimerRef.current !== null) window.clearTimeout(bubbleHideTimerRef.current);
       bubbleHideTimerRef.current = window.setTimeout(
         () => setResultBubble(null),
         BUBBLE_VISIBLE_MS,
       );
-      void awardLearningCoins(
-        isMultiplication ? "math:multiplication" : "math:arithmetic-battle",
-      ).catch(() => {
+      void learningRewards.award(difficulty).catch(() => {
         setSaveWarning("答案已经记录，但知识币暂时没有加上；下次答题时可以继续获得。");
       });
       if (completed.length === questionsRef.current.length) {
         void saveCompletedBattle(completed);
       }
     },
-    [isMultiplication, saveCompletedBattle],
+    [difficulty, learningRewards, saveCompletedBattle],
   );
+
+  useNumericKeypadSubmission(({ value }) => {
+    if (phaseRef.current !== "playing") return;
+    const matchingQuestion = questionsRef.current.find(
+      (question) => question.answer === value && !solvedByIdRef.current.has(question.id),
+    );
+    if (matchingQuestion) {
+      solveQuestion(matchingQuestion);
+      return;
+    }
+    const alreadySolved = [...solvedByIdRef.current.values()]
+      .some((question) => question.answer === value);
+    showResultBubble(value, alreadySolved);
+  }, phase === "playing");
 
   const beginAnswerChecking = useCallback(() => {
     clearAnswerChecking();
@@ -553,7 +583,7 @@ export function ArithmeticBattleGame({
             </span>
             {phase === "playing" && (
               <span className="battle-segment-chip">
-                语音能量 {asrSegmentCount} / {MAX_ASR_SEGMENTS} · 每段最多 2 分钟
+                语音能量 {asrSegmentCount} / {MAX_ASR_SEGMENTS} · 每段最多 {ASR_SESSION_LIMIT_MINUTES} 分钟
               </span>
             )}
             {transcript && <span className="battle-transcript">{transcript}</span>}
@@ -640,7 +670,10 @@ export function ArithmeticBattleGame({
                   ? `${parallelDifficultyLabel(difficulty)}挑战！`
                   : `${parallelDifficultyLabel(difficulty)}${gameTitle}！`}
               </h1>
-              <p>每一颗答案星都靠认真计算点亮，正确率 100%，每题获得 5 个知识币。</p>
+              <p>
+                每一颗答案星都靠认真计算点亮，正确率 100%，每题获得 {effectiveRewardCoins} 个知识币
+                {learningRewards.session?.multiplier === 3 ? `（基础 ${baseRewardCoins} × 3）` : ""}。
+              </p>
               <div className="battle-result-list">
                 {[...solvedQuestions]
                   .sort((a, b) => a.solvedOrder - b.solvedOrder)

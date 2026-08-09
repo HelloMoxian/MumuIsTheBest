@@ -7,6 +7,7 @@ import {
   type CSSProperties,
 } from "react";
 import {
+  ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
   type RecognitionResult,
@@ -81,7 +82,7 @@ function voiceLabel(state: VoiceState) {
     connecting: "正在连接语音",
     listening: "正在听方向指令",
     finishing: "正在结束识别",
-    limited: "本次已到 2 分钟",
+    limited: `本次已到 ${ASR_SESSION_LIMIT_MINUTES} 分钟`,
     stopped: "语音导航已停止",
     error: "语音暂时不可用",
   };

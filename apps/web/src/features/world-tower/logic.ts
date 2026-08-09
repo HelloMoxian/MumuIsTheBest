@@ -1,22 +1,15 @@
 import type {
-  RecipeRequirement,
-  ResourceGroupKey,
-  WorldTowerManifest,
   WorldTowerLevel,
-  WorldTowerLevelGroup,
   WorldTowerMapEdge,
   WorldTowerNode,
-  WorldTowerProgress,
-  WorldTowerRecipe,
-  WorldTowerResource,
 } from "./types";
 
-export const WORLD_MAP_WIDTH = 1_120;
-export const WORLD_MAP_BAND_HEIGHT = 230;
-export const WORLD_MAP_NODE_ROW_HEIGHT = 250;
-export const WORLD_MAP_NODES_PER_ROW = 6;
-export const WORLD_MAP_GRAPH_CENTER_X = 670;
-export const WORLD_MAP_GRAPH_COLUMN_GAP = 148;
+export const WORLD_MAP_WIDTH = 980;
+export const WORLD_MAP_BAND_HEADER_HEIGHT = 58;
+export const WORLD_MAP_NODE_ROW_HEIGHT = 116;
+export const WORLD_MAP_GRAPH_COLUMN_GAP = 106;
+export const WORLD_MAP_MIN_COLUMNS = 6;
+export const WORLD_MAP_MAX_COLUMNS = 11;
 
 export type AtlasCellPlacement = {
   widthPercent: number;
@@ -36,7 +29,6 @@ export function atlasCellPlacement(crop: {
   const index = Math.min(maxIndex, Math.max(0, Math.floor(crop.index)));
   const column = index % columns;
   const row = Math.floor(index / columns);
-
   return {
     widthPercent: columns * 100,
     heightPercent: rows * 100,
@@ -45,222 +37,104 @@ export function atlasCellPlacement(crop: {
   };
 }
 
-function nodeXInCenteredRow(
-  rowLength: number,
-  columnIndex: number,
-  graphCenterX: number,
-) {
-  return graphCenterX
-    + (columnIndex - (rowLength - 1) / 2) * WORLD_MAP_GRAPH_COLUMN_GAP;
-}
-
-export type WorldMapPosition = {
-  x: number;
-  y: number;
-};
-
-export type WorldMapBand = {
-  top: number;
-  height: number;
-};
-
-export type WorldMapGroupLayout = {
-  id: string;
-  name: string;
-  levelId: string;
-  top: number;
-  height: number;
-  nodeCount: number;
-};
-
+export type WorldMapPosition = { x: number; y: number };
+export type WorldMapBand = { top: number; height: number };
 export type FrameQuality = "common" | "rare" | "epic" | "legendary";
 
 export function frameQualityForLevel(levelOrder: number): FrameQuality {
-  if (levelOrder >= 12) return "legendary";
-  if (levelOrder >= 8) return "epic";
-  if (levelOrder >= 4) return "rare";
+  if (levelOrder <= 4) return "legendary";
+  if (levelOrder <= 8) return "epic";
+  if (levelOrder <= 12) return "rare";
   return "common";
 }
 
 export function visibleNodeName(node: WorldTowerNode) {
-  return node.isUnlocked ? node.name : "未发现";
+  return node.isUnlocked ? node.name : "？";
 }
 
-export function resourceCount(
-  resource: WorldTowerResource,
-  progress: WorldTowerProgress,
-): number | "permanent" | "state" {
-  if (resource.inventoryMode === "charge") {
-    return progress.resourceInventory[resource.id] ?? 0;
-  }
-  if (resource.inventoryMode === "permanent-unlock") {
-    return progress.permanentResourceIds.includes(resource.id) ? "permanent" : 0;
-  }
-  return "state";
-}
-
-export function hasRequirement(
-  resource: WorldTowerResource,
-  requirement: RecipeRequirement,
-  progress: WorldTowerProgress,
+export function initialWorldTowerTarget(
+  nodes: WorldTowerNode[],
+  levels: WorldTowerLevel[],
 ) {
-  const count = resourceCount(resource, progress);
-  if (count === "state" || count === "permanent") return true;
-  return count >= requirement.amount;
+  const bottomLevel = [...levels].sort((left, right) => right.order - left.order)[0];
+  if (!bottomLevel) return { levelId: null, nodeId: null };
+  const bottomNodes = nodes.filter((node) => node.levelId === bottomLevel.id);
+  const preferredNode = bottomNodes.find((node) => node.name === "电子")
+    ?? bottomNodes.find((node) => node.name === "质子")
+    ?? bottomNodes[0];
+  return {
+    levelId: bottomLevel.id,
+    nodeId: preferredNode?.id ?? null,
+  };
 }
 
-const resourceGroupOrder: ResourceGroupKey[] = [
-  "particlePacks",
-  "actions",
-  "conditions",
-  "environments",
-  "knowledge",
-];
-
-export function recipeRequirements(
-  recipe: WorldTowerRecipe | undefined,
-  resourcesById: ReadonlyMap<string, WorldTowerResource>,
+export function bottomAlignedScrollTop(
+  layoutHeight: number,
+  viewportHeight: number,
+  zoom: number,
 ) {
-  if (!recipe) return [];
-  return resourceGroupOrder.flatMap((group) =>
-    recipe.requirements[group].map((requirement) => ({
-      group,
-      requirement,
-      resource: resourcesById.get(requirement.resourceId) ?? null,
-    })),
-  );
-}
-
-export function shouldDisplayRecipeRequirement(
-  group: ResourceGroupKey,
-  requirement: RecipeRequirement,
-  resource: WorldTowerResource | null,
-  progress: WorldTowerProgress,
-) {
-  return group !== "knowledge"
-    || !resource
-    || !hasRequirement(resource, requirement, progress);
-}
-
-export function buildResourceMap(manifest: WorldTowerManifest) {
-  return new Map(
-    Object.values(manifest.resources)
-      .flat()
-      .map((resource) => [resource.id, resource] as const),
-  );
+  return Math.max(0, layoutHeight * Math.max(0.1, zoom) - Math.max(0, viewportHeight));
 }
 
 export function layoutWorldTowerMap(
   nodes: WorldTowerNode[],
-  edges: WorldTowerMapEdge[],
+  _edges: WorldTowerMapEdge[],
   levels: WorldTowerLevel[],
-  expanded?: {
-    levelId: string;
-    groups: WorldTowerLevelGroup[];
-  } | null,
   availableWidth = WORLD_MAP_WIDTH,
 ) {
-  const mapWidth = Math.max(WORLD_MAP_WIDTH, availableWidth);
-  const graphCenterX = WORLD_MAP_GRAPH_CENTER_X + (mapWidth - WORLD_MAP_WIDTH) / 2;
+  const width = Math.max(WORLD_MAP_WIDTH, availableWidth);
+  const columnCount = Math.max(
+    WORLD_MAP_MIN_COLUMNS,
+    Math.min(WORLD_MAP_MAX_COLUMNS, Math.floor((width - 72) / WORLD_MAP_GRAPH_COLUMN_GAP)),
+  );
   const positions = new Map<string, WorldMapPosition>();
   const bands = new Map<string, WorldMapBand>();
-  const groupLayouts: WorldMapGroupLayout[] = [];
-  const incomingByTarget = new Map<string, string[]>();
-  for (const edge of edges) {
-    const incoming = incomingByTarget.get(edge.targetId) ?? [];
-    incoming.push(edge.sourceId);
-    incomingByTarget.set(edge.targetId, incoming);
-  }
-  const levelsDescending = [...levels].sort((left, right) => right.order - left.order);
-  let mapTop = 0;
-  for (const level of levelsDescending) {
-    const levelNodeCount = nodes.filter((node) => node.levelId === level.id).length;
-    const levelRows = Math.max(1, Math.ceil(levelNodeCount / WORLD_MAP_NODES_PER_ROW));
-    let height = 110 + levelRows * WORLD_MAP_NODE_ROW_HEIGHT;
-    if (expanded?.levelId === level.id) {
-      height = expanded.groups.length === 0
-        ? 330
-        : 110 + expanded.groups.reduce((sum, group) => (
-            sum + 90 + Math.ceil(group.nodeIds.length / WORLD_MAP_NODES_PER_ROW) * WORLD_MAP_NODE_ROW_HEIGHT
-          ), 0);
-    }
-    bands.set(level.id, { top: mapTop, height });
-    mapTop += height;
-  }
-  const orderedLevels = [...levels].sort((left, right) => left.order - right.order);
+  let top = 0;
 
-  for (const level of orderedLevels) {
-    const band = bands.get(level.id)!;
-    if (expanded?.levelId === level.id) {
-      let groupTop = band.top + 110;
-      for (const group of expanded.groups) {
-        const groupNodes = group.nodeIds
-          .map((nodeId) => nodes.find((node) => node.id === nodeId))
-          .filter((node): node is WorldTowerNode => Boolean(node));
-        const rows = Math.ceil(groupNodes.length / WORLD_MAP_NODES_PER_ROW);
-        const groupHeight = 90 + rows * WORLD_MAP_NODE_ROW_HEIGHT;
-        groupLayouts.push({
-          id: group.id,
-          name: group.name,
-          levelId: level.id,
-          top: groupTop,
-          height: groupHeight,
-          nodeCount: groupNodes.length,
+  for (const level of [...levels].sort((left, right) => left.order - right.order)) {
+    const levelNodes = nodes.filter((node) => node.levelId === level.id);
+    const rowCount = Math.max(1, Math.ceil(levelNodes.length / columnCount));
+    const height = WORLD_MAP_BAND_HEADER_HEIGHT + rowCount * WORLD_MAP_NODE_ROW_HEIGHT + 18;
+    bands.set(level.id, { top, height });
+
+    for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+      const rowNodes = levelNodes.slice(rowIndex * columnCount, (rowIndex + 1) * columnCount);
+      const rowWidth = Math.max(0, (rowNodes.length - 1) * WORLD_MAP_GRAPH_COLUMN_GAP);
+      const startX = width / 2 - rowWidth / 2;
+      rowNodes.forEach((node, columnIndex) => {
+        positions.set(node.id, {
+          x: startX + columnIndex * WORLD_MAP_GRAPH_COLUMN_GAP,
+          y: top + WORLD_MAP_BAND_HEADER_HEIGHT + 51 + rowIndex * WORLD_MAP_NODE_ROW_HEIGHT,
         });
-        for (let rowIndex = 0; rowIndex < rows; rowIndex += 1) {
-          const rowNodes = groupNodes.slice(
-            rowIndex * WORLD_MAP_NODES_PER_ROW,
-            (rowIndex + 1) * WORLD_MAP_NODES_PER_ROW,
-          );
-          rowNodes.forEach((node, columnIndex) => {
-            const x = nodeXInCenteredRow(rowNodes.length, columnIndex, graphCenterX);
-            const y = groupTop + 78 + rowIndex * WORLD_MAP_NODE_ROW_HEIGHT + 105;
-            positions.set(node.id, { x, y });
-          });
-        }
-        groupTop += groupHeight;
-      }
-      continue;
-    }
-    const levelNodes = nodes
-      .filter((node) => node.levelId === level.id)
-      .map((node) => {
-        const incomingPositions = (incomingByTarget.get(node.id) ?? [])
-          .map((nodeId) => positions.get(nodeId)?.x)
-          .filter((value): value is number => value !== undefined);
-        return {
-          node,
-          anchor: incomingPositions.length > 0
-            ? incomingPositions.reduce((sum, value) => sum + value, 0) / incomingPositions.length
-            : null,
-        };
-      })
-      .sort((left, right) => {
-        if (left.anchor !== null && right.anchor !== null) return left.anchor - right.anchor;
-        if (left.anchor !== null) return -1;
-        if (right.anchor !== null) return 1;
-        return left.node.clusterId.localeCompare(right.node.clusterId, "zh-CN")
-          || left.node.id.localeCompare(right.node.id, "zh-CN");
       });
-
-    levelNodes.forEach(({ node }, index) => {
-      const rowIndex = Math.floor(index / WORLD_MAP_NODES_PER_ROW);
-      const rowStart = rowIndex * WORLD_MAP_NODES_PER_ROW;
-      const rowLength = Math.min(WORLD_MAP_NODES_PER_ROW, levelNodes.length - rowStart);
-      const columnIndex = index - rowStart;
-      const x = nodeXInCenteredRow(rowLength, columnIndex, graphCenterX);
-      const y = band.top + 215 + rowIndex * WORLD_MAP_NODE_ROW_HEIGHT;
-      positions.set(node.id, { x, y });
-    });
+    }
+    top += height;
   }
 
-  return {
-    width: mapWidth,
-    height: mapTop + 40,
-    positions,
-    bands,
-    groupLayouts,
-  };
+  return { width, height: top, positions, bands, columnCount };
+}
+
+export function activeLevelAtViewport(
+  bands: ReadonlyMap<string, WorldMapBand>,
+  levels: WorldTowerLevel[],
+  scrollTop: number,
+  viewportHeight: number,
+  zoom: number,
+) {
+  const safeZoom = Math.max(0.1, zoom);
+  const ordered = [...levels].sort((left, right) => left.order - right.order);
+  const contentBottom = ordered.reduce((maximum, level) => {
+    const band = bands.get(level.id);
+    return band ? Math.max(maximum, band.top + band.height) : maximum;
+  }, 0) * safeZoom;
+  if (scrollTop + viewportHeight >= contentBottom - 2) {
+    return ordered.at(-1)?.id ?? null;
+  }
+  const readingLine = (scrollTop + viewportHeight * 0.3) / safeZoom;
+  return ordered.find((level) => {
+    const band = bands.get(level.id);
+    return band && readingLine >= band.top && readingLine < band.top + band.height;
+  })?.id ?? ordered.at(-1)?.id ?? null;
 }
 
 export function traceWorldTowerRelations(
@@ -270,7 +144,6 @@ export function traceWorldTowerRelations(
   const ancestors = new Set<string>();
   const descendants = new Set<string>();
   if (!selectedId) return { ancestors, descendants };
-
   for (const edge of edges) {
     if (edge.targetId === selectedId) ancestors.add(edge.sourceId);
     if (edge.sourceId === selectedId) descendants.add(edge.targetId);

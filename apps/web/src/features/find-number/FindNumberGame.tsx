@@ -7,7 +7,11 @@ import {
   type FormEvent,
 } from "react";
 import { flushSync } from "react-dom";
+import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
+import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
+import type { FindNumberRewardKey } from "../../shared/learning-coins";
 import {
+  ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
   type RecognitionState,
@@ -68,7 +72,7 @@ function voiceLabel(state: VoiceDisplayState) {
     connecting: "正在连接",
     listening: "正在听",
     finishing: "正在收尾",
-    limited: "本段已到 2 分钟",
+    limited: `本段已到 ${ASR_SESSION_LIMIT_MINUTES} 分钟`,
     stopped: "语音已停止",
     error: "语音需要检查",
     unconfigured: "需要配置语音",
@@ -85,6 +89,7 @@ function formatDuration(milliseconds: number) {
 }
 
 export function FindNumberGame() {
+  const learningRewards = useLearningRewardSession("math:find-number");
   const [rangeMaximum, setRangeMaximum] = useState<NumberRangeMaximum>(100);
   const [phase, setPhase] = useState<GamePhase>("setup");
   const [secret, setSecret] = useState(0);
@@ -191,6 +196,9 @@ export function FindNumberGame() {
       setFinalDurationMs(duration);
       setPhase("celebrating");
       setVoiceDetail("通关啦！说“下一局”可以再找一个");
+      void learningRewards.award(String(maximum) as FindNumberRewardKey).catch(() => {
+        setVoiceDetail("数字已经找到啦；知识币暂时没有加上，下一局还可以继续获得");
+      });
       void stopRecognition();
       clearCelebrationTimer();
       celebrationTimerRef.current = window.setTimeout(() => {
@@ -207,7 +215,7 @@ export function FindNumberGame() {
         }
       }, reducedMotion ? 30 : 1_250);
     }
-  }, [clearCelebrationTimer, stopRecognition]);
+  }, [clearCelebrationTimer, learningRewards, stopRecognition]);
 
   const processVoiceText = useCallback((text: string, isFinal: boolean) => {
     setTranscript(text);
@@ -316,6 +324,16 @@ export function FindNumberGame() {
     const value = Math.min(rangeMaximum, Math.max(0, Math.round(parsedValue)));
     handleGuess({ kind: manualKind, value, rawText: queryLabel({ kind: manualKind, value }) });
   };
+
+  useNumericKeypadSubmission(({ value: submittedValue }) => {
+    if (phaseRef.current !== "playing") return;
+    setManualValue(String(submittedValue));
+    handleGuess({
+      kind: manualKind,
+      value: submittedValue,
+      rawText: queryLabel({ kind: manualKind, value: submittedValue }),
+    });
+  }, phase === "playing");
 
   const toggleRecognition = async () => {
     if (
@@ -518,7 +536,7 @@ export function FindNumberGame() {
             aria-label={`${voiceLabel(voiceState)}。${voiceDetail}`}
           >
             <i aria-hidden="true" />
-            <span><strong>{voiceLabel(voiceState)}</strong><small>{voiceState === "limited" ? "点击继续" : `上限 2 分钟`}</small></span>
+            <span><strong>{voiceLabel(voiceState)}</strong><small>{voiceState === "limited" ? "点击继续" : `上限 ${ASR_SESSION_LIMIT_MINUTES} 分钟`}</small></span>
           </button>
           <button type="button" className="end-round-button" disabled={celebrating} onClick={() => void finishRoundEarly()}>结束一局</button>
         </div>

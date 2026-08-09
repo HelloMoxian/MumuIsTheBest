@@ -1,4 +1,5 @@
 import {
+  useCallback,
   useMemo,
   useRef,
   useState,
@@ -12,7 +13,8 @@ import {
   type ActorId,
   type CatMousePuzzle,
 } from "./logic";
-import { awardLearningCoins } from "../../shared/learning-coins";
+import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
+import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
 import "./cat-mouse-game.css";
 
 type AnswerState = "answering" | "retry" | "correct" | "revealed";
@@ -254,11 +256,13 @@ function PuzzlePicture({ puzzle }: { puzzle: CatMousePuzzle }) {
 }
 
 export function CatMouseGame() {
+  const learningRewards = useLearningRewardSession("math:cat-mouse-game");
   const [puzzle, setPuzzle] = useState(() => generateCatMousePuzzle());
   const [answerInput, setAnswerInput] = useState("");
   const [answerState, setAnswerState] = useState<AnswerState>("answering");
   const [coinMessage, setCoinMessage] = useState("");
   const puzzleIdRef = useRef(puzzle.id);
+  const rewardedPuzzleIdsRef = useRef(new Set<string>());
 
   const showSolution = answerState === "correct" || answerState === "revealed";
 
@@ -275,9 +279,7 @@ export function CatMouseGame() {
     setCoinMessage("");
   };
 
-  const submitAnswer = (event: FormEvent) => {
-    event.preventDefault();
-    const value = Number(answerInput);
+  const checkAnswer = useCallback((value: number) => {
     if (!Number.isInteger(value) || value <= 0 || value > 200) {
       setAnswerState("retry");
       return;
@@ -286,19 +288,32 @@ export function CatMouseGame() {
       setAnswerState("retry");
       return;
     }
+    if (rewardedPuzzleIdsRef.current.has(puzzle.id)) return;
+    rewardedPuzzleIdsRef.current.add(puzzle.id);
     const rewardedPuzzleId = puzzle.id;
     setAnswerState("correct");
-    setCoinMessage("正在把 +20 知识币存进万物构成塔…");
-    void awardLearningCoins("math:cat-mouse-game")
+    setCoinMessage("正在把知识币送到顶部…");
+    void learningRewards.award()
       .then((result) => {
         if (puzzleIdRef.current !== rewardedPuzzleId) return;
-        setCoinMessage(`获得 20 个知识币！现在共有 ${result.progress.coinBalance} 个。`);
+        setCoinMessage(`获得 ${result.rewardCoins} 个知识币！现在共有 ${result.progress.coinBalance} 个。`);
       })
       .catch(() => {
         if (puzzleIdRef.current !== rewardedPuzzleId) return;
         setCoinMessage("答案已经算对，但知识币暂时没有加上；下一题还可以继续获得。");
       });
+  }, [learningRewards, puzzle.answer, puzzle.id]);
+
+  const submitAnswer = (event: FormEvent) => {
+    event.preventDefault();
+    checkAnswer(Number(answerInput));
   };
+
+  useNumericKeypadSubmission(({ value }) => {
+    if (showSolution) return;
+    setAnswerInput(String(value));
+    checkAnswer(value);
+  }, !showSolution);
 
   return (
     <div className={`cat-mouse-page state-${answerState}`}>

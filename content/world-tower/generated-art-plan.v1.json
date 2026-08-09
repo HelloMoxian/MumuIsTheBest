@@ -1,0 +1,3202 @@
+{
+  "schemaVersion": 1,
+  "graphId": "mumu-material-tower-graph-v2",
+  "generatedAt": "2026-08-09T10:28:18.964Z",
+  "grid": {
+    "columns": 5,
+    "rows": 4,
+    "cellsPerAtlas": 20,
+    "readingOrder": "row-major-left-to-right-top-to-bottom",
+    "cutPolicy": "equal-width-and-height-grid-with-24px-inset",
+    "outputPolicy": "one-transparent-trimmed-png-per-non-reserved-cell"
+  },
+  "counts": {
+    "graphNodes": 479,
+    "existingSuitableAssets": 183,
+    "missingSuitableAssets": 296,
+    "atlases": 15,
+    "reservedCells": 4
+  },
+  "batches": [
+    {
+      "id": "material-tower-atlas-01",
+      "index": 1,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#00FF00",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-01.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-01",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-01-01",
+          "nodeId": "node:暗物质",
+          "name": "暗物质",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-01-02",
+          "nodeId": "node:暗能量",
+          "name": "暗能量",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-01-03",
+          "nodeId": "node:宇宙微波背景",
+          "name": "宇宙微波背景",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-01-04",
+          "nodeId": "node:星系丝状结构",
+          "name": "星系丝状结构",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-01-05",
+          "nodeId": "node:宇宙空洞",
+          "name": "宇宙空洞",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-01-06",
+          "nodeId": "node:星系长城",
+          "name": "星系长城",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-01-07",
+          "nodeId": "node:宇宙网",
+          "name": "宇宙网",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-01-08",
+          "nodeId": "node:宇宙大尺度结构",
+          "name": "宇宙大尺度结构",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-01-09",
+          "nodeId": "node:时空",
+          "name": "时空",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-01-10",
+          "nodeId": "node:宇宙",
+          "name": "宇宙",
+          "levelId": "level:01-universe",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-01-11",
+          "nodeId": "node:仙女座星系",
+          "name": "仙女座星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-01-12",
+          "nodeId": "node:三角座星系",
+          "name": "三角座星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-01-13",
+          "nodeId": "node:大麦哲伦星系",
+          "name": "大麦哲伦星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-01-14",
+          "nodeId": "node:小麦哲伦星系",
+          "name": "小麦哲伦星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-01-15",
+          "nodeId": "node:人马座矮椭球星系",
+          "name": "人马座矮椭球星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-01-16",
+          "nodeId": "node:大犬座矮星系",
+          "name": "大犬座矮星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-01-17",
+          "nodeId": "node:涡状星系",
+          "name": "涡状星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-01-18",
+          "nodeId": "node:草帽星系",
+          "name": "草帽星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-01-19",
+          "nodeId": "node:螺旋星系",
+          "name": "螺旋星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-01-20",
+          "nodeId": "node:不规则星系",
+          "name": "不规则星系",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-02",
+      "index": 2,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#00FF00",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-02.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-02",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-02-01",
+          "nodeId": "node:本星系群",
+          "name": "本星系群",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-02-02",
+          "nodeId": "node:星系团",
+          "name": "星系团",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-02-03",
+          "nodeId": "node:室女座星系团",
+          "name": "室女座星系团",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-02-04",
+          "nodeId": "node:超星系团",
+          "name": "超星系团",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-02-05",
+          "nodeId": "node:室女座超星系团",
+          "name": "室女座超星系团",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-02-06",
+          "nodeId": "node:拉尼亚凯亚超星系团",
+          "name": "拉尼亚凯亚超星系团",
+          "levelId": "level:02-galaxies",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-02-07",
+          "nodeId": "node:猎户座大星云",
+          "name": "猎户座大星云",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-02-08",
+          "nodeId": "node:猎户悬臂",
+          "name": "猎户悬臂",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-02-09",
+          "nodeId": "node:英仙臂",
+          "name": "英仙臂",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-02-10",
+          "nodeId": "node:盾牌—半人马臂",
+          "name": "盾牌—半人马臂",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-02-11",
+          "nodeId": "node:人马臂",
+          "name": "人马臂",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-02-12",
+          "nodeId": "node:矩尺臂",
+          "name": "矩尺臂",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-02-13",
+          "nodeId": "node:外臂",
+          "name": "外臂",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-02-14",
+          "nodeId": "node:远三千秒差距臂",
+          "name": "远三千秒差距臂",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-02-15",
+          "nodeId": "node:银河盘",
+          "name": "银河盘",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-02-16",
+          "nodeId": "node:银河棒",
+          "name": "银河棒",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-02-17",
+          "nodeId": "node:银河核球",
+          "name": "银河核球",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-02-18",
+          "nodeId": "node:银河中心",
+          "name": "银河中心",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-02-19",
+          "nodeId": "node:中心黑洞（人马座A*）",
+          "name": "中心黑洞（人马座A*）",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-02-20",
+          "nodeId": "node:银河晕",
+          "name": "银河晕",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-03",
+      "index": 3,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#00FF00",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-03.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-03",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-03-01",
+          "nodeId": "node:太阳邻域",
+          "name": "太阳邻域",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-03-02",
+          "nodeId": "node:银河系",
+          "name": "银河系",
+          "levelId": "level:03-milky-way",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-03-03",
+          "nodeId": "node:太阳",
+          "name": "太阳",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-03-04",
+          "nodeId": "node:水星",
+          "name": "水星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-03-05",
+          "nodeId": "node:金星",
+          "name": "金星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-03-06",
+          "nodeId": "node:地球",
+          "name": "地球",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-03-07",
+          "nodeId": "node:火星",
+          "name": "火星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-03-08",
+          "nodeId": "node:木星",
+          "name": "木星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-03-09",
+          "nodeId": "node:土星",
+          "name": "土星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-03-10",
+          "nodeId": "node:天王星",
+          "name": "天王星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-03-11",
+          "nodeId": "node:海王星",
+          "name": "海王星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-03-12",
+          "nodeId": "node:彗星",
+          "name": "彗星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-03-13",
+          "nodeId": "node:小行星",
+          "name": "小行星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-03-14",
+          "nodeId": "node:柯伊伯带",
+          "name": "柯伊伯带",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-03-15",
+          "nodeId": "node:奥尔特云",
+          "name": "奥尔特云",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-03-16",
+          "nodeId": "node:流星",
+          "name": "流星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-03-17",
+          "nodeId": "node:陨石",
+          "name": "陨石",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-03-18",
+          "nodeId": "node:冥王星",
+          "name": "冥王星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-03-19",
+          "nodeId": "node:谷神星",
+          "name": "谷神星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-03-20",
+          "nodeId": "node:阋神星",
+          "name": "阋神星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-04",
+      "index": 4,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#00FF00",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-04.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-04",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-04-01",
+          "nodeId": "node:妊神星",
+          "name": "妊神星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-04-02",
+          "nodeId": "node:鸟神星",
+          "name": "鸟神星",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-04-03",
+          "nodeId": "node:太阳风",
+          "name": "太阳风",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-04-04",
+          "nodeId": "node:日球层",
+          "name": "日球层",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-04-05",
+          "nodeId": "node:行星环",
+          "name": "行星环",
+          "levelId": "level:04-solar-system",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-04-06",
+          "nodeId": "node:月亮",
+          "name": "月亮",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-04-07",
+          "nodeId": "node:人造卫星",
+          "name": "人造卫星",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-04-08",
+          "nodeId": "node:空间站",
+          "name": "空间站",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-04-09",
+          "nodeId": "node:地球磁场",
+          "name": "地球磁场",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-04-10",
+          "nodeId": "node:磁层",
+          "name": "磁层",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-04-11",
+          "nodeId": "node:南极",
+          "name": "南极",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-04-12",
+          "nodeId": "node:北极",
+          "name": "北极",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-04-13",
+          "nodeId": "node:地壳板块",
+          "name": "地壳板块",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-04-14",
+          "nodeId": "node:河流",
+          "name": "河流",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-04-15",
+          "nodeId": "node:湖泊",
+          "name": "湖泊",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-04-16",
+          "nodeId": "node:云",
+          "name": "云",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-04-17",
+          "nodeId": "node:雨",
+          "name": "雨",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-04-18",
+          "nodeId": "node:风",
+          "name": "风",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-04-19",
+          "nodeId": "node:地下水",
+          "name": "地下水",
+          "levelId": "level:05-earth-system",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-04-20",
+          "nodeId": "node:云计算",
+          "name": "云计算",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-05",
+      "index": 5,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#00FF00",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-05.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-05",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-05-01",
+          "nodeId": "node:大数据",
+          "name": "大数据",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-05-02",
+          "nodeId": "node:机器学习",
+          "name": "机器学习",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-05-03",
+          "nodeId": "node:生成式人工智能",
+          "name": "生成式人工智能",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-05-04",
+          "nodeId": "node:大语言模型",
+          "name": "大语言模型",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-05-05",
+          "nodeId": "node:计算机视觉",
+          "name": "计算机视觉",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-05-06",
+          "nodeId": "node:语音识别",
+          "name": "语音识别",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-05-07",
+          "nodeId": "node:智能助手",
+          "name": "智能助手",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-05-08",
+          "nodeId": "node:人形机器人",
+          "name": "人形机器人",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-05-09",
+          "nodeId": "node:自动驾驶汽车",
+          "name": "自动驾驶汽车",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-05-10",
+          "nodeId": "node:无人机",
+          "name": "无人机",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-05-11",
+          "nodeId": "node:智能手机",
+          "name": "智能手机",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-05-12",
+          "nodeId": "node:物联网",
+          "name": "物联网",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-05-13",
+          "nodeId": "node:智能家居",
+          "name": "智能家居",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-05-14",
+          "nodeId": "node:5G通信",
+          "name": "5G通信",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-05-15",
+          "nodeId": "node:卫星互联网",
+          "name": "卫星互联网",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-05-16",
+          "nodeId": "node:虚拟现实",
+          "name": "虚拟现实",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-05-17",
+          "nodeId": "node:增强现实",
+          "name": "增强现实",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-05-18",
+          "nodeId": "node:量子计算机",
+          "name": "量子计算机",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-05-19",
+          "nodeId": "node:脑机接口",
+          "name": "脑机接口",
+          "levelId": "level:06-ai-era",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-05-20",
+          "nodeId": "node:半导体",
+          "name": "半导体",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-06",
+      "index": 6,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#00FF00",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-06.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-06",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-06-01",
+          "nodeId": "node:晶体管",
+          "name": "晶体管",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-06-02",
+          "nodeId": "node:集成电路",
+          "name": "集成电路",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-06-03",
+          "nodeId": "node:电池",
+          "name": "电池",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-06-04",
+          "nodeId": "node:激光器",
+          "name": "激光器",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-06-05",
+          "nodeId": "node:光纤",
+          "name": "光纤",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-06-06",
+          "nodeId": "node:海底电缆",
+          "name": "海底电缆",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-06-07",
+          "nodeId": "node:雷达",
+          "name": "雷达",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-06-08",
+          "nodeId": "node:数字相机",
+          "name": "数字相机",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-06-09",
+          "nodeId": "node:电子计算器",
+          "name": "电子计算器",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-06-10",
+          "nodeId": "node:数控机床",
+          "name": "数控机床",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-06-11",
+          "nodeId": "node:工业机器人",
+          "name": "工业机器人",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-06-12",
+          "nodeId": "node:核电站",
+          "name": "核电站",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-06-13",
+          "nodeId": "node:太阳能电池板",
+          "name": "太阳能电池板",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-06-14",
+          "nodeId": "node:移动电话",
+          "name": "移动电话",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-06-15",
+          "nodeId": "node:火箭",
+          "name": "火箭",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-06-16",
+          "nodeId": "node:宇宙飞船",
+          "name": "宇宙飞船",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-06-17",
+          "nodeId": "node:全球定位系统",
+          "name": "全球定位系统",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-06-18",
+          "nodeId": "node:射电望远镜",
+          "name": "射电望远镜",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-06-19",
+          "nodeId": "node:空间望远镜",
+          "name": "空间望远镜",
+          "levelId": "level:07-third-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-06-20",
+          "nodeId": "node:钢铁",
+          "name": "钢铁",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-07",
+      "index": 7,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#00FF00",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-07.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-07",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-07-01",
+          "nodeId": "node:交流电",
+          "name": "交流电",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-07-02",
+          "nodeId": "node:变压器",
+          "name": "变压器",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-07-03",
+          "nodeId": "node:电网",
+          "name": "电网",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-07-04",
+          "nodeId": "node:电机",
+          "name": "电机",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-07-05",
+          "nodeId": "node:橡胶轮胎",
+          "name": "橡胶轮胎",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-07-06",
+          "nodeId": "node:内燃机",
+          "name": "内燃机",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-07-07",
+          "nodeId": "node:电报",
+          "name": "电报",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-07-08",
+          "nodeId": "node:电话",
+          "name": "电话",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-07-09",
+          "nodeId": "node:留声机",
+          "name": "留声机",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-07-10",
+          "nodeId": "node:无线电",
+          "name": "无线电",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-07-11",
+          "nodeId": "node:X光机",
+          "name": "X光机",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-07-12",
+          "nodeId": "node:照相机",
+          "name": "照相机",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-07-13",
+          "nodeId": "node:抗生素",
+          "name": "抗生素",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-07-14",
+          "nodeId": "node:医疗器械",
+          "name": "医疗器械",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-07-15",
+          "nodeId": "node:石油工业",
+          "name": "石油工业",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-07-16",
+          "nodeId": "node:炼油设备",
+          "name": "炼油设备",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-07-17",
+          "nodeId": "node:化肥",
+          "name": "化肥",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-07-18",
+          "nodeId": "node:塑料",
+          "name": "塑料",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-07-19",
+          "nodeId": "node:流水线",
+          "name": "流水线",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-07-20",
+          "nodeId": "node:打字机",
+          "name": "打字机",
+          "levelId": "level:08-second-industrial",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-08",
+      "index": 8,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#FF00FF",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-08.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-08",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-08-01",
+          "nodeId": "node:螺丝",
+          "name": "螺丝",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-08-02",
+          "nodeId": "node:微型弹簧",
+          "name": "微型弹簧",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-08-03",
+          "nodeId": "node:焦炭",
+          "name": "焦炭",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-08-04",
+          "nodeId": "node:高炉",
+          "name": "高炉",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-08-05",
+          "nodeId": "node:炼铁",
+          "name": "炼铁",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-08-06",
+          "nodeId": "node:蒸汽泵",
+          "name": "蒸汽泵",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-08-07",
+          "nodeId": "node:蒸汽机",
+          "name": "蒸汽机",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-08-08",
+          "nodeId": "node:珍妮纺纱机",
+          "name": "珍妮纺纱机",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-08-09",
+          "nodeId": "node:水力纺纱机",
+          "name": "水力纺纱机",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-08-10",
+          "nodeId": "node:骡机",
+          "name": "骡机",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-08-11",
+          "nodeId": "node:动力织布机",
+          "name": "动力织布机",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-08-12",
+          "nodeId": "node:纺织厂",
+          "name": "纺织厂",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-08-13",
+          "nodeId": "node:煤矿",
+          "name": "煤矿",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-08-14",
+          "nodeId": "node:车床",
+          "name": "车床",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-08-15",
+          "nodeId": "node:铣床",
+          "name": "铣床",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-08-16",
+          "nodeId": "node:运河",
+          "name": "运河",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-08-17",
+          "nodeId": "node:蒸汽锤",
+          "name": "蒸汽锤",
+          "levelId": "level:09-first-industrial",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-08-18",
+          "nodeId": "node:玻璃",
+          "name": "玻璃",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-08-19",
+          "nodeId": "node:金币",
+          "name": "金币",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-08-20",
+          "nodeId": "node:银币",
+          "name": "银币",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-09",
+      "index": 9,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#FF00FF",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-09.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-09",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-09-01",
+          "nodeId": "node:纸",
+          "name": "纸",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-09-02",
+          "nodeId": "node:木屋",
+          "name": "木屋",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-09-03",
+          "nodeId": "node:锄头",
+          "name": "锄头",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-09-04",
+          "nodeId": "node:玉米",
+          "name": "玉米",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-09-05",
+          "nodeId": "node:小米",
+          "name": "小米",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-09-06",
+          "nodeId": "node:大豆",
+          "name": "大豆",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-09-07",
+          "nodeId": "node:蔬菜",
+          "name": "蔬菜",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-09-08",
+          "nodeId": "node:果树",
+          "name": "果树",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-09-09",
+          "nodeId": "node:粮食",
+          "name": "粮食",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-09-10",
+          "nodeId": "node:狗",
+          "name": "狗",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-09-11",
+          "nodeId": "node:犁",
+          "name": "犁",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-09-12",
+          "nodeId": "node:镰刀",
+          "name": "镰刀",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-09-13",
+          "nodeId": "node:磨盘",
+          "name": "磨盘",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-09-14",
+          "nodeId": "node:水井",
+          "name": "水井",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-09-15",
+          "nodeId": "node:灌溉渠",
+          "name": "灌溉渠",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-09-16",
+          "nodeId": "node:粮仓",
+          "name": "粮仓",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-09-17",
+          "nodeId": "node:马车",
+          "name": "马车",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-09-18",
+          "nodeId": "node:陶器",
+          "name": "陶器",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-09-19",
+          "nodeId": "node:丝绸",
+          "name": "丝绸",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-09-20",
+          "nodeId": "node:棉花",
+          "name": "棉花",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-10",
+      "index": 10,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#FF00FF",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-10.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-10",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-10-01",
+          "nodeId": "node:钟",
+          "name": "钟",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-10-02",
+          "nodeId": "node:表",
+          "name": "表",
+          "levelId": "level:10-agriculture",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-10-03",
+          "nodeId": "node:火",
+          "name": "火",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-10-04",
+          "nodeId": "node:绳子",
+          "name": "绳子",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-10-05",
+          "nodeId": "node:石刀",
+          "name": "石刀",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-10-06",
+          "nodeId": "node:石斧",
+          "name": "石斧",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-10-07",
+          "nodeId": "node:石锤",
+          "name": "石锤",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-10-08",
+          "nodeId": "node:骨针",
+          "name": "骨针",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-10-09",
+          "nodeId": "node:草屋",
+          "name": "草屋",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-10-10",
+          "nodeId": "node:长矛",
+          "name": "长矛",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-10-11",
+          "nodeId": "node:弓",
+          "name": "弓",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-10-12",
+          "nodeId": "node:箭",
+          "name": "箭",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-10-13",
+          "nodeId": "node:兽皮衣",
+          "name": "兽皮衣",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-10-14",
+          "nodeId": "node:木筏",
+          "name": "木筏",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-10-15",
+          "nodeId": "node:独木舟",
+          "name": "独木舟",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-10-16",
+          "nodeId": "node:陶罐",
+          "name": "陶罐",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-10-17",
+          "nodeId": "node:车轮",
+          "name": "车轮",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-10-18",
+          "nodeId": "node:鱼网",
+          "name": "鱼网",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-10-19",
+          "nodeId": "node:捕鱼",
+          "name": "捕鱼",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-10-20",
+          "nodeId": "node:盐",
+          "name": "盐",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-11",
+      "index": 11,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#FF00FF",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-11.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-11",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-11-01",
+          "nodeId": "node:火把",
+          "name": "火把",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-11-02",
+          "nodeId": "node:捕猎陷阱",
+          "name": "捕猎陷阱",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-11-03",
+          "nodeId": "node:赭石颜料",
+          "name": "赭石颜料",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-11-04",
+          "nodeId": "node:洞穴壁画",
+          "name": "洞穴壁画",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-11-05",
+          "nodeId": "node:贝壳饰品",
+          "name": "贝壳饰品",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-11-06",
+          "nodeId": "node:骨笛",
+          "name": "骨笛",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-11-07",
+          "nodeId": "node:燧石",
+          "name": "燧石",
+          "levelId": "level:11-ancient",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-11-08",
+          "nodeId": "node:铜矿",
+          "name": "铜矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-11-09",
+          "nodeId": "node:铁矿",
+          "name": "铁矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-11-10",
+          "nodeId": "node:银矿",
+          "name": "银矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-11-11",
+          "nodeId": "node:金矿",
+          "name": "金矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-11-12",
+          "nodeId": "node:煤",
+          "name": "煤",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-11-13",
+          "nodeId": "node:石油",
+          "name": "石油",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-11-14",
+          "nodeId": "node:天然气",
+          "name": "天然气",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-11-15",
+          "nodeId": "node:铝土矿",
+          "name": "铝土矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-11-16",
+          "nodeId": "node:锡矿",
+          "name": "锡矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-11-17",
+          "nodeId": "node:锌矿",
+          "name": "锌矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-11-18",
+          "nodeId": "node:铅矿",
+          "name": "铅矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-11-19",
+          "nodeId": "node:磷矿",
+          "name": "磷矿",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-11-20",
+          "nodeId": "node:岩盐",
+          "name": "岩盐",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-12",
+      "index": 12,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#FF00FF",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-12.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-12",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-12-01",
+          "nodeId": "node:石英",
+          "name": "石英",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-12-02",
+          "nodeId": "node:石灰岩",
+          "name": "石灰岩",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-12-03",
+          "nodeId": "node:花岗岩",
+          "name": "花岗岩",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-12-04",
+          "nodeId": "node:玄武岩",
+          "name": "玄武岩",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-12-05",
+          "nodeId": "node:大理石",
+          "name": "大理石",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-12-06",
+          "nodeId": "node:玉石",
+          "name": "玉石",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-12-07",
+          "nodeId": "node:金刚石",
+          "name": "金刚石",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-12-08",
+          "nodeId": "node:沙",
+          "name": "沙",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-12-09",
+          "nodeId": "node:砂土",
+          "name": "砂土",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-12-10",
+          "nodeId": "node:黏土土壤",
+          "name": "黏土土壤",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-12-11",
+          "nodeId": "node:壤土",
+          "name": "壤土",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-12-12",
+          "nodeId": "node:腐殖土",
+          "name": "腐殖土",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-12-13",
+          "nodeId": "node:水体",
+          "name": "水体",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-12-14",
+          "nodeId": "node:火山灰",
+          "name": "火山灰",
+          "levelId": "level:12-natural-world",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-12-15",
+          "nodeId": "node:细胞",
+          "name": "细胞",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-12-16",
+          "nodeId": "node:植物",
+          "name": "植物",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-12-17",
+          "nodeId": "node:动物",
+          "name": "动物",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-12-18",
+          "nodeId": "node:草",
+          "name": "草",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-12-19",
+          "nodeId": "node:树木",
+          "name": "树木",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-12-20",
+          "nodeId": "node:细菌",
+          "name": "细菌",
+          "levelId": "level:13-life",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-13",
+      "index": 13,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#FF00FF",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-13.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-13",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-13-01",
+          "nodeId": "node:真菌",
+          "name": "真菌",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-13-02",
+          "nodeId": "node:人",
+          "name": "人",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-13-03",
+          "nodeId": "node:哺乳动物",
+          "name": "哺乳动物",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-13-04",
+          "nodeId": "node:鸟",
+          "name": "鸟",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-13-05",
+          "nodeId": "node:爬行动物",
+          "name": "爬行动物",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-13-06",
+          "nodeId": "node:两栖动物",
+          "name": "两栖动物",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-13-07",
+          "nodeId": "node:昆虫",
+          "name": "昆虫",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-13-08",
+          "nodeId": "node:蜘蛛",
+          "name": "蜘蛛",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-13-09",
+          "nodeId": "node:珊瑚",
+          "name": "珊瑚",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-13-10",
+          "nodeId": "node:水母",
+          "name": "水母",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-13-11",
+          "nodeId": "node:贝类",
+          "name": "贝类",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-13-12",
+          "nodeId": "node:章鱼",
+          "name": "章鱼",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-13-13",
+          "nodeId": "node:鲸",
+          "name": "鲸",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-13-14",
+          "nodeId": "node:海豚",
+          "name": "海豚",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-13-15",
+          "nodeId": "node:猫",
+          "name": "猫",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-13-16",
+          "nodeId": "node:水稻植株",
+          "name": "水稻植株",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-13-17",
+          "nodeId": "node:小麦植株",
+          "name": "小麦植株",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-13-18",
+          "nodeId": "node:花",
+          "name": "花",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-13-19",
+          "nodeId": "node:蘑菇",
+          "name": "蘑菇",
+          "levelId": "level:13-life",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-13-20",
+          "nodeId": "node:二氧化碳",
+          "name": "二氧化碳",
+          "levelId": "level:14-matter",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-14",
+      "index": 14,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#FF00FF",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-14.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-14",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-14-01",
+          "nodeId": "node:氯化钠",
+          "name": "氯化钠",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-14-02",
+          "nodeId": "node:葡萄糖",
+          "name": "葡萄糖",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-14-03",
+          "nodeId": "node:淀粉",
+          "name": "淀粉",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-14-04",
+          "nodeId": "node:纤维素",
+          "name": "纤维素",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-14-05",
+          "nodeId": "node:木质素",
+          "name": "木质素",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-14-06",
+          "nodeId": "node:叶黄素",
+          "name": "叶黄素",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-14-07",
+          "nodeId": "node:叶绿素",
+          "name": "叶绿素",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-14-08",
+          "nodeId": "node:ATP",
+          "name": "ATP",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-14-09",
+          "nodeId": "node:DNA",
+          "name": "DNA",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-14-10",
+          "nodeId": "node:蛋白质",
+          "name": "蛋白质",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-14-11",
+          "nodeId": "node:二氧化硅",
+          "name": "二氧化硅",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-14-12",
+          "nodeId": "node:碳酸钙",
+          "name": "碳酸钙",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-14-13",
+          "nodeId": "node:三氧化二铁",
+          "name": "三氧化二铁",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-14-14",
+          "nodeId": "node:四氧化三铁",
+          "name": "四氧化三铁",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-14-15",
+          "nodeId": "node:氧化铝",
+          "name": "氧化铝",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-14-16",
+          "nodeId": "node:高岭石",
+          "name": "高岭石",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-14-17",
+          "nodeId": "node:蒙脱石",
+          "name": "蒙脱石",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-14-18",
+          "nodeId": "node:石膏",
+          "name": "石膏",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-14-19",
+          "nodeId": "node:白云石",
+          "name": "白云石",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-14-20",
+          "nodeId": "node:钾长石",
+          "name": "钾长石",
+          "levelId": "level:14-matter",
+          "reserved": false
+        }
+      ]
+    },
+    {
+      "id": "material-tower-atlas-15",
+      "index": 15,
+      "columns": 5,
+      "rows": 4,
+      "readingOrder": "row-major-left-to-right-top-to-bottom",
+      "keyColor": "#FF00FF",
+      "sourcePath": "/images/world-tower/source-atlases/material-tower-v1/atlas-15.png",
+      "outputDirectory": "/images/world-tower/nodes/generated/material-tower-v1/atlas-15",
+      "items": [
+        {
+          "slot": 1,
+          "row": 1,
+          "column": 1,
+          "assetId": "material-v1-15-01",
+          "nodeId": "node:钠长石",
+          "name": "钠长石",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 2,
+          "row": 1,
+          "column": 2,
+          "assetId": "material-v1-15-02",
+          "nodeId": "node:二硫化铁",
+          "name": "二硫化铁",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 3,
+          "row": 1,
+          "column": 3,
+          "assetId": "material-v1-15-03",
+          "nodeId": "node:黄铜矿",
+          "name": "黄铜矿",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 4,
+          "row": 1,
+          "column": 4,
+          "assetId": "material-v1-15-04",
+          "nodeId": "node:孔雀石",
+          "name": "孔雀石",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 5,
+          "row": 1,
+          "column": 5,
+          "assetId": "material-v1-15-05",
+          "nodeId": "node:硫化铅",
+          "name": "硫化铅",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 6,
+          "row": 2,
+          "column": 1,
+          "assetId": "material-v1-15-06",
+          "nodeId": "node:硫化锌",
+          "name": "硫化锌",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 7,
+          "row": 2,
+          "column": 2,
+          "assetId": "material-v1-15-07",
+          "nodeId": "node:二氧化钛",
+          "name": "二氧化钛",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 8,
+          "row": 2,
+          "column": 3,
+          "assetId": "material-v1-15-08",
+          "nodeId": "node:二氧化锰",
+          "name": "二氧化锰",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 9,
+          "row": 2,
+          "column": 4,
+          "assetId": "material-v1-15-09",
+          "nodeId": "node:氟化钙",
+          "name": "氟化钙",
+          "levelId": "level:14-matter",
+          "reserved": false
+        },
+        {
+          "slot": 10,
+          "row": 2,
+          "column": 5,
+          "assetId": "material-v1-15-10",
+          "nodeId": "particle:photon",
+          "name": "光子",
+          "levelId": "level:16-particles",
+          "reserved": false
+        },
+        {
+          "slot": 11,
+          "row": 3,
+          "column": 1,
+          "assetId": "material-v1-15-11",
+          "nodeId": "particle:electron-neutrino",
+          "name": "电子中微子",
+          "levelId": "level:16-particles",
+          "reserved": false
+        },
+        {
+          "slot": 12,
+          "row": 3,
+          "column": 2,
+          "assetId": "material-v1-15-12",
+          "nodeId": "particle:up-quark",
+          "name": "上夸克",
+          "levelId": "level:16-particles",
+          "reserved": false
+        },
+        {
+          "slot": 13,
+          "row": 3,
+          "column": 3,
+          "assetId": "material-v1-15-13",
+          "nodeId": "particle:down-quark",
+          "name": "下夸克",
+          "levelId": "level:16-particles",
+          "reserved": false
+        },
+        {
+          "slot": 14,
+          "row": 3,
+          "column": 4,
+          "assetId": "material-v1-15-14",
+          "nodeId": "particle:gluon",
+          "name": "胶子",
+          "levelId": "level:16-particles",
+          "reserved": false
+        },
+        {
+          "slot": 15,
+          "row": 3,
+          "column": 5,
+          "assetId": "material-v1-15-15",
+          "nodeId": "particle:positron",
+          "name": "正电子",
+          "levelId": "level:16-particles",
+          "reserved": false
+        },
+        {
+          "slot": 16,
+          "row": 4,
+          "column": 1,
+          "assetId": "material-v1-15-16",
+          "nodeId": "particle:higgs-boson",
+          "name": "希格斯玻色子",
+          "levelId": "level:16-particles",
+          "reserved": false
+        },
+        {
+          "slot": 17,
+          "row": 4,
+          "column": 2,
+          "assetId": "material-v1-15-17",
+          "nodeId": null,
+          "name": "保留空格",
+          "levelId": null,
+          "reserved": true
+        },
+        {
+          "slot": 18,
+          "row": 4,
+          "column": 3,
+          "assetId": "material-v1-15-18",
+          "nodeId": null,
+          "name": "保留空格",
+          "levelId": null,
+          "reserved": true
+        },
+        {
+          "slot": 19,
+          "row": 4,
+          "column": 4,
+          "assetId": "material-v1-15-19",
+          "nodeId": null,
+          "name": "保留空格",
+          "levelId": null,
+          "reserved": true
+        },
+        {
+          "slot": 20,
+          "row": 4,
+          "column": 5,
+          "assetId": "material-v1-15-20",
+          "nodeId": null,
+          "name": "保留空格",
+          "levelId": null,
+          "reserved": true
+        }
+      ]
+    }
+  ]
+}

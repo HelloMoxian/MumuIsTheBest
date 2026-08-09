@@ -4,6 +4,14 @@ import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
 import { MysteryFunctionGame } from "./features/mystery-function/MysteryFunctionGame";
+import { NumericKeypadLayer } from "./shared/NumericKeypadLayer";
+import {
+  LearningCoinBalancePill,
+  LearningCoinLayer,
+  useLearningCoinStatus,
+} from "./shared/LearningCoinLayer";
+import type { LearningCoinSource } from "./shared/learning-coins";
+import { openNumericKeypad } from "./shared/numeric-keypad";
 import "./styles.css";
 
 const FindNumberGame = lazy(async () => {
@@ -80,7 +88,7 @@ const MISSION_LAB_ROUTES = new Set([
 
 const DEFAULT_ENDPOINT =
   "wss://llm-v5rvizd868hi5qxb.cn-beijing.maas.aliyuncs.com/api-ws/v1/inference";
-const MAX_ASR_SECONDS = 120;
+const MAX_ASR_SECONDS = 10 * 60;
 const ENCOURAGEMENTS = [
   "今天认真一点点，明天进步一大步。",
   "每一次尝试，都是在给自己加能量。",
@@ -139,6 +147,7 @@ type GamePlaceholder = {
   shape?: "wide" | "tall" | "compact";
   comingSoon?: boolean;
   href?: string;
+  rewardSource?: LearningCoinSource;
 };
 type SubjectBoard = {
   id: string;
@@ -155,13 +164,14 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "让数字变成好玩的闯关伙伴",
     icon: "math",
     games: [
-      { title: "加减练习", mark: "＋−", description: "0—20 快速计算", shape: "wide", href: "/math/add-subtract" },
+      { title: "加减练习", mark: "＋−", description: "0—20 快速计算", shape: "wide", href: "/math/add-subtract", rewardSource: "math:add-subtract" },
       {
         title: "算数大战",
         mark: "⚔",
         description: "同时解开多颗答案星",
         shape: "compact",
         href: "/math/arithmetic-battle",
+        rewardSource: "math:arithmetic-battle",
       },
       {
         title: "乘法小能手",
@@ -169,6 +179,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "乘法与整除星际挑战",
         shape: "tall",
         href: "/math/multiplication",
+        rewardSource: "math:multiplication",
       },
       {
         title: "神秘函数",
@@ -183,6 +194,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "问问大小，缩小数字范围",
         shape: "wide",
         href: "/math/find-number",
+        rewardSource: "math:find-number",
       },
       {
         title: "猫鼠游戏",
@@ -190,6 +202,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "观察动画场景，列式解开谜题",
         shape: "compact",
         href: "/math/cat-mouse-game",
+        rewardSource: "math:cat-mouse-game",
       },
     ],
   },
@@ -228,9 +241,9 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         href: "/chemistry/experiment-master",
       },
       {
-        title: "万物构成塔",
+        title: "物质塔",
         mark: "✦",
-        description: "从粒子一路搭到山河与宇宙",
+        description: "十六层精选节点，从基本粒子发现到宇宙",
         shape: "wide",
         href: "/world-tower",
       },
@@ -370,6 +383,7 @@ function stateCopy(state: SessionState) {
 }
 
 function App() {
+  const { status: learningCoinStatus } = useLearningCoinStatus();
   const [encouragement] = useState(
     () => ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)],
   );
@@ -405,7 +419,7 @@ function App() {
     setInterim("");
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       setState("finishing");
-      setStatusDetail(becauseOfLimit ? "已到 2 分钟上限，正在整理最后一句…" : "正在把最后一句送回星际实验舱…");
+      setStatusDetail(becauseOfLimit ? "已到 10 分钟上限，正在整理最后一句…" : "正在把最后一句送回星际实验舱…");
       socketRef.current.send(JSON.stringify({ type: "stop" }));
     } else {
       setState("completed");
@@ -458,7 +472,7 @@ function App() {
           setState("listening");
           sessionStartedAtRef.current = Date.now();
           setRemainingSeconds(MAX_ASR_SECONDS);
-          setStatusDetail("麦克风已开启。慢慢说，右侧会实时出现文字。单次最多 2 分钟。");
+          setStatusDetail("麦克风已开启。慢慢说，右侧会实时出现文字。单次最多 10 分钟。");
           safetyTimerRef.current = window.setInterval(() => {
             const startedAt = sessionStartedAtRef.current;
             if (!startedAt) return;
@@ -509,7 +523,7 @@ function App() {
         clearSafetyTimer();
         await endCapture();
         setState("finishing");
-        setStatusDetail(message.label ?? "已达到单次 2 分钟上限，正在停止识别。");
+        setStatusDetail(message.label ?? "已达到单次 10 分钟上限，正在停止识别。");
         return;
       }
 
@@ -590,6 +604,14 @@ function App() {
         </a>
         <nav className="nav-actions" aria-label="主导航">
           <a className="nav-link" href="#top">学习大厅</a>
+          <button
+            className="test-trigger numeric-keypad-nav-button"
+            type="button"
+            onClick={openNumericKeypad}
+            aria-label="打开或收起右侧数字键盘"
+          >
+            数字键盘
+          </button>
           <div className="test-menu">
             <button
               className="test-trigger"
@@ -608,11 +630,12 @@ function App() {
                 </a>
                 <a href="/parent/coin-reset" role="menuitem" onClick={() => setMenuOpen(false)}>
                   <span aria-hidden="true">✦</span>
-                  <span><strong>知识币管理</strong><small>密码重置余额</small></span>
+                  <span><strong>知识币管理</strong><small>密码设置余额</small></span>
                 </a>
               </div>
             )}
           </div>
+          <LearningCoinBalancePill className="home-learning-coin-balance" />
           <button className="avatar" type="button" aria-label="小小宇航员资料">👩‍🚀</button>
         </nav>
       </header>
@@ -653,8 +676,17 @@ function App() {
                 </div>
                 <div className="game-cluster" aria-label={`${subject.title}小游戏`}>
                   {subject.games.map((game) => {
+                    const activePromotion = game.rewardSource
+                      && learningCoinStatus?.promotion.source === game.rewardSource
+                      ? learningCoinStatus.promotion
+                      : null;
+                    const isTripleReward = Boolean(activePromotion);
+                    const gameHref = game.href && activePromotion
+                      ? `${game.href}?promotion=${encodeURIComponent(activePromotion.id)}`
+                      : game.href;
                     const content = (
                       <>
+                        {isTripleReward && <span className="game-triple-badge">×3 知识币</span>}
                         <span className="game-mark" aria-hidden="true">{game.mark}</span>
                         <div>
                           <h4>{game.title}</h4>
@@ -665,9 +697,9 @@ function App() {
                         </span>
                       </>
                     );
-                    const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""}`;
-                    return game.href ? (
-                      <a className={className} href={game.href} key={game.title}>{content}</a>
+                    const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""} ${isTripleReward ? "is-triple-reward" : ""}`;
+                    return gameHref ? (
+                      <a className={className} href={gameHref} key={game.title}>{content}</a>
                     ) : (
                       <article className={className} key={game.title}>{content}</article>
                     );
@@ -755,7 +787,7 @@ function App() {
                   <span aria-hidden="true">●</span> {busy ? "正在准备…" : "开始录入"}
                 </button>
               )}
-              <p className="microphone-note">建议一次说一句话，说完后稍停一停。每次识别最多 2 分钟。</p>
+              <p className="microphone-note">建议一次说一句话，说完后稍停一停。每次识别最多 10 分钟。</p>
             </article>
 
             <article className="console-card transcript-card" aria-labelledby="transcript-title">
@@ -844,7 +876,7 @@ function CurrentPage() {
     return <Suspense fallback={<ChemistryLoading label="分子工厂" />}><MoleculeFactoryPage /></Suspense>;
   }
   if (window.location.pathname === "/world-tower") {
-    return <Suspense fallback={<ChemistryLoading label="万物构成塔" />}><WorldTowerPage /></Suspense>;
+    return <Suspense fallback={<ChemistryLoading label="物质塔" />}><WorldTowerPage /></Suspense>;
   }
   if (window.location.pathname === "/chinese/pinyin") {
     return (
@@ -913,4 +945,10 @@ function CurrentPage() {
   return <App />;
 }
 
-createRoot(document.getElementById("root")!).render(<CurrentPage />);
+createRoot(document.getElementById("root")!).render(
+  <LearningCoinLayer>
+    <NumericKeypadLayer>
+      <CurrentPage />
+    </NumericKeypadLayer>
+  </LearningCoinLayer>,
+);

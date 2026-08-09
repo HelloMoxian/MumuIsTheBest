@@ -18,7 +18,7 @@ const defaultEndpoint =
 const port = Number(process.env.PORT ?? 8787);
 const host = process.env.HOST ?? "127.0.0.1";
 const app = Fastify({ logger: false });
-const asrMaxSessionMs = 2 * 60 * 1000;
+const asrMaxSessionMs = 10 * 60 * 1000;
 const projectRoot = resolve(import.meta.dirname, "../../..");
 const appDataDir = resolve(process.env.APP_DATA_DIR ?? resolve(projectRoot, "var"));
 const asrConfigPath = resolve(appDataDir, "config", "asr-settings.json");
@@ -50,7 +50,7 @@ const completedQuestionSchema = z.object({
   answer: z.number().int().min(0).max(20),
   firstAttemptCorrect: z.boolean(),
   calculationDurationMs: z.number().int().min(0).max(30 * 60 * 1000),
-  wrongAnswers: z.array(z.number().int().min(0).max(100_000)).max(100),
+  wrongAnswers: z.array(z.number().int().min(0).max(999_999_999_999)).max(100),
 }).superRefine((question, context) => {
   const expected = question.operator === "+" ? question.left + question.right : question.left - question.right;
   if (expected !== question.answer || expected < 0 || expected > 20) {
@@ -425,11 +425,11 @@ async function registerAsrProxy() {
         if (kind === "task-started") {
           upstreamReady = true;
           if (connectTimeout) clearTimeout(connectTimeout);
-          send(client, { type: "ready", label: "识别引擎已就绪，可以开始说话。单次最多 2 分钟。" });
+          send(client, { type: "ready", label: "识别引擎已就绪，可以开始说话。单次最多 10 分钟。" });
           sessionLimitTimeout = setTimeout(() => {
             if (!upstreamReady || closing) return;
-            send(client, { type: "limit", label: "已达到单次 2 分钟上限，正在停止识别。" });
-            finish("已达到单次 2 分钟上限，正在整理最后一句…");
+            send(client, { type: "limit", label: "已达到单次 10 分钟上限，正在停止识别。" });
+            finish("已达到单次 10 分钟上限，正在整理最后一句…");
           }, asrMaxSessionMs);
           return;
         }

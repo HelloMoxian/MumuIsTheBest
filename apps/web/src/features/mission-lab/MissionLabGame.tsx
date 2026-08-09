@@ -7,6 +7,7 @@ import {
 } from "react";
 import { browserTts, useTts } from "../../shared/speech";
 import {
+  ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
   type RecognitionState,
@@ -33,7 +34,7 @@ function voiceLabel(state: VoiceDisplayState) {
     connecting: "正在连接",
     listening: "正在听",
     finishing: "正在收尾",
-    limited: "本段已到 2 分钟",
+    limited: `本段已到 ${ASR_SESSION_LIMIT_MINUTES} 分钟`,
     stopped: "语音已暂停",
     error: "语音需要检查",
   };

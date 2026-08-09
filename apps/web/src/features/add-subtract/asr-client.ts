@@ -6,6 +6,8 @@ export type RecognitionState =
   | "stopped"
   | "error";
 
+export const ASR_SESSION_LIMIT_MINUTES = 10;
+
 export type RecognitionResult = {
   text: string;
   sentenceId: number;
@@ -160,7 +162,10 @@ export class AsrRecognitionSession {
       if (message.type === "limit") {
         this.limited = true;
         await this.stopCapture();
-        this.handlers.onState("limited", message.label ?? "本次识别已到 2 分钟上限");
+        this.handlers.onState(
+          "limited",
+          message.label ?? `本次识别已到 ${ASR_SESSION_LIMIT_MINUTES} 分钟上限`,
+        );
         return;
       }
 

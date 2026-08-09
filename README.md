@@ -9,6 +9,7 @@
 - 技术方案（已选定 A）：[`docs/TECH_STACK_OPTIONS.md`](docs/TECH_STACK_OPTIONS.md)
 - 正式设计系统（已选定星际探索舱）：[`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
 - 实时语音识别与密钥安全：[`docs/ASR_REALTIME.md`](docs/ASR_REALTIME.md)
+- 全局数字键盘、位值展示与玩法提交协议：[`docs/NUMERIC_KEYPAD.md`](docs/NUMERIC_KEYPAD.md)
 - 数学加减练习规则与数据语义：[`docs/ADD_SUBTRACT_PRACTICE.md`](docs/ADD_SUBTRACT_PRACTICE.md)
 - 数学算数大战规则与数据语义：[`docs/ARITHMETIC_BATTLE.md`](docs/ARITHMETIC_BATTLE.md)
 - 数学乘法小能手规则与数据语义：[`docs/MULTIPLICATION_PRACTICE.md`](docs/MULTIPLICATION_PRACTICE.md)
@@ -33,7 +34,8 @@
 - 备份默认存放在 Git 忽略的 `backups/`，以后提供显式导入/导出和恢复机制。
 - 美术风格固定为“星际探索舱”：深空玻璃面板、紫/青/粉光效、大字号圆润组件和克制动效。
 - API Key 永不写入仓库；语音测试页会将其仅保存到本机 Git 忽略的 `var/config/asr-settings.json`，重新打开页面可直接使用但不会显示明文。
-- 每一次实时 ASR 识别强制最多 2 分钟；该规则会自动继承到后续算术、游戏与知识模块。
+- 每一次实时 ASR 识别强制最多 10 分钟；该规则会自动继承到后续算术、游戏与知识模块。
+- 首页和五个数学玩法共享知识币余额；系统每十分钟随机一个三倍玩法，并在进入时锁定本局倍率。答题奖励经服务端原子入账后以逐枚知识币飞向顶部的方式反馈。
 
 ## 下一步
 

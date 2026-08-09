@@ -117,7 +117,8 @@
 }
 
 .coin-reset-form { display: grid; gap: 10px; }
-.coin-reset-form label { color: #e7e6fa; font-weight: 900; }
+.coin-reset-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.coin-reset-form label { display: grid; gap: 8px; color: #e7e6fa; font-weight: 900; }
 .coin-reset-form input {
   min-height: 62px;
   padding: 0 18px;
@@ -127,9 +128,9 @@
   background: rgba(8, 12, 38, .66);
   font-size: 22px;
   font-weight: 900;
-  letter-spacing: .12em;
   text-align: center;
 }
+.coin-reset-form input[type="password"] { letter-spacing: .12em; }
 .coin-reset-form input:focus {
   border-color: var(--cyan-300);
   box-shadow: 0 0 0 5px rgba(89, 231, 255, .12);
@@ -148,6 +149,12 @@
 .coin-reset-form button:active:not(:disabled) {
   box-shadow: 0 3px 0 var(--violet-600);
   transform: translateY(3px);
+}
+.coin-reset-form .coin-zero-button {
+  border: 1px solid rgba(89, 231, 255, .28);
+  color: var(--cyan-300);
+  background: rgba(89, 231, 255, .07);
+  box-shadow: none;
 }
 
 .coin-reset-message {
@@ -191,12 +198,17 @@
   text-align: center;
 }
 .coin-reward-rules b { color: var(--warning-300); font-size: 24px; }
+.coin-reward-rules .is-triple {
+  border-color: rgba(255, 211, 92, .44);
+  background: linear-gradient(135deg, rgba(255, 211, 92, .15), rgba(255, 110, 199, .1));
+}
 
 @media (max-width: 620px) {
   .coin-reset-topbar,
   .coin-reset-main { width: min(100% - 24px, 960px); }
   .coin-reset-topbar strong { padding: 0 11px; font-size: 14px; }
   .coin-reset-card { gap: 18px; border-radius: 25px; }
+  .coin-reset-fields { grid-template-columns: 1fr; }
   .coin-reward-rules { grid-template-columns: 1fr; }
   .coin-reward-rules span { min-height: 58px; grid-template-columns: auto 1fr; gap: 10px; }
 }

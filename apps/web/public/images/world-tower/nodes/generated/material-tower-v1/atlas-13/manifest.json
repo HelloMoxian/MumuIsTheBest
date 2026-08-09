@@ -1,0 +1,597 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/木木/MumuIsTheBest/apps/web/public/images/world-tower/source-atlases/material-tower-v1/atlas-13.png",
+  "sourceWidth": 1402,
+  "sourceHeight": 1122,
+  "columns": 5,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 24,
+  "trimmed": true,
+  "backgroundRemoved": true,
+  "keyColor": "#FA03F8",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "material-v1-13-01",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "material-v1-13-01.png",
+      "sourceBox": [
+        24,
+        24,
+        256,
+        256
+      ],
+      "trimBox": [
+        0,
+        29,
+        232,
+        225
+      ],
+      "outputWidth": 232,
+      "outputHeight": 196,
+      "opaqueCoverage": 0.554803,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-02",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "material-v1-13-02.png",
+      "sourceBox": [
+        304,
+        24,
+        537,
+        256
+      ],
+      "trimBox": [
+        54,
+        0,
+        171,
+        232
+      ],
+      "outputWidth": 117,
+      "outputHeight": 232,
+      "opaqueCoverage": 0.585654,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-03",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "material-v1-13-03.png",
+      "sourceBox": [
+        585,
+        24,
+        817,
+        256
+      ],
+      "trimBox": [
+        12,
+        14,
+        218,
+        232
+      ],
+      "outputWidth": 206,
+      "outputHeight": 218,
+      "opaqueCoverage": 0.63619,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-04",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "material-v1-13-04.png",
+      "sourceBox": [
+        865,
+        24,
+        1098,
+        256
+      ],
+      "trimBox": [
+        0,
+        21,
+        224,
+        226
+      ],
+      "outputWidth": 224,
+      "outputHeight": 205,
+      "opaqueCoverage": 0.37659,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-05",
+      "index": 4,
+      "row": 0,
+      "column": 4,
+      "filename": "material-v1-13-05.png",
+      "sourceBox": [
+        1146,
+        24,
+        1378,
+        256
+      ],
+      "trimBox": [
+        0,
+        24,
+        232,
+        232
+      ],
+      "outputWidth": 232,
+      "outputHeight": 208,
+      "opaqueCoverage": 0.331068,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-06",
+      "index": 5,
+      "row": 1,
+      "column": 0,
+      "filename": "material-v1-13-06.png",
+      "sourceBox": [
+        24,
+        304,
+        256,
+        537
+      ],
+      "trimBox": [
+        0,
+        23,
+        227,
+        227
+      ],
+      "outputWidth": 227,
+      "outputHeight": 204,
+      "opaqueCoverage": 0.520018,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-07",
+      "index": 6,
+      "row": 1,
+      "column": 1,
+      "filename": "material-v1-13-07.png",
+      "sourceBox": [
+        304,
+        304,
+        537,
+        537
+      ],
+      "trimBox": [
+        15,
+        0,
+        211,
+        228
+      ],
+      "outputWidth": 196,
+      "outputHeight": 228,
+      "opaqueCoverage": 0.328724,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-08",
+      "index": 7,
+      "row": 1,
+      "column": 2,
+      "filename": "material-v1-13-08.png",
+      "sourceBox": [
+        585,
+        304,
+        817,
+        537
+      ],
+      "trimBox": [
+        0,
+        27,
+        225,
+        227
+      ],
+      "outputWidth": 225,
+      "outputHeight": 200,
+      "opaqueCoverage": 0.232711,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-09",
+      "index": 8,
+      "row": 1,
+      "column": 3,
+      "filename": "material-v1-13-09.png",
+      "sourceBox": [
+        865,
+        304,
+        1098,
+        537
+      ],
+      "trimBox": [
+        5,
+        13,
+        227,
+        227
+      ],
+      "outputWidth": 222,
+      "outputHeight": 214,
+      "opaqueCoverage": 0.523554,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-10",
+      "index": 9,
+      "row": 1,
+      "column": 4,
+      "filename": "material-v1-13-10.png",
+      "sourceBox": [
+        1146,
+        304,
+        1378,
+        537
+      ],
+      "trimBox": [
+        12,
+        9,
+        198,
+        230
+      ],
+      "outputWidth": 186,
+      "outputHeight": 221,
+      "opaqueCoverage": 0.44648,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-11",
+      "index": 10,
+      "row": 2,
+      "column": 0,
+      "filename": "material-v1-13-11.png",
+      "sourceBox": [
+        24,
+        585,
+        256,
+        818
+      ],
+      "trimBox": [
+        0,
+        21,
+        222,
+        218
+      ],
+      "outputWidth": 222,
+      "outputHeight": 197,
+      "opaqueCoverage": 0.608085,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-12",
+      "index": 11,
+      "row": 2,
+      "column": 1,
+      "filename": "material-v1-13-12.png",
+      "sourceBox": [
+        304,
+        585,
+        537,
+        818
+      ],
+      "trimBox": [
+        0,
+        10,
+        228,
+        225
+      ],
+      "outputWidth": 228,
+      "outputHeight": 215,
+      "opaqueCoverage": 0.503876,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-13",
+      "index": 12,
+      "row": 2,
+      "column": 2,
+      "filename": "material-v1-13-13.png",
+      "sourceBox": [
+        585,
+        585,
+        817,
+        818
+      ],
+      "trimBox": [
+        0,
+        42,
+        232,
+        200
+      ],
+      "outputWidth": 232,
+      "outputHeight": 158,
+      "opaqueCoverage": 0.381957,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-14",
+      "index": 13,
+      "row": 2,
+      "column": 3,
+      "filename": "material-v1-13-14.png",
+      "sourceBox": [
+        865,
+        585,
+        1098,
+        818
+      ],
+      "trimBox": [
+        0,
+        29,
+        227,
+        217
+      ],
+      "outputWidth": 227,
+      "outputHeight": 188,
+      "opaqueCoverage": 0.338902,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-15",
+      "index": 14,
+      "row": 2,
+      "column": 4,
+      "filename": "material-v1-13-15.png",
+      "sourceBox": [
+        1146,
+        585,
+        1378,
+        818
+      ],
+      "trimBox": [
+        48,
+        0,
+        206,
+        227
+      ],
+      "outputWidth": 158,
+      "outputHeight": 227,
+      "opaqueCoverage": 0.562036,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-16",
+      "index": 15,
+      "row": 3,
+      "column": 0,
+      "filename": "material-v1-13-16.png",
+      "sourceBox": [
+        24,
+        866,
+        256,
+        1098
+      ],
+      "trimBox": [
+        0,
+        0,
+        230,
+        220
+      ],
+      "outputWidth": 230,
+      "outputHeight": 220,
+      "opaqueCoverage": 0.27496,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-17",
+      "index": 16,
+      "row": 3,
+      "column": 1,
+      "filename": "material-v1-13-17.png",
+      "sourceBox": [
+        304,
+        866,
+        537,
+        1098
+      ],
+      "trimBox": [
+        18,
+        0,
+        218,
+        226
+      ],
+      "outputWidth": 200,
+      "outputHeight": 226,
+      "opaqueCoverage": 0.314735,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-18",
+      "index": 17,
+      "row": 3,
+      "column": 2,
+      "filename": "material-v1-13-18.png",
+      "sourceBox": [
+        585,
+        866,
+        817,
+        1098
+      ],
+      "trimBox": [
+        9,
+        0,
+        208,
+        226
+      ],
+      "outputWidth": 199,
+      "outputHeight": 226,
+      "opaqueCoverage": 0.571953,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-19",
+      "index": 18,
+      "row": 3,
+      "column": 3,
+      "filename": "material-v1-13-19.png",
+      "sourceBox": [
+        865,
+        866,
+        1098,
+        1098
+      ],
+      "trimBox": [
+        11,
+        12,
+        207,
+        221
+      ],
+      "outputWidth": 196,
+      "outputHeight": 209,
+      "opaqueCoverage": 0.537008,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "material-v1-13-20",
+      "index": 19,
+      "row": 3,
+      "column": 4,
+      "filename": "material-v1-13-20.png",
+      "sourceBox": [
+        1146,
+        866,
+        1378,
+        1098
+      ],
+      "trimBox": [
+        0,
+        58,
+        232,
+        165
+      ],
+      "outputWidth": 232,
+      "outputHeight": 107,
+      "opaqueCoverage": 0.478448,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

@@ -116,7 +116,7 @@ Hook 提供：
 - 切题、重新开始或离开页面时先 `browserTts.stop()`，再清理 ASR。
 - `stop()` 会让等待中的朗读返回 `cancelled`；业务收到该结果后不得继续启动旧题目的 ASR。
 - TTS 错误或设备不支持朗读时，可以继续进入可见题目和 ASR 作答流程。
-- ASR 的 Key、服务端转接和 120 秒限制继续遵循 [`ASR_REALTIME.md`](./ASR_REALTIME.md)。
+- ASR 的 Key、服务端转接和 600 秒限制继续遵循 [`ASR_REALTIME.md`](./ASR_REALTIME.md)。
 
 ## UI 与儿童体验
 

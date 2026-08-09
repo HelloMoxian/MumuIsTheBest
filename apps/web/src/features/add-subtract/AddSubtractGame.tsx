@@ -1,7 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { browserTts } from "../../shared/speech";
-import { awardLearningCoins } from "../../shared/learning-coins";
-import { AsrRecognitionSession, readAsrConfiguration, type RecognitionState } from "./asr-client";
+import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
+import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
+import {
+  ASR_SESSION_LIMIT_MINUTES,
+  AsrRecognitionSession,
+  readAsrConfiguration,
+  type RecognitionState,
+} from "./asr-client";
 import {
   aggregateHistory,
   decideTranscriptAnswer,
@@ -100,7 +106,7 @@ function recognitionCopy(state: RecognitionState | "reading" | "idle" | "unconfi
     listening: "识别中",
     reading: "朗读题目",
     finishing: "结束中",
-    limited: "已到 2 分钟上限",
+    limited: `已到 ${ASR_SESSION_LIMIT_MINUTES} 分钟上限`,
     stopped: "语音已停止",
     unconfigured: "需要配置 ASR",
     error: "连接失败",
@@ -109,6 +115,7 @@ function recognitionCopy(state: RecognitionState | "reading" | "idle" | "unconfi
 }
 
 export function AddSubtractGame() {
+  const learningRewards = useLearningRewardSession("math:add-subtract");
   const [questionCount, setQuestionCount] = useState<QuestionCount>(5);
   const [operationType, setOperationType] = useState<OperationType>("mixed");
   const [speechType, setSpeechType] = useState<SpeechType>("none");
@@ -239,7 +246,7 @@ export function AddSubtractGame() {
       setFeedback({ kind: "correct", answer });
       setPhase("feedback");
       playSuccessChime();
-      void awardLearningCoins("math:add-subtract").catch(() => {
+      void learningRewards.award().catch(() => {
         setSaveWarning("答案已经记录，但知识币暂时没有加上；下次答题时可以继续获得。");
       });
       await stopRecognition();
@@ -256,12 +263,18 @@ export function AddSubtractGame() {
     },
     [
       clearPendingWrongAnswer,
+      learningRewards,
       questions.length,
       recordWrongAttempt,
       saveCompletedRound,
       stopRecognition,
     ],
   );
+
+  useNumericKeypadSubmission(({ value }) => {
+    if (phase !== "playing" || !currentQuestion || attemptRef.current?.isResolved) return;
+    void acceptAnswer(currentQuestion, value);
+  }, phase === "playing" && Boolean(currentQuestion));
 
   const startRecognition = useCallback(
     async (onText: (text: string, isFinal: boolean) => void) => {
@@ -615,7 +628,7 @@ export function AddSubtractGame() {
           {recognitionState === "limited" && (
             <div className="recognition-recovery" role="status">
               <strong>当前未识别语音</strong>
-              <span>本次 2 分钟语音已自动停止，题目还在这里。</span>
+              <span>本次 {ASR_SESSION_LIMIT_MINUTES} 分钟语音已自动停止，题目还在这里。</span>
               <button
                 type="button"
                 onClick={() => currentQuestion && void listenForCurrentQuestion(currentQuestion, false)}
