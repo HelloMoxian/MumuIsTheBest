@@ -69,6 +69,11 @@ const WorldTowerPage = lazy(async () => {
   return { default: module.WorldTowerPage };
 });
 
+const MathKnowledgeTowerPage = lazy(async () => {
+  const module = await import("./features/math-knowledge-tower/MathKnowledgeTowerPage");
+  return { default: module.MathKnowledgeTowerPage };
+});
+
 function ChemistryLoading({ label }: { label: string }) {
   return (
     <div className="app-shell" aria-live="polite">
@@ -203,6 +208,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         shape: "compact",
         href: "/math/cat-mouse-game",
         rewardSource: "math:cat-mouse-game",
+      },
+      {
+        title: "数学知识塔",
+        mark: "517",
+        description: "点亮四级熟练度，从一年级向九年级攀登",
+        shape: "wide",
+        href: "/math/knowledge-tower",
       },
     ],
   },
@@ -849,6 +861,13 @@ function CurrentPage() {
     return (
       <Suspense fallback={<ChemistryLoading label="猫鼠游戏" />}>
         <CatMouseGame />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname === "/math/knowledge-tower") {
+    return (
+      <Suspense fallback={<ChemistryLoading label="数学知识塔" />}>
+        <MathKnowledgeTowerPage />
       </Suspense>
     );
   }
