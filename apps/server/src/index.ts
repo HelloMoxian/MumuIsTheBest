@@ -9,6 +9,7 @@ import WebSocket, { type RawData } from "ws";
 import { z } from "zod";
 import { registerArithmeticBattleHistoryApi } from "./arithmetic-battle-history.js";
 import { registerCommonCharacterProgressApi } from "./common-character-progress.js";
+import { registerEnglishEchoIslandApi } from "./english-echo-island.js";
 import { registerMathKnowledgeTowerApi } from "./math-knowledge-tower.js";
 import { registerMultiplicationHistoryApi } from "./multiplication-history.js";
 import { registerWorldTowerApi } from "./world-tower.js";
@@ -527,6 +528,7 @@ async function main() {
   registerMultiplicationHistoryApi(app, appDataDir);
   registerCommonCharacterProgressApi(app, appDataDir);
   registerWorldTowerApi(app, appDataDir, projectRoot);
+  await registerEnglishEchoIslandApi(app, appDataDir, projectRoot);
   await registerMathKnowledgeTowerApi(app, appDataDir, projectRoot);
 
   app.get("/api/health", async () => ({ status: "ok", service: "mumu-asr" }));

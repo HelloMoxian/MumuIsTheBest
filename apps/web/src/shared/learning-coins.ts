@@ -3,7 +3,8 @@ export type LearningCoinSource =
   | "math:arithmetic-battle"
   | "math:multiplication"
   | "math:find-number"
-  | "math:cat-mouse-game";
+  | "math:cat-mouse-game"
+  | "english:echo-island";
 
 export type FindNumberRewardKey = "100" | "1000" | "10000" | "100000";
 export type ArithmeticBattleRewardKey = "easy" | "medium" | "hard";
@@ -19,6 +20,7 @@ export const LEARNING_COIN_REWARDS = {
   "math:multiplication": null,
   "math:find-number": null,
   "math:cat-mouse-game": 20,
+  "english:echo-island": 1,
 } as const;
 
 export const ARITHMETIC_BATTLE_COIN_REWARDS: Readonly<
@@ -68,7 +70,8 @@ export type LearningRewardSession = {
 export type LearningCoinAward = {
   alreadyAwarded: boolean;
   baseRewardCoins: number;
-  multiplier: 1 | 3;
+  multiplier: 1 | 3 | 5;
+  criticalHit: boolean;
   rewardCoins: number;
   source: LearningCoinSource;
   progress: {
@@ -122,7 +125,7 @@ export function startLearningRewardSession(source: LearningCoinSource, promotion
 
 export function awardLearningCoins(
   source: LearningCoinSource,
-  eventId = crypto.randomUUID(),
+  eventId: string = crypto.randomUUID(),
   options: LearningCoinAwardOptions = {},
 ) {
   return requestJson<LearningCoinAward>("/api/world-tower/coins/earn", {

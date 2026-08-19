@@ -190,6 +190,7 @@ const learningRewardSourceSchema = z.enum([
   "math:multiplication",
   "math:find-number",
   "math:cat-mouse-game",
+  "english:echo-island",
 ]);
 
 const rewardSessionSchema = z.object({
@@ -287,6 +288,7 @@ const COIN_RESET_PASSWORD = "123456";
 const LEARNING_REWARDS = {
   "math:add-subtract": 2,
   "math:cat-mouse-game": 20,
+  "english:echo-island": 1,
 } as const;
 const ARITHMETIC_BATTLE_REWARDS = {
   easy: 4,
@@ -305,7 +307,17 @@ const FIND_NUMBER_REWARDS = {
   "100000": 150,
 } as const;
 const PROMOTION_INTERVAL_MS = 10 * 60 * 1_000;
-const PROMOTION_SOURCES = learningRewardSourceSchema.options;
+const PROMOTION_SOURCES = [
+  "math:add-subtract",
+  "math:arithmetic-battle",
+  "math:multiplication",
+  "math:find-number",
+  "math:cat-mouse-game",
+] as const satisfies readonly LearningRewardSource[];
+
+export function echoIslandRewardMultiplier(random: () => number = Math.random): 1 | 5 {
+  return random() < 0.15 ? 5 : 1;
+}
 
 function promotionAt(time = Date.now()) {
   const startsAtMs = Math.floor(time / PROMOTION_INTERVAL_MS) * PROMOTION_INTERVAL_MS;
@@ -784,7 +796,8 @@ export function registerWorldTowerApi(
     try {
       let alreadyAwarded = false;
       let baseRewardCoins = 0;
-      let multiplier: 1 | 3 = 1;
+      let multiplier: 1 | 3 | 5 = 1;
+      let criticalHit = false;
       const progress = await updateProgress((current) => {
         if (current.transactions.some((transaction) => transaction.id === parsed.data.eventId)) {
           alreadyAwarded = true;
@@ -800,7 +813,12 @@ export function registerWorldTowerApi(
             "这次奖励场次已经无法确认，请返回首页重新进入玩法。",
           );
         }
-        multiplier = session?.multiplier ?? 1;
+        if (parsed.data.source === "english:echo-island") {
+          multiplier = echoIslandRewardMultiplier();
+          criticalHit = multiplier === 5;
+        } else {
+          multiplier = session?.multiplier ?? 1;
+        }
         baseRewardCoins = rewardFor(parsed.data.source, parsed.data.rewardKey);
         const rewardCoins = baseRewardCoins * multiplier;
         const now = new Date().toISOString();
@@ -829,6 +847,7 @@ export function registerWorldTowerApi(
         alreadyAwarded,
         baseRewardCoins: alreadyAwarded ? 0 : baseRewardCoins,
         multiplier,
+        criticalHit: alreadyAwarded ? false : criticalHit,
         rewardCoins: alreadyAwarded ? 0 : baseRewardCoins * multiplier,
         source: parsed.data.source,
         progress: publicProgress(progress),

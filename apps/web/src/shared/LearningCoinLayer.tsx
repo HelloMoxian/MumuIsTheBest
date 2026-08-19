@@ -49,6 +49,7 @@ const GAME_SOURCE_BY_PATH: Readonly<Record<string, LearningCoinSource>> = {
   "/math/multiplication": "math:multiplication",
   "/math/find-number": "math:find-number",
   "/math/cat-mouse-game": "math:cat-mouse-game",
+  "/english/echo-island": "english:echo-island",
 };
 
 function createBurst(award: LearningCoinAward): CoinBurst {
@@ -249,7 +250,7 @@ export function useLearningRewardSession(source: LearningCoinSource) {
     void ensureSession().catch(() => undefined);
   }, [ensureSession]);
 
-  const award = useCallback(async (rewardKey?: LearningRewardKey, eventId = crypto.randomUUID()) => {
+  const award = useCallback(async (rewardKey?: LearningRewardKey, eventId: string = crypto.randomUUID()) => {
     const lockedSession = await ensureSession();
     return awardLearningCoins(source, eventId, { sessionId: lockedSession.id, rewardKey });
   }, [ensureSession, source]);

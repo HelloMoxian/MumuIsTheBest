@@ -79,6 +79,11 @@ const MathKnowledgeTowerPage = lazy(async () => {
   return { default: module.MathKnowledgeTowerPage };
 });
 
+const EnglishEchoIslandPage = lazy(async () => {
+  const module = await import("./features/english-echo-island/EnglishEchoIslandPage");
+  return { default: module.EnglishEchoIslandPage };
+});
+
 function ChemistryLoading({ label }: { label: string }) {
   return (
     <div className="app-shell" aria-live="polite">
@@ -149,7 +154,7 @@ type AsrConfiguration = {
   isConfigured: boolean;
   storage: "local-file" | "environment" | "none";
 };
-type SubjectIconKind = "math" | "chemistry" | "chinese" | "classics";
+type SubjectIconKind = "math" | "english" | "chemistry" | "chinese" | "classics";
 type GamePlaceholder = {
   title: string;
   mark: string;
@@ -220,6 +225,22 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "点亮四级熟练度，从一年级向九年级攀登",
         shape: "wide",
         href: "/math/knowledge-tower",
+      },
+    ],
+  },
+  {
+    id: "english",
+    title: "英语",
+    caption: "先听声音，再把英文和中文连起来",
+    icon: "english",
+    games: [
+      {
+        title: "英语回声岛",
+        mark: "Aa",
+        description: "1000 句双语真人录音，专注听懂一整句",
+        shape: "wide",
+        href: "/english/echo-island",
+        rewardSource: "english:echo-island",
       },
     ],
   },
@@ -303,6 +324,9 @@ function SubjectGlyph({ kind }: { kind: SubjectIconKind }) {
   }
   if (kind === "chemistry") {
     return <span className="subject-glyph glyph-chemistry" aria-hidden="true"><i /><i /><i /></span>;
+  }
+  if (kind === "english") {
+    return <span className="subject-glyph glyph-letter glyph-english" aria-hidden="true">Aa</span>;
   }
   if (kind === "chinese") {
     return <span className="subject-glyph glyph-letter" aria-hidden="true">文</span>;
@@ -883,6 +907,13 @@ function CurrentPage() {
     return (
       <Suspense fallback={<ChemistryLoading label="数学知识塔" />}>
         <MathKnowledgeTowerPage />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname === "/english/echo-island") {
+    return (
+      <Suspense fallback={<ChemistryLoading label="英语回声岛" />}>
+        <EnglishEchoIslandPage />
       </Suspense>
     );
   }
