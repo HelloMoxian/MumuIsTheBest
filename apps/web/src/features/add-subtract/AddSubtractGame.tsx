@@ -3,6 +3,11 @@ import { browserTts } from "../../shared/speech";
 import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
 import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
 import {
+  arithmeticResultSpeech,
+  LocalizedLines,
+  speakLearningMoment,
+} from "../../shared/experience";
+import {
   ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
@@ -250,6 +255,12 @@ export function AddSubtractGame() {
         setSaveWarning("答案已经记录，但知识币暂时没有加上；下次答题时可以继续获得。");
       });
       await stopRecognition();
+      await speakLearningMoment(
+        arithmeticResultSpeech(
+          `${question.left} ${question.operator} ${question.right}`,
+          question.answer,
+        ),
+      );
 
       feedbackTimerRef.current = window.setTimeout(() => {
         if (finished.length === questions.length) {
@@ -574,7 +585,12 @@ export function AddSubtractGame() {
           {phase === "ready" && (
             <div className="ready-content">
               <span className="eyebrow">0—20 数字原子训练</span>
-              <h1 id="practice-title">让小小算式<br />变成木木的超能力</h1>
+              <h1 id="practice-title" data-no-ui-translation>
+                <LocalizedLines
+                  zh={<>让小小算式<br />变成木木的超能力</>}
+                  en={<>Turn little equations<br />into Mumu&apos;s superpower</>}
+                />
+              </h1>
               <p>说“开始 / start”，或者按下按钮。回答时请说“等于 + 答案”。</p>
               <button className="start-button" type="button" onClick={() => void beginRound()}>
                 <span aria-hidden="true">▶</span>

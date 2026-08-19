@@ -11,6 +11,11 @@ import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
 import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
 import type { FindNumberRewardKey } from "../../shared/learning-coins";
 import {
+  findNumberResultSpeech,
+  LocalizedLines,
+  speakLearningMoment,
+} from "../../shared/experience";
+import {
   ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
@@ -199,7 +204,9 @@ export function FindNumberGame() {
       void learningRewards.award(String(maximum) as FindNumberRewardKey).catch(() => {
         setVoiceDetail("数字已经找到啦；知识币暂时没有加上，下一局还可以继续获得");
       });
-      void stopRecognition();
+      void stopRecognition().then(() => (
+        speakLearningMoment(findNumberResultSpeech(secretRef.current, nextAttempts.length))
+      ));
       clearCelebrationTimer();
       celebrationTimerRef.current = window.setTimeout(() => {
         celebrationTimerRef.current = null;
@@ -385,7 +392,12 @@ export function FindNumberGame() {
         <main className="find-number-setup-main">
           <section className="find-number-setup-copy">
             <p className="find-number-eyebrow">NUMBER RADAR · 数字雷达舱</p>
-            <h1>问一问大小，<em>把神秘数字找出来。</em></h1>
+            <h1 data-no-ui-translation>
+              <LocalizedLines
+                zh={<>问一问大小，<em>把神秘数字找出来。</em></>}
+                en={<>Ask whether it is higher or lower, <em>and find the mystery number.</em></>}
+              />
+            </h1>
             <p className="find-number-lead">
               每次比较都会冻住一大片不可能的数字。
               观察每次留下的范围，自己决定下一次怎样问。

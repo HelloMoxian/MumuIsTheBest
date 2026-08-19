@@ -31,6 +31,10 @@ import {
 import { CompoundReferenceImage } from "../reaction-furnace/CompoundReferenceImage";
 import { MoleculeStructurePreview } from "../reaction-furnace/MoleculeStructurePreview";
 import type { ReactionCompound } from "../reaction-furnace/logic";
+import {
+  elementDiscoverySpeech,
+  speakLearningMoment,
+} from "../../shared/experience";
 import { ELEMENTS } from "./elements.generated";
 import {
   applyNavigationCommands,
@@ -534,6 +538,7 @@ export function PeriodicTablePage() {
   );
   const elementButtonsRef = useRef<ElementButtonMap>(new Map());
   const recognitionRef = useRef<AsrRecognitionSession | null>(null);
+  const startVoiceRef = useRef<() => Promise<void>>(async () => undefined);
   const consumedBySentenceRef = useRef(new Map<number, VoiceSentenceProgress>());
   const detailElementRef = useRef<ElementRecord | null>(null);
   const selectedAtomicNumberRef = useRef(1);
@@ -573,6 +578,23 @@ export function PeriodicTablePage() {
     });
   }, []);
 
+  const openElementDetail = useCallback((element: ElementRecord) => {
+    setDetailElement(element);
+    const activeRecognition = recognitionRef.current;
+    const shouldResume = Boolean(activeRecognition);
+    recognitionRef.current = null;
+    void (activeRecognition ? activeRecognition.stop() : Promise.resolve())
+      .then(() => speakLearningMoment(elementDiscoverySpeech({
+        atomicNumber: element.atomicNumber,
+        symbol: element.symbol,
+        nameZh: element.chineseName,
+        nameEn: element.englishName,
+      })))
+      .then(() => {
+        if (shouldResume) void startVoiceRef.current();
+      });
+  }, []);
+
   const processVoiceResult = useCallback((result: RecognitionResult) => {
     const previous = consumedBySentenceRef.current.get(result.sentenceId) ?? {
       directionCount: 0,
@@ -600,7 +622,7 @@ export function PeriodicTablePage() {
     }
 
     if (detailCommand && !previous.detailHandled) {
-      setDetailElement(findElement(selectedAtomicNumberRef.current));
+      openElementDetail(findElement(selectedAtomicNumberRef.current));
       setVoiceDetail("已打开元素详情，说“返回”可以回到周期表");
       return;
     }
@@ -617,7 +639,7 @@ export function PeriodicTablePage() {
       });
       setVoiceDetail(`识别到 ${directions.length} 个方向指令`);
     }
-  }, []);
+  }, [openElementDetail]);
 
   const stopVoice = useCallback(async () => {
     const session = recognitionRef.current;
@@ -651,6 +673,7 @@ export function PeriodicTablePage() {
     recognitionRef.current = session;
     await session.start();
   }, [asrConfigured, processVoiceResult]);
+  startVoiceRef.current = startVoice;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -673,13 +696,13 @@ export function PeriodicTablePage() {
       if (event.key === "Enter") {
         const target = event.target as HTMLElement;
         if (target.closest(".periodic-element")) {
-          setDetailElement(findElement(selectedAtomicNumberRef.current));
+          openElementDetail(findElement(selectedAtomicNumberRef.current));
         }
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [openElementDetail]);
 
   const listening = voiceState === "listening";
   const voiceBusy = voiceState === "connecting" || voiceState === "finishing";
@@ -767,7 +790,7 @@ export function PeriodicTablePage() {
                 }}
                 onClick={() => {
                   selectAndFocus(element.atomicNumber);
-                  setDetailElement(element);
+                  openElementDetail(element);
                 }}
               >
                 <span className="cell-number">{element.atomicNumber}</span>
@@ -792,7 +815,7 @@ export function PeriodicTablePage() {
               电子层 {selectedElement.shells.join(" / ")}
             </p>
           </div>
-          <button type="button" onClick={() => setDetailElement(selectedElement)}>
+          <button type="button" onClick={() => openElementDetail(selectedElement)}>
             查看详细信息 <span aria-hidden="true">→</span>
           </button>
         </section>

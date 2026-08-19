@@ -24,6 +24,12 @@ import {
   type ExerciseCount,
   type RoundResult,
 } from "./logic";
+import {
+  characterDiscoverySpeech,
+  LocalizedLines,
+  speakLearningMoment,
+  translateUiText,
+} from "../../shared/experience";
 import "./common-characters.css";
 
 type GamePhase = "setup" | "learning" | "summary";
@@ -264,7 +270,19 @@ export function CommonCharactersGame() {
     if (phaseRef.current !== "learning") return;
     setRevealStage(2);
     setFeedback("拼音、组词和句子都出现啦");
-  }, []);
+    const character = roundRef.current[currentIndexRef.current];
+    if (!character) return;
+    void stopRecognition()
+      .then(() => speakLearningMoment(characterDiscoverySpeech({
+        character: character.character,
+        pinyin: character.pinyin,
+        meaningZh: `${character.meaning} 例句：${character.sentence}`,
+        meaningEn: `${translateUiText(character.meaning)} Example: ${translateUiText(character.sentence)}`,
+      })))
+      .then(() => {
+        if (asrConfigured) setRecognitionToken((token) => token + 1);
+      });
+  }, [asrConfigured, stopRecognition]);
 
   const returnToSetup = useCallback(() => {
     phaseRef.current = "setup";
@@ -505,7 +523,12 @@ export function CommonCharactersGame() {
         <main className="characters-setup-main">
           <section className="characters-intro">
             <p className="characters-eyebrow">CHARACTER CONSTELLATION · 文字星图</p>
-            <h1>一个字一个字，<em>把故事读进心里。</em></h1>
+            <h1 data-no-ui-translation>
+              <LocalizedLines
+                zh={<>一个字一个字，<em>把故事读进心里。</em></>}
+                en={<>One character at a time, <em>bring each story into your heart.</em></>}
+              />
+            </h1>
             <p>
               先看汉字，再看拼音、组词和句子。会了就说“我会了”，
               还没会的字会更常回来和木木见面。
@@ -643,7 +666,12 @@ export function CommonCharactersGame() {
         <main className="characters-summary-main">
           <section className="characters-summary-hero">
             <span>ROUND COMPLETE · 文字星光已收好</span>
-            <h1>{summary.studiedCount} 个字，<em>都认真看过了。</em></h1>
+            <h1 data-no-ui-translation>
+              <LocalizedLines
+                zh={<>{summary.studiedCount} 个字，<em>都认真看过了。</em></>}
+                en={<><em>{summary.studiedCount} characters</em> explored with care.</>}
+              />
+            </h1>
             <p>
               点亮了 {summary.knownCount} 颗“我会了”文字星，
               还有 {summary.reviewCount} 个字会放进之后的复习队伍。

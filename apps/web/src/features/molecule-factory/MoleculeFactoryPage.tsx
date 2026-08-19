@@ -35,6 +35,10 @@ import {
   writeChemistryLocalCache,
   type ChemistryCacheMetadata,
 } from "../chemistry-local-cache";
+import {
+  chemistryDiscoverySpeech,
+  speakLearningMoment,
+} from "../../shared/experience";
 import "../reaction-furnace/reaction-furnace.css";
 import "./molecule-factory.css";
 
@@ -459,6 +463,11 @@ export function MoleculeFactoryPage() {
     assemblingIdRef.current = null;
     setAssemblingId(null);
     setStatusText(`${compound.formula} ${compound.name}已经进入成品收藏架，本次不会重复生成。`);
+    void speakLearningMoment(chemistryDiscoverySpeech({
+      formula: compound.formula,
+      nameZh: compound.name,
+      nameEn: compound.nameEnglish,
+    }));
     scheduleMatch(260);
   }, [scheduleMatch]);
 

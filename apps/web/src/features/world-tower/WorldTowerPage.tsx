@@ -31,6 +31,7 @@ import type {
   WorldTowerNode,
   WorldTowerNodeDetail,
 } from "./types";
+import { speakLearningMoment } from "../../shared/experience";
 import "./world-tower.css";
 
 function errorMessage(error: unknown) {
@@ -266,6 +267,10 @@ export function WorldTowerPage() {
       await refreshData();
       setDetail(await loadWorldTowerNode(detail.node.id));
       setNotice(`${detail.node.name}已经点亮，知识路线又向前一步！`);
+      void speakLearningMoment({
+        zh: `${detail.node.name}已经点亮。${detail.node.summary}`,
+        en: "You unlocked a new node in the Material Tower. The knowledge path can now continue.",
+      });
     } catch (error) {
       setNotice(errorMessage(error));
     } finally {

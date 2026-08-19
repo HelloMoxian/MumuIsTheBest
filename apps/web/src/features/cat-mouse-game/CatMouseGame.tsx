@@ -15,6 +15,10 @@ import {
 } from "./logic";
 import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
 import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
+import {
+  catMouseResultSpeech,
+  speakLearningMoment,
+} from "../../shared/experience";
 import "./cat-mouse-game.css";
 
 type AnswerState = "answering" | "retry" | "correct" | "revealed";
@@ -293,6 +297,12 @@ export function CatMouseGame() {
     const rewardedPuzzleId = puzzle.id;
     setAnswerState("correct");
     setCoinMessage("正在把知识币送到顶部…");
+    void speakLearningMoment(catMouseResultSpeech({
+      kind: puzzle.kind,
+      answer: puzzle.answer,
+      unit: puzzle.unit,
+      equation: puzzle.equations.at(-1) ?? `x = ${puzzle.answer}`,
+    }));
     void learningRewards.award()
       .then((result) => {
         if (puzzleIdRef.current !== rewardedPuzzleId) return;

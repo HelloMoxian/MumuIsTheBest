@@ -6,6 +6,12 @@ import {
 } from "../../shared/learning-coins";
 import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
 import {
+  arithmeticResultSpeech,
+  LocalizedLines,
+  speakLearningMoment,
+  translateUiText,
+} from "../../shared/experience";
+import {
   ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
@@ -297,11 +303,18 @@ export function ArithmeticBattleGame({
       void learningRewards.award(difficulty).catch(() => {
         setSaveWarning("答案已经记录，但知识币暂时没有加上；下次答题时可以继续获得。");
       });
+      void stopRecognition()
+        .then(() => speakLearningMoment(arithmeticResultSpeech(question.expression, question.answer)))
+        .then(() => {
+          if (phaseRef.current === "playing") {
+            setRecognitionRestartToken((token) => token + 1);
+          }
+        });
       if (completed.length === questionsRef.current.length) {
         void saveCompletedBattle(completed);
       }
     },
-    [difficulty, learningRewards, saveCompletedBattle],
+    [difficulty, learningRewards, saveCompletedBattle, stopRecognition],
   );
 
   useNumericKeypadSubmission(({ value }) => {
@@ -592,7 +605,12 @@ export function ArithmeticBattleGame({
           {phase === "ready" && (
             <div className="battle-ready">
               <span className="battle-eyebrow">答案唯一 · 自由选择解题顺序</span>
-              <h1 id="battle-title">{gameTitle}<br /><em>点亮所有答案星</em></h1>
+              <h1 id="battle-title" data-no-ui-translation>
+                <LocalizedLines
+                  zh={<>{gameTitle}<br /><em>点亮所有答案星</em></>}
+                  en={<>{translateUiText(gameTitle)}<br /><em>Light up every answer star</em></>}
+                />
+              </h1>
               <p>
                 {isMultiplication
                   ? "乘法和整除题会同时出现。说“等于 + 答案”，每个结果只会命中一颗题目星。"

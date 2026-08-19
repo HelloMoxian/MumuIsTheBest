@@ -12,6 +12,11 @@ import {
 } from "./shared/LearningCoinLayer";
 import type { LearningCoinSource } from "./shared/learning-coins";
 import { openNumericKeypad } from "./shared/numeric-keypad";
+import {
+  GlobalExperienceLayer,
+  LocalizedLines,
+  translateUiText,
+} from "./shared/experience";
 import "./styles.css";
 
 const FindNumberGame = lazy(async () => {
@@ -657,7 +662,12 @@ function App() {
           <div className="hero-art" aria-hidden="true" />
           <div className="hero-content">
             <p className="eyebrow"><span aria-hidden="true">✦</span> 木木的学习乐园 · 每天进步一点点</p>
-            <h1 id="hero-title">木木最努力，<em>{encouragement}</em></h1>
+            <h1 id="hero-title" data-no-ui-translation>
+              <LocalizedLines
+                zh={<>木木最努力，<em>{encouragement}</em></>}
+                en={<>Mumu keeps trying. <em>{translateUiText(encouragement)}</em></>}
+              />
+            </h1>
             <p className="hero-copy">
               把好玩的小任务、知识问答和探索挑战，装进同一座星际学习岛。每一次认真尝试，都会让木木更有力量。
             </p>
@@ -669,7 +679,12 @@ function App() {
           <div className="subject-board-heading">
             <div>
               <p className="eyebrow"><span aria-hidden="true">✦</span> 学科探索地图 · 玩法正在集合</p>
-              <h2 id="subject-board-title">挑一块星图，<em>开始努力闯关。</em></h2>
+              <h2 id="subject-board-title" data-no-ui-translation>
+                <LocalizedLines
+                  zh={<>挑一块星图，<em>开始努力闯关。</em></>}
+                  en={<>Choose a star map. <em>Start your learning mission.</em></>}
+                />
+              </h2>
             </div>
             <p>每一门学科都有不同的好玩入口。先从想试试的那一块开始吧！</p>
           </div>
@@ -965,9 +980,11 @@ function CurrentPage() {
 }
 
 createRoot(document.getElementById("root")!).render(
-  <LearningCoinLayer>
-    <NumericKeypadLayer>
-      <CurrentPage />
-    </NumericKeypadLayer>
-  </LearningCoinLayer>,
+  <GlobalExperienceLayer>
+    <LearningCoinLayer>
+      <NumericKeypadLayer>
+        <CurrentPage />
+      </NumericKeypadLayer>
+    </LearningCoinLayer>
+  </GlobalExperienceLayer>,
 );

@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CURVE_COLORS, FunctionGraphCanvas } from "./FunctionGraphCanvas";
 import {
+  functionDiscoverySpeech,
+  LocalizedLines,
+  speakLearningMoment,
+} from "../../shared/experience";
+import {
   FUNCTION_DEFINITIONS,
   MAX_GRAPH_SPAN,
   MIN_GRAPH_SPAN,
@@ -138,6 +143,12 @@ export function MysteryFunctionGame() {
       kind: "success",
       text: `${getDefinition(definitionId).name}已经点亮，试着拨动它的参数吧。`,
     });
+    if (!isFirst) {
+      void speakLearningMoment(functionDiscoverySpeech(
+        getDefinition(definitionId).name,
+        curveEquation(nextCurve),
+      ));
+    }
   };
 
   const startLab = () => {
@@ -228,7 +239,12 @@ export function MysteryFunctionGame() {
         <main className="mystery-intro">
           <section className="mystery-intro-copy">
             <p className="mystery-eyebrow">FUNCTION ORBIT · 函数轨道舱</p>
-            <h1>拨动一个数字，<em>看看曲线怎样变身。</em></h1>
+            <h1 data-no-ui-translation>
+              <LocalizedLines
+                zh={<>拨动一个数字，<em>看看曲线怎样变身。</em></>}
+                en={<>Change one number, <em>and watch the curve transform.</em></>}
+              />
+            </h1>
             <p className="mystery-lead">
               公式像一台小机器：把 x 放进去，就会得到 y。
               同时点亮最多四台机器，观察它们画出的不同航线。
@@ -273,7 +289,12 @@ export function MysteryFunctionGame() {
         </header>
         <main className="mystery-summary">
           <p className="mystery-eyebrow">ORBIT REPORT · 航线观察报告</p>
-          <h1>木木点亮了 <em>{seenKinds.size}</em> 个函数家族</h1>
+          <h1 data-no-ui-translation>
+            <LocalizedLines
+              zh={<>木木点亮了 <em>{seenKinds.size}</em> 个函数家族</>}
+              en={<>Mumu lit up <em>{seenKinds.size}</em> function families</>}
+            />
+          </h1>
           <p className="summary-lead">
             你拨动了 {adjustmentCount} 次参数。公式里的数字一变化，曲线的位置、方向和弯曲也会跟着变化。
           </p>

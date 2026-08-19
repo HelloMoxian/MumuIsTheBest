@@ -36,6 +36,11 @@ import {
   writeChemistryLocalCache,
   type ChemistryCacheMetadata,
 } from "../chemistry-local-cache";
+import {
+  chemistryDiscoverySpeech,
+  LocalizedLines,
+  speakLearningMoment,
+} from "../../shared/experience";
 import "./reaction-furnace.css";
 
 const ELEMENT_BY_SYMBOL = new Map(ELEMENTS.map((element) => [element.symbol, element]));
@@ -336,6 +341,11 @@ export function ReactionFurnacePage() {
     assemblingIdRef.current = null;
     setAssemblingId(null);
     setLatestCompound(compound);
+    void speakLearningMoment(chemistryDiscoverySpeech({
+      formula: compound.formula,
+      nameZh: compound.name,
+      nameEn: compound.nameEnglish,
+    }));
     window.setTimeout(() => tryAssemblyRef.current(), 260);
   }, []);
 
@@ -380,7 +390,12 @@ export function ReactionFurnacePage() {
         <section className="furnace-heading">
           <div>
             <p>第 {batchNumber} 批 · 从 {REACTION_COMPOUNDS.length} 种物质中随机选择</p>
-            <h1>把原子投入熔炉，<em>看它们组成物质。</em></h1>
+            <h1 data-no-ui-translation>
+              <LocalizedLines
+                zh={<>把原子投入熔炉，<em>看它们组成物质。</em></>}
+                en={<>Send atoms into the furnace, <em>and watch them form substances.</em></>}
+              />
+            </h1>
           </div>
           <div className="furnace-summary" aria-label="当前进度">
             <span><strong>{completedIds.size}</strong><small>/ {REACTION_FURNACE_TARGET_COUNT} 已稳定</small></span>

@@ -7,6 +7,12 @@ import {
 } from "react";
 import { browserTts, useTts } from "../../shared/speech";
 import {
+  learningConclusionSpeech,
+  LocalizedLines,
+  speakLearningMoment,
+  translateUiText,
+} from "../../shared/experience";
+import {
   ASR_SESSION_LIMIT_MINUTES,
   AsrRecognitionSession,
   readAsrConfiguration,
@@ -156,7 +162,17 @@ export function MissionLabGame({
     const nextResults = [...resultsRef.current, result];
     resultsRef.current = nextResults;
     setResults(nextResults);
-  }, []);
+    void stopRecognition()
+      .then(() => speakLearningMoment(learningConclusionSpeech(
+        `${mission.conclusion} ${mission.explanation}`,
+        `${translateUiText(mission.conclusion)} ${translateUiText(mission.explanation)}`,
+      )))
+      .then(() => {
+        if (asrConfigured && phaseRef.current === "playing") {
+          setRecognitionToken((token) => token + 1);
+        }
+      });
+  }, [asrConfigured, stopRecognition]);
 
   const submitSequence = useCallback((
     mission: LearningMission,
@@ -430,7 +446,12 @@ export function MissionLabGame({
         <main className="mission-summary-main">
           <section className="mission-summary-hero">
             <p>{summary.completeRound ? "本局星图完成" : "已经保存这次观察"}</p>
-            <h1>{summary.completed} 个新发现，<em>都装进木木的知识舱。</em></h1>
+            <h1 data-no-ui-translation>
+              <LocalizedLines
+                zh={<>{summary.completed} 个新发现，<em>都装进木木的知识舱。</em></>}
+                en={<><em>{summary.completed} new discoveries</em> saved in Mumu&apos;s knowledge deck.</>}
+              />
+            </h1>
             <div className="summary-stats">
               <article><strong>{summary.firstTry}</strong><span>第一次发现</span></article>
               <article><strong>{summary.observed}</strong><span>观察后发现</span></article>

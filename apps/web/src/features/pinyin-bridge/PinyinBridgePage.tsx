@@ -29,6 +29,11 @@ import {
   type PinyinGroupId,
   type PinyinUnit,
 } from "./logic";
+import {
+  LocalizedLines,
+  pinyinDiscoverySpeech,
+  speakLearningMoment,
+} from "../../shared/experience";
 import "./pinyin-bridge.css";
 
 type VoiceState = RecognitionState | "idle" | "unconfigured";
@@ -173,8 +178,11 @@ function PinyinDetailDialog({
           </div>
           <div className="dialog-title">
             <span>{GROUP_LABEL[unit.group]} · 汉字星群</span>
-            <h2 id="pinyin-detail-title">
-              拼音 <em>{unit.value}</em> 能遇见哪些汉字？
+            <h2 id="pinyin-detail-title" data-no-ui-translation>
+              <LocalizedLines
+                zh={<>拼音 <em>{unit.value}</em> 能遇见哪些汉字？</>}
+                en={<>Which Chinese characters use the Pinyin sound <em>{unit.value}</em>?</>}
+              />
             </h2>
             <p>亮起来的部分，就是这次正在观察的拼音。</p>
           </div>
@@ -258,6 +266,7 @@ export function PinyinBridgePage() {
   const selectedIdRef = useRef("initial:b");
   const detailUnitRef = useRef<PinyinUnit | null>(null);
   const columnsForRef = useRef(columnsFor);
+  const startVoiceRef = useRef<() => Promise<void>>(async () => undefined);
 
   const candidateMap = useMemo(
     () =>
@@ -334,16 +343,29 @@ export function PinyinBridgePage() {
 
   const shuffleDetail = useCallback((unit: PinyinUnit) => {
     const candidates = candidateMap.get(unit.id) ?? [];
-    setDetailCharacters(samplePinyinCharacters(candidates, 6));
+    const sampled = samplePinyinCharacters(candidates, 6);
+    setDetailCharacters(sampled);
+    return sampled;
   }, [candidateMap]);
 
   const openDetail = useCallback(
     (unit: PinyinUnit) => {
       selectUnit(unit, false);
-      shuffleDetail(unit);
+      const sampled = shuffleDetail(unit);
       detailUnitRef.current = unit;
       setDetailUnit(unit);
       setVoiceDetail(`已打开拼音 ${unit.value} 的汉字卡片，可以说“换一批”`);
+      const activeRecognition = recognitionRef.current;
+      const shouldResume = Boolean(activeRecognition);
+      recognitionRef.current = null;
+      void (activeRecognition ? activeRecognition.stop() : Promise.resolve())
+        .then(() => speakLearningMoment(pinyinDiscoverySpeech(
+          unit.value,
+          sampled.map((character) => character.character),
+        )))
+        .then(() => {
+          if (shouldResume) void startVoiceRef.current();
+        });
     },
     [selectUnit, shuffleDetail],
   );
@@ -471,6 +493,7 @@ export function PinyinBridgePage() {
     recognitionRef.current = session;
     await session.start();
   }, [asrConfigured, handleVoiceResult]);
+  startVoiceRef.current = startVoice;
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
