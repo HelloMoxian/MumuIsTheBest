@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -69,9 +70,9 @@ const KIND_LABELS: Record<MineralCatalogItem["kind"], string> = {
   "ore-aggregate": "矿石集合体",
 };
 
-const SORT_LABELS: Array<{ key: CatalogSortKey; label: string }> = [
+const CATALOG_COLUMNS: Array<{ key: CatalogSortKey; label: string }> = [
   { key: "discovery", label: "发现顺序" },
-  { key: "name", label: "名称" },
+  { key: "name", label: "样本" },
   { key: "kind", label: "类型" },
   { key: "rarity", label: "稀有度" },
   { key: "hardness", label: "莫氏硬度" },
@@ -194,7 +195,7 @@ function cellsInVisualOrder(cells: DigCell[]) {
   for (let column = 0; column < catalog.gameplay.columns; column += 1) {
     cells
       .filter((cell) => cell.column === column)
-      .sort((left, right) => left.depth - right.depth)
+      .sort((left, right) => right.depth - left.depth)
       .forEach((cell, row) => visualRows.set(cell.id, row));
   }
   return cells.slice().sort((left, right) => (
@@ -221,6 +222,8 @@ export function RockMineralGame() {
   const discoveryTimer = useRef<number | null>(null);
   const burstTimers = useRef<number[]>([]);
   const gridWrapRef = useRef<HTMLDivElement | null>(null);
+  const previousCellRects = useRef<Map<string, DOMRect>>(new Map());
+  const detailCloseRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -284,10 +287,10 @@ export function RockMineralGame() {
           }
         }
         setProgress(next);
-        setSelectedId(next.discoveredIds[0] ?? null);
+        setSelectedId(null);
         setSaveState("ready");
         if (!next.pendingResearch && !next.pendingHammerPurchase && stored) {
-          setMessage("钻探记录已恢复。先敲每列最上方发光的格子。");
+          setMessage("钻探记录已恢复。沿着发光的联通边缘继续探索吧。");
         }
       } catch (error) {
         if ((error as DOMException).name === "AbortError") return;
@@ -303,6 +306,57 @@ export function RockMineralGame() {
     };
   }, []);
 
+  useLayoutEffect(() => {
+    const previous = previousCellRects.current;
+    if (previous.size === 0 || !gridWrapRef.current) return;
+    previousCellRects.current = new Map();
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    gridWrapRef.current.querySelectorAll<HTMLButtonElement>(".geo-cell[data-cell-id]").forEach((element) => {
+      const cellId = element.dataset.cellId;
+      const before = cellId ? previous.get(cellId) : undefined;
+      if (!before) {
+        element.animate(
+          [
+            { opacity: 0, transform: "translateY(-24px) scale(.96)" },
+            { opacity: 1, transform: "translateY(0) scale(1)" },
+          ],
+          { duration: 300, easing: "cubic-bezier(.2,.82,.24,1)" },
+        );
+        return;
+      }
+      const after = element.getBoundingClientRect();
+      const offsetX = before.left - after.left;
+      const offsetY = before.top - after.top;
+      if (Math.abs(offsetX) < .5 && Math.abs(offsetY) < .5) return;
+      element.animate(
+        [
+          { transform: `translate(${offsetX}px, ${offsetY}px)` },
+          { transform: "translate(0, 0)" },
+        ],
+        { duration: 360, easing: "cubic-bezier(.2,.82,.24,1)" },
+      );
+    });
+  }, [progress?.board.cells]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const previousFocus = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    detailCloseRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedId(null);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [selectedId]);
+
   const commit = async (next: RockMineralProgress, nextMessage: string) => {
     setProgress(next);
     setSaveState("saving");
@@ -315,6 +369,14 @@ export function RockMineralGame() {
       setMessage(error instanceof Error ? error.message : "这次进度暂时无法保存。");
       throw error;
     }
+  };
+
+  const captureCellPositions = () => {
+    const positions = new Map<string, DOMRect>();
+    gridWrapRef.current?.querySelectorAll<HTMLButtonElement>(".geo-cell[data-cell-id]").forEach((element) => {
+      if (element.dataset.cellId) positions.set(element.dataset.cellId, element.getBoundingClientRect());
+    });
+    previousCellRects.current = positions;
   };
 
   const spawnImpactBurst = (
@@ -400,7 +462,7 @@ export function RockMineralGame() {
     const struckCell = progress.board.cells.find((cell) => cell.id === cellId);
     const result = strikeCell(progress, cellId, catalog);
     if (result.outcome === "blocked") {
-      setMessage("先把它上方的格子挖开，就能继续向下。");
+      setMessage("这个位置还没有连到挖开的通道，先从发光边缘继续扩展吧。");
       return;
     }
     if (result.outcome === "no-hammer") {
@@ -411,8 +473,9 @@ export function RockMineralGame() {
       playHitSound(result.outcome === "soil" ? "soil" : "mineral");
     }
     if (result.outcome === "soil") {
+      captureCellPositions();
       if (struckCell) spawnImpactBurst(struckCell, sourceElement, "soil");
-      void commit(result.progress, `泥土已经清开，钻孔到达 ${result.progress.currentDepth} 米。`);
+      void commit(result.progress, `泥土已经清开，现在挖了 ${result.progress.currentDepth} 米。`);
       return;
     }
     if (result.outcome === "crack") {
@@ -427,11 +490,11 @@ export function RockMineralGame() {
       ? itemById.get(result.collectedMineralId)
       : undefined;
     if (item) {
+      captureCellPositions();
       if (struckCell) spawnImpactBurst(struckCell, sourceElement, "mineral", item);
       setDiscovery({ item, first: result.firstDiscovery });
       if (discoveryTimer.current !== null) window.clearTimeout(discoveryTimer.current);
       discoveryTimer.current = window.setTimeout(() => setDiscovery(null), 1_450);
-      if (result.firstDiscovery) setSelectedId(item.id);
     }
     void commit(
       result.progress,
@@ -538,6 +601,15 @@ export function RockMineralGame() {
     });
   }, [progress, sortDirection, sortKey]);
 
+  const handleSort = (nextSortKey: CatalogSortKey) => {
+    if (sortKey === nextSortKey) {
+      setSortDirection((value) => value === "asc" ? "desc" : "asc");
+      return;
+    }
+    setSortKey(nextSortKey);
+    setSortDirection("asc");
+  };
+
   const selectedItem = selectedId ? itemById.get(selectedId) ?? null : null;
   const hammerCount = progress
     ? progress.spareHammers + (progress.currentHammerDurability > 0 ? 1 : 0)
@@ -590,7 +662,7 @@ export function RockMineralGame() {
           <section className="geo-dig-panel" aria-labelledby="geo-dig-title">
             <div className="geo-section-heading">
               <div><small>DRILL WINDOW · 5 × 6</small><h2 id="geo-dig-title">未知地层</h2></div>
-              <span>最浅顶部 {progress.board.baseDepth} m</span>
+              <span>{`挖了 ${progress.currentDepth} 米`}</span>
             </div>
             <div
               ref={gridWrapRef}
@@ -624,6 +696,7 @@ export function RockMineralGame() {
                         type="button"
                         role="gridcell"
                         key={cell.id}
+                        data-cell-id={cell.id}
                         disabled={cell.status === "cleared" || saveState === "saving"}
                         onClick={(event) => handleStrike(cell.id, event.currentTarget)}
                         aria-label={
@@ -631,7 +704,7 @@ export function RockMineralGame() {
                             ? `第 ${cell.depth} 米发现坚硬样本，继续敲击`
                             : accessible
                               ? `敲击第 ${cell.depth} 米地层`
-                              : `第 ${cell.depth} 米地层，上方尚未挖开`
+                              : `第 ${cell.depth} 米地层，尚未与挖开区域联通`
                         }
                       >
                         {cell.status === "revealed" && mineral && (
@@ -639,7 +712,6 @@ export function RockMineralGame() {
                         )}
                         <span className="geo-soil-grain" aria-hidden="true" />
                         {crackLevel > 0 && <span className="geo-cracks" aria-hidden="true" />}
-                        <small>{cell.depth}m</small>
                       </button>
                     );
                   })}
@@ -671,7 +743,7 @@ export function RockMineralGame() {
                 </span>
               )}
             </div>
-            <p className="geo-grid-help">只敲每列最上方发光的格子。泥土不耗耐久，坚硬样本会逐渐出现裂纹。</p>
+            <p className="geo-grid-help">从发光的联通边缘向四周探索。泥土不耗耐久，坚硬样本会逐渐出现裂纹。</p>
           </section>
 
           <aside className="geo-tool-panel">
@@ -726,15 +798,6 @@ export function RockMineralGame() {
         <section className="geo-catalog" aria-labelledby="geo-catalog-title">
           <div className="geo-catalog-toolbar">
             <div><small>DISCOVERY ARCHIVE</small><h2 id="geo-catalog-title">发现图鉴</h2><p>只有挖到过的样本会出现在这里。研究一次，随机翻开一张属性卡。</p></div>
-            <label>
-              排序维度
-              <select value={sortKey} onChange={(event) => setSortKey(event.target.value as CatalogSortKey)}>
-                {SORT_LABELS.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
-              </select>
-            </label>
-            <button type="button" onClick={() => setSortDirection((value) => value === "asc" ? "desc" : "asc")}>
-              {sortDirection === "asc" ? "↑ 正序" : "↓ 倒序"}
-            </button>
           </div>
 
           {discoveredItems.length === 0 ? (
@@ -746,17 +809,36 @@ export function RockMineralGame() {
             <div className="geo-catalog-layout">
               <div className="geo-table-wrap">
                 <table>
-                  <thead><tr><th>样本</th><th>类型</th><th>稀有度</th><th>硬度</th><th>价值</th><th>库存</th><th>研究</th></tr></thead>
+                  <thead>
+                    <tr>
+                      {CATALOG_COLUMNS.map((column) => (
+                        <th
+                          key={column.key}
+                          aria-sort={sortKey === column.key
+                            ? sortDirection === "asc" ? "ascending" : "descending"
+                            : "none"}
+                        >
+                          <button type="button" onClick={() => handleSort(column.key)}>
+                            <span>{column.label}</span>
+                            <i aria-hidden="true">
+                              {sortKey === column.key ? sortDirection === "asc" ? "↑" : "↓" : "↕"}
+                            </i>
+                          </button>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
                   <tbody>
                     {discoveredItems.map((item) => {
                       const unlocked = new Set(progress.unlockedAttributes[item.id] ?? []);
                       const completion = researchCompletion(progress, item.id);
                       return (
-                        <tr className={selectedId === item.id ? "is-selected" : ""} key={item.id}>
+                        <tr key={item.id} onClick={() => setSelectedId(item.id)}>
+                          <td className="geo-discovery-index">#{progress.discoveredIds.indexOf(item.id) + 1}</td>
                           <td>
                             <button type="button" onClick={() => setSelectedId(item.id)}>
                               <img src={item.image.path} alt="" />
-                              <span><strong>{itemName(progress, item)}</strong><small>第 {progress.discoveredIds.indexOf(item.id) + 1} 个发现</small></span>
+                              <span><strong>{itemName(progress, item)}</strong><small>点击查看大图与完整档案</small></span>
                             </button>
                           </td>
                           <td>{unlocked.has("classification") ? KIND_LABELS[item.kind] : "未知"}</td>
@@ -778,44 +860,72 @@ export function RockMineralGame() {
                   </tbody>
                 </table>
               </div>
-
-              {selectedItem && (
-                <article className="geo-detail">
-                  <div className="geo-detail-hero">
-                    <img src={selectedItem.image.path} alt={isUnlocked(progress, selectedItem.id, "name") ? selectedItem.name : "已发现的未知样本"} />
-                    <div><small>库存 {progress.inventory[selectedItem.id] ?? 0} 份</small><h3>{itemName(progress, selectedItem)}</h3><p>已解锁 {progress.unlockedAttributes[selectedItem.id]?.length ?? 0} / {RESEARCH_ATTRIBUTE_KEYS.length} 个词条</p></div>
-                  </div>
-                  <button
-                    className="geo-research-button"
-                    type="button"
-                    disabled={
-                      saveState === "saving"
-                      || (progress.inventory[selectedItem.id] ?? 0) < 1
-                      || remainingResearchAttributes(progress, selectedItem.id).length === 0
-                      || (learningCoins?.coinBalance ?? 0) < catalog.gameplay.research.knowledgeCoinCost
-                    }
-                    onClick={() => void handleResearch(selectedItem)}
-                  >
-                    <span aria-hidden="true">✦</span>
-                    <span><strong>研究一次</strong><small>消耗 5 知识币 + 1 份库存，随机解锁 1 个词条</small></span>
-                  </button>
-                  <div className="geo-attribute-grid">
-                    {RESEARCH_ATTRIBUTE_KEYS.map((key) => {
-                      const unlocked = isUnlocked(progress, selectedItem.id, key);
-                      return (
-                        <section className={`geo-attribute ${unlocked ? "is-unlocked" : "is-locked"} ${key === "safety" ? "is-safety" : ""}`} key={key}>
-                          <header><span aria-hidden="true">{unlocked ? "✓" : "?"}</span><h4>{ATTRIBUTE_LABELS[key]}</h4></header>
-                          <div>{unlocked ? attributeValue(selectedItem, key) : <p>这个词条还没有研究。</p>}</div>
-                        </section>
-                      );
-                    })}
-                  </div>
-                  <p className="geo-editorial-note">稀有度和价值是儿童游戏中的相对分数，不是交易价格或投资建议。</p>
-                </article>
-              )}
             </div>
           )}
         </section>
+      )}
+
+      {activeView === "catalog" && selectedItem && (
+        <div
+          className="geo-detail-backdrop"
+          onPointerDown={(event) => {
+            if (event.target === event.currentTarget) setSelectedId(null);
+          }}
+        >
+          <article
+            className="geo-detail-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="geo-detail-title"
+          >
+            <button
+              ref={detailCloseRef}
+              className="geo-detail-close"
+              type="button"
+              aria-label="关闭矿物详细资料"
+              onClick={() => setSelectedId(null)}
+            >
+              ×
+            </button>
+            <div className="geo-detail-overview">
+              <figure>
+                <img src={selectedItem.image.path} alt={isUnlocked(progress, selectedItem.id, "name") ? selectedItem.name : "已发现的未知样本"} />
+                <figcaption>写实标本图 · 放大观察纹理、晶体与共生细节</figcaption>
+              </figure>
+              <div className="geo-detail-summary">
+                <small>库存 {progress.inventory[selectedItem.id] ?? 0} 份</small>
+                <h3 id="geo-detail-title">{itemName(progress, selectedItem)}</h3>
+                <p>已解锁 {progress.unlockedAttributes[selectedItem.id]?.length ?? 0} / {RESEARCH_ATTRIBUTE_KEYS.length} 个词条</p>
+                <button
+                  className="geo-research-button"
+                  type="button"
+                  disabled={
+                    saveState === "saving"
+                    || (progress.inventory[selectedItem.id] ?? 0) < 1
+                    || remainingResearchAttributes(progress, selectedItem.id).length === 0
+                    || (learningCoins?.coinBalance ?? 0) < catalog.gameplay.research.knowledgeCoinCost
+                  }
+                  onClick={() => void handleResearch(selectedItem)}
+                >
+                  <span aria-hidden="true">✦</span>
+                  <span><strong>研究一次</strong><small>消耗 1 知识币 + 1 份库存，随机解锁 1 个词条</small></span>
+                </button>
+              </div>
+            </div>
+            <div className="geo-attribute-grid">
+              {RESEARCH_ATTRIBUTE_KEYS.map((key) => {
+                const unlocked = isUnlocked(progress, selectedItem.id, key);
+                return (
+                  <section className={`geo-attribute ${unlocked ? "is-unlocked" : "is-locked"} ${key === "safety" ? "is-safety" : ""}`} key={key}>
+                    <header><span aria-hidden="true">{unlocked ? "✓" : "?"}</span><h4>{ATTRIBUTE_LABELS[key]}</h4></header>
+                    <div>{unlocked ? attributeValue(selectedItem, key) : <p>这个词条还没有研究。</p>}</div>
+                  </section>
+                );
+              })}
+            </div>
+            <p className="geo-editorial-note">稀有度和价值是儿童游戏中的相对分数，不是交易价格或投资建议。</p>
+          </article>
+        </div>
       )}
 
       {discovery && (

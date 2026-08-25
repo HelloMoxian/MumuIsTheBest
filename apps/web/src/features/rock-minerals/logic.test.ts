@@ -15,12 +15,30 @@ const catalog = catalogAsset as RockMineralCatalog;
 const fixedRandom = () => 0.99;
 
 describe("rock and mineral digging", () => {
-  it("only allows the first uncleared cell in each column", () => {
+  it("starts with the surface row connected to open air", () => {
     const progress = createInitialProgress(catalog, fixedRandom);
     const top = progress.board.cells.find((cell) => cell.depth === 1 && cell.column === 0)!;
     const below = progress.board.cells.find((cell) => cell.depth === 2 && cell.column === 0)!;
     assert.equal(isCellAccessible(progress.board, top), true);
     assert.equal(isCellAccessible(progress.board, below), false);
+  });
+
+  it("allows any cell touching a connected excavated tunnel", () => {
+    const initial = createInitialProgress(catalog, fixedRandom);
+    const first = initial.board.cells.find((cell) => cell.column === 0 && cell.depth === 1)!;
+    const afterFirst = strikeCell(initial, first.id, catalog, fixedRandom).progress;
+    const second = afterFirst.board.cells.find((cell) => cell.column === 0 && cell.depth === 2)!;
+    const tunneled = strikeCell(afterFirst, second.id, catalog, fixedRandom).progress;
+    const sideCell = tunneled.board.cells.find((cell) => cell.column === 1 && cell.depth === 2)!;
+    const deeperSideCell = tunneled.board.cells.find((cell) => cell.column === 1 && cell.depth === 3)!;
+
+    assert.equal(isCellAccessible(tunneled.board, sideCell), true);
+    assert.equal(isCellAccessible(tunneled.board, deeperSideCell), false);
+
+    const branched = strikeCell(tunneled, sideCell.id, catalog, fixedRandom).progress;
+    const nextSideCell = branched.board.cells.find((cell) => cell.column === 2 && cell.depth === 2)!;
+    assert.equal(isCellAccessible(branched.board, nextSideCell), true);
+    assert.ok(branched.board.cells.some((cell) => cell.column === 1 && cell.depth === 1));
   });
 
   it("clears soil without spending hammer durability", () => {

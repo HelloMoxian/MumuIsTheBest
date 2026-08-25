@@ -105,10 +105,40 @@ export function createInitialProgress(
 
 export function isCellAccessible(board: DigBoard, cell: DigCell) {
   if (cell.status === "cleared") return false;
-  return board.cells.every((candidate) => (
-    candidate.column !== cell.column
-    || candidate.depth >= cell.depth
-    || candidate.status === "cleared"
+  const activeCells = board.cells.filter((candidate) => candidate.status !== "cleared");
+  if (activeCells.length === 0) return false;
+  const columnCount = Math.max(...activeCells.map((candidate) => candidate.column)) + 1;
+  const ceilingDepth = Math.min(...activeCells.map((candidate) => candidate.depth)) - 1;
+  const floorDepth = Math.max(...activeCells.map((candidate) => candidate.depth));
+  const coordinate = (column: number, depth: number) => `${column}:${depth}`;
+  const occupied = new Set(activeCells.map((candidate) => coordinate(candidate.column, candidate.depth)));
+  const reachableAir = new Set<string>();
+  const queue = Array.from(
+    { length: columnCount },
+    (_, column) => ({ column, depth: ceilingDepth }),
+  );
+
+  for (let cursor = 0; cursor < queue.length; cursor += 1) {
+    const current = queue[cursor]!;
+    const key = coordinate(current.column, current.depth);
+    if (reachableAir.has(key) || occupied.has(key)) continue;
+    reachableAir.add(key);
+    for (const [columnOffset, depthOffset] of [[-1, 0], [1, 0], [0, -1], [0, 1]] as const) {
+      const column = current.column + columnOffset;
+      const depth = current.depth + depthOffset;
+      if (
+        column < 0
+        || column >= columnCount
+        || depth < ceilingDepth
+        || depth > floorDepth
+      ) continue;
+      const nextKey = coordinate(column, depth);
+      if (!reachableAir.has(nextKey) && !occupied.has(nextKey)) queue.push({ column, depth });
+    }
+  }
+
+  return [[-1, 0], [1, 0], [0, -1], [0, 1]].some(([columnOffset, depthOffset]) => (
+    reachableAir.has(coordinate(cell.column + columnOffset, cell.depth + depthOffset))
   ));
 }
 

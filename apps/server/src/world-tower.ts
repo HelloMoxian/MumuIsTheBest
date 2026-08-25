@@ -280,7 +280,7 @@ const coinSetSchema = coinResetSchema.extend({
 const knowledgeCoinSpendSchema = z.object({
   eventId: z.string().uuid(),
   purpose: z.literal("nature:rock-mineral-research"),
-  amount: z.literal(5),
+  amount: z.literal(1),
 });
 
 type WorldGraph = z.infer<typeof graphSchema>;
@@ -789,7 +789,7 @@ export function registerWorldTowerApi(
           throw new WorldTowerError(
             "WORLD_TOWER_INSUFFICIENT_COINS",
             409,
-            "知识币还不够，完成学习任务获得至少 5 个知识币后再研究。",
+            "知识币还不够，完成学习任务获得至少 1 个知识币后再研究。",
           );
         }
         const now = new Date().toISOString();

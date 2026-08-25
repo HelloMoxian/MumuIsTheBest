@@ -22,7 +22,7 @@
         "energyCoinAdapter": "/api/games/fruit-slice/energy-coins/spend"
     },
     "research": {
-      "knowledgeCoinCost": 5,
+      "knowledgeCoinCost": 1,
       "inventoryCost": 1,
       "attributeKeys": [
         "name",
