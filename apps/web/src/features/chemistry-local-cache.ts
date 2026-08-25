@@ -1,3 +1,8 @@
+import {
+  loadPersistentData,
+  queuePersistentDataWrite,
+} from "../shared/persistent-data";
+
 export const CHEMISTRY_LOCAL_CACHE_SCHEMA_VERSION = 1;
 
 export type LocalStorageLike = Pick<Storage, "getItem" | "setItem">;
@@ -120,4 +125,32 @@ export function writeChemistryLocalCache<T>(
   } catch {
     return undefined;
   }
+}
+
+export function loadChemistryPersistentCache<T>(
+  spec: ChemistryLocalCacheSpec<T>,
+  legacySpecs: readonly ChemistryLocalCacheSpec<T>[] = [],
+  storage: LocalStorageLike | undefined = getBrowserLocalStorage(),
+  fetcher: typeof fetch = fetch,
+) {
+  return loadPersistentData({
+    stableId: spec.stableId,
+    parsePayload: spec.parsePayload,
+    legacyCandidates: [spec, ...legacySpecs].map((legacySpec) => (
+      () => readChemistryLocalCache(legacySpec, storage)
+    )),
+  }, fetcher);
+}
+
+export function writeChemistryPersistentCache<T>(
+  spec: ChemistryLocalCacheSpec<T>,
+  payload: T,
+  fetcher: typeof fetch = fetch,
+) {
+  return queuePersistentDataWrite(
+    spec.stableId,
+    payload,
+    spec.parsePayload,
+    fetcher,
+  );
 }

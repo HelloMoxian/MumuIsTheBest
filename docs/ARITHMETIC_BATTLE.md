@@ -83,12 +83,12 @@
 完整完成的成绩写入：
 
 ```text
-var/learning/math/arithmetic-battle-history.json
+../data/learning/math/arithmetic-battle-history.json
 ```
 
 若配置了 `APP_DATA_DIR`，则写入该目录下同样的相对路径。该文件：
 
-- 被 Git 忽略，只保存在本机运行时数据目录。
+- 位于 Git 工作树之外，只保存在本机运行时数据目录。
 - 包含 `schemaVersion`、稳定 ID、创建/更新时间、配置、各题算式与解题顺序/耗时。
 - 经服务端 schema 和业务约束校验后，以临时文件 + 原子替换方式写入，文件权限仅当前用户可读写。
 - 不记录音频、识别原文或非命中的语音结果。

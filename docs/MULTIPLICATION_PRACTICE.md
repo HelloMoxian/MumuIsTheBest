@@ -55,7 +55,7 @@
 完整成绩保存到：
 
 ```text
-var/learning/math/multiplication-history.json
+../data/learning/math/multiplication-history.json
 ```
 
-若设置了 `APP_DATA_DIR`，则写入该目录下同样的相对路径。文件必须经过 schema 与业务规则校验，并使用临时文件 + 原子替换写入；它被 Git 忽略，不记录音频、识别原文或未匹配的语音结果。
+若设置了绝对路径 `APP_DATA_DIR`，则写入该目录下同样的相对路径。文件必须经过 schema 与业务规则校验，并使用临时文件 + 原子替换写入；它位于 Git 工作树之外，不记录音频、识别原文或未匹配的语音结果。

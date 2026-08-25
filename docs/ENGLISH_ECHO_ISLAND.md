@@ -67,7 +67,7 @@
 个人进度默认写入：
 
 ```text
-var/learning/english/echo-island-progress.json
+../data/learning/english/echo-island-progress.json
 ```
 
 使用 `APP_DATA_DIR` 时写到对应绝对目录。文件包含 `schemaVersion`、稳定 UUID、创建/更新时间、标记句子 ID、普通练习计数、总完成数、幂等事件 ID 和稀疏句子次数记录。服务端使用单写入队列、临时文件 + 原子替换、0700 目录和 0600 文件权限。

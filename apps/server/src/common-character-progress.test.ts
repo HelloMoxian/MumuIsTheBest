@@ -205,9 +205,8 @@ describe("common character progress API", () => {
       resolve(tmpdir(), "mumu-common-character-write-failure-"),
     );
     cleanupPaths.push(parentDirectory);
-    const unusableDataPath = resolve(parentDirectory, "not-a-directory");
-    await writeFile(unusableDataPath, "occupied");
-    const { baseUrl, child } = await startServer(unusableDataPath);
+    const { baseUrl, child } = await startServer(parentDirectory);
+    await writeFile(resolve(parentDirectory, "learning"), "occupied");
 
     try {
       const response = await fetch(

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   CHEMISTRY_LOCAL_CACHE_SCHEMA_VERSION,
+  loadChemistryPersistentCache,
   readChemistryLocalCache,
   writeChemistryLocalCache,
   type LocalStorageLike,
@@ -109,4 +110,34 @@ test("浏览器拒绝写入时保留玩法本身且不抛出异常", () => {
     },
   };
   assert.equal(writeChemistryLocalCache(spec, { label: "不会中断" }, undefined, storage), undefined);
+});
+
+test("服务端为空时会迁移化学浏览器缓存", async () => {
+  const storage = new MemoryStorage();
+  writeChemistryLocalCache(
+    spec,
+    { label: "待迁移探索" },
+    undefined,
+    storage,
+    () => "2026-08-02T03:00:00.000Z",
+  );
+  const methods: string[] = [];
+  const fetcher: typeof fetch = async (_input, init) => {
+    const method = init?.method ?? "GET";
+    methods.push(method);
+    if (method === "GET") return Response.json({ state: null });
+    return Response.json({
+      state: {
+        schemaVersion: 1,
+        id: "70b7595e-662a-47f7-b786-786d81180f33",
+        stableId: spec.stableId,
+        createdAt: "2026-08-02T03:01:00.000Z",
+        updatedAt: "2026-08-02T03:01:00.000Z",
+        payload: { label: "待迁移探索" },
+      },
+    });
+  };
+  const restored = await loadChemistryPersistentCache(spec, [], storage, fetcher);
+  assert.equal(restored?.payload.label, "待迁移探索");
+  assert.deepEqual(methods, ["GET", "PUT"]);
 });

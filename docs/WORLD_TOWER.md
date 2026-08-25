@@ -83,7 +83,7 @@
 
 ## 6. 进度、安全与迁移
 
-个人进度默认存放在 var/learning/world-tower/progress.json，也可以由 APP_DATA_DIR 指向仓库外的绝对目录。服务端使用单写入队列、临时文件、原子替换以及 0700 目录 / 0600 文件权限。
+个人进度与知识币默认存放在 `../data/learning/world-tower/progress.json`，也可以由 `APP_DATA_DIR` 指向其他仓库外绝对目录。服务端使用单写入队列、临时文件、原子替换以及 0700 目录 / 0600 文件权限。
 
 从旧图谱切换到物质塔时：
 

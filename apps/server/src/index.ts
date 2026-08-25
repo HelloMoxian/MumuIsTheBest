@@ -7,11 +7,17 @@ import fastifyStatic from "@fastify/static";
 import fastifyWebsocket from "@fastify/websocket";
 import WebSocket, { type RawData } from "ws";
 import { z } from "zod";
+import {
+  defaultAppDataDirectory,
+  initializeAppDataDirectory,
+  resolveAppDataDirectory,
+} from "./app-data.js";
 import { registerArithmeticBattleHistoryApi } from "./arithmetic-battle-history.js";
 import { registerCommonCharacterProgressApi } from "./common-character-progress.js";
 import { registerEnglishEchoIslandApi } from "./english-echo-island.js";
 import { registerMathKnowledgeTowerApi } from "./math-knowledge-tower.js";
 import { registerMultiplicationHistoryApi } from "./multiplication-history.js";
+import { registerPersistentUserDataApi } from "./persistent-user-data.js";
 import { registerWorldTowerApi } from "./world-tower.js";
 
 const defaultEndpoint =
@@ -22,7 +28,8 @@ const host = process.env.HOST ?? "127.0.0.1";
 const app = Fastify({ logger: false });
 const asrMaxSessionMs = 10 * 60 * 1000;
 const projectRoot = resolve(import.meta.dirname, "../../..");
-const appDataDir = resolve(process.env.APP_DATA_DIR ?? resolve(projectRoot, "var"));
+const appDataDir = resolveAppDataDirectory(projectRoot);
+const defaultDataDir = defaultAppDataDirectory(projectRoot);
 const asrConfigPath = resolve(appDataDir, "config", "asr-settings.json");
 const legacyAsrConfigPath = resolve(projectRoot, "apps", "server", "var", "config", "asr-settings.json");
 const addSubtractHistoryPath = resolve(appDataDir, "learning", "math", "add-subtract-history.json");
@@ -522,11 +529,18 @@ async function registerAsrProxy() {
 }
 
 async function main() {
+  const migration = await initializeAppDataDirectory({
+    appDataDir,
+    legacyDataDir: appDataDir === defaultDataDir
+      ? resolve(projectRoot, "var")
+      : undefined,
+  });
   await registerAsrProxy();
   registerMathPracticeApi();
   registerArithmeticBattleHistoryApi(app, appDataDir);
   registerMultiplicationHistoryApi(app, appDataDir);
   registerCommonCharacterProgressApi(app, appDataDir);
+  registerPersistentUserDataApi(app, appDataDir);
   registerWorldTowerApi(app, appDataDir, projectRoot);
   await registerEnglishEchoIslandApi(app, appDataDir, projectRoot);
   await registerMathKnowledgeTowerApi(app, appDataDir, projectRoot);
@@ -540,10 +554,15 @@ async function main() {
   }
 
   console.info(`Mumu 本机数据目录：${appDataDir}`);
+  if (migration.copiedFiles > 0) {
+    console.info(`已从仓库内旧数据目录安全迁移 ${migration.copiedFiles} 个文件；旧文件未删除。`);
+  }
   await app.listen({ port, host });
 }
 
-main().catch(() => {
+main().catch((error: unknown) => {
   // Keep startup failures free of request payloads and credentials.
+  const message = error instanceof Error ? error.message : "未知启动错误";
+  console.error(`Mumu 服务启动失败：${message}`);
   process.exitCode = 1;
 });

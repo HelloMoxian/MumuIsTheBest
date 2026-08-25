@@ -195,9 +195,8 @@ describe("English Echo Island API", () => {
   it("reports an unusable data directory without claiming progress was saved", async () => {
     const parentDirectory = await mkdtemp(resolve(tmpdir(), "mumu-echo-write-failure-"));
     cleanupPaths.push(parentDirectory);
-    const unusableDataPath = resolve(parentDirectory, "not-a-directory");
-    await writeFile(unusableDataPath, "occupied");
-    const { baseUrl, child } = await startServer(unusableDataPath);
+    const { baseUrl, child } = await startServer(parentDirectory);
+    await writeFile(resolve(parentDirectory, "learning"), "occupied");
     try {
       const response = await fetch(`${baseUrl}/api/english/echo-island`);
       assert.equal(response.status, 500);

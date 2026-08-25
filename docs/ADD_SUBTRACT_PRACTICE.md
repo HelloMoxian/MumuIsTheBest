@@ -54,16 +54,16 @@
 历史文件默认保存于：
 
 ```text
-var/learning/math/add-subtract-history.json
+../data/learning/math/add-subtract-history.json
 ```
 
-若设置 `APP_DATA_DIR`，则写入该目录下相同的 `learning/math/` 相对路径。文件：
+若设置绝对路径 `APP_DATA_DIR`，则写入该目录下相同的 `learning/math/` 相对路径。文件：
 
 - 使用 `schemaVersion: 1`；
 - 每局和文件都有稳定 ID / 创建、完成、更新时间；
 - 使用临时文件 + 原子替换写入，权限仅当前用户可读写；
 - 通过进程内单写入队列串行追加；
-- 完全受 `.gitignore` 保护，不进入 Git。
+- 位于 Git 工作树之外，不进入 Git，也不受仓库内 `git reset` 或 `git clean` 影响。
 
 服务端根据逐题的 `firstAttemptCorrect` 计算正确题数和正确率，不信任浏览器上传的汇总值。历史面板按“题目数量 + 题目类型”聚合，展示场次、平均总耗时、单题平均耗时、平均计算时间、木木年龄和正确率。
 

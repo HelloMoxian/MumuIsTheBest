@@ -1,4 +1,8 @@
 import { useSyncExternalStore } from "react";
+import {
+  loadPersistentData,
+  queuePersistentDataWrite,
+} from "../persistent-data";
 import type { InterfaceLanguageMode } from "./translations";
 
 export type ReadAloudMode = "none" | "zh" | "en" | "bilingual";
@@ -17,6 +21,8 @@ const DEFAULT_SNAPSHOT: ExperienceSnapshot = {
   speechStatus: "idle",
 };
 const listeners = new Set<() => void>();
+let preferenceRevision = 0;
+let hydrationPromise: Promise<void> | undefined;
 
 function isInterfaceMode(value: unknown): value is InterfaceLanguageMode {
   return value === "zh" || value === "en" || value === "bilingual";
@@ -49,19 +55,64 @@ function loadPreferences(): ExperienceSnapshot {
 
 let snapshot = loadPreferences();
 
+function parsePreferencePayload(value: unknown) {
+  if (typeof value !== "object" || value === null) return undefined;
+  const candidate = value as { interfaceMode?: unknown; readAloudMode?: unknown };
+  if (!isInterfaceMode(candidate.interfaceMode) || !isReadAloudMode(candidate.readAloudMode)) {
+    return undefined;
+  }
+  return {
+    interfaceMode: candidate.interfaceMode,
+    readAloudMode: candidate.readAloudMode,
+  };
+}
+
+function persistedPreferences() {
+  return {
+    interfaceMode: snapshot.interfaceMode,
+    readAloudMode: snapshot.readAloudMode,
+  };
+}
+
 function emit(next: ExperienceSnapshot, persist: boolean) {
   snapshot = next;
-  if (persist && typeof window !== "undefined") {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
-        interfaceMode: next.interfaceMode,
-        readAloudMode: next.readAloudMode,
-      }));
-    } catch {
-      // Preference persistence is optional; the live setting remains available.
-    }
+  if (persist) {
+    preferenceRevision += 1;
+    void queuePersistentDataWrite(
+      "experience-preferences",
+      persistedPreferences(),
+      parsePreferencePayload,
+    ).catch(() => undefined);
   }
   listeners.forEach((listener) => listener());
+}
+
+export function hydrateExperiencePreferences() {
+  hydrationPromise ??= (async () => {
+    const revisionAtStart = preferenceRevision;
+    const restored = await loadPersistentData({
+      stableId: "experience-preferences",
+      parsePayload: parsePreferencePayload,
+      legacyCandidates: [() => {
+        const legacy = loadPreferences();
+        return { payload: {
+          interfaceMode: legacy.interfaceMode,
+          readAloudMode: legacy.readAloudMode,
+        } };
+      }],
+    });
+    if (!restored) return;
+    if (preferenceRevision !== revisionAtStart) {
+      await queuePersistentDataWrite(
+        "experience-preferences",
+        persistedPreferences(),
+        parsePreferencePayload,
+      );
+      return;
+    }
+    emit({ ...restored.payload, speechStatus: "idle" }, false);
+  })().catch(() => undefined);
+  return hydrationPromise;
 }
 
 export function getExperienceSnapshot(): ExperienceSnapshot {

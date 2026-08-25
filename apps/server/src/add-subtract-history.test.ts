@@ -151,9 +151,8 @@ describe("add/subtract history API", () => {
   it("reports write failures without creating a partial session", async () => {
     const parentDirectory = await mkdtemp(resolve(tmpdir(), "mumu-history-write-failure-"));
     cleanupPaths.push(parentDirectory);
-    const unusableDataPath = resolve(parentDirectory, "not-a-directory");
-    await writeFile(unusableDataPath, "occupied");
-    const { baseUrl, child } = await startServer(unusableDataPath);
+    const { baseUrl, child } = await startServer(parentDirectory);
+    await writeFile(resolve(parentDirectory, "learning"), "occupied");
 
     try {
       const response = await fetch(`${baseUrl}/api/math/add-subtract/history`, {

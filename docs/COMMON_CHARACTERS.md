@@ -53,7 +53,7 @@ ASR 可能重复发送增量和整句文本，前端按 `sentenceId + 语义命�
 
 学习进度只写入：
 
-`var/learning/chinese/common-characters-progress.json`
+`../data/learning/chinese/common-characters-progress.json`
 
 或 `APP_DATA_DIR/learning/chinese/common-characters-progress.json`。
 

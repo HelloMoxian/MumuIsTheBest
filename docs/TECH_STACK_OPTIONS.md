@@ -10,7 +10,7 @@
 - 语言：TypeScript（strict）
 - 包管理：pnpm，锁定 lockfile
 - 数据：JSON/JSONL 等可读文件 + schema 校验 + 原子写入
-- 数据目录：默认 `var/`，可由 `APP_DATA_DIR` 指向仓库外
+- 数据目录：默认仓库同级 `../data/`，可由绝对路径 `APP_DATA_DIR` 指向其他仓库外位置
 - 测试：Vitest；关键儿童操作流后续增加 Playwright
 - 代码质量：ESLint + Prettier（或所选框架的等价官方配置）
 - API：版本化契约、统一错误结构、服务端校验所有输入
@@ -41,9 +41,8 @@
 │   └── learning-engine/     # 与 UI、存储无关的出题/判题逻辑
 ├── content/                 # 可提交的默认题库和课程模板
 ├── docs/
-├── temp/                    # 本轮视觉样稿，不参与正式运行
-├── var/                     # 运行时个人数据，Git ignored
-└── backups/                 # 导出/自动备份，Git ignored
+└── temp/                    # 本轮视觉样稿，不参与正式运行
+../data/                     # 运行时个人数据、配置、日志和未来备份，不属于 Git 工作树
 ```
 
 ### 推荐原因

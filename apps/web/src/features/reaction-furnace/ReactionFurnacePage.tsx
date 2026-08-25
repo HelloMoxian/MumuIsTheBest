@@ -32,9 +32,10 @@ import {
   type ReactionCompound,
 } from "./logic";
 import {
-  readChemistryLocalCache,
-  writeChemistryLocalCache,
+  loadChemistryPersistentCache,
+  writeChemistryPersistentCache,
   type ChemistryCacheMetadata,
+  type ChemistryLocalCacheRead,
 } from "../chemistry-local-cache";
 import {
   chemistryDiscoverySpeech,
@@ -210,8 +211,9 @@ function freshRound() {
   return selectReactionRoundPlan(REACTION_COMPOUNDS);
 }
 
-function createInitialState(): FurnaceInitialState {
-  const restored = readChemistryLocalCache(FURNACE_CACHE_SPEC);
+function createInitialState(
+  restored?: ChemistryLocalCacheRead<FurnaceCachePayload>,
+): FurnaceInitialState {
   if (restored) {
     const targets = restored.payload.targetIds.map((id) => COMPOUND_BY_ID.get(id)!);
     const recoveredPool = restored.payload.assemblingId === null
@@ -246,7 +248,36 @@ function addToPool(pool: AtomCounts, bundle: AtomBundle) {
 }
 
 export function ReactionFurnacePage() {
-  const [initialState] = useState(createInitialState);
+  const [initialState, setInitialState] = useState<FurnaceInitialState | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void loadChemistryPersistentCache(FURNACE_CACHE_SPEC)
+      .then((restored) => {
+        if (active) setInitialState(createInitialState(restored));
+      })
+      .catch(() => {
+        if (active) setInitialState(createInitialState());
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!initialState) {
+    return (
+      <div className="furnace-page" aria-busy="true" aria-live="polite">
+        <div className="furnace-stars" aria-hidden="true" />
+        <main className="furnace-main">
+          <section className="furnace-heading"><div><p>正在读取安全数据目录…</p><h1>反应熔炉准备中</h1></div></section>
+        </main>
+      </div>
+    );
+  }
+  return <ReactionFurnaceExperience initialState={initialState} />;
+}
+
+function ReactionFurnaceExperience({ initialState }: { initialState: FurnaceInitialState }) {
   const [round, setRound] = useState(initialState.round);
   const targets = round.compounds;
   const bundles = useMemo(() => buildAtomBundles(targets), [targets]);
@@ -297,7 +328,7 @@ export function ReactionFurnacePage() {
   }, [completedIds, pool, targets]);
 
   useEffect(() => {
-    const nextMetadata = writeChemistryLocalCache(
+    void writeChemistryPersistentCache(
       FURNACE_CACHE_SPEC,
       {
         targetIds: targets.map((compound) => compound.id),
@@ -308,9 +339,9 @@ export function ReactionFurnacePage() {
         assemblingId,
         batchNumber,
       },
-      cacheMetadataRef.current,
-    );
-    if (nextMetadata) cacheMetadataRef.current = nextMetadata;
+    ).then((saved) => {
+      cacheMetadataRef.current = saved.metadata;
+    }).catch(() => undefined);
   }, [assemblingId, batchNumber, completedIds, pool, round.targetElements, targets, usedBundleIds]);
 
   const tryAssembly = useCallback(() => {

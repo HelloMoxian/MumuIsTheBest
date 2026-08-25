@@ -7,6 +7,7 @@ import {
 import { browserTts } from "../speech";
 import {
   getExperienceSnapshot,
+  hydrateExperiencePreferences,
   setInterfaceMode,
   setReadAloudMode,
   useExperiencePreferences,
@@ -128,6 +129,10 @@ export function GlobalExperienceLayer({ children }: { children: ReactNode }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const localizerRef = useRef<DomLocalizer | null>(null);
   const { interfaceMode } = useExperiencePreferences();
+
+  useEffect(() => {
+    void hydrateExperiencePreferences();
+  }, []);
 
   useLayoutEffect(() => {
     const content = contentRef.current;

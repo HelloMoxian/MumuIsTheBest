@@ -31,9 +31,10 @@ import {
   type PolyatomicIon,
 } from "./logic";
 import {
-  readChemistryLocalCache,
-  writeChemistryLocalCache,
+  loadChemistryPersistentCache,
+  writeChemistryPersistentCache,
   type ChemistryCacheMetadata,
+  type ChemistryLocalCacheRead,
 } from "../chemistry-local-cache";
 import {
   chemistryDiscoverySpeech,
@@ -193,10 +194,9 @@ const LEGACY_TREASURE_BOX_CACHE_SPEC = {
   stableId: "chemistry-treasure-box",
 };
 
-function createInitialState(): BasinInitialState {
-  const restored = readChemistryLocalCache(FACTORY_CACHE_SPEC)
-    ?? readChemistryLocalCache(LEGACY_TREASURE_BASIN_CACHE_SPEC)
-    ?? readChemistryLocalCache(LEGACY_TREASURE_BOX_CACHE_SPEC);
+function createInitialState(
+  restored?: ChemistryLocalCacheRead<BasinCachePayload>,
+): BasinInitialState {
   if (!restored) {
     return {
       pool: {},
@@ -225,7 +225,37 @@ function createInitialState(): BasinInitialState {
 }
 
 export function MoleculeFactoryPage() {
-  const [initialState] = useState(createInitialState);
+  const [initialState, setInitialState] = useState<BasinInitialState | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void loadChemistryPersistentCache(
+      FACTORY_CACHE_SPEC,
+      [LEGACY_TREASURE_BASIN_CACHE_SPEC, LEGACY_TREASURE_BOX_CACHE_SPEC],
+    ).then((restored) => {
+      if (active) setInitialState(createInitialState(restored));
+    }).catch(() => {
+      if (active) setInitialState(createInitialState());
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!initialState) {
+    return (
+      <div className="furnace-page treasure-page" aria-busy="true" aria-live="polite">
+        <div className="furnace-stars" aria-hidden="true" />
+        <main className="furnace-main">
+          <section className="furnace-heading"><div><p>正在读取安全数据目录…</p><h1>分子工厂准备中</h1></div></section>
+        </main>
+      </div>
+    );
+  }
+  return <MoleculeFactoryExperience initialState={initialState} />;
+}
+
+function MoleculeFactoryExperience({ initialState }: { initialState: BasinInitialState }) {
   const [pool, setPool] = useState<AtomCounts>(initialState.pool);
   const [completedIds, setCompletedIds] = useState<ReadonlySet<string>>(
     new Set(initialState.discoveries.map((compound) => compound.id)),
@@ -311,7 +341,7 @@ export function MoleculeFactoryPage() {
   }, [pool, scheduleMatch]);
 
   useEffect(() => {
-    const nextMetadata = writeChemistryLocalCache(
+    void writeChemistryPersistentCache(
       FACTORY_CACHE_SPEC,
       {
         pool,
@@ -322,9 +352,9 @@ export function MoleculeFactoryPage() {
         autoAssemble,
         formedIonIds: formedIons.map((ion) => ion.id),
       },
-      cacheMetadataRef.current,
-    );
-    if (nextMetadata) cacheMetadataRef.current = nextMetadata;
+    ).then((saved) => {
+      cacheMetadataRef.current = saved.metadata;
+    }).catch(() => undefined);
   }, [assemblingId, autoAssemble, discoveries, excludeOrganic, formedIons, pool, selectedSymbol]);
 
   const startIonFormation = useCallback((ion: PolyatomicIon) => {

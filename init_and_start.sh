@@ -9,13 +9,6 @@ WEB_PORT=5173
 SERVER_PORT=8787
 WEB_URL="http://localhost:${WEB_PORT}/"
 HEALTH_URL="http://127.0.0.1:${SERVER_PORT}/api/health"
-RUNTIME_DIR="${PROJECT_ROOT}/var/run"
-LOG_DIR="${PROJECT_ROOT}/var/logs"
-LOG_FILE="${LOG_DIR}/mumu-dev.log"
-PID_FILE="${RUNTIME_DIR}/mumu-dev.pid"
-
-cd "${PROJECT_ROOT}"
-mkdir -p "${RUNTIME_DIR}" "${LOG_DIR}"
 
 say() {
   printf '\n🚀 %s\n' "$1"
@@ -46,6 +39,29 @@ configure_pnpm() {
   fi
 
   fail "未找到 pnpm 或 Corepack。请安装 Node.js 24+（含 Corepack）或 pnpm 后重试。"
+}
+
+configure_data_directory() {
+  local project_parent
+  project_parent="$(cd -- "${PROJECT_ROOT}/.." && pwd)"
+  APP_DATA_DIR="${APP_DATA_DIR:-${project_parent}/data}"
+  [[ "${APP_DATA_DIR}" = /* ]] || fail "APP_DATA_DIR 必须是仓库外的绝对路径。"
+  APP_DATA_DIR="$(node -e 'process.stdout.write(require("node:path").resolve(process.argv[1]))' "${APP_DATA_DIR}")"
+  case "${APP_DATA_DIR}" in
+    "${PROJECT_ROOT}"|"${PROJECT_ROOT}/"*)
+      fail "APP_DATA_DIR 必须位于 Git 仓库之外。"
+      ;;
+  esac
+
+  RUNTIME_DIR="${APP_DATA_DIR}/run"
+  LOG_DIR="${APP_DATA_DIR}/logs"
+  LOG_FILE="${LOG_DIR}/mumu-dev.log"
+  PID_FILE="${RUNTIME_DIR}/mumu-dev.pid"
+  mkdir -p "${APP_DATA_DIR}" "${RUNTIME_DIR}" "${LOG_DIR}" \
+    || fail "无法创建本机数据目录：${APP_DATA_DIR}"
+  chmod 700 "${APP_DATA_DIR}" "${RUNTIME_DIR}" "${LOG_DIR}" \
+    || fail "无法保护本机数据目录权限：${APP_DATA_DIR}"
+  export APP_DATA_DIR
 }
 
 port_pids() {
@@ -107,6 +123,8 @@ open_browser() {
 
 require_node
 configure_pnpm
+configure_data_directory
+cd "${PROJECT_ROOT}"
 
 say "初始化依赖环境"
 "${PNPM[@]}" install --frozen-lockfile --prefer-offline

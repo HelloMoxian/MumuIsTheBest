@@ -26,7 +26,7 @@ Fastify 本地服务 /api/asr/stream
 ## 密钥规则（强制）
 
 - 不把 API Key 写入源代码、`README`、测试、截图、日志、浏览器存储或 Git 提交。
-- “语音识别测试”是本机可视化配置页。首次粘贴并点击“保存本机配置”后，服务端以原子写入方式保存至 `var/config/asr-settings.json`；`var/` 已被 `.gitignore` 忽略，文件权限为仅当前用户可读写。
+- “语音识别测试”是本机可视化配置页。首次粘贴并点击“保存本机配置”后，服务端以原子写入方式保存至仓库同级 `../data/config/asr-settings.json`（或 `APP_DATA_DIR/config/asr-settings.json`）；它不属于 Git 工作树，文件权限为仅当前用户可读写。
 - 页面重新打开时只读取“是否已配置”和端点，绝不回传或显示 API Key 明文；后续识别由服务端从该本机文件读取 Key。粘贴框可用于替换 Key，保存后立即清空。
 - 服务端仅在内存中短暂使用 Key 建立上游连接，绝不打印该值。
 - `.env`、`.env.local` 和所有 `.env.*` 已被 `.gitignore` 忽略；`.env.example` 只保留空键名。

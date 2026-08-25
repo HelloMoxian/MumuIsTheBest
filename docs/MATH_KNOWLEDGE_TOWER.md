@@ -58,7 +58,7 @@
 
 运行时进度默认保存到：
 
-`var/learning/math/knowledge-tower-progress.json`
+`../data/learning/math/knowledge-tower-progress.json`
 
 使用 `APP_DATA_DIR` 时相对结构保持不变。文件必须包含：
 

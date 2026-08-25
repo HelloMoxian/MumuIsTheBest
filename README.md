@@ -9,6 +9,7 @@
 - 技术方案（已选定 A）：[`docs/TECH_STACK_OPTIONS.md`](docs/TECH_STACK_OPTIONS.md)
 - 正式设计系统（已选定星际探索舱）：[`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
 - 实时语音识别与密钥安全：[`docs/ASR_REALTIME.md`](docs/ASR_REALTIME.md)
+- 本机数据目录、完整文件清单与安全迁移：[`docs/DATA_STORAGE.md`](docs/DATA_STORAGE.md)
 - 全局数字键盘、位值展示与玩法提交协议：[`docs/NUMERIC_KEYPAD.md`](docs/NUMERIC_KEYPAD.md)
 - 数学加减练习规则与数据语义：[`docs/ADD_SUBTRACT_PRACTICE.md`](docs/ADD_SUBTRACT_PRACTICE.md)
 - 数学算数大战规则与数据语义：[`docs/ARITHMETIC_BATTLE.md`](docs/ARITHMETIC_BATTLE.md)
@@ -30,16 +31,17 @@
 
 - 不使用数据库，业务数据以文件形式保存。
 - 默认题库/课程内容与孩子的运行时个人数据分开。
-- 运行时数据默认存放在 Git 忽略的 `var/`，并可通过 `APP_DATA_DIR` 放到仓库外。
-- 备份默认存放在 Git 忽略的 `backups/`，以后提供显式导入/导出和恢复机制。
+- 运行时数据默认存放在仓库同级的 `../data/`，天然不属于 Git 工作树；也可通过绝对路径 `APP_DATA_DIR` 改到其他位置。
+- 启动时会自动创建数据目录，并把旧版仓库内 `var/` 的缺失文件安全复制过去；不覆盖目标文件，也不删除旧文件。
+- 备份默认放在 `../data/backups/`，以后提供显式导入/导出和恢复机制。
 - 美术风格固定为“星际探索舱”：深空玻璃面板、紫/青/粉光效、大字号圆润组件和克制动效。
-- API Key 永不写入仓库；语音测试页会将其仅保存到本机 Git 忽略的 `var/config/asr-settings.json`，重新打开页面可直接使用但不会显示明文。
+- API Key 永不写入仓库；语音测试页会将其仅保存到 `../data/config/asr-settings.json`，重新打开页面可直接使用但不会显示明文。
 - 每一次实时 ASR 识别强制最多 10 分钟；该规则会自动继承到后续算术、游戏与知识模块。
 - 首页和五个数学玩法共享知识币余额；系统每十分钟随机一个三倍玩法，并在进入时锁定本局倍率。答题奖励经服务端原子入账后以逐枚知识币飞向顶部的方式反馈。
 
 ## 下一步
 
-1. 在工程根目录执行 `./init_and_start.sh`。它会检查环境、安装锁定的 npm 依赖、释放本项目的端口、启动服务并自动打开网页；如只想在终端环境启动而不打开浏览器，可执行 `MUMU_NO_OPEN=1 ./init_and_start.sh`。
+1. 在工程根目录执行 `./init_and_start.sh`。它会检查并创建仓库同级 `../data/`、安装锁定的 npm 依赖、释放本项目的端口、启动服务并自动打开网页；如只想在终端环境启动而不打开浏览器，可执行 `MUMU_NO_OPEN=1 ./init_and_start.sh`。
 2. 首页进入“数学 → 加减练习 / 算数大战 / 乘法小能手”，可使用按钮或语音“开始 / start”开启一局；回答请说“等于 + 答案”。
 3. 首页进入“数学 → 神秘函数”，可同时点亮最多四条常见函数曲线，调整参数并用坐标探针比较同一个 `x` 对应的 `y`。
 4. 首页进入“数学 → 找数字”，选择零至百、千、万或十万的范围，通过语音询问“是 / 小于 / 大于某个数吗”，观察持续数轴一步步缩小范围。

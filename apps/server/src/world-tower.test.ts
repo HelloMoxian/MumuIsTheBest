@@ -640,9 +640,8 @@ describe("world tower API", () => {
   it("does not report progress or balance changes when the data path cannot be written", async () => {
     const parentDirectory = await mkdtemp(resolve(tmpdir(), "mumu-world-tower-write-failure-"));
     cleanupPaths.push(parentDirectory);
-    const unusableDataPath = resolve(parentDirectory, "not-a-directory");
-    await writeFile(unusableDataPath, "occupied");
-    const { baseUrl, child } = await startServer(unusableDataPath);
+    const { baseUrl, child } = await startServer(parentDirectory);
+    await writeFile(resolve(parentDirectory, "learning"), "occupied");
 
     try {
       const response = await post(
