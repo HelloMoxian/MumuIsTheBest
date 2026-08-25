@@ -332,15 +332,92 @@
     linear-gradient(145deg, transparent 47%, #dfe7ff 48% 49%, transparent 50%) 32% 76% / 72% 72% no-repeat,
     linear-gradient(30deg, transparent 47%, #09071c 48% 50%, transparent 51%) 18% 28% / 55% 55% no-repeat;
 }
+
+.geo-impact-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.geo-impact-burst {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.geo-impact-burst::after {
+  position: absolute;
+  width: 62px;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(202,175,142,.32), rgba(121,91,69,.14) 46%, transparent 72%);
+  content: "";
+  opacity: 0;
+  transform: translate(-50%,-50%) scale(.25);
+  animation: geo-impact-dust 560ms ease-out both;
+}
+.geo-impact-burst.is-mineral::after,
+.geo-impact-burst.is-chip::after {
+  background: radial-gradient(ellipse, rgba(220,228,255,.32), rgba(130,117,189,.16) 48%, transparent 72%);
+}
+.geo-impact-fragment {
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 5px;
+  min-height: 4px;
+  will-change: transform, opacity;
+  animation: geo-chunk-horizontal var(--fragment-duration) linear var(--fragment-delay) both;
+}
+.geo-impact-fragment > b {
+  display: block;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  animation: geo-chunk-vertical var(--fragment-duration) var(--fall-curve) var(--fragment-delay) both;
+}
+.geo-impact-fragment > b::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 2px 5px 3px 4px;
+  background: linear-gradient(145deg, #8f6b50, #4b352e 72%);
+  box-shadow: inset 1px 1px rgba(255,255,255,.12), 0 3px 5px rgba(0,0,0,.34);
+  content: "";
+  will-change: transform;
+  animation: geo-chunk-spin var(--fragment-duration) linear var(--fragment-delay) both;
+}
+.geo-impact-fragment:nth-child(3n + 1) > b::before { clip-path: polygon(8% 18%, 78% 0, 100% 67%, 35% 100%, 0 62%); }
+.geo-impact-fragment:nth-child(3n + 2) > b::before { clip-path: polygon(24% 0, 100% 22%, 78% 100%, 0 74%); }
+.geo-impact-fragment:nth-child(3n) > b::before { clip-path: polygon(0 28%, 61% 0, 100% 43%, 70% 100%, 13% 84%); }
+.geo-impact-burst.is-soil-clay .geo-impact-fragment > b::before { background: linear-gradient(145deg, #9b7056, #563b31 72%); }
+.geo-impact-burst.is-soil-sand .geo-impact-fragment > b::before { background: linear-gradient(145deg, #b08a5c, #66503b 72%); }
+.geo-impact-burst.is-soil-gravel .geo-impact-fragment > b::before { background: linear-gradient(145deg, #747074, #3e3a42 72%); }
+.geo-impact-burst.is-soil-deep .geo-impact-fragment > b::before { background: linear-gradient(145deg, #55465a, #29253a 72%); }
+.geo-impact-burst.is-chip .geo-impact-fragment > b::before {
+  filter: brightness(.82) saturate(.8);
+  box-shadow: inset 1px 1px rgba(255,255,255,.18), 0 2px 4px rgba(0,0,0,.4);
+}
+.geo-impact-burst.is-mineral .geo-impact-fragment > b::before,
+.geo-impact-burst.is-chip .geo-impact-fragment > b::before {
+  background-color: #4f4965;
+  background-image: var(--fragment-image);
+  background-position: var(--fragment-position);
+  background-repeat: no-repeat;
+  background-size: auto, 150px 150px;
+}
+
 .geo-hammer-cursor {
-  position: fixed;
-  z-index: 100;
+  position: absolute;
+  z-index: 50;
   width: 46px;
   height: 55px;
   pointer-events: none;
-  transform: translate(-7px, -44px) rotate(-31deg);
-  transform-origin: 11px 45px;
-  animation: geo-hammer-hover 1.8s ease-in-out infinite;
+  transform: translate(-9px,-11px) rotate(-31deg);
+  transform-origin: 9px 11px;
+  will-change: transform;
 }
 .geo-hammer-cursor i, .geo-hammer-illustration i {
   position: absolute;
@@ -361,7 +438,10 @@
   background: linear-gradient(90deg, #5d3829, #bd7847 48%, #683b2b);
   box-shadow: inset 2px 0 rgba(255,255,255,.12), 0 3px 6px rgba(0,0,0,.3);
 }
-.geo-hammer-cursor[data-swing] { animation-name: geo-hammer-hover; }
+.geo-hammer-cursor i { top: 3px; left: 0; }
+.geo-hammer-cursor[data-swing="true"] {
+  animation: geo-hammer-strike 220ms cubic-bezier(.2,.75,.35,1) both;
+}
 
 .geo-grid-help { margin: 13px 4px 0; color: var(--ink-secondary); font-size: 14px; font-weight: 800; line-height: 1.55; }
 .geo-tool-panel { display: grid; align-content: start; gap: 13px; }
@@ -594,7 +674,34 @@
 .geo-loading p { color: var(--ink-secondary); }
 
 @keyframes geo-pulse { 50% { opacity: .5; transform: scale(.86); } }
-@keyframes geo-hammer-hover { 50% { transform: translate(-7px,-44px) rotate(-25deg); } }
+@keyframes geo-hammer-strike {
+  0% { transform: translate(-9px,-11px) rotate(-48deg); }
+  58% { transform: translate(-9px,-11px) rotate(-17deg) scale(1.04); }
+  100% { transform: translate(-9px,-11px) rotate(-31deg); }
+}
+@keyframes geo-impact-dust {
+  20% { opacity: .72; transform: translate(-50%,-50%) scale(.55); }
+  100% { opacity: 0; transform: translate(-50%,-68%) scale(1.8); }
+}
+@keyframes geo-chunk-horizontal {
+  0% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--start-x)), calc(-50% + var(--start-y))) scale(1);
+  }
+  82% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--start-x) + var(--land-x)), calc(-50% + var(--start-y))) scale(.76);
+  }
+}
+@keyframes geo-chunk-vertical {
+  from { transform: translateY(0); }
+  to { transform: translateY(var(--land-y)); }
+}
+@keyframes geo-chunk-spin {
+  from { transform: rotate(0) scale(1); }
+  to { transform: rotate(var(--spin-end)) scale(.94); }
+}
 @keyframes geo-discovery {
   0% { opacity: 0; transform: translate(-50%,-38%) scale(.62) rotate(-3deg); filter: blur(5px); }
   24% { opacity: 1; transform: translate(-50%,-50%) scale(1.06) rotate(1deg); filter: blur(0); }
@@ -690,6 +797,6 @@
     animation-iteration-count: 1 !important;
     transition-duration: .001ms !important;
   }
-  .geo-hammer-cursor, .geo-fragment { display: none; }
+  .geo-hammer-cursor, .geo-fragment, .geo-impact-layer { display: none; }
   .geo-discovery-flight { animation: none; opacity: 1; transform: translate(-50%,-50%); }
 }

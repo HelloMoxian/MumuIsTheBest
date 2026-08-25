@@ -4,7 +4,6 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { browserTts } from "../speech";
 import {
   getExperienceSnapshot,
   hydrateExperiencePreferences,
@@ -39,89 +38,41 @@ const READ_OPTIONS: readonly { value: ReadAloudMode; short: string }[] = [
   { value: "bilingual", short: "中英" },
 ];
 
-function modeLabel(mode: InterfaceLanguageMode, zh: string, en: string) {
-  if (mode === "zh") return zh;
-  if (mode === "en") return en;
-  return `${zh} / ${en}`;
-}
-
-function speechStatusLabel(
-  interfaceMode: InterfaceLanguageMode,
-  status: ReturnType<typeof useExperiencePreferences>["speechStatus"],
+function nextMode<T extends string>(
+  options: readonly { value: T; short: string }[],
+  current: T,
 ) {
-  const labels = {
-    idle: ["准备朗读", "Ready"],
-    "speaking-zh": ["正在读中文", "Reading Chinese"],
-    "speaking-en": ["正在读英文", "Reading English"],
-    unavailable: ["暂时不能朗读", "Voice unavailable"],
-    error: ["朗读需要再试一次", "Try reading again"],
-  } as const;
-  return modeLabel(interfaceMode, labels[status][0], labels[status][1]);
+  const currentIndex = options.findIndex((option) => option.value === current);
+  return options[(currentIndex + 1) % options.length]?.value ?? options[0]!.value;
 }
 
-function ExperienceControls() {
-  const { interfaceMode, readAloudMode, speechStatus } = useExperiencePreferences();
-  const isSpeaking = speechStatus === "speaking-zh" || speechStatus === "speaking-en";
+export function CompactExperienceControls() {
+  const { interfaceMode, readAloudMode } = useExperiencePreferences();
+  const interfaceOption = INTERFACE_OPTIONS.find((option) => option.value === interfaceMode)
+    ?? INTERFACE_OPTIONS[0];
+  const readOption = READ_OPTIONS.find((option) => option.value === readAloudMode)
+    ?? READ_OPTIONS[0];
 
   return (
-    <header className="global-experience-bar" data-no-ui-translation>
-      <div className="global-experience-title" aria-hidden="true">
-        <span>文</span>
-        <strong>{modeLabel(interfaceMode, "语言舱", "Language Deck")}</strong>
-      </div>
-
-      <fieldset className="global-mode-control">
-        <legend>{modeLabel(interfaceMode, "界面", "Interface")}</legend>
-        <div className="global-segment" role="group" aria-label="界面语言 Interface language">
-          {INTERFACE_OPTIONS.map((option) => (
-            <button
-              type="button"
-              key={option.value}
-              className={interfaceMode === option.value ? "is-selected" : ""}
-              aria-pressed={interfaceMode === option.value}
-              aria-label={option.value === "zh" ? "中文界面" : option.value === "en" ? "English interface" : "中英双语界面 Bilingual interface"}
-              onClick={() => setInterfaceMode(option.value)}
-            >
-              {interfaceMode === option.value && <i aria-hidden="true">✓</i>}
-              {option.short}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <fieldset className="global-mode-control global-read-control">
-        <legend>{modeLabel(interfaceMode, "朗读", "Read aloud")}</legend>
-        <div className="global-segment" role="group" aria-label="朗读语言 Read-aloud language">
-          {READ_OPTIONS.map((option) => (
-            <button
-              type="button"
-              key={option.value}
-              className={readAloudMode === option.value ? "is-selected" : ""}
-              aria-pressed={readAloudMode === option.value}
-              aria-label={`朗读模式 ${option.short}`}
-              onClick={() => {
-                if (option.value === "none") stopLearningSpeech();
-                else browserTts.stop();
-                setReadAloudMode(option.value);
-              }}
-            >
-              {readAloudMode === option.value && <i aria-hidden="true">✓</i>}
-              {option.short}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-
-      <div className={`global-speech-status status-${speechStatus}`} aria-live="polite">
-        <i aria-hidden="true" />
-        <span>{speechStatusLabel(interfaceMode, speechStatus)}</span>
-        {isSpeaking && (
-          <button type="button" onClick={stopLearningSpeech}>
-            {modeLabel(interfaceMode, "停止", "Stop")}
-          </button>
-        )}
-      </div>
-    </header>
+    <div className="global-compact-experience" data-no-ui-translation>
+      <button
+        type="button"
+        aria-label={`界面语言当前为${interfaceOption.short}，点击切换`}
+        onClick={() => setInterfaceMode(nextMode(INTERFACE_OPTIONS, interfaceMode))}
+      >
+        {interfaceOption.short}
+      </button>
+      <button
+        type="button"
+        aria-label={`朗读语言当前为${readOption.short}，点击切换`}
+        onClick={() => {
+          stopLearningSpeech();
+          setReadAloudMode(nextMode(READ_OPTIONS, readAloudMode));
+        }}
+      >
+        {readOption.short}
+      </button>
+    </div>
   );
 }
 
@@ -164,7 +115,7 @@ export function GlobalExperienceLayer({ children }: { children: ReactNode }) {
     const greetAfterFirstAction = (event: MouseEvent) => {
       if (event.defaultPrevented || !(event.target instanceof Element)) return;
       const action = event.target.closest("button, a, input, select, textarea, [role='button']");
-      if (!action || action.closest(".global-experience-bar") || action.closest("[data-skip-startup-greeting]")) return;
+      if (!action || action.closest(".global-compact-experience") || action.closest("[data-skip-startup-greeting]")) return;
       const mode = getExperienceSnapshot().readAloudMode;
       if (mode === "none") return;
 
@@ -201,7 +152,6 @@ export function GlobalExperienceLayer({ children }: { children: ReactNode }) {
 
   return (
     <div className="global-experience-root">
-      <ExperienceControls />
       <div className="global-experience-content" ref={contentRef}>
         {children}
       </div>

@@ -112,30 +112,33 @@ export function isCellAccessible(board: DigBoard, cell: DigCell) {
   ));
 }
 
-function appendBottomRow(
+function refillClearedColumns(
   catalog: RockMineralCatalog,
   board: DigBoard,
   random: RandomSource,
 ) {
-  const topDepth = board.baseDepth;
-  const topCells = board.cells.filter((cell) => cell.depth === topDepth);
-  if (
-    topCells.length !== catalog.gameplay.columns
-    || topCells.some((cell) => cell.status !== "cleared")
-  ) {
-    return board;
+  const cells = board.cells.filter((cell) => cell.status !== "cleared");
+  const topDepths: number[] = [];
+
+  for (let column = 0; column < catalog.gameplay.columns; column += 1) {
+    const previousColumn = board.cells.filter((cell) => cell.column === column);
+    const visibleColumn = cells.filter((cell) => cell.column === column);
+    let bottomDepth = previousColumn.reduce(
+      (deepest, cell) => Math.max(deepest, cell.depth),
+      board.baseDepth + catalog.gameplay.rows - 1,
+    );
+    while (visibleColumn.length < catalog.gameplay.rows) {
+      bottomDepth += 1;
+      const cell = makeCell(catalog, bottomDepth, column, random);
+      cells.push(cell);
+      visibleColumn.push(cell);
+    }
+    topDepths.push(Math.min(...visibleColumn.map((cell) => cell.depth)));
   }
-  const baseDepth = board.baseDepth + 1;
-  const bottomDepth = baseDepth + catalog.gameplay.rows - 1;
+
   return {
-    baseDepth,
-    cells: [
-      ...board.cells.filter((cell) => cell.depth !== topDepth),
-      ...Array.from(
-        { length: catalog.gameplay.columns },
-        (_, column) => makeCell(catalog, bottomDepth, column, random),
-      ),
-    ],
+    baseDepth: Math.min(...topDepths),
+    cells,
   };
 }
 
@@ -185,7 +188,7 @@ export function strikeCell(
     return {
       progress: {
         ...progress,
-        board: appendBottomRow(catalog, { ...progress.board, cells }, random),
+        board: refillClearedColumns(catalog, { ...progress.board, cells }, random),
         currentDepth: Math.max(progress.currentDepth, cell.depth),
       },
       outcome: "soil",
@@ -240,7 +243,7 @@ export function strikeCell(
       ...equipped,
       currentHammerDurability: durability,
       currentDepth: Math.max(equipped.currentDepth, cell.depth),
-      board: appendBottomRow(catalog, { ...equipped.board, cells }, random),
+      board: refillClearedColumns(catalog, { ...equipped.board, cells }, random),
       inventory: {
         ...equipped.inventory,
         [cell.mineralId]: (equipped.inventory[cell.mineralId] ?? 0) + 1,

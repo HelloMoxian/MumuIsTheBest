@@ -14,6 +14,7 @@ import {
 import type { LearningCoinSource } from "./shared/learning-coins";
 import { openNumericKeypad } from "./shared/numeric-keypad";
 import {
+  CompactExperienceControls,
   GlobalExperienceLayer,
   LocalizedLines,
   translateUiText,
@@ -690,6 +691,7 @@ function App() {
           <span className="brand-mark" aria-hidden="true">🚀</span>
           <span>木木学习岛</span>
         </a>
+        <CompactExperienceControls />
         <nav className="nav-actions" aria-label="主导航">
           <a className="nav-link" href="#top">学习大厅</a>
           <button

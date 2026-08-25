@@ -1,4 +1,7 @@
-export { GlobalExperienceLayer } from "./GlobalExperienceLayer";
+export {
+  CompactExperienceControls,
+  GlobalExperienceLayer,
+} from "./GlobalExperienceLayer";
 export { LocalizedLines } from "./LocalizedLines";
 export {
   getExperienceSnapshot,

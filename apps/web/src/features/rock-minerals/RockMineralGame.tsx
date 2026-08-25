@@ -36,6 +36,7 @@ import {
 import {
   RESEARCH_ATTRIBUTE_KEYS,
   type CatalogSortKey,
+  type DigCell,
   type MineralCatalogItem,
   type ResearchAttributeKey,
   type RockMineralCatalog,
@@ -172,6 +173,35 @@ function playHitSound(kind: "soil" | "mineral") {
 }
 
 type SaveState = "loading" | "ready" | "saving" | "error";
+type ImpactKind = "soil" | "chip" | "mineral";
+
+type ImpactFragment = {
+  id: string;
+  style: CSSProperties;
+};
+
+type ImpactBurst = {
+  id: string;
+  x: number;
+  y: number;
+  kind: ImpactKind;
+  soilVariant: DigCell["soilVariant"];
+  fragments: ImpactFragment[];
+};
+
+function cellsInVisualOrder(cells: DigCell[]) {
+  const visualRows = new Map<string, number>();
+  for (let column = 0; column < catalog.gameplay.columns; column += 1) {
+    cells
+      .filter((cell) => cell.column === column)
+      .sort((left, right) => left.depth - right.depth)
+      .forEach((cell, row) => visualRows.set(cell.id, row));
+  }
+  return cells.slice().sort((left, right) => (
+    (visualRows.get(left.id) ?? 0) - (visualRows.get(right.id) ?? 0)
+    || left.column - right.column
+  ));
+}
 
 export function RockMineralGame() {
   const { status: learningCoins } = useLearningCoinStatus();
@@ -186,8 +216,11 @@ export function RockMineralGame() {
   const [energyError, setEnergyError] = useState<string | null>(null);
   const [hammerPointer, setHammerPointer] = useState<{ x: number; y: number } | null>(null);
   const [hammerSwing, setHammerSwing] = useState(0);
+  const [impactBursts, setImpactBursts] = useState<ImpactBurst[]>([]);
   const [discovery, setDiscovery] = useState<{ item: MineralCatalogItem; first: boolean } | null>(null);
   const discoveryTimer = useRef<number | null>(null);
+  const burstTimers = useRef<number[]>([]);
+  const gridWrapRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -266,6 +299,7 @@ export function RockMineralGame() {
     return () => {
       controller.abort();
       if (discoveryTimer.current !== null) window.clearTimeout(discoveryTimer.current);
+      burstTimers.current.forEach((timer) => window.clearTimeout(timer));
     };
   }, []);
 
@@ -283,9 +317,87 @@ export function RockMineralGame() {
     }
   };
 
-  const handleStrike = (cellId: string) => {
+  const spawnImpactBurst = (
+    cell: DigCell,
+    sourceElement: HTMLButtonElement,
+    kind: ImpactKind,
+    mineral?: MineralCatalogItem,
+  ) => {
+    const wrapper = gridWrapRef.current;
+    if (!wrapper) return;
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const cellRect = sourceElement.getBoundingClientRect();
+    const count = kind === "mineral" ? 18 : kind === "soil" ? 14 : 6;
+    const columns = kind === "chip" ? 3 : 4;
+    const fragments = Array.from({ length: count }, (_, index): ImpactFragment => {
+      const row = Math.floor(index / columns);
+      const column = index % columns;
+      const startX = ((column + 0.5) / columns - 0.5) * cellRect.width * 0.68
+        + (Math.random() - 0.5) * 7;
+      const rowCount = Math.ceil(count / columns);
+      const startY = ((row + 0.5) / rowCount - 0.5) * cellRect.height * 0.58
+        + (Math.random() - 0.5) * 7;
+      const direction = index / (count - 1) - 0.5;
+      const landX = direction * cellRect.width * (kind === "chip" ? 1.05 : 1.65)
+        + (Math.random() - 0.5) * 32;
+      const landY = (kind === "chip" ? 38 : 66) + Math.random() * (kind === "chip" ? 45 : 92);
+      const upwardVelocity = -(kind === "chip" ? 42 : 78)
+        - Math.random() * (kind === "chip" ? 48 : 102);
+      const halfAcceleration = landY - upwardVelocity;
+      const fallCurve = Array.from({ length: 25 }, (_, step) => {
+        const time = step / 24;
+        const verticalPosition = upwardVelocity * time + halfAcceleration * time * time;
+        return `${(verticalPosition / landY).toFixed(4)} ${(time * 100).toFixed(2)}%`;
+      }).join(", ");
+      const size = Math.max(
+        kind === "chip" ? 5 : 8,
+        Math.min(kind === "chip" ? 10 : 18, cellRect.width * (0.09 + Math.random() * 0.07)),
+      );
+      const spin = (Math.random() > 0.5 ? 1 : -1) * (170 + Math.random() * 430);
+      const delay = Math.random() * 55;
+      const duration = kind === "chip" ? 620 + Math.random() * 180 : 820 + Math.random() * 260;
+      const style = {
+        "--start-x": `${startX}px`,
+        "--start-y": `${startY}px`,
+        "--land-x": `${landX}px`,
+        "--land-y": `${landY}px`,
+        "--spin-end": `${spin}deg`,
+        "--fall-curve": `linear(${fallCurve})`,
+        "--fragment-delay": `${delay}ms`,
+        "--fragment-duration": `${duration}ms`,
+        "--fragment-image": mineral
+          ? `linear-gradient(145deg, rgba(255,255,255,.18), transparent 42%), url("${mineral.image.path}")`
+          : undefined,
+        "--fragment-position": mineral
+          ? `center, ${Math.round(Math.random() * 100)}% ${Math.round(Math.random() * 100)}%`
+          : undefined,
+        width: `${size}px`,
+        height: `${size * (0.68 + Math.random() * 0.5)}px`,
+      } as CSSProperties;
+      return { id: `${index}-${Math.random().toString(36).slice(2)}`, style };
+    });
+    const id = crypto.randomUUID();
+    setImpactBursts((current) => [
+      ...current.slice(-3),
+      {
+        id,
+        x: cellRect.left - wrapperRect.left + cellRect.width / 2,
+        y: cellRect.top - wrapperRect.top + cellRect.height / 2,
+        kind,
+        soilVariant: cell.soilVariant,
+        fragments,
+      },
+    ]);
+    const timer = window.setTimeout(() => {
+      setImpactBursts((current) => current.filter((burst) => burst.id !== id));
+    }, 1_300);
+    burstTimers.current.push(timer);
+  };
+
+  const handleStrike = (cellId: string, sourceElement: HTMLButtonElement) => {
     if (!progress || saveState === "saving") return;
     setHammerSwing((value) => value + 1);
+    const struckCell = progress.board.cells.find((cell) => cell.id === cellId);
     const result = strikeCell(progress, cellId, catalog);
     if (result.outcome === "blocked") {
       setMessage("先把它上方的格子挖开，就能继续向下。");
@@ -299,10 +411,15 @@ export function RockMineralGame() {
       playHitSound(result.outcome === "soil" ? "soil" : "mineral");
     }
     if (result.outcome === "soil") {
+      if (struckCell) spawnImpactBurst(struckCell, sourceElement, "soil");
       void commit(result.progress, `泥土已经清开，钻孔到达 ${result.progress.currentDepth} 米。`);
       return;
     }
     if (result.outcome === "crack") {
+      const crackedMineral = struckCell?.mineralId
+        ? itemById.get(struckCell.mineralId)
+        : undefined;
+      if (struckCell) spawnImpactBurst(struckCell, sourceElement, "chip", crackedMineral);
       void commit(result.progress, "下面有坚硬的东西！裂纹变深了，再敲一次看看。");
       return;
     }
@@ -310,6 +427,7 @@ export function RockMineralGame() {
       ? itemById.get(result.collectedMineralId)
       : undefined;
     if (item) {
+      if (struckCell) spawnImpactBurst(struckCell, sourceElement, "mineral", item);
       setDiscovery({ item, first: result.firstDiscovery });
       if (discoveryTimer.current !== null) window.clearTimeout(discoveryTimer.current);
       discoveryTimer.current = window.setTimeout(() => setDiscovery(null), 1_450);
@@ -472,17 +590,22 @@ export function RockMineralGame() {
           <section className="geo-dig-panel" aria-labelledby="geo-dig-title">
             <div className="geo-section-heading">
               <div><small>DRILL WINDOW · 5 × 6</small><h2 id="geo-dig-title">未知地层</h2></div>
-              <span>顶部深度 {progress.board.baseDepth} m</span>
+              <span>最浅顶部 {progress.board.baseDepth} m</span>
             </div>
             <div
+              ref={gridWrapRef}
               className="geo-grid-wrap"
-              onPointerMove={(event: ReactPointerEvent) => setHammerPointer({ x: event.clientX, y: event.clientY })}
+              onPointerMove={(event: ReactPointerEvent<HTMLDivElement>) => {
+                const bounds = event.currentTarget.getBoundingClientRect();
+                setHammerPointer({
+                  x: event.clientX - bounds.left,
+                  y: event.clientY - bounds.top,
+                });
+              }}
               onPointerLeave={() => setHammerPointer(null)}
             >
               <div className="geo-grid" role="grid" aria-label="五列六行未知地层">
-                {progress.board.cells
-                  .slice()
-                  .sort((left, right) => left.depth - right.depth || left.column - right.column)
+                {cellsInVisualOrder(progress.board.cells)
                   .map((cell) => {
                     const accessible = isCellAccessible(progress.board, cell);
                     const mineral = cell.mineralId ? itemById.get(cell.mineralId) : null;
@@ -502,7 +625,7 @@ export function RockMineralGame() {
                         role="gridcell"
                         key={cell.id}
                         disabled={cell.status === "cleared" || saveState === "saving"}
-                        onClick={() => handleStrike(cell.id)}
+                        onClick={(event) => handleStrike(cell.id, event.currentTarget)}
                         aria-label={
                           cell.status === "revealed"
                             ? `第 ${cell.depth} 米发现坚硬样本，继续敲击`
@@ -521,10 +644,26 @@ export function RockMineralGame() {
                     );
                   })}
               </div>
+              <div className="geo-impact-layer" aria-hidden="true">
+                {impactBursts.map((burst) => (
+                  <span
+                    className={`geo-impact-burst is-${burst.kind} is-soil-${burst.soilVariant}`}
+                    key={burst.id}
+                    style={{ left: burst.x, top: burst.y }}
+                  >
+                    {burst.fragments.map((fragment) => (
+                      <i className="geo-impact-fragment" key={fragment.id} style={fragment.style}>
+                        <b />
+                      </i>
+                    ))}
+                  </span>
+                ))}
+              </div>
               {hammerPointer && (
                 <span
                   className="geo-hammer-cursor"
-                  data-swing={hammerSwing}
+                  data-swing={hammerSwing > 0 ? "true" : undefined}
+                  key={hammerSwing}
                   style={{ left: hammerPointer.x, top: hammerPointer.y }}
                   aria-hidden="true"
                 >

@@ -31,6 +31,11 @@ describe("rock and mineral digging", () => {
     assert.equal(result.outcome, "soil");
     assert.equal(result.progress.currentHammerDurability, catalog.gameplay.hammer.durability);
     assert.equal(result.progress.currentDepth, 1);
+    assert.equal(result.progress.board.cells.length, 30);
+    assert.equal(
+      Math.max(...result.progress.board.cells.filter((cell) => cell.column === 0).map((cell) => cell.depth)),
+      7,
+    );
   });
 
   it("uses one durability per mineral hit and collects after rarity hit count", () => {
@@ -65,23 +70,31 @@ describe("rock and mineral digging", () => {
     assert.deepEqual(third.progress.discoveredIds, [mineralId]);
   });
 
-  it("moves the 5 × 6 window down after the top row is cleared", () => {
+  it("can keep moving one column down without clearing the other columns", () => {
     const initial = createInitialProgress(catalog, fixedRandom);
-    let progress = {
-      ...initial,
-      board: {
-        ...initial.board,
-        cells: initial.board.cells.map((cell) => (
-          cell.depth === 1 ? { ...cell, mineralId: null } : cell
-        )),
-      },
-    };
-    for (const cell of progress.board.cells.filter((candidate) => candidate.depth === 1)) {
-      progress = strikeCell(progress, cell.id, catalog, fixedRandom).progress;
-    }
-    assert.equal(progress.board.baseDepth, 2);
+    const first = initial.board.cells.find((cell) => cell.column === 0 && cell.depth === 1)!;
+    let progress = strikeCell(initial, first.id, catalog, fixedRandom).progress;
+
+    assert.deepEqual(
+      progress.board.cells.filter((cell) => cell.column === 0).map((cell) => cell.depth).sort((a, b) => a - b),
+      [2, 3, 4, 5, 6, 7],
+    );
+    assert.deepEqual(
+      progress.board.cells.filter((cell) => cell.column === 1).map((cell) => cell.depth).sort((a, b) => a - b),
+      [1, 2, 3, 4, 5, 6],
+    );
+    assert.equal(progress.board.baseDepth, 1);
+
+    const second = progress.board.cells.find((cell) => cell.column === 0 && cell.depth === 2)!;
+    assert.equal(isCellAccessible(progress.board, second), true);
+    progress = strikeCell(progress, second.id, catalog, fixedRandom).progress;
+
+    assert.deepEqual(
+      progress.board.cells.filter((cell) => cell.column === 0).map((cell) => cell.depth).sort((a, b) => a - b),
+      [3, 4, 5, 6, 7, 8],
+    );
+    assert.equal(progress.currentDepth, 2);
     assert.equal(progress.board.cells.length, 30);
-    assert.equal(Math.max(...progress.board.cells.map((cell) => cell.depth)), 7);
   });
 });
 
