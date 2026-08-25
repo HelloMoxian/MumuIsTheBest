@@ -150,6 +150,18 @@ async function setLearningCoinBalance(baseUrl: string, password: string, balance
   });
 }
 
+async function spendResearchCoins(baseUrl: string, eventId: string, amount = 5) {
+  return fetch(`${baseUrl}/api/world-tower/coins/spend`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      eventId,
+      purpose: "nature:rock-mineral-research",
+      amount,
+    }),
+  });
+}
+
 after(async () => {
   await Promise.all(children.map((child) => stopServer(child)));
   await Promise.all(cleanupPaths.map((path) => rm(path, { recursive: true, force: true })));
@@ -464,6 +476,50 @@ describe("world tower API", () => {
         body: JSON.stringify({ password: "123456", balance: -1 }),
       });
       assert.equal(invalidSet.status, 403);
+    } finally {
+      await stopServer(child);
+    }
+  });
+
+  it("spends five knowledge coins for mineral research exactly once", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-mineral-research-coins-"));
+    cleanupPaths.push(dataDirectory);
+    const { baseUrl, child } = await startServer(dataDirectory);
+
+    try {
+      assert.equal((await setLearningCoinBalance(baseUrl, "123456", 9)).status, 201);
+      const eventId = randomUUID();
+      const first = await spendResearchCoins(baseUrl, eventId);
+      assert.equal(first.status, 201);
+      const firstBody = await first.json() as {
+        alreadySpent: boolean;
+        coinDelta: number;
+        progress: { coinBalance: number };
+      };
+      assert.equal(firstBody.alreadySpent, false);
+      assert.equal(firstBody.coinDelta, -5);
+      assert.equal(firstBody.progress.coinBalance, 4);
+
+      const duplicate = await spendResearchCoins(baseUrl, eventId);
+      assert.equal(duplicate.status, 200);
+      const duplicateBody = await duplicate.json() as {
+        alreadySpent: boolean;
+        coinDelta: number;
+        progress: { coinBalance: number };
+      };
+      assert.equal(duplicateBody.alreadySpent, true);
+      assert.equal(duplicateBody.coinDelta, 0);
+      assert.equal(duplicateBody.progress.coinBalance, 4);
+
+      const insufficient = await spendResearchCoins(baseUrl, randomUUID());
+      assert.equal(insufficient.status, 409);
+      assert.equal(
+        (await insufficient.json() as { code: string }).code,
+        "WORLD_TOWER_INSUFFICIENT_COINS",
+      );
+
+      const wrongAmount = await spendResearchCoins(baseUrl, randomUUID(), 6);
+      assert.equal(wrongAmount.status, 400);
     } finally {
       await stopServer(child);
     }

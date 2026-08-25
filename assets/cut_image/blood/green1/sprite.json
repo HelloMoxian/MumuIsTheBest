@@ -1,0 +1,15 @@
+{
+  "fps": 20,
+  "elements": [
+    {
+      "lazy": true,
+      "count": 5,
+      "image": "%01d.png",
+      "range": [0, 4],
+      "size": [
+        1,
+        1
+      ]
+    }
+  ]
+}

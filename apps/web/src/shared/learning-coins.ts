@@ -97,6 +97,12 @@ type CoinBalanceChangeResult = {
   };
 };
 
+export type LearningCoinSpendResult = CoinBalanceChangeResult & {
+  alreadySpent: boolean;
+  eventId: string;
+  purpose: "nature:rock-mineral-research";
+};
+
 async function requestJson<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
   const response = await fetch(input, init);
   const body = await response.json().catch(() => null) as { message?: string } | null;
@@ -140,7 +146,7 @@ export function awardLearningCoins(
   });
 }
 
-function reportBalanceChange(result: CoinBalanceChangeResult) {
+function reportBalanceChange<T extends CoinBalanceChangeResult>(result: T): T {
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent(LEARNING_COINS_CHANGED_EVENT, {
       detail: { coinBalance: result.progress.coinBalance, updatedAt: result.progress.updatedAt },
@@ -162,5 +168,17 @@ export function setLearningCoinBalance(password: string, balance: number) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password, balance }),
+  }).then(reportBalanceChange);
+}
+
+export function spendLearningCoins(
+  eventId: string,
+  purpose: LearningCoinSpendResult["purpose"],
+  amount: number,
+) {
+  return requestJson<LearningCoinSpendResult>("/api/world-tower/coins/spend", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ eventId, purpose, amount }),
   }).then(reportBalanceChange);
 }

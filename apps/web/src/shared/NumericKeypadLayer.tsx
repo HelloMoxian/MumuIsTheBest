@@ -24,6 +24,7 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
   const [announcement, setAnnouncement] = useState("数字键盘已准备好");
   const placeRowRef = useRef<HTMLDivElement | null>(null);
   const isHome = window.location.pathname === "/";
+  const isImmersiveCameraGame = window.location.pathname === "/games/fruit-slice";
   const value = digits ? Number(digits) : null;
   const spokenValue = useMemo(
     () => value === null ? "还没有输入数字" : formatChineseInteger(value),
@@ -82,6 +83,8 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
     setAnnouncement(`已经提交 ${spokenValue}`);
     setDigits("");
   };
+
+  if (isImmersiveCameraGame) return <>{children}</>;
 
   return (
     <>

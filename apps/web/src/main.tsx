@@ -5,6 +5,7 @@ import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBat
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
 import { MysteryFunctionGame } from "./features/mystery-function/MysteryFunctionGame";
 import { NumericKeypadLayer } from "./shared/NumericKeypadLayer";
+import { EnergyCoinBalancePill } from "./shared/EnergyCoinBalancePill";
 import {
   LearningCoinBalancePill,
   LearningCoinLayer,
@@ -84,6 +85,16 @@ const EnglishEchoIslandPage = lazy(async () => {
   return { default: module.EnglishEchoIslandPage };
 });
 
+const FruitSliceGame = lazy(async () => {
+  const module = await import("./features/fruit-slice/FruitSliceGame");
+  return { default: module.FruitSliceGame };
+});
+
+const RockMineralGame = lazy(async () => {
+  const module = await import("./features/rock-minerals/RockMineralGame");
+  return { default: module.RockMineralGame };
+});
+
 function ChemistryLoading({ label }: { label: string }) {
   return (
     <div className="app-shell" aria-live="polite">
@@ -154,7 +165,7 @@ type AsrConfiguration = {
   isConfigured: boolean;
   storage: "local-file" | "environment" | "none";
 };
-type SubjectIconKind = "math" | "english" | "chemistry" | "chinese" | "classics";
+type SubjectIconKind = "games" | "math" | "english" | "chemistry" | "nature" | "chinese" | "classics";
 type GamePlaceholder = {
   title: string;
   mark: string;
@@ -173,6 +184,21 @@ type SubjectBoard = {
 };
 
 const SUBJECT_BOARDS: SubjectBoard[] = [
+  {
+    id: "games",
+    title: "游戏",
+    caption: "让身体动起来，把运动变成家庭挑战",
+    icon: "games",
+    games: [
+      {
+        title: "切水果",
+        mark: "⚡",
+        description: "摄像头识别挥手，支持单人和双人对战",
+        shape: "wide",
+        href: "/games/fruit-slice",
+      },
+    ],
+  },
   {
     id: "math",
     title: "数学",
@@ -288,6 +314,21 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     ],
   },
   {
+    id: "nature",
+    title: "自然",
+    caption: "向地下出发，读懂岩石记录的地球故事",
+    icon: "nature",
+    games: [
+      {
+        title: "岩石与矿物",
+        mark: "◇",
+        description: "敲开未知地层，发现并研究 128 种自然样本",
+        shape: "wide",
+        href: "/nature/rock-minerals",
+      },
+    ],
+  },
+  {
     id: "chinese",
     title: "语文",
     caption: "读一读、认一认，文字会发光",
@@ -319,11 +360,17 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
 ];
 
 function SubjectGlyph({ kind }: { kind: SubjectIconKind }) {
+  if (kind === "games") {
+    return <span className="subject-glyph glyph-games" aria-hidden="true"><i /><b>⚡</b></span>;
+  }
   if (kind === "math") {
     return <span className="subject-glyph glyph-math" aria-hidden="true"><i /><b>×</b></span>;
   }
   if (kind === "chemistry") {
     return <span className="subject-glyph glyph-chemistry" aria-hidden="true"><i /><i /><i /></span>;
+  }
+  if (kind === "nature") {
+    return <span className="subject-glyph glyph-nature" aria-hidden="true"><i /><i /><b>◇</b></span>;
   }
   if (kind === "english") {
     return <span className="subject-glyph glyph-letter glyph-english" aria-hidden="true">Aa</span>;
@@ -677,6 +724,7 @@ function App() {
             )}
           </div>
           <LearningCoinBalancePill className="home-learning-coin-balance" />
+          <EnergyCoinBalancePill />
           <button className="avatar" type="button" aria-label="小小宇航员资料">👩‍🚀</button>
         </nav>
       </header>
@@ -876,6 +924,12 @@ function App() {
 }
 
 function CurrentPage() {
+  if (window.location.pathname === "/games/fruit-slice") {
+    return <Suspense fallback={<ChemistryLoading label="切水果体感舱" />}><FruitSliceGame /></Suspense>;
+  }
+  if (window.location.pathname === "/nature/rock-minerals") {
+    return <Suspense fallback={<ChemistryLoading label="岩石与矿物探索舱" />}><RockMineralGame /></Suspense>;
+  }
   if (window.location.pathname === "/math/add-subtract") return <AddSubtractGame />;
   if (window.location.pathname === "/math/arithmetic-battle") return <ArithmeticBattleGame />;
   if (window.location.pathname === "/math/multiplication") return <MultiplicationGame />;

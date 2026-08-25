@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/nature/rock-minerals/atlases/rock-mineral-atlas-03.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 3,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 4,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "pentlandite",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "pentlandite.png",
+      "sourceBox": [
+        4,
+        4,
+        414,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "realgar",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "realgar.png",
+      "sourceBox": [
+        422,
+        4,
+        832,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "orpiment",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "orpiment.png",
+      "sourceBox": [
+        840,
+        4,
+        1250,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hematite",
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "filename": "hematite.png",
+      "sourceBox": [
+        4,
+        422,
+        414,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "magnetite",
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "filename": "magnetite.png",
+      "sourceBox": [
+        422,
+        422,
+        832,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "goethite",
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "filename": "goethite.png",
+      "sourceBox": [
+        840,
+        422,
+        1250,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "corundum",
+      "index": 6,
+      "row": 2,
+      "column": 0,
+      "filename": "corundum.png",
+      "sourceBox": [
+        4,
+        840,
+        414,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "rutile",
+      "index": 7,
+      "row": 2,
+      "column": 1,
+      "filename": "rutile.png",
+      "sourceBox": [
+        422,
+        840,
+        832,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "cassiterite",
+      "index": 8,
+      "row": 2,
+      "column": 2,
+      "filename": "cassiterite.png",
+      "sourceBox": [
+        840,
+        840,
+        1250,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

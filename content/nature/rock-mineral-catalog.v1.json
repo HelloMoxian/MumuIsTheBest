@@ -1,0 +1,5926 @@
+{
+  "schemaVersion": 1,
+  "catalogId": "nature-rock-minerals-v1",
+  "title": "岩石与矿物发现图鉴",
+  "language": "zh-CN",
+  "itemCount": 128,
+  "semantics": {
+    "itemLabel": "样本",
+    "rarityNote": "稀有度为1—10的儿童游戏相对分数，综合自然产出、可见标本形态和收集体验，不代表全球储量统计。",
+    "valueNote": "价值为1—10的科普相对分数，综合工业、科研、宝石与标本意义，不是价格或投资建议。",
+    "hardnessNote": "岩石和集合体的硬度使用代表性范围；单颗粒、胶结物和风化程度会改变实际表现。",
+    "imageNote": "图片为写实风格生成标本图，用于儿童识别；名称和属性以本配置文字为准。"
+  },
+  "gameplay": {
+    "columns": 5,
+    "rows": 6,
+    "mineralProbability": 0.2,
+    "hammer": {
+      "energyCoinCost": 30,
+      "durability": 30,
+      "starterHammers": 1,
+        "energyCoinAdapter": "/api/games/fruit-slice/energy-coins/spend"
+    },
+    "research": {
+      "knowledgeCoinCost": 5,
+      "inventoryCost": 1,
+      "attributeKeys": [
+        "name",
+        "classification",
+        "crystalStructure",
+        "formation",
+        "rarity",
+        "mohsHardness",
+        "introduction",
+        "chemicalComposition",
+        "uses",
+        "products",
+        "value",
+        "safety"
+      ]
+    },
+    "hitsByRarity": [
+      {
+        "minRarity": 1,
+        "maxRarity": 3,
+        "hits": 1
+      },
+      {
+        "minRarity": 4,
+        "maxRarity": 7,
+        "hits": 2
+      },
+      {
+        "minRarity": 8,
+        "maxRarity": 10,
+        "hits": 3
+      }
+    ],
+    "rarityWeights": {
+      "1": 34,
+      "2": 24,
+      "3": 16,
+      "4": 10,
+      "5": 6,
+      "6": 4,
+      "7": 2.5,
+      "8": 1.5,
+      "9": 0.8,
+      "10": 0.2
+    },
+    "soilVariants": [
+      "clay",
+      "sand",
+      "gravel",
+      "deep"
+    ]
+  },
+  "sources": [
+    {
+      "title": "USGS Minerals and Uses Activity",
+      "url": "https://www.usgs.gov/programs/mineral-resources-program/minerals-and-uses-activity",
+      "scope": "矿物定义、典型矿物与日常用途"
+    },
+    {
+      "title": "USGS Minerals 101",
+      "url": "https://www.usgs.gov/science/science-explorer/minerals/minerals-101",
+      "scope": "常见造岩矿物与矿物基本性质"
+    },
+    {
+      "title": "Natural History Museum Mineral Collections",
+      "url": "https://www.nhm.ac.uk/our-science/services/collections/mineralogy/minerals.html",
+      "scope": "矿物、宝石、岩石和矿石分层语义"
+    }
+  ],
+  "items": [
+    {
+      "id": "native-gold",
+      "name": "自然金",
+      "aliases": [
+        "黄金"
+      ],
+      "kind": "mineral",
+      "group": "自然元素",
+      "chemicalComposition": {
+        "formula": "Au",
+        "summary": "主要由金元素组成，常含少量银、铜"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见不规则粒状、片状或树枝状集合体，完整晶体较少"
+      },
+      "formation": "多由含金热液在石英脉和裂隙中沉淀，也会风化搬运后富集成砂金",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 3,
+        "description": "代表性莫氏硬度约 2.5—3"
+      },
+      "introduction": "金黄色、延展性很强且不易氧化，是最容易被人认出的金属矿物之一",
+      "uses": [
+        "首饰",
+        "电子触点",
+        "航天器件",
+        "牙科材料"
+      ],
+      "products": [
+        "金饰",
+        "镀金连接器",
+        "金箔",
+        "精密电路"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "导电稳定、耐腐蚀且文化价值高，优质标本与天然晶金也有收藏价值"
+      },
+      "safety": "普通标本也很贵重；只观察来源合法的标本，不自行淘挖",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/native-gold.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "native-silver",
+      "name": "自然银",
+      "aliases": [
+        "银"
+      ],
+      "kind": "mineral",
+      "group": "自然元素",
+      "chemicalComposition": {
+        "formula": "Ag",
+        "summary": "主要由银元素组成，可含金、铜或汞"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见丝状、枝状、片状或致密块状，表面容易变暗"
+      },
+      "formation": "在中低温热液矿脉及硫化物矿床氧化带中形成",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 3,
+        "description": "代表性莫氏硬度约 2.5—3"
+      },
+      "introduction": "新鲜断面银白明亮，久置会因表面反应变成灰黑色",
+      "uses": [
+        "首饰",
+        "导电材料",
+        "反光镀层",
+        "抗菌材料"
+      ],
+      "products": [
+        "银饰",
+        "电触点",
+        "镜面镀层",
+        "导电浆料"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "兼具贵金属、工业导电和标本价值，天然丝状晶体尤其受收藏者喜爱"
+      },
+      "safety": "不要用化学药剂自行清洗或提炼",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/native-silver.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "native-copper",
+      "name": "自然铜",
+      "aliases": [
+        "红铜"
+      ],
+      "kind": "mineral",
+      "group": "自然元素",
+      "chemicalComposition": {
+        "formula": "Cu",
+        "summary": "主要由铜元素组成，常带微量银、铁"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见树枝状、片状和不规则块状，表面可形成绿色氧化膜"
+      },
+      "formation": "由含铜热液沉淀，或在铜矿床氧化还原带中富集",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 3,
+        "description": "代表性莫氏硬度约 2.5—3"
+      },
+      "introduction": "新鲜面呈铜红色，柔韧并能导电，是早期人类直接利用的金属之一",
+      "uses": [
+        "导电研究",
+        "冶金原料",
+        "标本收藏",
+        "装饰"
+      ],
+      "products": [
+        "铜线",
+        "铜管",
+        "青铜",
+        "黄铜"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "工业用途广，造型清楚的天然晶簇具有较高标本价值"
+      },
+      "safety": "表面铜盐不入口，接触后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/native-copper.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "native-platinum",
+      "name": "自然铂",
+      "aliases": [
+        "铂金"
+      ],
+      "kind": "mineral",
+      "group": "自然元素",
+      "chemicalComposition": {
+        "formula": "Pt",
+        "summary": "以铂为主，常与铁、铱、钯等形成天然合金"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；多为细小粒状、扁圆颗粒或不规则块体"
+      },
+      "formation": "形成于镁铁质—超镁铁质岩浆矿床，也可风化富集于砂矿",
+      "rarity": 10,
+      "mohsHardness": {
+        "min": 4,
+        "max": 4.5,
+        "description": "代表性莫氏硬度约 4—4.5"
+      },
+      "introduction": "银灰色、密度很大、耐腐蚀，是自然界很少见的贵金属矿物",
+      "uses": [
+        "催化剂",
+        "首饰",
+        "实验器皿",
+        "精密电子"
+      ],
+      "products": [
+        "汽车催化器",
+        "铂金首饰",
+        "燃料电池部件",
+        "耐蚀电极"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "资源稀少且工业催化性能重要，天然颗粒标本也很珍贵"
+      },
+      "safety": "只使用正规标本，不进行加热或冶炼",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/native-platinum.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "native-sulfur",
+      "name": "自然硫",
+      "aliases": [
+        "硫黄"
+      ],
+      "kind": "mineral",
+      "group": "自然元素",
+      "chemicalComposition": {
+        "formula": "S",
+        "summary": "主要由硫元素组成"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见明黄色双锥或厚板状晶体，也呈块状和粉状"
+      },
+      "formation": "可在火山喷气孔附近凝华，也由沉积层中的硫酸盐还原形成",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 1.5,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 1.5—2.5"
+      },
+      "introduction": "鲜黄色、质轻而脆，摩擦或受热时可能产生明显气味",
+      "uses": [
+        "硫酸工业",
+        "肥料",
+        "橡胶硫化",
+        "火药历史研究"
+      ],
+      "products": [
+        "硫酸",
+        "硫肥",
+        "硫化橡胶",
+        "部分农用制剂"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "工业基础原料价值稳定，通透完整晶体具有标本价值"
+      },
+      "safety": "易燃；不要加热、点燃或靠近火源",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/native-sulfur.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "graphite",
+      "name": "石墨",
+      "aliases": [
+        "黑铅"
+      ],
+      "kind": "mineral",
+      "group": "自然元素",
+      "chemicalComposition": {
+        "formula": "C",
+        "summary": "碳元素形成的层状晶体"
+      },
+      "crystalStructure": {
+        "system": "六方晶系",
+        "detail": "六方晶系；常见片状、鳞片状或土状集合体，层间容易滑动"
+      },
+      "formation": "由富碳沉积物变质形成，也可在岩浆和热液环境结晶",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 1,
+        "max": 2,
+        "description": "代表性莫氏硬度约 1—2"
+      },
+      "introduction": "黑灰色、有金属光泽，层片容易滑开，能导电却摸起来柔软",
+      "uses": [
+        "铅笔芯",
+        "电池",
+        "润滑",
+        "耐火材料"
+      ],
+      "products": [
+        "铅笔芯",
+        "锂电池负极",
+        "石墨坩埚",
+        "电刷"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "天然鳞片石墨在电池和耐高温工业中很重要"
+      },
+      "safety": "粉尘不要吸入，观察后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/graphite.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "diamond",
+      "name": "金刚石",
+      "aliases": [
+        "钻石"
+      ],
+      "kind": "mineral",
+      "group": "自然元素",
+      "chemicalComposition": {
+        "formula": "C",
+        "summary": "碳元素以三维强键网络排列"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见八面体、立方体或圆化晶体，具有极强光泽"
+      },
+      "formation": "在地幔高温高压环境形成，后被金伯利岩等快速带到地表",
+      "rarity": 10,
+      "mohsHardness": {
+        "min": 10,
+        "max": 10,
+        "description": "代表性莫氏硬度约 10"
+      },
+      "introduction": "天然最硬的矿物，透明晶体切磨后能强烈闪光，工业级晶体也非常重要",
+      "uses": [
+        "精密切削",
+        "磨料",
+        "钻探",
+        "宝石"
+      ],
+      "products": [
+        "钻石首饰",
+        "金刚石刀具",
+        "钻头",
+        "散热片"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "宝石级和大颗粒天然晶体价值极高，工业金刚石也有重要技术价值"
+      },
+      "safety": "硬但可能沿解理破裂；不做敲击实验",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/diamond.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "pyrite",
+      "name": "黄铁矿",
+      "aliases": [
+        "愚人金"
+      ],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "FeS₂",
+        "summary": "二硫化铁"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见立方体、五角十二面体和粒状集合体，晶面常有条纹"
+      },
+      "formation": "广泛形成于热液、沉积和变质环境，也常伴随煤层",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "黄铜色金属光泽很像金，但更硬、更脆，晶体常有整齐直边",
+      "uses": [
+        "硫资源历史",
+        "硫酸原料",
+        "地质指示",
+        "标本"
+      ],
+      "products": [
+        "硫酸",
+        "铁氧化物副产物",
+        "矿物标本"
+      ],
+      "value": {
+        "score": 3,
+        "label": "常见资源",
+        "description": "资源常见，完美立方晶体和特殊共生标本更有收藏价值"
+      },
+      "safety": "受潮氧化可能产生酸性物质；保持干燥，不舔舐",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/pyrite.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "chalcopyrite",
+      "name": "黄铜矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "CuFeS₂",
+        "summary": "铜铁硫化物，是重要铜矿物"
+      },
+      "crystalStructure": {
+        "system": "四方晶系",
+        "detail": "四方晶系；常见粒状、致密块状或四面体状晶体，表面会出现彩虹氧化色"
+      },
+      "formation": "形成于多种热液矿床、斑岩铜矿和岩浆硫化物矿床",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "颜色比黄铁矿更偏金黄，质地更软，是世界上最重要的铜矿石矿物之一",
+      "uses": [
+        "炼铜",
+        "地质勘探",
+        "标本"
+      ],
+      "products": [
+        "铜线",
+        "铜管",
+        "黄铜",
+        "电子器件"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "本身常见，但作为铜的主要来源具有很高工业价值"
+      },
+      "safety": "不自行粉碎或冶炼，接触粉末后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/chalcopyrite.png",
+        "atlasId": "rock-mineral-atlas-01",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "bornite",
+      "name": "斑铜矿",
+      "aliases": [
+        "孔雀铜矿"
+      ],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "Cu₅FeS₄",
+        "summary": "铜铁硫化物"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系（高温相可为等轴）",
+        "detail": "斜方晶系（高温相可为等轴）；多为块状和粒状，表面氧化后出现紫蓝彩虹色"
+      },
+      "formation": "在铜矿热液脉、接触交代和斑岩铜矿中形成",
+      "rarity": 5,
+      "mohsHardness": {
+        "min": 3,
+        "max": 3.25,
+        "description": "代表性莫氏硬度约 3—3.25"
+      },
+      "introduction": "新鲜面铜红褐，空气中很快形成蓝紫色彩膜，因此很受孩子注意",
+      "uses": [
+        "炼铜",
+        "矿床指示",
+        "标本收藏"
+      ],
+      "products": [
+        "铜材",
+        "铜合金",
+        "颜色综合观察标本"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "铜品位较高，彩色表面标本有明显观赏价值"
+      },
+      "safety": "彩膜不是涂料；不磨粉、不入口",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/bornite.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "chalcocite",
+      "name": "辉铜矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "Cu₂S",
+        "summary": "硫化亚铜，含铜比例高"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见致密块状、粒状或短柱状晶体，新鲜面铅灰色"
+      },
+      "formation": "常在铜矿床次生富集带形成，也见于热液矿脉",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 3,
+        "description": "代表性莫氏硬度约 2.5—3"
+      },
+      "introduction": "颜色暗但含铜量高，是重要的高品位铜矿石矿物",
+      "uses": [
+        "炼铜",
+        "矿床研究"
+      ],
+      "products": [
+        "铜线",
+        "铜板",
+        "铜合金",
+        "电子元件"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "高铜含量带来显著工业价值，漂亮晶体较少见"
+      },
+      "safety": "避免粉尘和自行冶炼",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/chalcocite.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "galena",
+      "name": "方铅矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "PbS",
+        "summary": "硫化铅，可含少量银"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见立方体、八面体或粗粒块状，具有完全立方解理"
+      },
+      "formation": "在中低温热液脉、沉积改造和接触交代矿床中形成",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 2.75,
+        "description": "代表性莫氏硬度约 2.5—2.75"
+      },
+      "introduction": "铅灰色、很沉，敲开常出现阶梯状小立方反光面",
+      "uses": [
+        "炼铅",
+        "银副产物",
+        "辐射屏蔽材料来源"
+      ],
+      "products": [
+        "蓄电池铅板",
+        "防护铅材",
+        "焊料历史材料",
+        "银副产品"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "是最重要的铅矿石之一，含银矿体价值更高"
+      },
+      "safety": "含铅；只隔着展示盒观察，接触后认真洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/galena.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "sphalerite",
+      "name": "闪锌矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "ZnS",
+        "summary": "硫化锌，常含铁、镉等微量元素"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见四面体、十二面体或粒状集合体，解理明显"
+      },
+      "formation": "广泛形成于热液脉、密西西比河谷型和块状硫化物矿床",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "颜色可从浅黄到深褐甚至黑色，树脂光泽是重要识别线索",
+      "uses": [
+        "炼锌",
+        "镓铟等副产资源",
+        "标本"
+      ],
+      "products": [
+        "镀锌钢",
+        "黄铜",
+        "氧化锌防晒材料",
+        "电池材料"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "是锌最主要的矿石矿物，也可能伴生有价值的稀散元素"
+      },
+      "safety": "不磨粉，避免接触含镉杂质的未知标本",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/sphalerite.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "cinnabar",
+      "name": "辰砂",
+      "aliases": [
+        "朱砂"
+      ],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "HgS",
+        "summary": "硫化汞"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见鲜红色粒状、被膜状或菱面体晶体"
+      },
+      "formation": "多在低温热液脉、火山附近和温泉沉积中形成",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 2,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 2—2.5"
+      },
+      "introduction": "鲜红色十分醒目，历史上曾被用作颜料，也是主要汞矿物",
+      "uses": [
+        "矿物学研究",
+        "历史颜料研究",
+        "密封展示标本"
+      ],
+      "products": [
+        "历史朱砂颜料",
+        "汞的历史来源"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "优质晶体有收藏价值，但现代利用受毒性严格限制"
+      },
+      "safety": "含汞；禁止触摸粉末、研磨、加热或带离展示盒",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/cinnabar.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "stibnite",
+      "name": "辉锑矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "Sb₂S₃",
+        "summary": "三硫化二锑"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见细长柱状、针状放射晶簇，表面铅灰闪亮"
+      },
+      "formation": "主要在低温热液脉和温泉型矿床中形成",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 2,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 2—2.5"
+      },
+      "introduction": "细长金属晶体像一束银灰色长矛，是最主要的锑矿石矿物",
+      "uses": [
+        "阻燃材料",
+        "合金",
+        "半导体研究",
+        "标本"
+      ],
+      "products": [
+        "阻燃剂",
+        "铅锑合金",
+        "部分电子材料"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "锑工业用途重要，完整长柱晶簇也有较高收藏价值"
+      },
+      "safety": "含锑；不要摸粉末、折断晶体或加热",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/stibnite.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "molybdenite",
+      "name": "辉钼矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "MoS₂",
+        "summary": "二硫化钼"
+      },
+      "crystalStructure": {
+        "system": "六方晶系",
+        "detail": "六方晶系；常见柔软片状、鳞片状或玫瑰状集合体，手感似石墨"
+      },
+      "formation": "在花岗岩相关斑岩矿床、矽卡岩和高温热液脉中形成",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 1,
+        "max": 1.5,
+        "description": "代表性莫氏硬度约 1—1.5"
+      },
+      "introduction": "铅灰色薄片能在纸上留下痕迹，是钼最重要的矿石矿物",
+      "uses": [
+        "合金钢",
+        "高温润滑",
+        "催化剂",
+        "电子材料"
+      ],
+      "products": [
+        "耐热钢",
+        "二硫化钼润滑剂",
+        "催化器",
+        "薄膜器件"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "钼对高强度钢和能源工业很重要，矿石具有高工业价值"
+      },
+      "safety": "粉末不要吸入，观察后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/molybdenite.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "arsenopyrite",
+      "name": "毒砂",
+      "aliases": [
+        "砷黄铁矿"
+      ],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "FeAsS",
+        "summary": "铁砷硫化物"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见银白色柱状、菱形或致密粒状，敲击会有金属断口"
+      },
+      "formation": "在中高温热液脉和变质矿床中形成，常与金矿伴生",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5.5—6"
+      },
+      "introduction": "银白偏灰、坚硬而脆，名字提醒它含有砷",
+      "uses": [
+        "金矿找矿指示",
+        "砷资源历史",
+        "矿物学研究"
+      ],
+      "products": [
+        "砷化合物的受控工业来源",
+        "伴生金资源"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "有找矿和伴生资源价值，但危险性降低了日常利用"
+      },
+      "safety": "含砷；禁止敲碎、加热、闻气味或徒手把玩",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/arsenopyrite.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "pyrrhotite",
+      "name": "磁黄铁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "Fe₁₋ₓS",
+        "summary": "缺铁型硫化铁，成分有一定变化"
+      },
+      "crystalStructure": {
+        "system": "单斜或六方晶系",
+        "detail": "单斜或六方晶系；多为块状、粒状或板状，部分标本具有磁性"
+      },
+      "formation": "形成于岩浆硫化物矿床、接触交代和高温热液环境",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4.5,
+        "description": "代表性莫氏硬度约 3.5—4.5"
+      },
+      "introduction": "青铜褐色，比黄铁矿颜色更暗，有些样本能吸引小磁针",
+      "uses": [
+        "镍铜找矿指示",
+        "硫铁资源",
+        "地质研究"
+      ],
+      "products": [
+        "硫酸原料历史",
+        "伴生镍铜资源"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "本身价值中等，但常是镍铜矿床的重要伴生矿物"
+      },
+      "safety": "易氧化；保持干燥，不磨粉",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/pyrrhotite.png",
+        "atlasId": "rock-mineral-atlas-02",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "pentlandite",
+      "name": "镍黄铁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "(Fe,Ni)₉S₈",
+        "summary": "铁镍硫化物"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；多呈青铜黄色粒状或细脉，与磁黄铁矿紧密共生"
+      },
+      "formation": "由镁铁质岩浆中的硫化物熔体结晶形成",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "常藏在其他硫化物中，是世界上重要的镍矿石矿物",
+      "uses": [
+        "炼镍",
+        "不锈钢",
+        "电池材料",
+        "找矿"
+      ],
+      "products": [
+        "不锈钢",
+        "镍基合金",
+        "动力电池材料",
+        "镀镍件"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "镍在合金和电池中需求高，因此工业价值显著"
+      },
+      "safety": "不磨粉或冶炼，避免含镍粉尘",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/pentlandite.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "realgar",
+      "name": "雄黄",
+      "aliases": [
+        "鸡冠石"
+      ],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "As₄S₄",
+        "summary": "砷的硫化物"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见橙红色短柱晶体、粒状或被膜状"
+      },
+      "formation": "在低温热液脉、火山喷气和温泉沉积中形成",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 1.5,
+        "max": 2,
+        "description": "代表性莫氏硬度约 1.5—2"
+      },
+      "introduction": "橙红色很鲜艳，但受光后可能逐渐变成黄色粉状物",
+      "uses": [
+        "矿物学研究",
+        "历史颜料研究",
+        "密封标本"
+      ],
+      "products": [
+        "历史颜料",
+        "砷化合物的受控工业来源"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "颜色和晶形带来标本价值，毒性使实际用途受限"
+      },
+      "safety": "含砷且怕光；密封避光，禁止触摸粉末和加热",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/realgar.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "orpiment",
+      "name": "雌黄",
+      "aliases": [
+        "鸡冠黄"
+      ],
+      "kind": "mineral",
+      "group": "硫化物",
+      "chemicalComposition": {
+        "formula": "As₂S₃",
+        "summary": "三硫化二砷"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见柠檬黄色片状、叶片状或土状集合体"
+      },
+      "formation": "形成于低温热液、火山喷气孔和温泉环境",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 1.5,
+        "max": 2,
+        "description": "代表性莫氏硬度约 1.5—2"
+      },
+      "introduction": "金黄色薄片柔软而醒目，古代曾作颜料，但含砷有毒",
+      "uses": [
+        "矿物学研究",
+        "历史颜料研究",
+        "密封展示"
+      ],
+      "products": [
+        "历史黄色颜料",
+        "砷化合物受控来源"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "优质晶簇有收藏价值，现代应用因毒性很有限"
+      },
+      "safety": "含砷；只能密封观察，不触摸、不研磨、不加热",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/orpiment.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "hematite",
+      "name": "赤铁矿",
+      "aliases": [
+        "红铁矿"
+      ],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "Fe₂O₃",
+        "summary": "三氧化二铁"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；可呈钢灰片状、肾状、土状或红色粉末，条痕多为红褐色"
+      },
+      "formation": "在沉积、热液、火山和变质环境均可形成，也是风化产物",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 5—6.5"
+      },
+      "introduction": "外表可黑可红，但粉末常呈红褐色，是主要铁矿石矿物",
+      "uses": [
+        "炼铁",
+        "颜料",
+        "配重",
+        "标本"
+      ],
+      "products": [
+        "钢铁",
+        "红色氧化铁颜料",
+        "抛光粉",
+        "重介质"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "储量大且是钢铁工业核心原料，优质镜铁矿晶体也有收藏价值"
+      },
+      "safety": "粉尘不要吸入，磁性通常弱于磁铁矿",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/hematite.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "magnetite",
+      "name": "磁铁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "Fe₃O₄",
+        "summary": "四氧化三铁"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见八面体、十二面体或黑色粒状块体，磁性明显"
+      },
+      "formation": "由岩浆结晶、接触交代、变质和沉积等多种作用形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 5.5—6.5"
+      },
+      "introduction": "黑色且能明显吸引磁铁，是认识磁性的经典天然样本",
+      "uses": [
+        "炼铁",
+        "磁性材料",
+        "重介质",
+        "地质导航研究"
+      ],
+      "products": [
+        "钢铁",
+        "磁性粉体",
+        "重介质选矿材料",
+        "铁氧体"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "是重要铁矿石，也因天然磁性具有教学和标本价值"
+      },
+      "safety": "大块标本较重，防止掉落砸伤",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/magnetite.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "goethite",
+      "name": "针铁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "FeO(OH)",
+        "summary": "含水氧化铁"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见针状、纤维状、钟乳状或褐色土状集合体"
+      },
+      "formation": "多由含铁矿物在含水含氧环境中风化，也可由热液沉淀",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5,
+        "max": 5.5,
+        "description": "代表性莫氏硬度约 5—5.5"
+      },
+      "introduction": "黄褐到黑褐色，常组成铁锈色的风化壳和褐铁矿",
+      "uses": [
+        "铁矿石组成",
+        "颜料",
+        "土壤与古环境研究"
+      ],
+      "products": [
+        "黄色和褐色氧化铁颜料",
+        "钢铁原料"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "常见且价值适中，形态漂亮的针状或彩虹表面标本较受欢迎"
+      },
+      "safety": "粉尘不要吸入，尖锐针状晶体不要徒手按压",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/goethite.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "corundum",
+      "name": "刚玉",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "Al₂O₃",
+        "summary": "氧化铝"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见桶状、柱状或块状晶体，晶面可有横纹"
+      },
+      "formation": "形成于富铝贫硅的变质岩、伟晶岩和部分火成岩中",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 9,
+        "max": 9,
+        "description": "代表性莫氏硬度约 9"
+      },
+      "introduction": "仅次于金刚石的硬矿物；不同微量元素会形成红宝石和蓝宝石",
+      "uses": [
+        "磨料",
+        "耐火材料",
+        "轴承",
+        "宝石母矿物"
+      ],
+      "products": [
+        "砂轮",
+        "耐火砖",
+        "人造刚玉磨料",
+        "红蓝宝石饰品"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "工业磨料和宝石两方面都很重要，透明彩色晶体价值极高"
+      },
+      "safety": "硬而脆，不用它划玻璃或互相撞击",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/corundum.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "rutile",
+      "name": "金红石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "TiO₂",
+        "summary": "二氧化钛"
+      },
+      "crystalStructure": {
+        "system": "四方晶系",
+        "detail": "四方晶系；常见红褐到黑色针状、柱状晶体，也会包裹在石英中"
+      },
+      "formation": "形成于岩浆岩、变质岩、热液脉，并可富集于砂矿",
+      "rarity": 5,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "细长晶体有强光泽，是钛的重要矿物，也会形成漂亮的发晶包裹体",
+      "uses": [
+        "钛金属",
+        "白色颜料",
+        "焊材",
+        "宝石包裹体"
+      ],
+      "products": [
+        "钛合金",
+        "二氧化钛涂料",
+        "防晒材料",
+        "焊条涂层"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "钛工业需求稳定，完整晶体及发晶包裹体具有收藏价值"
+      },
+      "safety": "普通标本安全，避免吸入加工粉尘",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/rutile.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "cassiterite",
+      "name": "锡石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "SnO₂",
+        "summary": "二氧化锡"
+      },
+      "crystalStructure": {
+        "system": "四方晶系",
+        "detail": "四方晶系；常见棕黑色短柱、双锥或膝状双晶，密度较大"
+      },
+      "formation": "主要在花岗岩伟晶岩、高温热液脉和砂矿中形成",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 6,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6—7"
+      },
+      "introduction": "深褐色、很沉，是人类炼锡最重要的矿石矿物",
+      "uses": [
+        "炼锡",
+        "焊料",
+        "镀锡",
+        "玻璃陶瓷"
+      ],
+      "products": [
+        "锡焊料",
+        "马口铁",
+        "青铜",
+        "透明导电氧化物"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "高品位锡石具有重要工业价值，漂亮双晶也很受收藏者喜爱"
+      },
+      "safety": "不自行磨碎或冶炼，重块注意防跌落",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/cassiterite.png",
+        "atlasId": "rock-mineral-atlas-03",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "chromite",
+      "name": "铬铁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "FeCr₂O₄",
+        "summary": "铬铁氧化物"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；多为黑色粒状、致密块状或少见八面体晶体"
+      },
+      "formation": "从超镁铁质岩浆中早期结晶并层状富集，也见于蛇绿岩",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5.5—6"
+      },
+      "introduction": "黑色金属至半金属光泽，是铬的主要矿石矿物",
+      "uses": [
+        "不锈钢",
+        "耐火材料",
+        "镀铬",
+        "颜料"
+      ],
+      "products": [
+        "不锈钢",
+        "铬合金",
+        "耐火砖",
+        "铬颜料"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "铬对不锈钢不可替代，矿石具有高工业价值"
+      },
+      "safety": "不进行化学处理；天然三价铬矿物与有害六价铬化合物不同",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/chromite.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "ilmenite",
+      "name": "钛铁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "FeTiO₃",
+        "summary": "钛铁氧化物"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见黑色厚板状、片状或粒状集合体，弱磁性"
+      },
+      "formation": "广泛结晶于基性岩浆，也可富集成海滨重砂矿",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5—6"
+      },
+      "introduction": "黑色沉重，是钛和二氧化钛颜料的重要来源之一",
+      "uses": [
+        "钛金属",
+        "白色颜料",
+        "焊材"
+      ],
+      "products": [
+        "钛合金",
+        "二氧化钛涂料",
+        "塑料白色填料"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "资源量大，工业价值主要来自钛元素"
+      },
+      "safety": "粉尘不要吸入，砂矿标本装盒保存",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/ilmenite.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "pyrolusite",
+      "name": "软锰矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "MnO₂",
+        "summary": "二氧化锰"
+      },
+      "crystalStructure": {
+        "system": "四方晶系",
+        "detail": "四方晶系；常见黑色针状、放射状、肾状或土状集合体"
+      },
+      "formation": "多在锰矿氧化带、沉积环境和低温热液作用中形成",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 2,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 2—6.5"
+      },
+      "introduction": "黑色且容易留下黑色痕迹，是重要锰矿物，集合形态硬度差异较大",
+      "uses": [
+        "炼锰",
+        "电池",
+        "玻璃脱色",
+        "催化剂"
+      ],
+      "products": [
+        "锰钢",
+        "干电池材料",
+        "玻璃",
+        "高锰酸盐原料"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "锰对钢铁和电池很重要，矿石具有稳定工业价值"
+      },
+      "safety": "粉末不要吸入或入口，观察后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/pyrolusite.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "cuprite",
+      "name": "赤铜矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "Cu₂O",
+        "summary": "氧化亚铜"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见深红色八面体、立方体、毛发状或土状集合体"
+      },
+      "formation": "在铜硫化物矿床近地表氧化带中形成",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "深红到近黑色，薄边透红光，是含铜量很高的次生铜矿物",
+      "uses": [
+        "炼铜",
+        "颜料历史",
+        "矿物标本"
+      ],
+      "products": [
+        "铜材",
+        "氧化亚铜防污材料",
+        "红色玻璃历史制品"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "高含铜带来矿石价值，通透红色晶体有较高收藏价值"
+      },
+      "safety": "不磨粉、不入口，接触后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/cuprite.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "uraninite",
+      "name": "晶质铀矿",
+      "aliases": [
+        "沥青铀矿"
+      ],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "UO₂±x",
+        "summary": "以二氧化铀为主，常含铅等放射性衰变产物"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见黑色致密块状、肾状或少见立方与八面体晶体"
+      },
+      "formation": "形成于花岗伟晶岩、热液脉和部分沉积型铀矿床",
+      "rarity": 10,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5—6"
+      },
+      "introduction": "黑色而密重，是铀的主要矿石矿物，具有天然放射性",
+      "uses": [
+        "核能资源研究",
+        "地质年代学",
+        "密封教学展示"
+      ],
+      "products": [
+        "核燃料的受控工业来源",
+        "同位素研究材料"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "能源与科研价值高，但采集、运输和保存受严格管控"
+      },
+      "safety": "有放射性且可能含有毒重金属；只能使用合规密封教具，禁止个人采集",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/uraninite.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "spinel",
+      "name": "尖晶石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "MgAl₂O₄",
+        "summary": "镁铝氧化物，元素替代可产生多种颜色"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；典型为八面体晶体，也呈粒状集合体"
+      },
+      "formation": "形成于富镁碳酸盐岩接触变质、片麻岩和部分岩浆岩中",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 7.5,
+        "max": 8,
+        "description": "代表性莫氏硬度约 7.5—8"
+      },
+      "introduction": "晶体常呈整齐八面体，红色尖晶石历史上曾被误认作红宝石",
+      "uses": [
+        "宝石",
+        "耐火材料",
+        "陶瓷",
+        "地质温压指示"
+      ],
+      "products": [
+        "尖晶石首饰",
+        "耐火砖",
+        "特种陶瓷",
+        "颜料"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "透明艳色晶体具有高宝石价值，普通工业原料价值较低"
+      },
+      "safety": "硬而脆，避免撞击和吞咽小晶体",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/spinel.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "zincite",
+      "name": "红锌矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "氧化物与氢氧化物",
+      "chemicalComposition": {
+        "formula": "ZnO",
+        "summary": "氧化锌，天然晶体常含锰"
+      },
+      "crystalStructure": {
+        "system": "六方晶系",
+        "detail": "六方晶系；天然常呈红橙色粒状或片状，完整晶体很少见"
+      },
+      "formation": "天然产出多与变质锌矿床有关，也常见人工冶炼副产晶体",
+      "rarity": 9,
+      "mohsHardness": {
+        "min": 4,
+        "max": 4.5,
+        "description": "代表性莫氏硬度约 4—4.5"
+      },
+      "introduction": "天然红锌矿十分少见，红橙色来自微量锰；市场上许多晶体为人工形成",
+      "uses": [
+        "矿物学研究",
+        "氧化锌资源",
+        "标本"
+      ],
+      "products": [
+        "氧化锌陶瓷",
+        "橡胶添加剂",
+        "防晒材料"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "天然来源稀少、标本价值高，但人工晶体不能冒充天然标本"
+      },
+      "safety": "来源要标明天然或人工；粉尘不要吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/zincite.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "halite",
+      "name": "石盐",
+      "aliases": [
+        "岩盐晶体"
+      ],
+      "kind": "mineral",
+      "group": "卤化物",
+      "chemicalComposition": {
+        "formula": "NaCl",
+        "summary": "氯化钠"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见透明或彩色立方体、阶梯状晶簇和粒状层"
+      },
+      "formation": "由海水或盐湖蒸发沉淀，也见于盐丘和火山喷气环境",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 2,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 2—2.5"
+      },
+      "introduction": "常形成方方正正的立方体，是食盐矿床的主要矿物，但教学标本不等于食品",
+      "uses": [
+        "食盐工业",
+        "化工",
+        "融雪",
+        "水处理"
+      ],
+      "products": [
+        "食盐",
+        "氯气",
+        "烧碱",
+        "纯碱"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "资源常见但用量巨大，洁净彩色晶体也有标本价值"
+      },
+      "safety": "矿物标本可能含杂质，禁止舔尝",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/halite.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "sylvite",
+      "name": "钾石盐",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "卤化物",
+      "chemicalComposition": {
+        "formula": "KCl",
+        "summary": "氯化钾"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见无色、白色或红色立方晶体和粒状盐层"
+      },
+      "formation": "在蒸发岩盆地晚期、盐湖和盐丘中形成",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 2,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 2—2.5"
+      },
+      "introduction": "外形像石盐，常呈淡红色，是制造钾肥的重要矿物",
+      "uses": [
+        "钾肥",
+        "化工",
+        "低钠盐原料"
+      ],
+      "products": [
+        "氯化钾肥料",
+        "钾化合物",
+        "部分代盐产品"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "农业对钾肥需求很大，因此工业价值高于普通外观所显示的程度"
+      },
+      "safety": "教学标本不可食用，避免受潮溶解",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/sylvite.png",
+        "atlasId": "rock-mineral-atlas-04",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "fluorite",
+      "name": "萤石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "卤化物",
+      "chemicalComposition": {
+        "formula": "CaF₂",
+        "summary": "氟化钙"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见立方体、八面体和穿插双晶，颜色变化极多"
+      },
+      "formation": "形成于热液脉、碳酸盐岩交代矿床和某些花岗岩中",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 4,
+        "max": 4,
+        "description": "代表性莫氏硬度约 4"
+      },
+      "introduction": "紫、绿、蓝、黄等颜色都可能出现，有些样本在紫外线下会发荧光",
+      "uses": [
+        "冶金助熔",
+        "氟化工",
+        "光学",
+        "标本"
+      ],
+      "products": [
+        "氢氟酸的受控原料",
+        "含氟化学品",
+        "光学晶体",
+        "助熔剂"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "工业和观赏价值兼具，通透彩色大晶体价值更高"
+      },
+      "safety": "不要自行用酸处理或加热；破碎边缘可能锋利",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/fluorite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "cryolite",
+      "name": "冰晶石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "卤化物",
+      "chemicalComposition": {
+        "formula": "Na₃AlF₆",
+        "summary": "氟铝酸钠"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见白色至无色块状或粒状，折射率接近水而显得半透明"
+      },
+      "formation": "天然主要形成于特殊花岗伟晶岩和富氟热液环境",
+      "rarity": 9,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 3,
+        "description": "代表性莫氏硬度约 2.5—3"
+      },
+      "introduction": "白色外观像冰，历史上对电解炼铝十分关键，天然矿床很少",
+      "uses": [
+        "炼铝助熔",
+        "玻璃陶瓷",
+        "历史工业研究"
+      ],
+      "products": [
+        "铝电解浴材料",
+        "乳白玻璃",
+        "磨料添加物"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "天然冰晶石稀少且有历史意义，现代工业多使用合成材料"
+      },
+      "safety": "含氟；不磨粉、不加热，接触后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/cryolite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "calcite",
+      "name": "方解石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "CaCO₃",
+        "summary": "碳酸钙"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见菱面体、犬牙状、柱状、钟乳状和纤维状，完全解理"
+      },
+      "formation": "广泛形成于沉积岩、热液脉、洞穴和生物骨骼中",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 3,
+        "max": 3,
+        "description": "代表性莫氏硬度约 3"
+      },
+      "introduction": "变化非常多的常见矿物，透明菱面体能让下方文字出现双影",
+      "uses": [
+        "水泥石灰",
+        "建筑",
+        "土壤改良",
+        "光学教学"
+      ],
+      "products": [
+        "水泥",
+        "石灰",
+        "碳酸钙填料",
+        "光学棱镜"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "资源极常见但工业用量巨大，冰洲石等透明晶体另有标本价值"
+      },
+      "safety": "稀酸会起泡，但儿童不要自行做酸反应",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/calcite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "aragonite",
+      "name": "文石",
+      "aliases": [
+        "霰石"
+      ],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "CaCO₃",
+        "summary": "与方解石同成分但原子排列不同"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见针状、柱状、放射状或假六方双晶"
+      },
+      "formation": "形成于海洋生物壳体、洞穴沉积、温泉和低温高压环境",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "和方解石成分相同，却因晶体排列不同而长出针束或放射花形",
+      "uses": [
+        "海洋与洞穴研究",
+        "标本",
+        "珍珠层组成研究"
+      ],
+      "products": [
+        "贝壳材料",
+        "珍珠层",
+        "碳酸钙研究材料"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "普通文石不贵，完整放射晶簇和洞穴花状标本更有收藏价值"
+      },
+      "safety": "晶针易折，避免按压；不采集受保护洞穴沉积",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/aragonite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "dolomite",
+      "name": "白云石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "CaMg(CO₃)₂",
+        "summary": "钙镁碳酸盐"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见弯曲菱面体、鞍状晶体和粒状集合体"
+      },
+      "formation": "由富镁流体改造石灰质沉积物，也见于热液脉和变质岩",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "常呈白、灰或粉色菱面体，是白云岩的主要造岩矿物",
+      "uses": [
+        "耐火材料",
+        "建筑骨料",
+        "镁资源",
+        "土壤调理"
+      ],
+      "products": [
+        "耐火砖",
+        "镁盐",
+        "建筑石料",
+        "农用白云石粉"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "储量大、用途广，精美鞍状晶簇有额外标本价值"
+      },
+      "safety": "粉尘不要吸入，建筑料标本边缘可能锋利",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/dolomite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "magnesite",
+      "name": "菱镁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "MgCO₃",
+        "summary": "碳酸镁"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见白色致密块状、瓷状或菱面体晶体"
+      },
+      "formation": "由富镁岩石蚀变、沉积浓缩或热液交代形成",
+      "rarity": 5,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4.5,
+        "description": "代表性莫氏硬度约 3.5—4.5"
+      },
+      "introduction": "外观常朴素，却是耐高温镁质材料的重要来源",
+      "uses": [
+        "耐火材料",
+        "镁化合物",
+        "环保吸附",
+        "建筑"
+      ],
+      "products": [
+        "镁砂",
+        "耐火砖",
+        "氧化镁",
+        "镁盐"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "高品位矿石是钢铁耐火材料的重要原料"
+      },
+      "safety": "粉尘不要吸入，不自行煅烧",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/magnesite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "siderite",
+      "name": "菱铁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "FeCO₃",
+        "summary": "碳酸亚铁"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见黄褐色菱面体、弯曲鞍状晶体或结核"
+      },
+      "formation": "在缺氧沉积环境、热液脉和变质铁建造中形成",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4.5,
+        "description": "代表性莫氏硬度约 3.5—4.5"
+      },
+      "introduction": "浅黄到深褐，风化后容易变成褐色铁氧化物",
+      "uses": [
+        "铁矿石",
+        "古环境指示",
+        "标本"
+      ],
+      "products": [
+        "钢铁原料",
+        "铁颜料风化产物"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "部分矿床可作铁矿，漂亮菱面体晶簇更具收藏价值"
+      },
+      "safety": "粉尘不要吸入，风化标本保持干燥",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/siderite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "rhodochrosite",
+      "name": "菱锰矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "MnCO₃",
+        "summary": "碳酸锰"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见粉红色菱面体、钟乳状条带和粒状集合体"
+      },
+      "formation": "形成于中低温热液脉、沉积锰矿和变质环境",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "粉红到玫瑰红色，条带状切面很漂亮，是重要锰矿物和观赏石",
+      "uses": [
+        "锰资源",
+        "宝石切磨",
+        "装饰石",
+        "标本"
+      ],
+      "products": [
+        "锰合金",
+        "装饰切片",
+        "珠宝"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "颜色鲜艳、晶体完整或条带清晰的标本价值很高"
+      },
+      "safety": "含锰粉尘不要吸入，避免用酸清洗",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/rhodochrosite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "smithsonite",
+      "name": "菱锌矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "ZnCO₃",
+        "summary": "碳酸锌"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见葡萄状、肾状、钟乳状或菱面体，颜色可蓝绿粉黄"
+      },
+      "formation": "在锌矿床近地表氧化带中形成",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 4,
+        "max": 4.5,
+        "description": "代表性莫氏硬度约 4—4.5"
+      },
+      "introduction": "表面常像一串光滑小葡萄，颜色柔和，是次生锌矿物",
+      "uses": [
+        "锌资源",
+        "宝石与标本",
+        "地质指示"
+      ],
+      "products": [
+        "锌金属",
+        "氧化锌",
+        "装饰弧面宝石"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "可作锌矿，颜色均匀的蓝绿葡萄状标本收藏价值高"
+      },
+      "safety": "不磨粉或用酸处理，接触后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/smithsonite.png",
+        "atlasId": "rock-mineral-atlas-05",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "malachite",
+      "name": "孔雀石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "Cu₂CO₃(OH)₂",
+        "summary": "含羟基的碱式碳酸铜"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见鲜绿色葡萄状、纤维状、钟乳状和同心条带块体"
+      },
+      "formation": "在铜矿床氧化带由含铜水溶液反应形成",
+      "rarity": 5,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "绿色条带像孔雀羽毛，是最容易辨认的次生铜矿物之一",
+      "uses": [
+        "铜矿石",
+        "装饰石",
+        "历史颜料",
+        "标本"
+      ],
+      "products": [
+        "铜材",
+        "孔雀石饰品",
+        "历史绿色颜料"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "优质条带石可作装饰，晶簇与共生标本也有收藏价值"
+      },
+      "safety": "含铜；不磨粉、不舔舐，不用酸清洗",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/malachite.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "azurite",
+      "name": "蓝铜矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "Cu₃(CO₃)₂(OH)₂",
+        "summary": "碱式碳酸铜"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见深蓝色柱状、板状、玫瑰状或土状集合体"
+      },
+      "formation": "在铜矿床氧化带形成，常与孔雀石共生并可能逐渐转变",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "浓郁深蓝色十分醒目，古代曾磨成蓝色颜料",
+      "uses": [
+        "铜矿指示",
+        "历史颜料",
+        "标本",
+        "装饰"
+      ],
+      "products": [
+        "历史蓝色颜料",
+        "铜材",
+        "收藏标本"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "色泽浓、晶体好的标本价值高，作为铜矿石的工业价值次于主要硫化物"
+      },
+      "safety": "含铜；保持干燥，禁止磨粉和入口",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/azurite.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "cerussite",
+      "name": "白铅矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "PbCO₃",
+        "summary": "碳酸铅"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见无色、白色或灰色板状、针状晶体，双晶形态丰富"
+      },
+      "formation": "在方铅矿等铅矿床氧化带中形成",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 3,
+        "max": 3.5,
+        "description": "代表性莫氏硬度约 3—3.5"
+      },
+      "introduction": "晶体可像雪花或放射星，密度很大，是重要次生铅矿物",
+      "uses": [
+        "铅矿石",
+        "矿床指示",
+        "密封标本"
+      ],
+      "products": [
+        "铅的受控冶炼原料",
+        "收藏标本"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "高品位矿石和复杂双晶都有价值，但毒性限制日常接触"
+      },
+      "safety": "含铅；只能密封观察，接触后洗手，禁止磨粉",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/cerussite.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "witherite",
+      "name": "毒重石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "碳酸盐",
+      "chemicalComposition": {
+        "formula": "BaCO₃",
+        "summary": "碳酸钡"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见假六方柱状、球状或致密块状，颜色多为白灰黄"
+      },
+      "formation": "在低温热液脉中形成，常与重晶石和方铅矿共生",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 3,
+        "max": 3.5,
+        "description": "代表性莫氏硬度约 3—3.5"
+      },
+      "introduction": "外表朴素却密度较大，是较少见的钡碳酸盐矿物",
+      "uses": [
+        "钡化工原料",
+        "矿物研究",
+        "密封标本"
+      ],
+      "products": [
+        "钡盐",
+        "特种玻璃",
+        "陶瓷釉料"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "天然产出不多，有一定工业和收藏价值"
+      },
+      "safety": "可溶性钡化合物有毒；禁止入口、磨粉或酸处理",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/witherite.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "gypsum",
+      "name": "石膏",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫酸盐",
+      "chemicalComposition": {
+        "formula": "CaSO₄·2H₂O",
+        "summary": "含结晶水的硫酸钙"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；可呈透明板状、燕尾双晶、纤维状或玫瑰状集合体"
+      },
+      "formation": "主要在蒸发岩盆地沉淀，也由硫化物氧化或热液作用形成",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 2,
+        "max": 2,
+        "description": "代表性莫氏硬度约 2"
+      },
+      "introduction": "非常柔软，指甲可以划动；透明透石膏和沙漠玫瑰都是它的形态",
+      "uses": [
+        "建筑",
+        "模型",
+        "医用固定",
+        "土壤改良"
+      ],
+      "products": [
+        "石膏板",
+        "石膏像",
+        "粉笔类材料",
+        "医用石膏绷带"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "资源常见但建筑用量大，完整沙漠玫瑰和透明晶体有观赏价值"
+      },
+      "safety": "易刮伤和吸水，展示时防潮，不把粉末入口",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/gypsum.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "anhydrite",
+      "name": "硬石膏",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫酸盐",
+      "chemicalComposition": {
+        "formula": "CaSO₄",
+        "summary": "无水硫酸钙"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见块状、粒状或厚板状晶体，解理面平整"
+      },
+      "formation": "在蒸发岩中沉淀，或由石膏埋藏加热脱水形成",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 3,
+        "max": 3.5,
+        "description": "代表性莫氏硬度约 3—3.5"
+      },
+      "introduction": "与石膏成分相近但不含结晶水，因此更硬、更致密",
+      "uses": [
+        "水泥调节",
+        "土壤改良",
+        "化工",
+        "装饰石"
+      ],
+      "products": [
+        "水泥",
+        "硫酸钙填料",
+        "土壤调理剂"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "资源较常见，工业价值稳定，蓝灰色透明标本有收藏价值"
+      },
+      "safety": "遇水可能缓慢水化，保持干燥",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/anhydrite.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "barite",
+      "name": "重晶石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫酸盐",
+      "chemicalComposition": {
+        "formula": "BaSO₄",
+        "summary": "硫酸钡"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见厚板状、玫瑰状、鸡冠状或致密块状，密度很大"
+      },
+      "formation": "形成于热液脉、沉积喷流矿床和海洋沉积环境",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 3,
+        "max": 3.5,
+        "description": "代表性莫氏硬度约 3—3.5"
+      },
+      "introduction": "看起来普通却异常沉重，是辨认重晶石的重要线索",
+      "uses": [
+        "钻井泥浆",
+        "医疗造影剂原料",
+        "涂料填料",
+        "防辐射混凝土"
+      ],
+      "products": [
+        "钻井加重剂",
+        "硫酸钡造影剂",
+        "高密度混凝土",
+        "油漆填料"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "石油钻探等行业用量大，高纯白色矿石价值更高"
+      },
+      "safety": "重块防跌落；医用硫酸钡必须是专用品，矿物标本不可食用",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/barite.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "celestine",
+      "name": "天青石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫酸盐",
+      "chemicalComposition": {
+        "formula": "SrSO₄",
+        "summary": "硫酸锶"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见淡蓝色板状、柱状晶体和晶洞簇"
+      },
+      "formation": "形成于蒸发岩、沉积岩孔洞和低温热液脉",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 3,
+        "max": 3.5,
+        "description": "代表性莫氏硬度约 3—3.5"
+      },
+      "introduction": "淡天蓝色晶体很有辨识度，是锶元素最主要的矿石矿物",
+      "uses": [
+        "锶化合物",
+        "烟火色彩",
+        "陶瓷",
+        "标本"
+      ],
+      "products": [
+        "红色烟火着色剂",
+        "铁氧体磁体",
+        "特种玻璃"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "锶工业原料价值稳定，晶洞中的蓝色晶簇很受收藏者欢迎"
+      },
+      "safety": "晶体较脆，避免摔落；不要点燃或自制烟火",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/celestine.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "alunite",
+      "name": "明矾石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫酸盐",
+      "chemicalComposition": {
+        "formula": "KAl₃(SO₄)₂(OH)₆",
+        "summary": "含钾铝的碱式硫酸盐"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；多为白灰色细粒块状、土状或小菱面体晶体"
+      },
+      "formation": "由富硫酸性热液蚀变火山岩形成，也见于氧化带",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3.5—4"
+      },
+      "introduction": "常以细粒浅色岩块出现，是酸性热液活动的重要线索",
+      "uses": [
+        "明矾与钾资源历史",
+        "地质找矿",
+        "水处理原料研究"
+      ],
+      "products": [
+        "明矾",
+        "氧化铝和钾盐的历史来源"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "可作低品位铝钾资源，主要价值也来自找矿指示"
+      },
+      "safety": "不尝味、不自行加热或溶解",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/alunite.png",
+        "atlasId": "rock-mineral-atlas-06",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "chalcanthite",
+      "name": "胆矾",
+      "aliases": [
+        "蓝矾"
+      ],
+      "kind": "mineral",
+      "group": "硫酸盐",
+      "chemicalComposition": {
+        "formula": "CuSO₄·5H₂O",
+        "summary": "含五个结晶水的硫酸铜"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；常见鲜蓝色短柱、板状或钟乳状晶体，极易溶于水"
+      },
+      "formation": "在干燥铜矿区由含铜酸性水蒸发形成，许多商品晶体为人工结晶",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 2.5"
+      },
+      "introduction": "蓝得非常鲜艳，但容易溶化，天然标本需要干燥环境保存",
+      "uses": [
+        "矿物学展示",
+        "铜盐工业研究",
+        "实验室试剂来源说明"
+      ],
+      "products": [
+        "硫酸铜产品",
+        "电镀液",
+        "农业用铜制剂的工业原料"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "天然晶体较少见，人工晶体常见；必须清楚标注来源"
+      },
+      "safety": "有害且易溶；禁止触摸后入口、舔尝或自行结晶",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/chalcanthite.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "anglesite",
+      "name": "铅矾",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硫酸盐",
+      "chemicalComposition": {
+        "formula": "PbSO₄",
+        "summary": "硫酸铅"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见无色、白色或灰色板状、柱状晶体，密度较大"
+      },
+      "formation": "在方铅矿等铅矿氧化带中形成",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 3,
+        "description": "代表性莫氏硬度约 2.5—3"
+      },
+      "introduction": "透明晶体外表清亮，却因含铅而需要密封观察",
+      "uses": [
+        "铅矿床指示",
+        "铅资源",
+        "密封标本"
+      ],
+      "products": [
+        "铅的受控冶炼原料",
+        "收藏标本"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "透明大晶体和复杂晶形有收藏价值，矿石也含铅资源"
+      },
+      "safety": "含铅；禁止徒手长期接触、磨粉或入口",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/anglesite.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "apatite",
+      "name": "磷灰石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "磷酸盐、硼酸盐与钨酸盐",
+      "chemicalComposition": {
+        "formula": "Ca₅(PO₄)₃(F,Cl,OH)",
+        "summary": "钙磷酸盐，含氟、氯或羟基"
+      },
+      "crystalStructure": {
+        "system": "六方晶系",
+        "detail": "六方晶系；常见六方柱状、针状、粒状，颜色可绿蓝黄紫"
+      },
+      "formation": "形成于多种火成岩、伟晶岩、变质岩和沉积磷块岩",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 5,
+        "max": 5,
+        "description": "代表性莫氏硬度约 5"
+      },
+      "introduction": "名称来自容易与其他矿物混淆的历史，还是地球磷循环的重要载体",
+      "uses": [
+        "磷肥",
+        "化工",
+        "宝石",
+        "地质年代研究"
+      ],
+      "products": [
+        "磷肥",
+        "磷酸",
+        "饲料磷酸盐",
+        "切磨宝石"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "磷肥工业价值很高，透明霓虹色晶体还有宝石价值"
+      },
+      "safety": "矿物标本不可食用，含氟品种不磨粉",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/apatite.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "turquoise",
+      "name": "绿松石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "磷酸盐、硼酸盐与钨酸盐",
+      "chemicalComposition": {
+        "formula": "CuAl₆(PO₄)₄(OH)₈·4H₂O",
+        "summary": "含铜铝的水合磷酸盐"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；多为天蓝至蓝绿色致密块状、脉状或葡萄状，晶体罕见"
+      },
+      "formation": "在干旱地区含铜铝岩石的风化带中缓慢形成",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5—6"
+      },
+      "introduction": "蓝绿色温润不透明，常带褐黑色网纹，是历史悠久的宝石材料",
+      "uses": [
+        "首饰",
+        "雕刻",
+        "文化艺术",
+        "标本"
+      ],
+      "products": [
+        "绿松石饰品",
+        "镶嵌工艺品",
+        "小型雕件"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "颜色、致密度和天然纹理决定宝石价值，高品质材料较珍贵"
+      },
+      "safety": "多孔怕油污和化学品，不用清洁剂浸泡",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/turquoise.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "monazite",
+      "name": "独居石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "磷酸盐、硼酸盐与钨酸盐",
+      "chemicalComposition": {
+        "formula": "(Ce,La,Nd,Th)PO₄",
+        "summary": "稀土磷酸盐，常含少量钍"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见黄褐、红褐色小粒状或楔形晶体，密度较大"
+      },
+      "formation": "结晶于花岗岩和伟晶岩，也可风化富集为重砂矿",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 5,
+        "max": 5.5,
+        "description": "代表性莫氏硬度约 5—5.5"
+      },
+      "introduction": "颗粒通常不大，却是轻稀土的重要来源之一，并可能有弱放射性",
+      "uses": [
+        "稀土资源",
+        "地质年代学",
+        "材料工业"
+      ],
+      "products": [
+        "永磁材料",
+        "抛光材料",
+        "催化剂",
+        "稀土玻璃"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "稀土资源价值高，但含钍会增加处理成本和监管要求"
+      },
+      "safety": "可能含钍并有放射性；只使用合规密封标本",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/monazite.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "vivianite",
+      "name": "蓝铁矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "磷酸盐、硼酸盐与钨酸盐",
+      "chemicalComposition": {
+        "formula": "Fe₃(PO₄)₂·8H₂O",
+        "summary": "含水磷酸亚铁"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见淡蓝至深蓝色片状、柱状晶体或土状团块，见光会变深"
+      },
+      "formation": "在缺氧、富铁且有磷的沉积物、泥炭和化石附近形成",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 1.5,
+        "max": 2,
+        "description": "代表性莫氏硬度约 1.5—2"
+      },
+      "introduction": "新鲜时可近乎无色，接触空气和光后逐渐变成蓝绿色",
+      "uses": [
+        "沉积环境研究",
+        "历史颜料",
+        "标本"
+      ],
+      "products": [
+        "历史蓝色颜料",
+        "环境指示材料"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "完整晶体和特殊产状有收藏价值，工业用途有限"
+      },
+      "safety": "避强光保存，不磨粉或用于自制颜料",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/vivianite.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "borax",
+      "name": "硼砂",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "磷酸盐、硼酸盐与钨酸盐",
+      "chemicalComposition": {
+        "formula": "Na₂B₄O₇·10H₂O",
+        "summary": "含十个结晶水的硼酸钠"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见无色白色短柱晶体、结壳或土状集合体，易失水"
+      },
+      "formation": "在干旱盐湖和蒸发盆地中由富硼水体结晶",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 2,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 2—2.5"
+      },
+      "introduction": "白色柔软、易溶于水，是重要硼资源，但矿物标本不可当作家用材料",
+      "uses": [
+        "玻璃",
+        "陶瓷釉",
+        "清洁剂工业",
+        "冶金助熔"
+      ],
+      "products": [
+        "耐热玻璃",
+        "玻璃纤维",
+        "珐琅",
+        "硼化合物"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "硼工业用途广，矿石资源具有稳定价值"
+      },
+      "safety": "不可入口或用于儿童实验，避免粉尘和长时间皮肤接触",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/borax.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "scheelite",
+      "name": "白钨矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "磷酸盐、硼酸盐与钨酸盐",
+      "chemicalComposition": {
+        "formula": "CaWO₄",
+        "summary": "钨酸钙"
+      },
+      "crystalStructure": {
+        "system": "四方晶系",
+        "detail": "四方晶系；常见双锥状、假八面体或粒状晶体，部分在紫外光下发亮"
+      },
+      "formation": "形成于花岗岩相关矽卡岩、高温热液脉和伟晶岩",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 4.5,
+        "max": 5,
+        "description": "代表性莫氏硬度约 4.5—5"
+      },
+      "introduction": "颜色可白黄褐，密度很大，是钨的重要矿石矿物",
+      "uses": [
+        "硬质合金",
+        "高温合金",
+        "照明与电子历史",
+        "标本"
+      ],
+      "products": [
+        "硬质合金刀具",
+        "耐热钢",
+        "钨丝",
+        "配重材料"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "钨对高温和切削工业很重要，高品位矿石价值高"
+      },
+      "safety": "重块防跌落，不自行粉碎或冶炼",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/scheelite.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "wolframite",
+      "name": "黑钨矿",
+      "aliases": [
+        "钨锰铁矿系列"
+      ],
+      "kind": "mineral",
+      "group": "磷酸盐、硼酸盐与钨酸盐",
+      "chemicalComposition": {
+        "formula": "(Fe,Mn)WO₄",
+        "summary": "铁锰钨酸盐固溶系列"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见黑褐色厚板状、柱状或刀片状晶体，密度很大"
+      },
+      "formation": "在花岗岩伟晶岩和高温石英热液脉中形成",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 4,
+        "max": 4.5,
+        "description": "代表性莫氏硬度约 4—4.5"
+      },
+      "introduction": "深色沉重，名字 wolfram 与钨元素英文符号 W 的历史有关",
+      "uses": [
+        "炼钨",
+        "硬质合金",
+        "耐高温材料"
+      ],
+      "products": [
+        "硬质合金",
+        "钨钢",
+        "钨丝",
+        "高密度合金"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "是钨的主要矿石系列之一，工业价值很高"
+      },
+      "safety": "不敲碎或冶炼，破口可能锋利",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/wolframite.png",
+        "atlasId": "rock-mineral-atlas-07",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "vanadinite",
+      "name": "钒铅矿",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "磷酸盐、硼酸盐与钨酸盐",
+      "chemicalComposition": {
+        "formula": "Pb₅(VO₄)₃Cl",
+        "summary": "含铅氯的钒酸盐"
+      },
+      "crystalStructure": {
+        "system": "六方晶系",
+        "detail": "六方晶系；常见红橙色六方短柱、桶状晶体和晶簇"
+      },
+      "formation": "在干旱地区铅矿床氧化带中形成",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 3,
+        "description": "代表性莫氏硬度约 2.5—3"
+      },
+      "introduction": "鲜红或橙红的六角小柱像一排微型蜂窝，是钒与铅的次生矿物",
+      "uses": [
+        "钒资源",
+        "铅资源",
+        "密封标本"
+      ],
+      "products": [
+        "特种钢用钒",
+        "受控铅原料",
+        "收藏标本"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "色彩晶形带来高标本价值，部分矿体也有资源意义"
+      },
+      "safety": "含铅；禁止触摸粉末、磨碎或入口",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/vanadinite.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "quartz",
+      "name": "石英",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "SiO₂",
+        "summary": "二氧化硅"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见六方柱状并带尖顶，也呈粒状、致密块状和微晶集合体"
+      },
+      "formation": "广泛形成于岩浆岩、变质岩、沉积岩和热液脉",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 7,
+        "max": 7,
+        "description": "代表性莫氏硬度约 7"
+      },
+      "introduction": "地壳中最常见的矿物之一，耐风化，形态和颜色变化极多",
+      "uses": [
+        "玻璃",
+        "电子振荡",
+        "建筑砂",
+        "磨料"
+      ],
+      "products": [
+        "玻璃",
+        "光纤",
+        "石英表",
+        "硅材料",
+        "人造石"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "资源丰富但用途极广，高纯石英和完美晶体价值明显更高"
+      },
+      "safety": "断口锋利，避免敲碎；粉尘不可吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/quartz.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "orthoclase",
+      "name": "正长石",
+      "aliases": [
+        "钾长石"
+      ],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "KAlSi₃O₈",
+        "summary": "钾铝硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见短柱状、板状晶体和卡尔斯巴双晶，颜色多白粉肉红"
+      },
+      "formation": "结晶于花岗岩、正长岩和伟晶岩，也见于变质岩",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6,
+        "description": "代表性莫氏硬度约 6"
+      },
+      "introduction": "花岗岩中常见的粉红或白色矿物，是重要造岩长石",
+      "uses": [
+        "陶瓷",
+        "玻璃",
+        "釉料",
+        "地质教学"
+      ],
+      "products": [
+        "瓷器",
+        "玻璃",
+        "瓷砖",
+        "陶瓷釉"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "资源常见但陶瓷工业需求大，完整双晶标本有收藏价值"
+      },
+      "safety": "碎片边缘锋利，粉尘不要吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/orthoclase.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "microcline",
+      "name": "微斜长石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "KAlSi₃O₈",
+        "summary": "与正长石同成分但结构有序程度不同"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；常见块状、短柱状及格子双晶，绿色变种称天河石"
+      },
+      "formation": "在缓慢冷却的花岗岩和伟晶岩中形成",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "肉眼常像正长石，显微镜下特有格子双晶能帮助辨认",
+      "uses": [
+        "陶瓷",
+        "玻璃",
+        "宝石母矿物",
+        "地质研究"
+      ],
+      "products": [
+        "瓷器",
+        "玻璃",
+        "天河石饰品",
+        "釉料"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "普通微斜长石常见，绿色天河石和完整晶体价值更高"
+      },
+      "safety": "断口可能锋利，避免粉尘",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/microcline.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "albite",
+      "name": "钠长石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "NaAlSi₃O₈",
+        "summary": "钠铝硅酸盐，是斜长石端元"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；常见白色板状、片状晶体，聚片双晶会出现细条纹"
+      },
+      "formation": "形成于花岗岩、伟晶岩、变质岩和低温热液蚀变带",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "白色长石中非常常见，细密双晶纹是重要观察点",
+      "uses": [
+        "陶瓷",
+        "玻璃",
+        "填料",
+        "地质指示"
+      ],
+      "products": [
+        "瓷砖",
+        "玻璃",
+        "陶瓷坯体",
+        "釉料"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "资源常见且工业用途稳定，透明晶簇可作标本"
+      },
+      "safety": "碎片边缘锋利，粉尘不要吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/albite.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "anorthite",
+      "name": "钙长石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "CaAl₂Si₂O₈",
+        "summary": "钙铝硅酸盐，是斜长石端元"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；常见白灰色板状、粒状晶体，聚片双晶常见"
+      },
+      "formation": "主要结晶于玄武岩、辉长岩等基性火成岩，也见于月球高地岩石",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "富钙斜长石，是理解玄武岩、辉长岩和月球岩石的重要矿物",
+      "uses": [
+        "陶瓷研究",
+        "地质与行星科学",
+        "耐火原料研究"
+      ],
+      "products": [
+        "钙铝硅酸盐陶瓷",
+        "地质标准样品"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "单独开采价值有限，科研和优质晶体标本更有价值"
+      },
+      "safety": "普通标本安全，注意锋利断口",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/anorthite.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "labradorite",
+      "name": "拉长石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "(Ca,Na)(Al,Si)₄O₈",
+        "summary": "富钙斜长石系列成员"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；多为灰黑块状或板状，特定方向会闪出蓝绿金色晕彩"
+      },
+      "formation": "形成于辉长岩、玄武岩和斜长岩等基性岩石中",
+      "rarity": 5,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "转动时出现像极光一样的拉长石晕彩，来自内部细微层状结构对光的干涉",
+      "uses": [
+        "装饰石",
+        "台面",
+        "首饰",
+        "地质标本"
+      ],
+      "products": [
+        "拉长石饰品",
+        "装饰板材",
+        "雕件"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "晕彩面积、亮度和颜色决定观赏价值"
+      },
+      "safety": "避免撞击和超声清洗，表面刮花后晕彩会减弱",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/labradorite.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "muscovite",
+      "name": "白云母",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "KAl₂(AlSi₃O₁₀)(OH)₂",
+        "summary": "富铝钾的层状硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见透明浅色片状、书本状晶体，可剥成有弹性的薄片"
+      },
+      "formation": "形成于花岗岩、伟晶岩和中低级变质岩",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 2,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 2—2.5"
+      },
+      "introduction": "薄片透明、有弹性，过去曾被当作耐热小窗材料",
+      "uses": [
+        "电绝缘",
+        "耐热窗口历史",
+        "化妆品闪光填料",
+        "地质标本"
+      ],
+      "products": [
+        "绝缘片",
+        "云母纸",
+        "珠光颜料",
+        "耐热垫片"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "大尺寸无缺陷片状晶体和工业云母有较高用途价值"
+      },
+      "safety": "薄片边缘可能割手，不撕成细粉",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/muscovite.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "biotite",
+      "name": "黑云母",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "K(Mg,Fe)₃(AlSi₃O₁₀)(OH)₂",
+        "summary": "富铁镁钾的云母族常用名称"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见黑褐色片状、书本状集合体，薄片可弯曲"
+      },
+      "formation": "广泛结晶于花岗岩、闪长岩和变质岩",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 3,
+        "description": "代表性莫氏硬度约 2.5—3"
+      },
+      "introduction": "黑色片片在许多岩石中闪光，是常见造岩矿物组名称",
+      "uses": [
+        "地质年代与成因研究",
+        "绝缘填料历史",
+        "土壤养分来源"
+      ],
+      "products": [
+        "矿物填料",
+        "风化形成的含钾黏土",
+        "教学薄片"
+      ],
+      "value": {
+        "score": 3,
+        "label": "常见资源",
+        "description": "资源常见，主要是科研教学价值，完整大晶簇有少量收藏价值"
+      },
+      "safety": "薄片边缘锋利，避免形成粉尘",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/biotite.png",
+        "atlasId": "rock-mineral-atlas-08",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "lepidolite",
+      "name": "锂云母",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "K(Li,Al)₃(Si,Al)₄O₁₀(F,OH)₂",
+        "summary": "富锂的云母族矿物"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见淡紫、粉红色片状、鳞片状或书本状集合体"
+      },
+      "formation": "在富锂花岗伟晶岩晚期结晶，常与锂辉石和电气石共生",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 2.5—4"
+      },
+      "introduction": "淡紫色薄片很漂亮，是锂矿床的重要指示矿物之一",
+      "uses": [
+        "锂资源",
+        "玻璃陶瓷",
+        "标本"
+      ],
+      "products": [
+        "锂盐",
+        "耐热玻璃",
+        "特种陶瓷",
+        "电池材料的上游原料"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "锂需求使其工业价值上升，颜色与晶形好的标本也受欢迎"
+      },
+      "safety": "不磨粉或自行提取锂，观察后洗手",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/lepidolite.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "olivine",
+      "name": "橄榄石",
+      "aliases": [
+        "橄榄石族"
+      ],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "(Mg,Fe)₂SiO₄",
+        "summary": "镁铁硅酸盐固溶系列"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见橄榄绿色粒状、短柱晶体和砂粒集合体"
+      },
+      "formation": "在地幔和镁铁质岩浆中结晶，是玄武岩和橄榄岩的重要矿物",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6.5—7"
+      },
+      "introduction": "橄榄绿色来自铁含量变化，透明宝石级品种称为贵橄榄石",
+      "uses": [
+        "耐火砂",
+        "铸造",
+        "宝石",
+        "地幔研究"
+      ],
+      "products": [
+        "铸造砂",
+        "耐火材料",
+        "橄榄石宝石",
+        "矿物碳化材料"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "工业级资源常见，透明鲜绿宝石级晶体价值较高"
+      },
+      "safety": "断口锋利，粉尘不要吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/olivine.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "augite",
+      "name": "普通辉石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "(Ca,Na)(Mg,Fe,Al,Ti)(Si,Al)₂O₆",
+        "summary": "成分复杂的钙铁镁单链硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见黑绿短柱状、粒状晶体，两个解理方向近直角"
+      },
+      "formation": "广泛结晶于玄武岩、辉长岩和部分变质岩",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5.5—6"
+      },
+      "introduction": "玄武岩中常见的深色造岩矿物，短粗晶形和近直角解理很有代表性",
+      "uses": [
+        "火成岩分类",
+        "地质教学",
+        "骨料组成研究"
+      ],
+      "products": [
+        "建筑骨料的一部分",
+        "教学薄片"
+      ],
+      "value": {
+        "score": 2,
+        "label": "普通实用",
+        "description": "通常不单独开采，价值主要在科研教学和特殊晶体标本"
+      },
+      "safety": "断口锋利，避免敲击产生飞屑",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/augite.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "diopside",
+      "name": "透辉石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "CaMgSi₂O₆",
+        "summary": "钙镁单链硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见浅绿到深绿柱状或粒状晶体，透明品种可作宝石"
+      },
+      "formation": "形成于富钙镁变质岩、矽卡岩和部分基性火成岩",
+      "rarity": 5,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 5.5—6.5"
+      },
+      "introduction": "绿色范围很宽，铬致色的透明品种可呈鲜艳祖母绿色",
+      "uses": [
+        "宝石",
+        "陶瓷研究",
+        "变质作用指示"
+      ],
+      "products": [
+        "透辉石宝石",
+        "特种陶瓷",
+        "地质温压标本"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "普通晶体价值中等，透明铬透辉石具有较好宝石价值"
+      },
+      "safety": "脆且有解理，避免撞击",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/diopside.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "hornblende",
+      "name": "普通角闪石",
+      "aliases": [
+        "角闪石"
+      ],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "复杂的Ca-Na-Mg-Fe-Al含水硅酸盐",
+        "summary": "成分变化较大的双链硅酸盐矿物组常用名称"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见黑色或深绿色长柱状晶体，两个解理方向约为56°和124°"
+      },
+      "formation": "广泛形成于闪长岩、安山岩和中高级变质岩",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5—6"
+      },
+      "introduction": "深色长柱晶体是常见造岩矿物，斜交解理可与辉石区分",
+      "uses": [
+        "岩石分类",
+        "变质条件研究",
+        "教学"
+      ],
+      "products": [
+        "建筑石料组成",
+        "地质薄片",
+        "教学标本"
+      ],
+      "value": {
+        "score": 2,
+        "label": "普通实用",
+        "description": "通常不单独开采，科研教学价值为主"
+      },
+      "safety": "长柱断口可能锋利，避免粉尘",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/hornblende.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "beryl",
+      "name": "绿柱石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "Be₃Al₂Si₆O₁₈",
+        "summary": "铍铝环状硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "六方晶系",
+        "detail": "六方晶系；常见六方柱状晶体，可从无色到绿、蓝、黄、粉红"
+      },
+      "formation": "主要在花岗伟晶岩和高温热液脉中结晶",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 7.5,
+        "max": 8,
+        "description": "代表性莫氏硬度约 7.5—8"
+      },
+      "introduction": "六方长柱很有辨识度，祖母绿和海蓝宝石都是它的颜色变种",
+      "uses": [
+        "铍资源",
+        "宝石",
+        "航空材料上游"
+      ],
+      "products": [
+        "铍铜合金",
+        "航空航天铍材",
+        "祖母绿和海蓝宝石首饰"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "宝石级变种价值很高，工业级绿柱石也是重要铍资源"
+      },
+      "safety": "含铍；禁止磨粉、切割或吸入粉尘",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/beryl.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "tourmaline",
+      "name": "电气石",
+      "aliases": [
+        "碧玺"
+      ],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "复杂的含硼环状硅酸盐",
+        "summary": "含硼、成分变化很大的矿物族"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见纵纹明显的长柱状晶体，横截面近三角形，颜色丰富"
+      },
+      "formation": "在花岗伟晶岩、热液脉和变质岩中形成",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 7,
+        "max": 7.5,
+        "description": "代表性莫氏硬度约 7—7.5"
+      },
+      "introduction": "可一根晶体出现多种颜色，受热或受压时会产生电性",
+      "uses": [
+        "宝石",
+        "压电与热电研究",
+        "地质指示",
+        "标本"
+      ],
+      "products": [
+        "碧玺首饰",
+        "压力传感研究材料",
+        "收藏晶体"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "透明艳色、双色或西瓜色晶体宝石价值很高"
+      },
+      "safety": "脆且断口锋利，避免高温和撞击",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/tourmaline.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "topaz",
+      "name": "黄玉",
+      "aliases": [
+        "托帕石"
+      ],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "Al₂SiO₄(F,OH)₂",
+        "summary": "含氟羟基的铝硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "斜方晶系",
+        "detail": "斜方晶系；常见柱状晶体，纵纹明显，颜色可无色、黄、蓝、粉"
+      },
+      "formation": "在富氟花岗伟晶岩、云英岩和流纹岩空洞中形成",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 8,
+        "max": 8,
+        "description": "代表性莫氏硬度约 8"
+      },
+      "introduction": "很硬却有完全解理，漂亮透明晶体是常见宝石",
+      "uses": [
+        "宝石",
+        "耐磨材料研究",
+        "标本"
+      ],
+      "products": [
+        "黄玉首饰",
+        "刻面宝石",
+        "收藏晶体"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "颜色、净度、是否天然致色和尺寸共同决定价值"
+      },
+      "safety": "虽硬但沿解理易裂，避免磕碰和快速加热",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/topaz.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "zircon",
+      "name": "锆石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "ZrSiO₄",
+        "summary": "锆硅酸盐，常含微量铀和钍"
+      },
+      "crystalStructure": {
+        "system": "四方晶系",
+        "detail": "四方晶系；常见短柱、双锥或磨圆砂粒，颜色可无色褐红蓝"
+      },
+      "formation": "结晶于多种火成岩并因耐风化进入沉积岩，是重要年代学矿物",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7.5,
+        "description": "代表性莫氏硬度约 6.5—7.5"
+      },
+      "introduction": "小晶体能保存极古老的地质年龄；透明锆石也是天然宝石，不等于合成立方氧化锆",
+      "uses": [
+        "地质年代学",
+        "耐火材料",
+        "陶瓷",
+        "宝石"
+      ],
+      "products": [
+        "锆质耐火砖",
+        "陶瓷乳浊剂",
+        "锆石首饰",
+        "锆金属上游原料"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "科研价值极高，宝石级和工业锆砂也有稳定价值"
+      },
+      "safety": "部分古老晶体有极弱放射性；合规标本正常观察即可",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/zircon.png",
+        "atlasId": "rock-mineral-atlas-09",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "jadeite",
+      "name": "硬玉",
+      "aliases": [
+        "翡翠矿物"
+      ],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "NaAlSi₂O₆",
+        "summary": "钠铝单链硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；单晶少见，多为细粒交织的致密集合体，颜色多样"
+      },
+      "formation": "在俯冲带高压低温变质环境中形成",
+      "rarity": 9,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6.5—7"
+      },
+      "introduction": "细小晶体紧密交织后形成韧性很高的翡翠材料，绿色来自微量铬",
+      "uses": [
+        "玉器",
+        "首饰",
+        "地质高压指示"
+      ],
+      "products": [
+        "翡翠饰品",
+        "雕件",
+        "高压变质研究标本"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "高品质透明鲜绿翡翠价值极高，普通硬玉岩差异很大"
+      },
+      "safety": "价值鉴定需专业机构，不用敲击或化学处理",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/jadeite.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "spodumene",
+      "name": "锂辉石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "LiAlSi₂O₆",
+        "summary": "锂铝单链硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "单斜晶系",
+        "detail": "单斜晶系；常见长柱状、板状巨大晶体，粉紫色变种为紫锂辉石"
+      },
+      "formation": "在富锂花岗伟晶岩中晚期结晶",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6.5—7"
+      },
+      "introduction": "晶体可以非常巨大，是当代最重要的硬岩型锂矿物之一",
+      "uses": [
+        "锂电池",
+        "玻璃陶瓷",
+        "宝石"
+      ],
+      "products": [
+        "碳酸锂",
+        "电池正极材料上游",
+        "耐热玻璃",
+        "紫锂辉石首饰"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "电池产业带来很高工业价值，透明彩色宝石晶体另具收藏价值"
+      },
+      "safety": "不自行粉碎、焙烧或提锂，解理面易裂",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/spodumene.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "kyanite",
+      "name": "蓝晶石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "Al₂SiO₅",
+        "summary": "铝硅酸盐，与红柱石和矽线石同成分"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；常见蓝色刀片状长晶体，同一晶体不同方向硬度不同"
+      },
+      "formation": "形成于中高压富铝变质岩",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 4.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 4.5—7"
+      },
+      "introduction": "方向不同硬度明显不同，是展示晶体各向异性的经典矿物",
+      "uses": [
+        "耐火材料",
+        "陶瓷",
+        "变质条件指示",
+        "宝石"
+      ],
+      "products": [
+        "耐火砖",
+        "窑具",
+        "蓝晶石饰品",
+        "高铝陶瓷"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "工业耐火价值稳定，透明深蓝晶体有宝石价值"
+      },
+      "safety": "刀片状晶体易裂且边缘尖，不用手折",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/kyanite.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "garnet",
+      "name": "石榴子石",
+      "aliases": [
+        "石榴石族"
+      ],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "X₃Y₂(SiO₄)₃",
+        "summary": "成分多变的岛状硅酸盐矿物族"
+      },
+      "crystalStructure": {
+        "system": "等轴晶系",
+        "detail": "等轴晶系；常见十二面体或二十四面体晶体，颜色不只红色"
+      },
+      "formation": "形成于多种变质岩、矽卡岩和部分火成岩中",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7.5,
+        "description": "代表性莫氏硬度约 6.5—7.5"
+      },
+      "introduction": "晶体像一颗颗石榴籽，既是宝石，也是耐磨工业矿物",
+      "uses": [
+        "磨料",
+        "水刀切割",
+        "过滤",
+        "宝石",
+        "变质研究"
+      ],
+      "products": [
+        "砂纸",
+        "水刀砂",
+        "过滤介质",
+        "石榴石首饰"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "工业级用量大，稀有颜色和高净度宝石价值很高"
+      },
+      "safety": "颗粒硬且可能飞溅，不进行敲击或投掷",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/garnet.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "talc",
+      "name": "滑石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "Mg₃Si₄O₁₀(OH)₂",
+        "summary": "含水镁层状硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "单斜或三斜晶系",
+        "detail": "单斜或三斜晶系；常见白灰绿的片状、鳞片状或致密块体，手感滑腻"
+      },
+      "formation": "由富镁岩石在含水热液或变质作用下蚀变形成",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 1,
+        "max": 1,
+        "description": "代表性莫氏硬度约 1"
+      },
+      "introduction": "莫氏硬度最低的标准矿物，层片容易滑动所以摸起来像肥皂",
+      "uses": [
+        "造纸",
+        "陶瓷",
+        "涂料",
+        "塑料填料",
+        "化妆品级原料"
+      ],
+      "products": [
+        "爽身粉类专用品",
+        "纸张涂层",
+        "陶瓷",
+        "塑料填料"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "资源较常见但用途广，价值取决于白度、纯度和无害杂质控制"
+      },
+      "safety": "只用合规无石棉滑石样品；不要吸入粉末",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/talc.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "kaolinite",
+      "name": "高岭石",
+      "aliases": [],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "Al₂Si₂O₅(OH)₄",
+        "summary": "含水铝层状硅酸盐"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；晶体极细小，常呈白色土状、致密或粉末状集合体"
+      },
+      "formation": "长石等铝硅酸盐在湿热风化或热液作用下分解形成",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 2,
+        "max": 2.5,
+        "description": "代表性莫氏硬度约 2—2.5"
+      },
+      "introduction": "颗粒细白，是高岭土的主要矿物，也是瓷器的重要原料",
+      "uses": [
+        "陶瓷",
+        "造纸",
+        "涂料",
+        "医药级填料"
+      ],
+      "products": [
+        "瓷器",
+        "纸张涂层",
+        "耐火黏土",
+        "白色填料"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "优质高白高岭土工业价值高，普通黏土资源常见"
+      },
+      "safety": "粉尘不要吸入，教学样品不可入口",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/kaolinite.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "serpentine",
+      "name": "蛇纹石",
+      "aliases": [
+        "蛇纹石族"
+      ],
+      "kind": "mineral",
+      "group": "硅酸盐",
+      "chemicalComposition": {
+        "formula": "(Mg,Fe)₃Si₂O₅(OH)₄",
+        "summary": "含水镁铁层状或纤维状硅酸盐矿物族"
+      },
+      "crystalStructure": {
+        "system": "单斜或三方等多种晶系",
+        "detail": "单斜或三方等多种晶系；常见绿色致密、鳞片状或纤维状集合体，部分具蜡状光泽"
+      },
+      "formation": "由橄榄岩等超镁铁质岩石与水反应发生蛇纹石化形成",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 5.5,
+        "description": "代表性莫氏硬度约 2.5—5.5"
+      },
+      "introduction": "常见绿色花纹和蜡状光泽；这个矿物族包含多种形态，部分纤维品种需特别小心",
+      "uses": [
+        "装饰石",
+        "地幔水化研究",
+        "镁资源研究"
+      ],
+      "products": [
+        "蛇纹石装饰板",
+        "雕件",
+        "地质标本"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "普通装饰料价值中等，细腻色泽好的材料价值更高"
+      },
+      "safety": "未知纤维状样品可能含温石棉；禁止锯切、磨粉或吹扫粉尘",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/serpentine.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "rock-crystal",
+      "name": "水晶",
+      "aliases": [
+        "无色水晶"
+      ],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂",
+        "summary": "无色透明的石英变种"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见透明六方柱和尖顶，内部可有冰裂、气液包裹体"
+      },
+      "formation": "从富硅热液、伟晶岩空洞或岩石裂隙中缓慢结晶",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 7,
+        "max": 7,
+        "description": "代表性莫氏硬度约 7"
+      },
+      "introduction": "水晶并不是玻璃，而是无色透明的天然石英晶体",
+      "uses": [
+        "光学与压电历史",
+        "装饰",
+        "首饰",
+        "标本"
+      ],
+      "products": [
+        "水晶饰品",
+        "雕件",
+        "石英振荡器的天然材料历史"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "净度、晶形、尺寸和特殊包裹体决定收藏价值"
+      },
+      "safety": "断口锋利，放大聚光时避免长时间照向可燃物",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/rock-crystal.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "amethyst",
+      "name": "紫水晶",
+      "aliases": [],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂",
+        "summary": "含微量铁并受天然辐照致紫的石英"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见紫色六方晶簇、晶洞内衬和尖顶晶体"
+      },
+      "formation": "多在火山岩气孔、热液脉和晶洞中形成",
+      "rarity": 5,
+      "mohsHardness": {
+        "min": 7,
+        "max": 7,
+        "description": "代表性莫氏硬度约 7"
+      },
+      "introduction": "从淡紫到深紫，颜色常在晶尖或条带处变化",
+      "uses": [
+        "首饰",
+        "装饰",
+        "晶洞展示",
+        "标本"
+      ],
+      "products": [
+        "紫水晶首饰",
+        "晶洞摆件",
+        "切磨宝石"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "颜色均匀、深而明亮且净度好的晶体价值更高"
+      },
+      "safety": "强光和高温可能使颜色变淡，避免暴晒",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/amethyst.png",
+        "atlasId": "rock-mineral-atlas-10",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "citrine",
+      "name": "黄水晶",
+      "aliases": [],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂",
+        "summary": "黄色至橙黄色石英，天然颜色多与铁有关"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见黄色透明六方柱、晶簇或切磨料"
+      },
+      "formation": "天然多形成于含铁石英脉和晶洞；市场上部分由紫水晶加热得到",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 7,
+        "max": 7,
+        "description": "代表性莫氏硬度约 7"
+      },
+      "introduction": "天然黄水晶相对少见，颜色从浅柠檬黄到金橙色",
+      "uses": [
+        "首饰",
+        "装饰",
+        "标本"
+      ],
+      "products": [
+        "黄水晶首饰",
+        "切磨宝石",
+        "摆件"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "天然未处理、颜色悦目的晶体价值高于常见热处理材料"
+      },
+      "safety": "购买时应标明是否经过加热处理，避免骤冷骤热",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/citrine.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "smoky-quartz",
+      "name": "烟晶",
+      "aliases": [
+        "茶晶"
+      ],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂",
+        "summary": "受天然辐照形成色心的棕灰色石英"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见透明到半透明棕灰色六方柱和大晶簇"
+      },
+      "formation": "在花岗伟晶岩、石英脉和岩洞中结晶后受到天然辐照",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 7,
+        "max": 7,
+        "description": "代表性莫氏硬度约 7"
+      },
+      "introduction": "像烟雾一样从浅茶色到近黑色，仍保留石英的玻璃光泽",
+      "uses": [
+        "首饰",
+        "装饰",
+        "标本"
+      ],
+      "products": [
+        "烟晶饰品",
+        "雕刻件",
+        "切磨宝石"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "大而通透、色泽自然的晶体有较好收藏价值"
+      },
+      "safety": "市场材料可能经人工辐照，应有处理说明",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/smoky-quartz.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "rose-quartz",
+      "name": "蔷薇石英",
+      "aliases": [
+        "粉晶"
+      ],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂",
+        "summary": "粉红色石英，颜色与微量元素或细微包裹体有关"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；通常为粉红色致密块状，清晰晶体较少见，部分有星光效应"
+      },
+      "formation": "多形成于花岗伟晶岩核心和石英脉中",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 7,
+        "max": 7,
+        "description": "代表性莫氏硬度约 7"
+      },
+      "introduction": "柔和粉红色，多数不是清楚六方晶体，而是块状石英",
+      "uses": [
+        "饰品",
+        "雕刻",
+        "装饰石",
+        "标本"
+      ],
+      "products": [
+        "粉晶手串",
+        "雕件",
+        "弧面宝石",
+        "装饰摆件"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "颜色均匀、透明度好或有星光效应的材料价值更高"
+      },
+      "safety": "强光可能使部分颜色变淡，避免磕碰",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/rose-quartz.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "agate",
+      "name": "玛瑙",
+      "aliases": [],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂",
+        "summary": "以玉髓为主的细晶石英条带集合体"
+      },
+      "crystalStructure": {
+        "system": "隐晶质石英，无肉眼可见单一晶体",
+        "detail": "隐晶质石英，无肉眼可见单一晶体；常见同心、平行或波状条带，单个微晶通常无法用肉眼分辨"
+      },
+      "formation": "常以一层层二氧化硅凝胶填充火山岩气孔和裂隙后结晶",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6.5—7"
+      },
+      "introduction": "切开后常见同心或平行彩色条带，每一层记录一次沉淀变化",
+      "uses": [
+        "首饰",
+        "雕刻",
+        "研钵",
+        "装饰"
+      ],
+      "products": [
+        "玛瑙饰品",
+        "印章",
+        "研钵",
+        "装饰切片"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "天然纹带、颜色、完整度和是否染色会明显影响价值"
+      },
+      "safety": "常见染色材料应明确标注；切片边缘可能锋利",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/agate.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "jasper",
+      "name": "碧玉",
+      "aliases": [
+        "石英质碧玉"
+      ],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂为主",
+        "summary": "含铁氧化物、黏土等杂质的不透明细晶石英"
+      },
+      "crystalStructure": {
+        "system": "隐晶质石英，无单一宏观晶系外观",
+        "detail": "隐晶质石英，无单一宏观晶系外观；常见致密不透明块体和丰富斑纹"
+      },
+      "formation": "由富硅沉积、火山热液或硅化作用形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6.5—7"
+      },
+      "introduction": "不透明而颜色丰富，红黄褐绿花纹常像一幅微型风景",
+      "uses": [
+        "装饰石",
+        "雕刻",
+        "建筑饰面",
+        "标本"
+      ],
+      "products": [
+        "碧玉雕件",
+        "珠串",
+        "装饰板",
+        "印章"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "普通材料常见，图案独特、质地细腻的观赏碧玉价值更高"
+      },
+      "safety": "避免摔落和用强酸清洗",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/jasper.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "tigers-eye",
+      "name": "虎眼石",
+      "aliases": [],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂为主",
+        "summary": "石英取代纤维状矿物后形成的平行纤维集合体"
+      },
+      "crystalStructure": {
+        "system": "隐晶质纤维结构",
+        "detail": "隐晶质纤维结构；平行纤维在弧面上产生集中移动的亮带"
+      },
+      "formation": "由原有纤维状矿物被石英交代并保留平行结构形成",
+      "rarity": 5,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6.5—7"
+      },
+      "introduction": "转动时会出现一条像猫眼一样移动的亮带，称为丝绢光泽",
+      "uses": [
+        "首饰",
+        "装饰",
+        "教学光学观察"
+      ],
+      "products": [
+        "虎眼石珠串",
+        "弧面宝石",
+        "雕件"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "亮带集中、移动清楚且色泽自然的材料价值较高"
+      },
+      "safety": "切磨粉尘不可吸入，避免撞击",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/tigers-eye.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "opal",
+      "name": "蛋白石",
+      "aliases": [
+        "欧泊"
+      ],
+      "kind": "variety",
+      "group": "石英变种与天然集合体",
+      "chemicalComposition": {
+        "formula": "SiO₂·nH₂O",
+        "summary": "含水的非晶质二氧化硅"
+      },
+      "crystalStructure": {
+        "system": "非晶质，无长程有序晶格",
+        "detail": "非晶质，无长程有序晶格；贵蛋白石中的微小二氧化硅球可规则排列并产生游彩"
+      },
+      "formation": "由富硅水在岩石裂隙、孔洞或生物遗骸中沉淀并失水形成",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 5.5—6.5"
+      },
+      "introduction": "有些蛋白石转动时会闪出彩虹游彩，来自规则排列的微小二氧化硅球",
+      "uses": [
+        "宝石",
+        "装饰",
+        "古环境研究",
+        "标本"
+      ],
+      "products": [
+        "欧泊首饰",
+        "弧面宝石",
+        "装饰切片"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "明亮完整的游彩、稳定性和底色决定宝石价值，普通蛋白石价值较低"
+      },
+      "safety": "含水且怕干裂、骤温和碰撞，不长时间暴晒",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/opal.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "emerald",
+      "name": "祖母绿",
+      "aliases": [],
+      "kind": "variety",
+      "group": "绿柱石宝石变种",
+      "chemicalComposition": {
+        "formula": "Be₃Al₂Si₆O₁₈",
+        "summary": "由铬或钒致绿色的绿柱石"
+      },
+      "crystalStructure": {
+        "system": "六方晶系",
+        "detail": "六方晶系；常见绿色六方柱状晶体，内部裂隙和包裹体较多"
+      },
+      "formation": "在富铍流体与含铬钒岩石相遇的热液或变质环境中形成",
+      "rarity": 10,
+      "mohsHardness": {
+        "min": 7.5,
+        "max": 8,
+        "description": "代表性莫氏硬度约 7.5—8"
+      },
+      "introduction": "鲜绿色非常珍贵，天然内部常有像小花园一样的包裹体",
+      "uses": [
+        "高级珠宝",
+        "收藏",
+        "矿床研究"
+      ],
+      "products": [
+        "祖母绿戒指",
+        "吊坠",
+        "收藏级晶体"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "颜色、透明度、产地特征和处理情况共同影响很高的宝石价值"
+      },
+      "safety": "含铍且裂隙多；不磨粉，避免超声和剧烈温差",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/emerald.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "aquamarine",
+      "name": "海蓝宝石",
+      "aliases": [],
+      "kind": "variety",
+      "group": "绿柱石宝石变种",
+      "chemicalComposition": {
+        "formula": "Be₃Al₂Si₆O₁₈",
+        "summary": "由铁致蓝绿或海蓝色的绿柱石"
+      },
+      "crystalStructure": {
+        "system": "六方晶系",
+        "detail": "六方晶系；常见透明浅蓝色六方长柱，晶面纵纹清楚"
+      },
+      "formation": "主要在花岗伟晶岩空洞中形成，常与石英、长石、云母共生",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 7.5,
+        "max": 8,
+        "description": "代表性莫氏硬度约 7.5—8"
+      },
+      "introduction": "颜色像清澈海水，通常比祖母绿裂隙少、晶体更大",
+      "uses": [
+        "首饰",
+        "收藏",
+        "伟晶岩研究"
+      ],
+      "products": [
+        "海蓝宝石戒指",
+        "吊坠",
+        "刻面宝石"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "色泽浓、体量大且净度高的天然晶体价值较高"
+      },
+      "safety": "含铍；不切磨粉碎，避免重击",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/aquamarine.png",
+        "atlasId": "rock-mineral-atlas-11",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "ruby",
+      "name": "红宝石",
+      "aliases": [],
+      "kind": "variety",
+      "group": "刚玉宝石变种",
+      "chemicalComposition": {
+        "formula": "Al₂O₃",
+        "summary": "由微量铬致红色的刚玉"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见红色桶状、板状晶体，部分弧面切磨后出现星光"
+      },
+      "formation": "形成于富铝贫硅的变质岩或玄武岩相关矿床",
+      "rarity": 10,
+      "mohsHardness": {
+        "min": 9,
+        "max": 9,
+        "description": "代表性莫氏硬度约 9"
+      },
+      "introduction": "红色刚玉才称红宝石，硬度高但仍可能沿裂隙破损",
+      "uses": [
+        "高级珠宝",
+        "激光历史与材料研究",
+        "收藏"
+      ],
+      "products": [
+        "红宝石首饰",
+        "激光晶体的人工对应材料",
+        "精密轴承历史材料"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "鲜艳红色、透明度、尺寸、产地和处理情况决定极高价值"
+      },
+      "safety": "不要自行加热改善颜色，避免猛烈撞击",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/ruby.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "sapphire",
+      "name": "蓝宝石",
+      "aliases": [
+        "彩色蓝宝石"
+      ],
+      "kind": "variety",
+      "group": "刚玉宝石变种",
+      "chemicalComposition": {
+        "formula": "Al₂O₃",
+        "summary": "非红色宝石级刚玉，蓝色多由铁钛致色"
+      },
+      "crystalStructure": {
+        "system": "三方晶系",
+        "detail": "三方晶系；常见桶状、板状晶体，可呈蓝、黄、粉、绿等颜色"
+      },
+      "formation": "形成于富铝变质岩或被玄武岩携带的深部岩石中",
+      "rarity": 9,
+      "mohsHardness": {
+        "min": 9,
+        "max": 9,
+        "description": "代表性莫氏硬度约 9"
+      },
+      "introduction": "蓝宝石不只蓝色；除红宝石外的多种宝石级刚玉都可归入彩色蓝宝石",
+      "uses": [
+        "珠宝",
+        "耐磨窗口材料研究",
+        "精密仪器"
+      ],
+      "products": [
+        "蓝宝石首饰",
+        "人造蓝宝石表镜",
+        "光学窗口"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "天然颜色、净度、大小和处理情况决定很高价值"
+      },
+      "safety": "硬但可能崩角，不做刮划实验或自行加热",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/sapphire.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "nephrite",
+      "name": "软玉",
+      "aliases": [
+        "和田玉主要矿物集合体"
+      ],
+      "kind": "variety",
+      "group": "角闪石质天然集合体",
+      "chemicalComposition": {
+        "formula": "Ca₂(Mg,Fe)₅Si₈O₂₂(OH)₂为主",
+        "summary": "以透闪石—阳起石细纤维交织形成的集合体"
+      },
+      "crystalStructure": {
+        "system": "混合纤维集合体",
+        "detail": "混合纤维集合体；无数细小透闪石—阳起石纤维交织，带来很高韧性"
+      },
+      "formation": "在富镁岩石与富钙流体接触的变质交代环境中形成",
+      "rarity": 8,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "虽然叫软玉，实际很坚韧；无数细纤维交织让它不容易碎",
+      "uses": [
+        "玉器",
+        "雕刻",
+        "文化艺术",
+        "标本"
+      ],
+      "products": [
+        "软玉饰品",
+        "雕件",
+        "器物"
+      ],
+      "value": {
+        "score": 9,
+        "label": "珍贵资源",
+        "description": "细腻度、油润感、颜色、裂纹和来源共同决定价值"
+      },
+      "safety": "不靠敲击判断真假，价值鉴定交给专业机构",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/nephrite.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "amazonite",
+      "name": "天河石",
+      "aliases": [],
+      "kind": "variety",
+      "group": "长石宝石变种",
+      "chemicalComposition": {
+        "formula": "KAlSi₃O₈",
+        "summary": "蓝绿色微斜长石，颜色与微量铅及结构有关"
+      },
+      "crystalStructure": {
+        "system": "三斜晶系",
+        "detail": "三斜晶系；常见蓝绿块状或板状，具有白色格纹和解理"
+      },
+      "formation": "在花岗伟晶岩中缓慢结晶",
+      "rarity": 6,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "蓝绿色长石带着浅白网格，颜色像河水，因此得名天河石",
+      "uses": [
+        "首饰",
+        "雕刻",
+        "装饰",
+        "标本"
+      ],
+      "products": [
+        "天河石珠饰",
+        "弧面宝石",
+        "雕件"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "颜色均匀、蓝绿鲜明且裂纹少的材料价值较高"
+      },
+      "safety": "有解理，避免摔落和超声清洗",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/amazonite.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "moonstone",
+      "name": "月光石",
+      "aliases": [],
+      "kind": "variety",
+      "group": "长石宝石变种",
+      "chemicalComposition": {
+        "formula": "KAlSi₃O₈与NaAlSi₃O₈层状共生",
+        "summary": "长石内部细微层片产生月光效应"
+      },
+      "crystalStructure": {
+        "system": "单斜或三斜相关长石结构",
+        "detail": "单斜或三斜相关长石结构；常见乳白、无色或浅色弧面料，转动时浮现蓝白光晕"
+      },
+      "formation": "在缓慢冷却的长石中形成细密钾长石—钠长石层片",
+      "rarity": 7,
+      "mohsHardness": {
+        "min": 6,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 6—6.5"
+      },
+      "introduction": "光晕像月光在表面漂移，其实来自晶体内部微小层片对光的散射",
+      "uses": [
+        "首饰",
+        "光学教学",
+        "收藏"
+      ],
+      "products": [
+        "月光石戒面",
+        "吊坠",
+        "弧面宝石"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "蓝色光晕集中、透明度好且裂纹少的材料价值更高"
+      },
+      "safety": "解理明显，避免撞击、超声和高温",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/moonstone.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "granite",
+      "name": "花岗岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "石英、长石、云母等",
+        "summary": "多种硅酸盐矿物的粗粒混合物"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；肉眼可见互相嵌合的浅色长石、石英和深色云母颗粒"
+      },
+      "formation": "地下富硅岩浆缓慢冷却结晶形成",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 6,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6—7"
+      },
+      "introduction": "颗粒较粗、颜色常浅，是大陆地壳和建筑中非常常见的岩石",
+      "uses": [
+        "建筑石材",
+        "路缘",
+        "纪念物",
+        "地质研究"
+      ],
+      "products": [
+        "台面",
+        "地砖",
+        "路缘石",
+        "雕刻基座"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "资源常见，价值取决于花色、完整度和加工尺寸"
+      },
+      "safety": "板材和样本较重，搬运防砸；切割粉尘不可吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/granite.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "basalt",
+      "name": "玄武岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "斜长石、辉石、橄榄石等",
+        "summary": "富铁镁的细粒火山岩混合物"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；通常黑灰色细粒，可有气孔、杏仁构造或柱状节理"
+      },
+      "formation": "低黏度基性熔岩在地表或海底快速冷却形成",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 5—6.5"
+      },
+      "introduction": "地球海洋地壳最主要的岩石，月球和火星上也很常见",
+      "uses": [
+        "道路骨料",
+        "岩棉",
+        "建筑",
+        "行星地质"
+      ],
+      "products": [
+        "碎石骨料",
+        "玄武岩纤维",
+        "岩棉",
+        "铺路石"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "资源丰富且工程用途广，完整柱状节理主要具景观和科研价值"
+      },
+      "safety": "断面锋利，野外不攀爬松动柱体",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/basalt.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "andesite",
+      "name": "安山岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "斜长石、角闪石、辉石等",
+        "summary": "中性成分细粒火山岩"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；多为灰色细粒，常含白色斜长石斑晶和深色矿物斑晶"
+      },
+      "formation": "多在俯冲带火山弧由中性岩浆喷出冷却形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6.5,
+        "description": "代表性莫氏硬度约 5—6.5"
+      },
+      "introduction": "名字来自安第斯山脉，是许多火山锥的重要组成岩石",
+      "uses": [
+        "建筑石料",
+        "道路骨料",
+        "火山研究"
+      ],
+      "products": [
+        "碎石",
+        "墙体石材",
+        "地质教学标本"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "普通工程石料价值中等，特殊斑状和火山产地标本有科研价值"
+      },
+      "safety": "火山岩碎片边缘锋利，野外遵守火山安全管理",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/andesite.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "rhyolite",
+      "name": "流纹岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "石英、碱性长石、斜长石等",
+        "summary": "富硅细粒火山岩"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；常呈浅灰、粉红或米色细粒，可见流纹和少量斑晶"
+      },
+      "formation": "高黏度富硅熔岩或火山碎屑在地表快速冷却形成",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 6,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6—7"
+      },
+      "introduction": "化学成分像花岗岩，但因为在地表快速冷却，晶粒通常很细",
+      "uses": [
+        "建筑装饰",
+        "火山研究",
+        "碎石"
+      ],
+      "products": [
+        "装饰石",
+        "骨料",
+        "地质标本"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "资源并不特别稀少，漂亮流纹和球粒结构增加观赏价值"
+      },
+      "safety": "边缘锋利，不在活火山区域擅自采集",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/rhyolite.png",
+        "atlasId": "rock-mineral-atlas-12",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "diorite",
+      "name": "闪长岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "斜长石、角闪石、黑云母等",
+        "summary": "中性成分粗粒侵入岩"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；黑白矿物相间，常像均匀的“椒盐”颗粒"
+      },
+      "formation": "中性岩浆在地下缓慢冷却结晶形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 5.5—7"
+      },
+      "introduction": "颗粒比安山岩粗，黑白相间，是侵入岩与喷出岩对比的好样本",
+      "uses": [
+        "建筑石材",
+        "道路骨料",
+        "雕刻",
+        "教学"
+      ],
+      "products": [
+        "建筑板材",
+        "碎石",
+        "纪念碑石料"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "坚固耐磨，工程价值稳定，花纹整齐的板材更有装饰价值"
+      },
+      "safety": "样本较重且棱角坚硬，防止掉落",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/diorite.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "gabbro",
+      "name": "辉长岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "钙质斜长石、辉石、橄榄石等",
+        "summary": "基性粗粒侵入岩"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；深色粗粒，黑色辉石和浅色斜长石互相嵌合"
+      },
+      "formation": "基性岩浆在地下或洋壳深部缓慢冷却形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 5.5—7"
+      },
+      "introduction": "成分与玄武岩相近，但冷却更慢，所以能看见粗大矿物颗粒",
+      "uses": [
+        "建筑石材",
+        "骨料",
+        "洋壳研究"
+      ],
+      "products": [
+        "黑色板材",
+        "路面骨料",
+        "纪念石"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "坚固耐磨且可抛光，工程和装饰价值较好"
+      },
+      "safety": "重且硬，搬运防砸，切割粉尘不可吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/gabbro.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "obsidian",
+      "name": "黑曜岩",
+      "aliases": [
+        "火山玻璃"
+      ],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "富硅火山玻璃",
+        "summary": "没有充分结晶的天然玻璃"
+      },
+      "crystalStructure": {
+        "system": "非晶质，无晶系",
+        "detail": "非晶质，无晶系；常呈黑色玻璃状贝壳断口，也可有棕红、雪花或彩虹效果"
+      },
+      "formation": "富硅熔岩极快冷却，原子来不及排列成晶体",
+      "rarity": 4,
+      "mohsHardness": {
+        "min": 5,
+        "max": 5.5,
+        "description": "代表性莫氏硬度约 5—5.5"
+      },
+      "introduction": "天然火山玻璃，断口能形成极锋利边缘，史前曾被制作工具",
+      "uses": [
+        "考古工具研究",
+        "装饰",
+        "精细刀刃研究",
+        "标本"
+      ],
+      "products": [
+        "黑曜石饰品",
+        "雕件",
+        "复制石器",
+        "特殊实验刀片"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "普通黑曜岩常见，彩虹、火焰和雪花纹品种更具观赏价值"
+      },
+      "safety": "断口像玻璃一样极锋利，禁止徒手敲碎",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/obsidian.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "pumice",
+      "name": "浮石",
+      "aliases": [
+        "浮岩"
+      ],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "富硅火山玻璃与微晶",
+        "summary": "充满气孔的浅色火山岩"
+      },
+      "crystalStructure": {
+        "system": "非晶质与微晶混合",
+        "detail": "非晶质与微晶混合；布满连通小孔、质轻，部分样本能暂时浮在水上"
+      },
+      "formation": "含气火山熔体喷出后迅速膨胀冷却形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5—6"
+      },
+      "introduction": "像凝固的泡沫，孔洞多、密度低，是观察火山气体逃逸的好样本",
+      "uses": [
+        "轻质混凝土",
+        "磨料",
+        "园艺",
+        "清洁"
+      ],
+      "products": [
+        "轻质砌块",
+        "磨脚石",
+        "园艺基质",
+        "抛光材料"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "资源常见但轻质和磨蚀特性带来稳定用途"
+      },
+      "safety": "粉尘不要吸入，不用粗糙表面摩擦皮肤",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/pumice.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "scoria",
+      "name": "火山渣",
+      "aliases": [
+        "熔岩渣"
+      ],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "玄武质火山玻璃、斜长石和辉石微晶",
+        "summary": "富铁镁、气孔丰富的火山岩"
+      },
+      "crystalStructure": {
+        "system": "非晶质与微晶混合",
+        "detail": "非晶质与微晶混合；多为黑、深灰或红褐色，孔洞较大且壁厚，通常比浮石重"
+      },
+      "formation": "富气基性熔岩喷出后快速冷却形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 5—6"
+      },
+      "introduction": "同样多孔，但通常颜色更深、孔壁更厚，不能像典型浮石那样漂浮",
+      "uses": [
+        "景观铺料",
+        "排水",
+        "轻质骨料",
+        "火山研究"
+      ],
+      "products": [
+        "园艺铺面",
+        "烧烤石材的专用加工品",
+        "轻质骨料"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "资源较常见，价值主要来自园艺和工程用途"
+      },
+      "safety": "孔洞边缘粗糙，避免摩擦皮肤，粉尘不要吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/scoria.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "tuff",
+      "name": "凝灰岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "岩浆岩",
+      "chemicalComposition": {
+        "formula": "火山灰、晶屑和岩屑胶结物",
+        "summary": "由喷发碎屑压实或焊结构成"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；细灰基质中可见晶屑、浮石碎片或不同颜色岩屑"
+      },
+      "formation": "火山灰和碎屑落下后压实胶结，或高温火山碎屑流焊结形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 3,
+        "max": 6,
+        "description": "代表性莫氏硬度约 3—6"
+      },
+      "introduction": "不是熔岩整块冷却，而是许多火山碎屑重新组成的岩石",
+      "uses": [
+        "建筑石材",
+        "火山年代研究",
+        "水泥掺合料"
+      ],
+      "products": [
+        "轻质建材",
+        "火山灰水泥",
+        "雕刻石"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "部分凝灰岩轻软易加工，优质建筑品种有地方价值"
+      },
+      "safety": "风化层可能松散，野外远离陡壁落石区",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/tuff.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "sandstone",
+      "name": "砂岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "沉积岩",
+      "chemicalComposition": {
+        "formula": "石英、长石和岩屑等",
+        "summary": "砂粒被胶结物粘合形成"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；能看见砂粒和层理，颜色受铁氧化物、黏土等影响"
+      },
+      "formation": "河流、沙漠、海岸等地的砂粒沉积后压实胶结形成",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 6,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6—7"
+      },
+      "introduction": "一粒粒旧岩石碎片组成新岩石，层理能记录水流或风的方向",
+      "uses": [
+        "建筑",
+        "铺路",
+        "储水层研究",
+        "磨石"
+      ],
+      "products": [
+        "墙砖",
+        "铺路板",
+        "建筑骨料",
+        "景观石"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "资源常见，坚固均匀和花纹漂亮的建筑砂岩价值较高"
+      },
+      "safety": "表面粗糙，切割产生硅尘，禁止自行锯磨",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/sandstone.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "shale",
+      "name": "页岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "沉积岩",
+      "chemicalComposition": {
+        "formula": "黏土矿物、石英和有机质等",
+        "summary": "极细泥质颗粒压实形成"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；细粒并沿平行层面薄薄剥开，常呈灰黑、红褐或绿色"
+      },
+      "formation": "湖泊、海洋和洪泛平原的泥沉积后压实成岩",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 2.5,
+        "max": 4,
+        "description": "代表性莫氏硬度约 2.5—4"
+      },
+      "introduction": "薄层像书页，因此得名；细小颗粒记录安静水体中的沉积",
+      "uses": [
+        "砖瓦原料",
+        "水泥",
+        "古环境与化石研究"
+      ],
+      "products": [
+        "砖",
+        "水泥原料",
+        "陶粒",
+        "页岩气储层研究资料"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "普通页岩常见，含化石、油气或特殊用途的层位价值更高"
+      },
+      "safety": "薄片边缘可能锋利，含化石地点遵守保护规定",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/shale.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "limestone",
+      "name": "石灰岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "沉积岩",
+      "chemicalComposition": {
+        "formula": "方解石为主，可含白云石、黏土和化石",
+        "summary": "碳酸钙质沉积岩"
+      },
+      "crystalStructure": {
+        "system": "混合组成，以方解石晶粒为主",
+        "detail": "混合组成，以方解石晶粒为主；常见灰白、灰黑或黄褐色，可有贝壳、珊瑚等化石碎片"
+      },
+      "formation": "由海洋生物骨骼堆积、碳酸钙化学沉淀或再沉积形成",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 3,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3—4"
+      },
+      "introduction": "许多石灰岩来自古代海洋，能记录生物和环境变化",
+      "uses": [
+        "水泥石灰",
+        "建筑",
+        "冶金熔剂",
+        "土壤改良"
+      ],
+      "products": [
+        "水泥",
+        "石灰",
+        "建筑石",
+        "钢铁熔剂"
+      ],
+      "value": {
+        "score": 8,
+        "label": "高价值资源",
+        "description": "储量大但工业用量极高，纯度和开采条件决定价值"
+      },
+      "safety": "不破坏化石和洞穴地貌，粉尘不要吸入",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/limestone.png",
+        "atlasId": "rock-mineral-atlas-13",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "conglomerate",
+      "name": "砾岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "沉积岩",
+      "chemicalComposition": {
+        "formula": "圆砾、砂和胶结物",
+        "summary": "圆形砾石胶结成的碎屑岩"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；可清楚看见许多磨圆小石块被较细材料粘在一起"
+      },
+      "formation": "河流、海滩或冲积扇中的砾石堆积并胶结形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 4,
+        "max": 7,
+        "description": "代表性莫氏硬度约 4—7"
+      },
+      "introduction": "像天然混凝土，圆砾说明碎石曾被水流搬运和磨圆",
+      "uses": [
+        "建筑装饰",
+        "沉积环境研究",
+        "骨料"
+      ],
+      "products": [
+        "景观石",
+        "装饰板",
+        "建筑骨料"
+      ],
+      "value": {
+        "score": 3,
+        "label": "常见资源",
+        "description": "通常不作高价值矿石，花纹完整的板材和教学标本有一定价值"
+      },
+      "safety": "突出砾石可能脱落，避免从陡坡采集",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/conglomerate.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "breccia",
+      "name": "角砾岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "沉积岩",
+      "chemicalComposition": {
+        "formula": "棱角状岩屑和胶结物",
+        "summary": "未被充分磨圆的碎石胶结体"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；内部碎块保留尖角，可呈断层角砾、火山角砾或撞击角砾"
+      },
+      "formation": "在山崩、断层、火山爆发或陨石撞击等快速破碎后胶结形成",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 4,
+        "max": 7,
+        "description": "代表性莫氏硬度约 4—7"
+      },
+      "introduction": "碎块尖角说明它们没有被搬运太远，常记录突然的地质事件",
+      "uses": [
+        "装饰石",
+        "断层研究",
+        "撞击与火山研究"
+      ],
+      "products": [
+        "装饰板材",
+        "教学标本",
+        "景观石"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "普通角砾岩价值不高，特殊撞击或矿化角砾具有科研价值"
+      },
+      "safety": "棱角锋利且坡脚可能落石，不在危险地形采集",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/breccia.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 1
+      }
+    },
+    {
+      "id": "chert",
+      "name": "燧石",
+      "aliases": [
+        "硅质岩"
+      ],
+      "kind": "rock",
+      "group": "沉积岩",
+      "chemicalComposition": {
+        "formula": "微晶石英和玉髓",
+        "summary": "极细二氧化硅集合体"
+      },
+      "crystalStructure": {
+        "system": "隐晶质，无肉眼可见单一晶体",
+        "detail": "隐晶质，无肉眼可见单一晶体；致密块体常见贝壳状断口"
+      },
+      "formation": "由海洋微生物硅质骨骼沉积、硅质流体置换或结核生长形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 6.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 6.5—7"
+      },
+      "introduction": "致密坚硬，贝壳状断口能形成锐边，古人常用来制作工具",
+      "uses": [
+        "考古研究",
+        "道路骨料",
+        "装饰",
+        "打火历史"
+      ],
+      "products": [
+        "复制石器",
+        "骨料",
+        "燧石饰品",
+        "点火器历史材料"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "资源较常见，带化石或特殊纹理的标本更有研究和观赏价值"
+      },
+      "safety": "断口极锋利，禁止敲制石器或互相撞击",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/chert.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 2
+      }
+    },
+    {
+      "id": "coal",
+      "name": "煤",
+      "aliases": [],
+      "kind": "rock",
+      "group": "沉积岩",
+      "chemicalComposition": {
+        "formula": "富碳有机质并含水、硫和矿物杂质",
+        "summary": "植物遗体经成岩与煤化形成的有机沉积岩"
+      },
+      "crystalStructure": {
+        "system": "非晶质有机质与多种矿物混合",
+        "detail": "非晶质有机质与多种矿物混合；可呈褐色到黑色，条带状、块状或易碎，类型随煤化程度变化"
+      },
+      "formation": "古代沼泽植物堆积后被埋藏，在压力和温度下逐渐煤化",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 1,
+        "max": 3,
+        "description": "代表性莫氏硬度约 1—3"
+      },
+      "introduction": "它来自古代植物，不是单一矿物；不同煤阶记录埋藏和加热程度",
+      "uses": [
+        "能源历史",
+        "炼焦",
+        "化工原料",
+        "古环境研究"
+      ],
+      "products": [
+        "电力和热能历史来源",
+        "焦炭",
+        "煤化工产品"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "仍有能源和工业价值，但使用会产生显著环境与气候影响"
+      },
+      "safety": "易燃且粉尘有害；禁止点燃、研磨或在密闭处堆放",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/coal.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 3
+      }
+    },
+    {
+      "id": "marble",
+      "name": "大理岩",
+      "aliases": [
+        "大理石岩石"
+      ],
+      "kind": "rock",
+      "group": "变质岩",
+      "chemicalComposition": {
+        "formula": "方解石或白云石为主",
+        "summary": "碳酸盐矿物重结晶形成"
+      },
+      "crystalStructure": {
+        "system": "混合组成，以方解石或白云石晶粒为主",
+        "detail": "混合组成，以方解石或白云石晶粒为主；可见互相嵌合的糖粒状晶体，颜色和纹路由杂质决定"
+      },
+      "formation": "石灰岩或白云岩在热和压力下重结晶形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 3,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3—4"
+      },
+      "introduction": "原来的化石和层理常在重结晶中消失，变成闪亮的碳酸盐晶粒",
+      "uses": [
+        "雕塑",
+        "建筑饰面",
+        "地板",
+        "工业碳酸钙"
+      ],
+      "products": [
+        "雕像",
+        "墙地砖",
+        "台面",
+        "碳酸钙粉"
+      ],
+      "value": {
+        "score": 7,
+        "label": "重要资源",
+        "description": "白度、纹理、块体完整度和可开采尺寸决定装饰价值"
+      },
+      "safety": "易受酸性液体腐蚀，板材较重且表面可能湿滑",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/marble.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 4
+      }
+    },
+    {
+      "id": "slate",
+      "name": "板岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "变质岩",
+      "chemicalComposition": {
+        "formula": "黏土矿物、云母和石英等",
+        "summary": "低级变质的细粒片理岩"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；细粒致密，可沿平整板理劈成薄板，颜色多灰黑绿紫"
+      },
+      "formation": "页岩在较低温压下受定向挤压变质形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 3,
+        "max": 4,
+        "description": "代表性莫氏硬度约 3—4"
+      },
+      "introduction": "能沿整齐方向劈开，但这个方向不一定等同于原始沉积层",
+      "uses": [
+        "屋面",
+        "黑板历史",
+        "地板",
+        "装饰"
+      ],
+      "products": [
+        "瓦片",
+        "餐盘",
+        "地砖",
+        "书写板"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "耐久平整的板材有稳定建筑价值，颜色纹理影响价格"
+      },
+      "safety": "薄板边缘锋利，搬运戴手套",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/slate.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 5
+      }
+    },
+    {
+      "id": "quartzite",
+      "name": "石英岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "变质岩",
+      "chemicalComposition": {
+        "formula": "石英为主",
+        "summary": "砂岩中的石英颗粒重结晶焊接"
+      },
+      "crystalStructure": {
+        "system": "混合组成，以石英晶粒为主",
+        "detail": "混合组成，以石英晶粒为主；非常坚硬致密，断裂常穿过原砂粒而不是绕开砂粒"
+      },
+      "formation": "石英砂岩在热和压力下变质重结晶形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 7,
+        "max": 7,
+        "description": "代表性莫氏硬度约 7"
+      },
+      "introduction": "原本松散的砂粒被焊成坚硬整体，比普通砂岩更耐磨",
+      "uses": [
+        "建筑石",
+        "铁路道砟",
+        "耐磨骨料",
+        "装饰"
+      ],
+      "products": [
+        "台面",
+        "铺路石",
+        "铁路道砟",
+        "硅质原料"
+      ],
+      "value": {
+        "score": 6,
+        "label": "实用与观赏",
+        "description": "坚硬耐磨带来工程价值，纯白或鲜艳纹理板材更贵"
+      },
+      "safety": "含硅切割粉尘危险，禁止自行锯磨",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/quartzite.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 6
+      }
+    },
+    {
+      "id": "gneiss",
+      "name": "片麻岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "变质岩",
+      "chemicalComposition": {
+        "formula": "长石、石英、黑云母、角闪石等",
+        "summary": "中高级变质的粗粒条带岩"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；浅色与深色矿物分离成明显条带，晶粒较粗"
+      },
+      "formation": "花岗质岩石或沉积岩在高温高压和定向应力下变质形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 5.5,
+        "max": 7,
+        "description": "代表性莫氏硬度约 5.5—7"
+      },
+      "introduction": "黑白条带不是沉积层，而是矿物在变质过程中重新分离排列",
+      "uses": [
+        "建筑石材",
+        "地质构造研究",
+        "景观石"
+      ],
+      "products": [
+        "墙地砖",
+        "路缘石",
+        "景观块石"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "坚固且花纹独特，可作建筑装饰，科研价值来自变质记录"
+      },
+      "safety": "大块沉重，断口锐利，野外注意落石",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/gneiss.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 7
+      }
+    },
+    {
+      "id": "schist",
+      "name": "片岩",
+      "aliases": [],
+      "kind": "rock",
+      "group": "变质岩",
+      "chemicalComposition": {
+        "formula": "云母、石英、石榴子石、角闪石等",
+        "summary": "中级变质且片理明显的岩石"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；片状矿物定向排列而闪光，常可见云母片或石榴子石斑晶"
+      },
+      "formation": "泥质或基性原岩在中等温压和定向应力下变质形成",
+      "rarity": 2,
+      "mohsHardness": {
+        "min": 3.5,
+        "max": 6,
+        "description": "代表性莫氏硬度约 3.5—6"
+      },
+      "introduction": "丰富片状矿物让岩石容易沿片理剥开，可能镶着醒目的变斑晶",
+      "uses": [
+        "变质研究",
+        "景观与装饰",
+        "教学"
+      ],
+      "products": [
+        "景观石",
+        "装饰板",
+        "地质标本"
+      ],
+      "value": {
+        "score": 4,
+        "label": "特色标本",
+        "description": "普通片岩价值不高，含漂亮石榴子石或蓝闪石的标本更受欢迎"
+      },
+      "safety": "薄片易脱落且边缘锋利，不从不稳定岩壁剥取",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/schist.png",
+        "atlasId": "rock-mineral-atlas-14",
+        "cellIndex": 8
+      }
+    },
+    {
+      "id": "bauxite",
+      "name": "铝土矿",
+      "aliases": [],
+      "kind": "ore-aggregate",
+      "group": "矿石集合体",
+      "chemicalComposition": {
+        "formula": "一水硬铝石、勃姆石、三水铝石等",
+        "summary": "富铝氢氧化物与铁氧化物、黏土的矿石集合体"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；常呈红褐、黄褐或白灰色土状、豆状和块状"
+      },
+      "formation": "在温暖湿润地区强烈风化淋滤，或由沉积再富集形成",
+      "rarity": 3,
+      "mohsHardness": {
+        "min": 1,
+        "max": 3,
+        "description": "代表性莫氏硬度约 1—3"
+      },
+      "introduction": "不是单一矿物，而是人类获取铝最主要的矿石集合体",
+      "uses": [
+        "炼铝",
+        "耐火材料",
+        "磨料",
+        "水泥"
+      ],
+      "products": [
+        "铝罐",
+        "飞机铝材",
+        "氧化铝磨料",
+        "耐火砖"
+      ],
+      "value": {
+        "score": 10,
+        "label": "极珍贵",
+        "description": "全球铝工业的核心原料，品位、杂质和开采条件决定价值"
+      },
+      "safety": "粉尘不要吸入，不自行用强碱提取氧化铝",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/bauxite.png",
+        "atlasId": "rock-mineral-atlas-15",
+        "cellIndex": 0
+      }
+    },
+    {
+      "id": "limonite",
+      "name": "褐铁矿",
+      "aliases": [],
+      "kind": "ore-aggregate",
+      "group": "矿石集合体",
+      "chemicalComposition": {
+        "formula": "针铁矿、纤铁矿和含水氧化铁等",
+        "summary": "多种含水铁氧化物的混合集合体"
+      },
+      "crystalStructure": {
+        "system": "混合组成，无单一晶系",
+        "detail": "混合组成，无单一晶系；常呈黄褐到深褐色土状、肾状、钟乳状或多孔块体"
+      },
+      "formation": "由含铁矿物在近地表含水含氧条件下风化和沉淀形成",
+      "rarity": 1,
+      "mohsHardness": {
+        "min": 1,
+        "max": 5.5,
+        "description": "代表性莫氏硬度约 1—5.5"
+      },
+      "introduction": "这是传统矿石名称而非单一矿物，常形成铁锈色风化壳",
+      "uses": [
+        "铁矿石",
+        "天然颜料",
+        "古代冶铁研究"
+      ],
+      "products": [
+        "钢铁原料",
+        "黄褐色颜料",
+        "赭石类材料"
+      ],
+      "value": {
+        "score": 5,
+        "label": "稳定用途",
+        "description": "品位变化大，部分矿体可作铁矿，漂亮肾状标本有收藏价值"
+      },
+      "safety": "成分不固定，未知标本不用于颜料或皮肤涂抹",
+      "image": {
+        "path": "/images/nature/rock-minerals/samples/limonite.png",
+        "atlasId": "rock-mineral-atlas-15",
+        "cellIndex": 1
+      }
+    }
+  ]
+}

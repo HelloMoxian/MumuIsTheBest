@@ -33,13 +33,15 @@
 | 数学知识塔 | `learning/math/knowledge-tower-progress.json` | 已点亮知识灯与目录版本 |
 | 常用汉字 | `learning/chinese/common-characters-progress.json` | 学习、掌握、继续复习次数与时间 |
 | 英语回声岛 | `learning/english/echo-island-progress.json` | 学习池、完成次数、标记与幂等事件 |
+| 切水果与能量币 | `learning/games/fruit-slice-history.json` | 六个家庭角色的逐局得分、双人胜负、完整赛前设置、独立能量币余额与幂等消费账本 |
 | 物质塔与知识币 | `learning/world-tower/progress.json` | 节点、知识币余额、奖励场次、幂等标记与交易 |
+| 岩石与矿物 | `learning/nature/rock-minerals-state.json` | 当前 5 × 6 地层、深度、地质锤、样本库存、发现与研究词条 |
 | 反应熔炉 | `learning/chemistry/reaction-furnace-state.json` | 当前批次、原子、稳定结构与批次编号 |
 | 分子工厂 | `learning/chemistry/molecule-factory-state.json` | 原子、原子团、收藏、选项与中断状态 |
 | 界面偏好 | `preferences/experience.json` | 界面语言与朗读模式 |
 | 启动辅助 | `run/mumu-dev.pid`、`logs/mumu-dev.log` | 当前启动进程号与不含个人内容/密钥的日志 |
 
-知识币不是浏览器独立余额；它与物质塔进度共用同一服务端文件。找数字、猫鼠游戏等玩法当前只通过这份文件记录奖励，不保存独立答题历史。神秘函数、拼音星桥、元素周期表、实验大师、声律启蒙等当前不保存个人进度。
+知识币不是浏览器独立余额；它与物质塔进度共用同一服务端文件，矿物研究按事件 ID 幂等消费。能量币是切水果体感游戏的独立钱包，仍只存放在切水果历史文件中；服务端按木木的完成分数幂等发放，并只允许“岩石与矿物”按固定 30 币购买地质锤。切水果只保存角色、设置和结算统计，绝不保存摄像头帧、身体/手部坐标或滑动轨迹。找数字、猫鼠游戏等玩法当前只通过知识币文件记录奖励，不保存独立答题历史。神秘函数、拼音星桥、元素周期表、实验大师、声律启蒙等当前不保存个人进度。
 
 反应熔炉、分子工厂及界面偏好旧版本曾写入浏览器 `localStorage`。新版本只把它作为一次性迁移来源：当服务端文件为空时读取旧记录、校验后写入上表对应文件；服务端已有记录时始终以服务端为准。会话内“本次已播放欢迎语”只使用 `sessionStorage`，关闭会话即失效，不属于长期数据。
 

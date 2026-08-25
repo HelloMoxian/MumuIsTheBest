@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/nature/rock-minerals/atlases/rock-mineral-atlas-15.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 3,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 4,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "bauxite",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "bauxite.png",
+      "sourceBox": [
+        4,
+        4,
+        414,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "limonite",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "limonite.png",
+      "sourceBox": [
+        422,
+        4,
+        832,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "soil-clay",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "soil-clay.png",
+      "sourceBox": [
+        840,
+        4,
+        1250,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "soil-sand",
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "filename": "soil-sand.png",
+      "sourceBox": [
+        4,
+        422,
+        414,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "soil-gravel",
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "filename": "soil-gravel.png",
+      "sourceBox": [
+        422,
+        422,
+        832,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "soil-deep",
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "filename": "soil-deep.png",
+      "sourceBox": [
+        840,
+        422,
+        1250,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "geode",
+      "index": 6,
+      "row": 2,
+      "column": 0,
+      "filename": "geode.png",
+      "sourceBox": [
+        4,
+        840,
+        414,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hammer-head",
+      "index": 7,
+      "row": 2,
+      "column": 1,
+      "filename": "hammer-head.png",
+      "sourceBox": [
+        422,
+        840,
+        832,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "rock-fragments",
+      "index": 8,
+      "row": 2,
+      "column": 2,
+      "filename": "rock-fragments.png",
+      "sourceBox": [
+        840,
+        840,
+        1250,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

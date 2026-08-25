@@ -8,6 +8,7 @@ const stateIdSchema = z.enum([
   "chemistry-reaction-furnace",
   "chemistry-molecule-factory",
   "experience-preferences",
+  "nature-rock-minerals",
 ]);
 
 const identifierSchema = z.string().min(1).max(180);
@@ -82,6 +83,81 @@ const experiencePreferencesPayloadSchema = z.object({
   readAloudMode: z.enum(["none", "zh", "en", "bilingual"]),
 });
 
+const researchAttributeSchema = z.enum([
+  "name",
+  "classification",
+  "crystalStructure",
+  "formation",
+  "rarity",
+  "mohsHardness",
+  "introduction",
+  "chemicalComposition",
+  "uses",
+  "products",
+  "value",
+  "safety",
+]);
+
+const rockMineralCellSchema = z.object({
+  id: identifierSchema,
+  depth: z.number().int().min(1).max(10_000_000),
+  column: z.number().int().min(0).max(4),
+  soilVariant: z.enum(["clay", "sand", "gravel", "deep"]),
+  mineralId: identifierSchema.nullable(),
+  status: z.enum(["covered", "revealed", "cleared"]),
+  hitsRemaining: z.number().int().min(0).max(3),
+  totalHits: z.number().int().min(0).max(3),
+});
+
+const rockMineralPayloadSchema = z.object({
+  schemaVersion: z.literal(1),
+  board: z.object({
+    baseDepth: z.number().int().min(1).max(10_000_000),
+    cells: z.array(rockMineralCellSchema).length(30),
+  }),
+  currentDepth: z.number().int().min(0).max(10_000_000),
+  currentHammerDurability: z.number().int().min(0).max(30),
+  spareHammers: z.number().int().min(0).max(100_000),
+  inventory: z.record(identifierSchema, z.number().int().min(0).max(100_000)),
+  discoveredIds: z.array(identifierSchema).max(128),
+  unlockedAttributes: z.record(
+    identifierSchema,
+    z.array(researchAttributeSchema).max(12),
+  ),
+  pendingResearch: z.object({
+    eventId: z.string().uuid(),
+    mineralId: identifierSchema,
+    attributeKey: researchAttributeSchema,
+  }).nullable(),
+  pendingHammerPurchase: z.object({
+    eventId: z.string().uuid(),
+  }).nullable(),
+  soundEnabled: z.boolean(),
+}).superRefine((payload, context) => {
+  const cellIds = payload.board.cells.map((cell) => cell.id);
+  const positions = payload.board.cells.map((cell) => `${cell.depth}:${cell.column}`);
+  if (!hasUniqueValues(cellIds) || !hasUniqueValues(positions)) {
+    context.addIssue({ code: "custom", message: "地层格 ID 与位置不能重复。" });
+  }
+  if (!hasUniqueValues(payload.discoveredIds)) {
+    context.addIssue({ code: "custom", message: "已发现样本不能重复。" });
+  }
+  if (
+    Object.values(payload.unlockedAttributes)
+      .some((attributes) => !hasUniqueValues(attributes))
+  ) {
+    context.addIssue({ code: "custom", message: "同一样本的研究词条不能重复。" });
+  }
+  const discovered = new Set(payload.discoveredIds);
+  if (
+    Object.keys(payload.inventory).some((id) => !discovered.has(id))
+    || Object.keys(payload.unlockedAttributes).some((id) => !discovered.has(id))
+    || (payload.pendingResearch && !discovered.has(payload.pendingResearch.mineralId))
+  ) {
+    context.addIssue({ code: "custom", message: "库存和研究记录必须属于已发现样本。" });
+  }
+});
+
 const storedStateBaseSchema = z.object({
   schemaVersion: z.literal(1),
   id: z.string().uuid(),
@@ -106,6 +182,10 @@ const definitions: Record<StateId, { relativePath: string; payloadSchema: z.ZodT
   "experience-preferences": {
     relativePath: "preferences/experience.json",
     payloadSchema: experiencePreferencesPayloadSchema,
+  },
+  "nature-rock-minerals": {
+    relativePath: "learning/nature/rock-minerals-state.json",
+    payloadSchema: rockMineralPayloadSchema,
   },
 };
 

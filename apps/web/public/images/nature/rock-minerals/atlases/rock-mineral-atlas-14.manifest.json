@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/nature/rock-minerals/atlases/rock-mineral-atlas-14.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 3,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 4,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "conglomerate",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "conglomerate.png",
+      "sourceBox": [
+        4,
+        4,
+        414,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "breccia",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "breccia.png",
+      "sourceBox": [
+        422,
+        4,
+        832,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chert",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "chert.png",
+      "sourceBox": [
+        840,
+        4,
+        1250,
+        414
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "coal",
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "filename": "coal.png",
+      "sourceBox": [
+        4,
+        422,
+        414,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "marble",
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "filename": "marble.png",
+      "sourceBox": [
+        422,
+        422,
+        832,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "slate",
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "filename": "slate.png",
+      "sourceBox": [
+        840,
+        422,
+        1250,
+        832
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "quartzite",
+      "index": 6,
+      "row": 2,
+      "column": 0,
+      "filename": "quartzite.png",
+      "sourceBox": [
+        4,
+        840,
+        414,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "gneiss",
+      "index": 7,
+      "row": 2,
+      "column": 1,
+      "filename": "gneiss.png",
+      "sourceBox": [
+        422,
+        840,
+        832,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "schist",
+      "index": 8,
+      "row": 2,
+      "column": 2,
+      "filename": "schist.png",
+      "sourceBox": [
+        840,
+        840,
+        1250,
+        1250
+      ],
+      "trimBox": null,
+      "outputWidth": 410,
+      "outputHeight": 410,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

@@ -176,6 +176,7 @@ const transactionSchema = z.object({
     "admin-coin-set",
     "coin-grant",
     "learning-reward",
+    "knowledge-spend",
   ]),
   targetId: z.string().min(1).max(160),
   quantity: z.number().int().min(0).max(1_000_000_000),
@@ -274,6 +275,12 @@ const coinResetSchema = z.object({
 
 const coinSetSchema = coinResetSchema.extend({
   balance: z.number().int().min(0).max(1_000_000_000),
+});
+
+const knowledgeCoinSpendSchema = z.object({
+  eventId: z.string().uuid(),
+  purpose: z.literal("nature:rock-mineral-research"),
+  amount: z.literal(5),
 });
 
 type WorldGraph = z.infer<typeof graphSchema>;
@@ -744,6 +751,71 @@ export function registerWorldTowerApi(
         updatedAt: progress.updatedAt,
         promotion: promotionAt(),
       };
+    } catch (error) {
+      return sendKnownError(error, reply);
+    }
+  });
+
+  app.post("/api/world-tower/coins/spend", async (request, reply) => {
+    const parsed = knowledgeCoinSpendSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        code: "INVALID_KNOWLEDGE_COIN_SPEND",
+        message: "这次研究费用不符合玩法规则，因此没有扣除知识币。",
+      });
+    }
+    try {
+      let alreadySpent = false;
+      const progress = await updateProgress((current) => {
+        const existing = current.transactions.find(
+          (transaction) => transaction.id === parsed.data.eventId,
+        );
+        if (existing) {
+          if (
+            existing.kind !== "knowledge-spend"
+            || existing.targetId !== parsed.data.purpose
+            || existing.coinDelta !== -parsed.data.amount
+          ) {
+            throw new WorldTowerError(
+              "KNOWLEDGE_COIN_EVENT_REUSED",
+              409,
+              "这次研究编号已经用于其他操作，请重新发起研究。",
+            );
+          }
+          alreadySpent = true;
+          return current;
+        }
+        if (current.coinBalance < parsed.data.amount) {
+          throw new WorldTowerError(
+            "WORLD_TOWER_INSUFFICIENT_COINS",
+            409,
+            "知识币还不够，完成学习任务获得至少 5 个知识币后再研究。",
+          );
+        }
+        const now = new Date().toISOString();
+        const balanceAfter = current.coinBalance - parsed.data.amount;
+        return {
+          ...current,
+          updatedAt: now,
+          coinBalance: balanceAfter,
+          transactions: [...current.transactions, {
+            id: parsed.data.eventId,
+            kind: "knowledge-spend" as const,
+            targetId: parsed.data.purpose,
+            quantity: 1,
+            coinDelta: -parsed.data.amount,
+            balanceAfter,
+            createdAt: now,
+          }].slice(-20_000),
+        };
+      });
+      return reply.code(alreadySpent ? 200 : 201).send({
+        alreadySpent,
+        eventId: parsed.data.eventId,
+        purpose: parsed.data.purpose,
+        coinDelta: alreadySpent ? 0 : -parsed.data.amount,
+        progress: publicProgress(progress),
+      });
     } catch (error) {
       return sendKnownError(error, reply);
     }

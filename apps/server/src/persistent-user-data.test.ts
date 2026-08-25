@@ -118,6 +118,75 @@ describe("persistent user data API", () => {
     }
   });
 
+  it("stores a validated 5 × 6 rock-mineral layer outside the repository", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-rock-minerals-"));
+    cleanupPaths.push(dataDirectory);
+    const app = await createTestApp(dataDirectory);
+    try {
+      const cells = Array.from({ length: 30 }, (_, index) => ({
+        id: `cell-${index}`,
+        depth: Math.floor(index / 5) + 1,
+        column: index % 5,
+        soilVariant: ["clay", "sand", "gravel", "deep"][index % 4],
+        mineralId: index === 0 ? "quartz" : null,
+        status: "covered",
+        hitsRemaining: index === 0 ? 1 : 0,
+        totalHits: index === 0 ? 1 : 0,
+      }));
+      const payload = {
+        schemaVersion: 1,
+        board: { baseDepth: 1, cells },
+        currentDepth: 0,
+        currentHammerDurability: 30,
+        spareHammers: 0,
+        inventory: { quartz: 1 },
+        discoveredIds: ["quartz"],
+        unlockedAttributes: { quartz: ["name"] },
+        pendingResearch: null,
+        pendingHammerPurchase: null,
+        soundEnabled: false,
+      };
+      const saved = await app.inject({
+        method: "PUT",
+        url: "/api/persistent-data/nature-rock-minerals",
+        payload: { payload },
+      });
+      assert.equal(saved.statusCode, 200);
+      const destination = resolve(
+        dataDirectory,
+        "learning",
+        "nature",
+        "rock-minerals-state.json",
+      );
+      assert.equal((await stat(destination)).mode & 0o777, 0o600);
+      const stored = JSON.parse(await readFile(destination, "utf8")) as {
+        stableId: string;
+        payload: unknown;
+      };
+      assert.equal(stored.stableId, "nature-rock-minerals");
+      assert.deepEqual(stored.payload, payload);
+
+      const duplicate = await app.inject({
+        method: "PUT",
+        url: "/api/persistent-data/nature-rock-minerals",
+        payload: {
+          payload: {
+            ...payload,
+            board: {
+              ...payload.board,
+              cells: payload.board.cells.map((cell, index) => (
+                index === 1 ? { ...cell, id: "cell-0" } : cell
+              )),
+            },
+          },
+        },
+      });
+      assert.equal(duplicate.statusCode, 400);
+    } finally {
+      await app.close();
+    }
+  });
+
   it("reports a write failure without claiming success", async () => {
     const parent = await mkdtemp(resolve(tmpdir(), "mumu-persistent-write-failure-"));
     cleanupPaths.push(parent);
