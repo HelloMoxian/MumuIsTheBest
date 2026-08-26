@@ -1,0 +1,365 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/apps/web/public/images/world-tower/source-atlases/material-tower-chemistry-v1/atlas-02.png",
+  "sourceWidth": 1086,
+  "sourceHeight": 1448,
+  "columns": 3,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 24,
+  "trimmed": true,
+  "backgroundRemoved": true,
+  "keyColor": "#F703F0",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "chem-v1-02-01",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "chem-v1-02-01.png",
+      "sourceBox": [
+        24,
+        24,
+        338,
+        338
+      ],
+      "trimBox": [
+        28,
+        45,
+        292,
+        314
+      ],
+      "outputWidth": 264,
+      "outputHeight": 269,
+      "opaqueCoverage": 0.671454,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-02",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "chem-v1-02-02.png",
+      "sourceBox": [
+        386,
+        24,
+        700,
+        338
+      ],
+      "trimBox": [
+        0,
+        0,
+        299,
+        314
+      ],
+      "outputWidth": 299,
+      "outputHeight": 314,
+      "opaqueCoverage": 0.497625,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-03",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "chem-v1-02-03.png",
+      "sourceBox": [
+        748,
+        24,
+        1062,
+        338
+      ],
+      "trimBox": [
+        19,
+        62,
+        263,
+        314
+      ],
+      "outputWidth": 244,
+      "outputHeight": 252,
+      "opaqueCoverage": 0.690818,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-04",
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "filename": "chem-v1-02-04.png",
+      "sourceBox": [
+        24,
+        386,
+        338,
+        700
+      ],
+      "trimBox": [
+        56,
+        0,
+        254,
+        314
+      ],
+      "outputWidth": 198,
+      "outputHeight": 314,
+      "opaqueCoverage": 0.583735,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-05",
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "filename": "chem-v1-02-05.png",
+      "sourceBox": [
+        386,
+        386,
+        700,
+        700
+      ],
+      "trimBox": [
+        89,
+        0,
+        218,
+        314
+      ],
+      "outputWidth": 129,
+      "outputHeight": 314,
+      "opaqueCoverage": 0.681183,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-06",
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "filename": "chem-v1-02-06.png",
+      "sourceBox": [
+        748,
+        386,
+        1062,
+        700
+      ],
+      "trimBox": [
+        51,
+        11,
+        285,
+        314
+      ],
+      "outputWidth": 234,
+      "outputHeight": 303,
+      "opaqueCoverage": 0.672308,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-07",
+      "index": 6,
+      "row": 2,
+      "column": 0,
+      "filename": "chem-v1-02-07.png",
+      "sourceBox": [
+        24,
+        748,
+        338,
+        1062
+      ],
+      "trimBox": [
+        57,
+        9,
+        244,
+        312
+      ],
+      "outputWidth": 187,
+      "outputHeight": 303,
+      "opaqueCoverage": 0.729214,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-08",
+      "index": 7,
+      "row": 2,
+      "column": 1,
+      "filename": "chem-v1-02-08.png",
+      "sourceBox": [
+        386,
+        748,
+        700,
+        1062
+      ],
+      "trimBox": [
+        28,
+        0,
+        273,
+        293
+      ],
+      "outputWidth": 245,
+      "outputHeight": 293,
+      "opaqueCoverage": 0.496803,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-09",
+      "index": 8,
+      "row": 2,
+      "column": 2,
+      "filename": "chem-v1-02-09.png",
+      "sourceBox": [
+        748,
+        748,
+        1062,
+        1062
+      ],
+      "trimBox": [
+        29,
+        23,
+        276,
+        285
+      ],
+      "outputWidth": 247,
+      "outputHeight": 262,
+      "opaqueCoverage": 0.651513,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-10",
+      "index": 9,
+      "row": 3,
+      "column": 0,
+      "filename": "chem-v1-02-10.png",
+      "sourceBox": [
+        24,
+        1110,
+        338,
+        1424
+      ],
+      "trimBox": [
+        47,
+        0,
+        277,
+        314
+      ],
+      "outputWidth": 230,
+      "outputHeight": 314,
+      "opaqueCoverage": 0.235516,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-11",
+      "index": 10,
+      "row": 3,
+      "column": 1,
+      "filename": "chem-v1-02-11.png",
+      "sourceBox": [
+        386,
+        1110,
+        700,
+        1424
+      ],
+      "trimBox": [
+        11,
+        0,
+        314,
+        297
+      ],
+      "outputWidth": 303,
+      "outputHeight": 297,
+      "opaqueCoverage": 0.569957,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "chem-v1-02-12",
+      "index": 11,
+      "row": 3,
+      "column": 2,
+      "filename": "chem-v1-02-12.png",
+      "sourceBox": [
+        748,
+        1110,
+        1062,
+        1424
+      ],
+      "trimBox": [
+        30,
+        0,
+        281,
+        291
+      ],
+      "outputWidth": 251,
+      "outputHeight": 291,
+      "opaqueCoverage": 0.639257,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

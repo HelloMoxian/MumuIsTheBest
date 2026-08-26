@@ -6,7 +6,7 @@
     "style": "premium-fantasy-science-cosmic-runes",
     "composition": "separate-frame-content-image-and-html-label",
     "fallbackPolicy": "every-node-has-a-semantic-image-stardust-is-emergency-only",
-    "generatedAtlasProtocol": "fixed-5x4-row-major-24px-inset-transparent-png"
+    "generatedAtlasProtocol": "legacy-fixed-5x4-plus-chemistry-fixed-3x4-row-major-24px-inset-transparent-png"
   },
   "backgroundAsset": "/images/world-tower/backgrounds/cosmic-tower-v2.webp",
   "frameAssets": {
@@ -1411,6 +1411,18 @@
         "index": 6
       }
     },
+    "node:冰": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-01.png",
+      "atlas": null
+    },
+    "node:水蒸气": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-02.png",
+      "atlas": null
+    },
+    "node:木材": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-11.png",
+      "atlas": null
+    },
     "particle:electron": {
       "path": "/images/world-tower/nodes/core/electron.webp",
       "atlas": null
@@ -2617,6 +2629,90 @@
     },
     "particle:higgs-boson": {
       "path": "/images/world-tower/nodes/generated/material-tower-v1/atlas-15/material-v1-15-16.png",
+      "atlas": null
+    },
+    "node:氧气": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-01.png",
+      "atlas": null
+    },
+    "node:甲烷": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-02.png",
+      "atlas": null
+    },
+    "node:过氧化氢": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-03.png",
+      "atlas": null
+    },
+    "node:碳酸钠": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-04.png",
+      "atlas": null
+    },
+    "node:碳酸氢钠": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-05.png",
+      "atlas": null
+    },
+    "node:氧化钙": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-06.png",
+      "atlas": null
+    },
+    "node:氢氧化钙": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-07.png",
+      "atlas": null
+    },
+    "node:磷酸钙": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-08.png",
+      "atlas": null
+    },
+    "node:乙醇": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-09.png",
+      "atlas": null
+    },
+    "node:乙酸": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-10.png",
+      "atlas": null
+    },
+    "node:乳酸": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-11.png",
+      "atlas": null
+    },
+    "node:果糖": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-01/chem-v1-01-12.png",
+      "atlas": null
+    },
+    "node:蔗糖": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-03.png",
+      "atlas": null
+    },
+    "node:食醋": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-04.png",
+      "atlas": null
+    },
+    "node:酒精消毒液": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-05.png",
+      "atlas": null
+    },
+    "node:蜂蜜": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-06.png",
+      "atlas": null
+    },
+    "node:牛奶": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-07.png",
+      "atlas": null
+    },
+    "node:酸奶": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-08.png",
+      "atlas": null
+    },
+    "node:蛋壳": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-09.png",
+      "atlas": null
+    },
+    "node:骨骼": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-10.png",
+      "atlas": null
+    },
+    "node:铁锈": {
+      "path": "/images/world-tower/nodes/generated/material-tower-chemistry-v1/atlas-02/chem-v1-02-12.png",
       "atlas": null
     }
   },

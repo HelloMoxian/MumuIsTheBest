@@ -1612,6 +1612,66 @@
       "grantMode": "permanent-unlock"
     },
     {
+      "targetId": "node:冰",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:水蒸气",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:蔗糖",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:食醋",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:酒精消毒液",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:蜂蜜",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:牛奶",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:酸奶",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:蛋壳",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:骨骼",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:木材",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:铁锈",
+      "priceCoins": 15,
+      "grantMode": "permanent-unlock"
+    },
+    {
       "targetId": "node:水",
       "priceCoins": 10,
       "grantMode": "permanent-unlock"
@@ -1763,6 +1823,66 @@
     },
     {
       "targetId": "node:氟化钙",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:氧气",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:甲烷",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:过氧化氢",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:碳酸钠",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:碳酸氢钠",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:氧化钙",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:氢氧化钙",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:磷酸钙",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:乙醇",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:乙酸",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:乳酸",
+      "priceCoins": 10,
+      "grantMode": "permanent-unlock"
+    },
+    {
+      "targetId": "node:果糖",
       "priceCoins": 10,
       "grantMode": "permanent-unlock"
     },

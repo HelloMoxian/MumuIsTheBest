@@ -28,12 +28,19 @@ const generatedArtPlanPath = path.join(
   "world-tower",
   "generated-art-plan.v1.json",
 );
+const chemistryArtPlanPath = path.join(
+  repositoryRoot,
+  "content",
+  "world-tower",
+  "chemistry-art-plan.v1.json",
+);
 const publicRoot = path.join(repositoryRoot, "apps", "web", "public");
 const assetRoot = "/images/world-tower";
 
 const graph = JSON.parse(fs.readFileSync(graphPath, "utf8"));
 const compoundCatalog = JSON.parse(fs.readFileSync(compoundCatalogPath, "utf8"));
 const generatedArtPlan = JSON.parse(fs.readFileSync(generatedArtPlanPath, "utf8"));
+const chemistryArtPlan = JSON.parse(fs.readFileSync(chemistryArtPlanPath, "utf8"));
 const nodeById = new Map(graph.nodes.map((node) => [node.id, node]));
 
 const coreNodeArt = new Map([
@@ -484,6 +491,37 @@ for (const batch of generatedArtPlan.batches) {
   }
 }
 
+if (chemistryArtPlan.graphId !== graph.graphId) {
+  throw new Error("化学扩展图片计划与物质塔图谱 ID 不一致。");
+}
+if (
+  chemistryArtPlan.grid.columns !== 3
+  || chemistryArtPlan.grid.rows !== 4
+  || chemistryArtPlan.grid.cellsPerAtlas !== 12
+  || chemistryArtPlan.grid.cutPolicy !== "equal-width-and-height-grid-with-24px-inset"
+) {
+  throw new Error("化学扩展图片计划必须固定为 3×4、12 格和 24px 安全内缩。");
+}
+for (const batch of chemistryArtPlan.batches) {
+  if (batch.columns !== 3 || batch.rows !== 4 || batch.items.length !== 12) {
+    throw new Error(`化学扩展图集 ${batch.id} 不是固定的 3×4、12 格。`);
+  }
+  for (const item of batch.items) {
+    if (item.reserved) {
+      throw new Error(`化学扩展图集 ${batch.id} 不应包含保留格。`);
+    }
+    const node = nodeById.get(item.nodeId);
+    if (!node || node.name !== item.name || node.levelId !== item.levelId) {
+      throw new Error(`化学扩展图集 ${batch.id} 的格位 ${item.slot} 与节点清单不一致。`);
+    }
+    nodeAssets[item.nodeId] = {
+      path: `${batch.outputDirectory}/${item.assetId}.png`,
+      atlas: null,
+    };
+    generatedNodeAssetCount += 1;
+  }
+}
+
 const resourceAssets = {};
 const particlePackAssets = {
   "particle-pack:electron": publicAsset("nodes/core/electron.webp"),
@@ -506,7 +544,7 @@ const manifest = {
     style: "premium-fantasy-science-cosmic-runes",
     composition: "separate-frame-content-image-and-html-label",
     fallbackPolicy: "every-node-has-a-semantic-image-stardust-is-emergency-only",
-    generatedAtlasProtocol: "fixed-5x4-row-major-24px-inset-transparent-png",
+    generatedAtlasProtocol: "legacy-fixed-5x4-plus-chemistry-fixed-3x4-row-major-24px-inset-transparent-png",
   },
   backgroundAsset: publicAsset("backgrounds/cosmic-tower-v2.webp"),
   frameAssets: {

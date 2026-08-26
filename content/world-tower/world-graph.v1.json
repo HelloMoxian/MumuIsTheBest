@@ -5,8 +5,8 @@
   "language": "zh-CN",
   "generatedAt": "2026-08-09T00:00:00.000Z",
   "counts": {
-    "nodes": 479,
-    "recipes": 469,
+    "nodes": 503,
+    "recipes": 493,
     "levels": 16,
     "clusters": 16,
     "resources": 0,
@@ -23,15 +23,15 @@
       "level:10-agriculture": 32,
       "level:11-ancient": 28,
       "level:12-natural-world": 30,
-      "level:13-life": 29,
-      "level:14-matter": 31,
+      "level:13-life": 41,
+      "level:14-matter": 43,
       "level:15-elements": 118,
       "level:16-particles": 10
     },
     "kindCounts": {
       "observation-led-discovery": 51,
       "knowledge-led-inference": 23,
-      "material-or-structural-composition": 87,
+      "material-or-structural-composition": 111,
       "human-made-invention": 147,
       "biological-development-or-classification": 43,
       "chemical-element": 118,
@@ -78,7 +78,7 @@
   },
   "loadingHints": {
     "strategy": "all-nodes-single-map",
-    "initialMapNodeCount": 479,
+    "initialMapNodeCount": 503,
     "renderEdges": "selected-one-hop-only",
     "levelNavigation": "independent-sticky-rail"
   },
@@ -159,7 +159,7 @@
       "id": "level:13-life",
       "order": 13,
       "name": "生命物质",
-      "description": "从细胞到植物、动物和常见生命。"
+      "description": "从常见生活物质连接到细胞、植物、动物和生命结构。"
     },
     {
       "id": "level:14-matter",
@@ -23513,6 +23513,874 @@
       ]
     },
     {
+      "id": "node:冰",
+      "name": "冰",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "冰",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "冰：H₂O，水在较低温度下形成的固态。",
+      "recipes": [
+        {
+          "id": "recipe:冰:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "H₂O，水在较低温度下形成的固态",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:冰",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "水帮助我们通过“组成”认识冰。H₂O，水在较低温度下形成的固态。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "H₂O，水在较低温度下形成的固态"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:水蒸气",
+      "name": "水蒸气",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "水蒸气",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "水蒸气：H₂O，水进入气态后仍由水分子组成。",
+      "recipes": [
+        {
+          "id": "recipe:水蒸气:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "H₂O，水进入气态后仍由水分子组成",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:水蒸气",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "水帮助我们通过“组成”认识水蒸气。H₂O，水进入气态后仍由水分子组成。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "H₂O，水进入气态后仍由水分子组成"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:蔗糖",
+      "name": "蔗糖",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "蔗糖",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "蔗糖：C₁₂H₂₂O₁₁，白糖的主要成分。",
+      "recipes": [
+        {
+          "id": "recipe:蔗糖:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "C₁₂H₂₂O₁₁，白糖的主要成分",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:葡萄糖",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:果糖",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:蔗糖",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "葡萄糖、果糖帮助我们通过“组成”认识蔗糖。C₁₂H₂₂O₁₁，白糖的主要成分。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "C₁₂H₂₂O₁₁，白糖的主要成分"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:食醋",
+      "name": "食醋",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "食醋",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "食醋：水和少量乙酸组成的常见调味品，没有单一化学式。",
+      "recipes": [
+        {
+          "id": "recipe:食醋:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "水和少量乙酸组成的常见调味品，没有单一化学式",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:乙酸",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:食醋",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "水、乙酸帮助我们通过“组成”认识食醋。水和少量乙酸组成的常见调味品，没有单一化学式。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "水和少量乙酸组成的常见调味品，没有单一化学式"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:酒精消毒液",
+      "name": "酒精消毒液",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "酒精消",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "酒精消毒液：水和乙醇组成的消毒液，没有单一化学式。",
+      "recipes": [
+        {
+          "id": "recipe:酒精消毒液:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "水和乙醇组成的消毒液，没有单一化学式",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:乙醇",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:酒精消毒液",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "水、乙醇帮助我们通过“组成”认识酒精消毒液。水和乙醇组成的消毒液，没有单一化学式。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "水和乙醇组成的消毒液，没有单一化学式"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:蜂蜜",
+      "name": "蜂蜜",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "蜂蜜",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "蜂蜜：多种糖和水组成的天然食物，没有单一化学式。",
+      "recipes": [
+        {
+          "id": "recipe:蜂蜜:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "多种糖和水组成的天然食物，没有单一化学式",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:葡萄糖",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:果糖",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:蜂蜜",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "葡萄糖、果糖、水帮助我们通过“组成”认识蜂蜜。多种糖和水组成的天然食物，没有单一化学式。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "多种糖和水组成的天然食物，没有单一化学式"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:牛奶",
+      "name": "牛奶",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "牛奶",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "牛奶：含水、蛋白质、脂肪和矿物质的混合物。",
+      "recipes": [
+        {
+          "id": "recipe:牛奶:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "含水、蛋白质、脂肪和矿物质的混合物",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:蛋白质",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:Ca",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:牛奶",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "水、蛋白质、钙帮助我们通过“组成”认识牛奶。含水、蛋白质、脂肪和矿物质的混合物。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "含水、蛋白质、脂肪和矿物质的混合物"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:酸奶",
+      "name": "酸奶",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "酸奶",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "酸奶：乳酸菌发酵牛奶形成的食物。",
+      "recipes": [
+        {
+          "id": "recipe:酸奶:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "乳酸菌发酵牛奶形成的食物",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:牛奶",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:乳酸",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:细菌",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:酸奶",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "牛奶、乳酸、细菌帮助我们通过“组成”认识酸奶。乳酸菌发酵牛奶形成的食物。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "乳酸菌发酵牛奶形成的食物"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:蛋壳",
+      "name": "蛋壳",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "蛋壳",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "蛋壳：主要矿物成分是 CaCO₃。",
+      "recipes": [
+        {
+          "id": "recipe:蛋壳:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "主要矿物成分是 CaCO₃",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:碳酸钙",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:蛋白质",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:蛋壳",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "碳酸钙、蛋白质帮助我们通过“组成”认识蛋壳。主要矿物成分是 CaCO₃。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "主要矿物成分是 CaCO₃"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:骨骼",
+      "name": "骨骼",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "骨骼",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "骨骼：钙磷矿物与胶原蛋白共同形成坚硬骨骼。",
+      "recipes": [
+        {
+          "id": "recipe:骨骼:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "钙磷矿物与胶原蛋白共同形成坚硬骨骼",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:磷酸钙",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:蛋白质",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:骨骼",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "磷酸钙、蛋白质、水帮助我们通过“组成”认识骨骼。钙磷矿物与胶原蛋白共同形成坚硬骨骼。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "钙磷矿物与胶原蛋白共同形成坚硬骨骼"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:木材",
+      "name": "木材",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "木材",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "木材：植物纤维和木质素组成的天然材料。",
+      "recipes": [
+        {
+          "id": "recipe:木材:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "植物纤维和木质素组成的天然材料",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:纤维素",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:木质素",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:木材",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "纤维素、木质素、水帮助我们通过“组成”认识木材。植物纤维和木质素组成的天然材料。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "植物纤维和木质素组成的天然材料"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:铁锈",
+      "name": "铁锈",
+      "aliases": [],
+      "tags": [
+        "生命物质",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "铁锈",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:13-life",
+      "clusterId": "cluster:13-life",
+      "summary": "铁锈：铁接触氧气和水后形成的含水氧化物混合物。",
+      "recipes": [
+        {
+          "id": "recipe:铁锈:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "铁接触氧气和水后形成的含水氧化物混合物",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:三氧化二铁",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:氧气",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:铁锈",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "三氧化二铁、水、氧气帮助我们通过“组成”认识铁锈。铁接触氧气和水后形成的含水氧化物混合物。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "铁接触氧气和水后形成的含水氧化物混合物"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
       "id": "node:水",
       "name": "水",
       "aliases": [],
@@ -25765,6 +26633,888 @@
         "relationType": "composition",
         "relationLabel": "组成",
         "knowledgeTopic": "CaF₂，萤石"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:氧气",
+      "name": "氧气",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "氧气",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "氧气：O₂，两个氧原子组成的分子，支持呼吸和燃烧。",
+      "recipes": [
+        {
+          "id": "recipe:氧气:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "O₂，两个氧原子组成的分子，支持呼吸和燃烧",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:氧气",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "氧帮助我们通过“组成”认识氧气。O₂，两个氧原子组成的分子，支持呼吸和燃烧。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "O₂，两个氧原子组成的分子，支持呼吸和燃烧"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:甲烷",
+      "name": "甲烷",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "甲烷",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "甲烷：CH₄，天然气的主要成分。",
+      "recipes": [
+        {
+          "id": "recipe:甲烷:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "CH₄，天然气的主要成分",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:C",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:H",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:甲烷",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "碳、氢帮助我们通过“组成”认识甲烷。CH₄，天然气的主要成分。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "CH₄，天然气的主要成分"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:过氧化氢",
+      "name": "过氧化氢",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "过氧化",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "过氧化氢：H₂O₂，双氧水中的有效成分。",
+      "recipes": [
+        {
+          "id": "recipe:过氧化氢:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "H₂O₂，双氧水中的有效成分",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:H",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:过氧化氢",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "氢、氧帮助我们通过“组成”认识过氧化氢。H₂O₂，双氧水中的有效成分。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "H₂O₂，双氧水中的有效成分"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:碳酸钠",
+      "name": "碳酸钠",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "碳酸钠",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "碳酸钠：Na₂CO₃，俗称苏打或纯碱。",
+      "recipes": [
+        {
+          "id": "recipe:碳酸钠:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "Na₂CO₃，俗称苏打或纯碱",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:Na",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:C",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:碳酸钠",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "钠、碳、氧帮助我们通过“组成”认识碳酸钠。Na₂CO₃，俗称苏打或纯碱。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "Na₂CO₃，俗称苏打或纯碱"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:碳酸氢钠",
+      "name": "碳酸氢钠",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "碳酸氢",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "碳酸氢钠：NaHCO₃，俗称小苏打。",
+      "recipes": [
+        {
+          "id": "recipe:碳酸氢钠:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "NaHCO₃，俗称小苏打",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:碳酸钠",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:二氧化碳",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:碳酸氢钠",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "碳酸钠、二氧化碳、水帮助我们通过“组成”认识碳酸氢钠。NaHCO₃，俗称小苏打。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "NaHCO₃，俗称小苏打"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:氧化钙",
+      "name": "氧化钙",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "氧化钙",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "氧化钙：CaO，俗称生石灰。",
+      "recipes": [
+        {
+          "id": "recipe:氧化钙:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "CaO，俗称生石灰",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:Ca",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:氧化钙",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "钙、氧帮助我们通过“组成”认识氧化钙。CaO，俗称生石灰。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "CaO，俗称生石灰"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:氢氧化钙",
+      "name": "氢氧化钙",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "氢氧化",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "氢氧化钙：Ca(OH)₂，俗称熟石灰。",
+      "recipes": [
+        {
+          "id": "recipe:氢氧化钙:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "Ca(OH)₂，俗称熟石灰",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "node:氧化钙",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "node:水",
+              "amount": 1,
+              "unit": "conceptual-prerequisite",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:氢氧化钙",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "氧化钙、水帮助我们通过“组成”认识氢氧化钙。Ca(OH)₂，俗称熟石灰。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "Ca(OH)₂，俗称熟石灰"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:磷酸钙",
+      "name": "磷酸钙",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "磷酸钙",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "磷酸钙：Ca₃(PO₄)₂，常见钙磷化合物。",
+      "recipes": [
+        {
+          "id": "recipe:磷酸钙:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "Ca₃(PO₄)₂，常见钙磷化合物",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:Ca",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:P",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:磷酸钙",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "钙、磷、氧帮助我们通过“组成”认识磷酸钙。Ca₃(PO₄)₂，常见钙磷化合物。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "Ca₃(PO₄)₂，常见钙磷化合物"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:乙醇",
+      "name": "乙醇",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "乙醇",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "乙醇：C₂H₆O，酒精的主要化学成分。",
+      "recipes": [
+        {
+          "id": "recipe:乙醇:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "C₂H₆O，酒精的主要化学成分",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:C",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:H",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:乙醇",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "碳、氢、氧帮助我们通过“组成”认识乙醇。C₂H₆O，酒精的主要化学成分。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "C₂H₆O，酒精的主要化学成分"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:乙酸",
+      "name": "乙酸",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "乙酸",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "乙酸：C₂H₄O₂，食醋酸味的主要来源。",
+      "recipes": [
+        {
+          "id": "recipe:乙酸:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "C₂H₄O₂，食醋酸味的主要来源",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:C",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:H",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:乙酸",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "碳、氢、氧帮助我们通过“组成”认识乙酸。C₂H₄O₂，食醋酸味的主要来源。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "C₂H₄O₂，食醋酸味的主要来源"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:乳酸",
+      "name": "乳酸",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "乳酸",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "乳酸：C₃H₆O₃，酸奶发酵和生命活动中常见的有机酸。",
+      "recipes": [
+        {
+          "id": "recipe:乳酸:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "C₃H₆O₃，酸奶发酵和生命活动中常见的有机酸",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:C",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:H",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:乳酸",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "碳、氢、氧帮助我们通过“组成”认识乳酸。C₃H₆O₃，酸奶发酵和生命活动中常见的有机酸。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "C₃H₆O₃，酸奶发酵和生命活动中常见的有机酸"
+      },
+      "sourceRefs": [
+        {
+          "type": "curated-rule",
+          "path": "content/world-tower/composition-rules.v2.json"
+        }
+      ]
+    },
+    {
+      "id": "node:果糖",
+      "name": "果糖",
+      "aliases": [],
+      "tags": [
+        "物质基础",
+        "组成"
+      ],
+      "art": {
+        "mode": "text-placeholder",
+        "imageAssetId": null,
+        "symbol": "果糖",
+        "frameStyle": "common"
+      },
+      "kind": "material-or-structural-composition",
+      "levelId": "level:14-matter",
+      "clusterId": "cluster:14-matter",
+      "summary": "果糖：C₆H₁₂O₆，水果和蜂蜜中常见的糖。",
+      "recipes": [
+        {
+          "id": "recipe:果糖:primary",
+          "type": "composition",
+          "relationLabel": "组成",
+          "knowledgeTopic": "C₆H₁₂O₆，水果和蜂蜜中常见的糖",
+          "logic": "ALL",
+          "inputs": [
+            {
+              "nodeId": "element:C",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:H",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            },
+            {
+              "nodeId": "element:O",
+              "amount": 1,
+              "unit": "atom-or-key-element",
+              "role": "prerequisite",
+              "consumed": false
+            }
+          ],
+          "requirements": {
+            "particlePacks": [],
+            "actions": [],
+            "conditions": [],
+            "environments": [],
+            "knowledge": []
+          },
+          "outputs": [
+            {
+              "nodeId": "node:果糖",
+              "amount": 1
+            }
+          ],
+          "childExplanation": "碳、氢、氧帮助我们通过“组成”认识果糖。C₆H₁₂O₆，水果和蜂蜜中常见的糖。",
+          "safety": "child-friendly-knowledge-graph"
+        }
+      ],
+      "properties": {
+        "relationType": "composition",
+        "relationLabel": "组成",
+        "knowledgeTopic": "C₆H₁₂O₆，水果和蜂蜜中常见的糖"
       },
       "sourceRefs": [
         {
@@ -37544,7 +39294,19 @@
         "node:小麦植株",
         "node:花",
         "node:蘑菇",
-        "node:苔藓"
+        "node:苔藓",
+        "node:冰",
+        "node:水蒸气",
+        "node:蔗糖",
+        "node:食醋",
+        "node:酒精消毒液",
+        "node:蜂蜜",
+        "node:牛奶",
+        "node:酸奶",
+        "node:蛋壳",
+        "node:骨骼",
+        "node:木材",
+        "node:铁锈"
       ],
       "level:14-matter": [
         "node:水",
@@ -37577,7 +39339,19 @@
         "node:硫化锌",
         "node:二氧化钛",
         "node:二氧化锰",
-        "node:氟化钙"
+        "node:氟化钙",
+        "node:氧气",
+        "node:甲烷",
+        "node:过氧化氢",
+        "node:碳酸钠",
+        "node:碳酸氢钠",
+        "node:氧化钙",
+        "node:氢氧化钙",
+        "node:磷酸钙",
+        "node:乙醇",
+        "node:乙酸",
+        "node:乳酸",
+        "node:果糖"
       ],
       "level:15-elements": [
         "element:H",
@@ -38057,7 +39831,19 @@
         "node:小麦植株",
         "node:花",
         "node:蘑菇",
-        "node:苔藓"
+        "node:苔藓",
+        "node:冰",
+        "node:水蒸气",
+        "node:蔗糖",
+        "node:食醋",
+        "node:酒精消毒液",
+        "node:蜂蜜",
+        "node:牛奶",
+        "node:酸奶",
+        "node:蛋壳",
+        "node:骨骼",
+        "node:木材",
+        "node:铁锈"
       ],
       "cluster:14-matter": [
         "node:水",
@@ -38090,7 +39876,19 @@
         "node:硫化锌",
         "node:二氧化钛",
         "node:二氧化锰",
-        "node:氟化钙"
+        "node:氟化钙",
+        "node:氧气",
+        "node:甲烷",
+        "node:过氧化氢",
+        "node:碳酸钠",
+        "node:碳酸氢钠",
+        "node:氧化钙",
+        "node:氢氧化钙",
+        "node:磷酸钙",
+        "node:乙醇",
+        "node:乙酸",
+        "node:乳酸",
+        "node:果糖"
       ],
       "cluster:15-elements": [
         "element:H",
@@ -39296,7 +41094,8 @@
       ],
       "node:细菌": [
         "node:抗生素",
-        "node:腐殖土"
+        "node:腐殖土",
+        "node:酸奶"
       ],
       "node:真菌": [
         "node:抗生素",
@@ -39346,6 +41145,20 @@
       ],
       "node:蘑菇": [],
       "node:苔藓": [],
+      "node:冰": [],
+      "node:水蒸气": [],
+      "node:蔗糖": [],
+      "node:食醋": [],
+      "node:酒精消毒液": [],
+      "node:蜂蜜": [],
+      "node:牛奶": [
+        "node:酸奶"
+      ],
+      "node:酸奶": [],
+      "node:蛋壳": [],
+      "node:骨骼": [],
+      "node:木材": [],
+      "node:铁锈": [],
       "node:水": [
         "node:大气圈",
         "node:水圈",
@@ -39362,13 +41175,25 @@
         "node:珊瑚",
         "node:水母",
         "node:苔藓",
+        "node:冰",
+        "node:水蒸气",
+        "node:食醋",
+        "node:酒精消毒液",
+        "node:蜂蜜",
+        "node:牛奶",
+        "node:骨骼",
+        "node:木材",
+        "node:铁锈",
         "node:高岭石",
         "node:蒙脱石",
         "node:石膏",
-        "node:孔雀石"
+        "node:孔雀石",
+        "node:碳酸氢钠",
+        "node:氢氧化钙"
       ],
       "node:二氧化碳": [
-        "node:空气"
+        "node:空气",
+        "node:碳酸氢钠"
       ],
       "node:氯化钠": [
         "node:海洋",
@@ -39376,6 +41201,8 @@
       ],
       "node:葡萄糖": [
         "node:真菌",
+        "node:蔗糖",
+        "node:蜂蜜",
         "node:淀粉",
         "node:纤维素"
       ],
@@ -39389,11 +41216,13 @@
         "node:棉花",
         "node:植物",
         "node:草",
-        "node:树木"
+        "node:树木",
+        "node:木材"
       ],
       "node:木质素": [
         "node:煤",
-        "node:树木"
+        "node:树木",
+        "node:木材"
       ],
       "node:叶黄素": [],
       "node:叶绿素": [
@@ -39418,7 +41247,10 @@
         "node:动物",
         "node:鱼",
         "node:细菌",
-        "node:真菌"
+        "node:真菌",
+        "node:牛奶",
+        "node:蛋壳",
+        "node:骨骼"
       ],
       "node:二氧化硅": [
         "node:银矿",
@@ -39437,6 +41269,7 @@
         "node:石灰岩",
         "node:大理石",
         "node:贝类",
+        "node:蛋壳",
         "node:白云石",
         "node:孔雀石"
       ],
@@ -39444,7 +41277,8 @@
         "node:赭石颜料",
         "node:铁矿",
         "node:玄武岩",
-        "node:红土"
+        "node:红土",
+        "node:铁锈"
       ],
       "node:四氧化三铁": [
         "node:铁矿"
@@ -39487,12 +41321,47 @@
       "node:二氧化钛": [],
       "node:二氧化锰": [],
       "node:氟化钙": [],
+      "node:氧气": [
+        "node:铁锈"
+      ],
+      "node:甲烷": [],
+      "node:过氧化氢": [],
+      "node:碳酸钠": [
+        "node:碳酸氢钠"
+      ],
+      "node:碳酸氢钠": [],
+      "node:氧化钙": [
+        "node:氢氧化钙"
+      ],
+      "node:氢氧化钙": [],
+      "node:磷酸钙": [
+        "node:骨骼"
+      ],
+      "node:乙醇": [
+        "node:酒精消毒液"
+      ],
+      "node:乙酸": [
+        "node:食醋"
+      ],
+      "node:乳酸": [
+        "node:酸奶"
+      ],
+      "node:果糖": [
+        "node:蔗糖",
+        "node:蜂蜜"
+      ],
       "element:H": [
         "node:猎户座大星云",
         "node:水",
         "node:葡萄糖",
         "node:木质素",
-        "node:叶黄素"
+        "node:叶黄素",
+        "node:甲烷",
+        "node:过氧化氢",
+        "node:乙醇",
+        "node:乙酸",
+        "node:乳酸",
+        "node:果糖"
       ],
       "element:He": [],
       "element:Li": [
@@ -39512,7 +41381,13 @@
         "node:ATP",
         "node:DNA",
         "node:蛋白质",
-        "node:碳酸钙"
+        "node:碳酸钙",
+        "node:甲烷",
+        "node:碳酸钠",
+        "node:乙醇",
+        "node:乙酸",
+        "node:乳酸",
+        "node:果糖"
       ],
       "element:N": [
         "node:化肥",
@@ -39535,7 +41410,16 @@
         "node:四氧化三铁",
         "node:氧化铝",
         "node:二氧化钛",
-        "node:二氧化锰"
+        "node:二氧化锰",
+        "node:氧气",
+        "node:过氧化氢",
+        "node:碳酸钠",
+        "node:氧化钙",
+        "node:磷酸钙",
+        "node:乙醇",
+        "node:乙酸",
+        "node:乳酸",
+        "node:果糖"
       ],
       "element:F": [
         "node:氟化钙"
@@ -39543,7 +41427,8 @@
       "element:Ne": [],
       "element:Na": [
         "node:氯化钠",
-        "node:钠长石"
+        "node:钠长石",
+        "node:碳酸钠"
       ],
       "element:Mg": [
         "node:玉石",
@@ -39565,7 +41450,8 @@
       "element:P": [
         "node:磷矿",
         "node:ATP",
-        "node:DNA"
+        "node:DNA",
+        "node:磷酸钙"
       ],
       "element:S": [
         "node:橡胶轮胎",
@@ -39587,9 +41473,12 @@
         "node:磷矿",
         "node:玄武岩",
         "node:玉石",
+        "node:牛奶",
         "node:碳酸钙",
         "node:石膏",
-        "node:氟化钙"
+        "node:氟化钙",
+        "node:氧化钙",
+        "node:磷酸钙"
       ],
       "element:Sc": [],
       "element:Ti": [

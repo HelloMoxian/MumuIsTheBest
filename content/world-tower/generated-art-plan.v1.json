@@ -11,7 +11,7 @@
     "outputPolicy": "one-transparent-trimmed-png-per-non-reserved-cell"
   },
   "counts": {
-    "graphNodes": 479,
+    "graphNodes": 503,
     "existingSuitableAssets": 183,
     "missingSuitableAssets": 296,
     "atlases": 15,

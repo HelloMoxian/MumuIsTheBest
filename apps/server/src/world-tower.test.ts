@@ -186,8 +186,8 @@ describe("world tower API", () => {
       assert.equal(manifest.graphId, "mumu-material-tower-graph-v2");
       assert.deepEqual(manifest.counts, {
         ...manifest.counts,
-        nodes: 479,
-        recipes: 469,
+        nodes: 503,
+        recipes: 493,
         levels: 16,
         resources: 0,
       });
@@ -206,10 +206,10 @@ describe("world tower API", () => {
         items: Array<{ id: string; name: string; isUnlocked: boolean; unlockPriceCoins: number }>;
         edges: Array<{ sourceId: string; targetId: string }>;
       };
-      assert.equal(map.totalNodes, 479);
+      assert.equal(map.totalNodes, 503);
       assert.equal(map.isTruncated, false);
-      assert.equal(map.items.length, 479);
-      assert.equal(map.edges.length, 1_186);
+      assert.equal(map.items.length, 503);
+      assert.equal(map.edges.length, 1_244);
       assert.equal(Object.keys(map.levelNodeCounts).length, 16);
       assert.ok(Object.values(map.levelNodeCounts).every((count) => count > 0));
       assert.ok(map.items.every((item) => item.name.length > 0));
@@ -231,6 +231,22 @@ describe("world tower API", () => {
       const hydrogen = elementMap.items.find((item) => item.id === "element:H");
       assert.equal(hydrogen?.unlockPriceCoins, 5);
       assert.match(hydrogen?.imagePath ?? "", /nodes\/core\/hydrogen/);
+
+      const matterMapResponse = await fetch(
+        `${baseUrl}/api/world-tower/level-map?levelId=level%3A14-matter&visibility=all`,
+      );
+      assert.equal(matterMapResponse.status, 200);
+      const matterMap = await matterMapResponse.json() as {
+        totalInLevel: number;
+        matchedTotal: number;
+        items: Array<{ id: string; imagePath: string | null }>;
+      };
+      assert.equal(matterMap.totalInLevel, 43);
+      assert.equal(matterMap.matchedTotal, 43);
+      assert.match(
+        matterMap.items.find((item) => item.id === "node:过氧化氢")?.imagePath ?? "",
+        /material-tower-chemistry-v1\/atlas-01\/chem-v1-01-03\.png$/,
+      );
 
       for (let index = 0; index < 2; index += 1) {
         assert.equal((await postLearningReward(baseUrl, "math:cat-mouse-game")).status, 201);
@@ -317,8 +333,8 @@ describe("world tower API", () => {
         affectedNodes: number;
         progress: { coinBalance: number; unlockedNodeIds: string[] };
       };
-      assert.equal(unlockAll.affectedNodes, 479);
-      assert.equal(unlockAll.progress.unlockedNodeIds.length, 479);
+      assert.equal(unlockAll.affectedNodes, 503);
+      assert.equal(unlockAll.progress.unlockedNodeIds.length, 503);
       assert.equal(unlockAll.progress.coinBalance, 40);
 
       const clearAllResponse = await postProgressAction(baseUrl, "clear-all");
@@ -332,7 +348,7 @@ describe("world tower API", () => {
           resourceInventory: Record<string, number>;
         };
       };
-      assert.equal(clearAll.affectedNodes, 479);
+      assert.equal(clearAll.affectedNodes, 503);
       assert.equal(clearAll.progress.coinBalance, 40);
       assert.deepEqual(clearAll.progress.unlockedNodeIds, []);
       assert.deepEqual(clearAll.progress.permanentResourceIds, []);
