@@ -14,6 +14,7 @@
     "content:nature:validate": "node scripts/validate-rock-mineral-catalog.mjs",
     "content:english:download": "node scripts/download-english-echo-audio.mjs",
     "content:english:validate": "node scripts/validate-english-echo-island.mjs",
+    "content:university:refresh": "node scripts/fetch-university-rankings.mjs",
     "content:world-tower:generate": "node scripts/generate-world-graph.mjs && node scripts/generate-world-icon-manifest.mjs",
     "content:world-tower:validate": "node scripts/validate-world-icon-atlases.mjs && node scripts/validate-world-graph.mjs",
     "content:chemistry:generate": "node scripts/generate-molecular-structures.mjs",

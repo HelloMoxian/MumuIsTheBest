@@ -96,6 +96,11 @@ const RockMineralGame = lazy(async () => {
   return { default: module.RockMineralGame };
 });
 
+const UniversityTop100Page = lazy(async () => {
+  const module = await import("./features/university-top100/UniversityTop100Page");
+  return { default: module.UniversityTop100Page };
+});
+
 function ChemistryLoading({ label }: { label: string }) {
   return (
     <div className="app-shell" aria-live="polite">
@@ -166,7 +171,7 @@ type AsrConfiguration = {
   isConfigured: boolean;
   storage: "local-file" | "environment" | "none";
 };
-type SubjectIconKind = "games" | "math" | "english" | "chemistry" | "nature" | "chinese" | "classics";
+type SubjectIconKind = "games" | "math" | "english" | "chemistry" | "nature" | "chinese" | "classics" | "planning";
 type GamePlaceholder = {
   title: string;
   mark: string;
@@ -358,6 +363,21 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
       },
     ],
   },
+  {
+    id: "planning",
+    title: "规划",
+    caption: "看看更远的目标，认识未来可以去的地方",
+    icon: "planning",
+    games: [
+      {
+        title: "大学",
+        mark: "TOP",
+        description: "按专业查看世界大学 Top100",
+        shape: "wide",
+        href: "/universities/top100",
+      },
+    ],
+  },
 ];
 
 function SubjectGlyph({ kind }: { kind: SubjectIconKind }) {
@@ -381,6 +401,9 @@ function SubjectGlyph({ kind }: { kind: SubjectIconKind }) {
   }
   if (kind === "classics") {
     return <span className="subject-glyph glyph-letter glyph-classics" aria-hidden="true">雅</span>;
+  }
+  if (kind === "planning") {
+    return <span className="subject-glyph glyph-planning" aria-hidden="true"><i /><i /><b>TOP</b></span>;
   }
   return null;
 }
@@ -926,6 +949,9 @@ function App() {
 }
 
 function CurrentPage() {
+  if (window.location.pathname === "/universities/top100" || window.location.pathname === "/university/top100") {
+    return <Suspense fallback={<ChemistryLoading label="大学 Top100 星图" />}><UniversityTop100Page /></Suspense>;
+  }
   if (window.location.pathname === "/games/fruit-slice") {
     return <Suspense fallback={<ChemistryLoading label="切水果体感舱" />}><FruitSliceGame /></Suspense>;
   }
