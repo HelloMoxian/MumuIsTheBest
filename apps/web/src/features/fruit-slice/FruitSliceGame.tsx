@@ -731,7 +731,7 @@ export function FruitSliceGame() {
                   <div><dt>超级模式</dt><dd>{player.superActivations}</dd></div>
                 </dl>
                 {player.role === "木木" && saveState === "saved" && (
-                  <p className="fruit-energy-award"><img src={energyCoinUrl} alt="" />{player.score >= 500 ? `木木获得 ${energyAward} 枚能量币` : "达到 500 分就能获得能量币"}</p>
+                  <p className="fruit-energy-award"><img src={energyCoinUrl} alt="" />{player.score >= 100 ? `木木获得 ${energyAward} 枚能量币` : "达到 100 分就能获得能量币"}</p>
                 )}
               </article>
             ))}

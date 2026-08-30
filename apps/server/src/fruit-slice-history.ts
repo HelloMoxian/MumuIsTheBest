@@ -176,7 +176,7 @@ type SessionInput = z.infer<typeof sessionInputSchema>;
 type StoredSession = z.infer<typeof storedSessionSchema>;
 
 const STABLE_HISTORY_UUID = "e110a8ab-cd3d-4cd2-a673-26d0554fc280";
-const ENERGY_SCORE_STEP = 500;
+const ENERGY_SCORE_STEP = 100;
 const GEOLOGY_HAMMER_COST = 30;
 const energyCoinSpendInputSchema = z.object({
   eventId: z.string().uuid(),

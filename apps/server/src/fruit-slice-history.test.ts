@@ -32,12 +32,14 @@ function player(role: "爸爸" | "木木", side: "full" | "left" | "right", scor
 
 test("能量币只奖励达到分数门槛的木木", () => {
   assert.equal(energyCoinsForPlayer("爸爸", 5_000), 0);
-  assert.equal(energyCoinsForPlayer("木木", 499), 0);
-  assert.equal(energyCoinsForPlayer("木木", 500), 1);
-  assert.equal(energyCoinsForPlayer("木木", 10_500, 30), 20);
-  assert.equal(energyCoinsForPlayer("木木", 20_000, 60), 30);
-  assert.equal(energyCoinsForPlayer("木木", 25_000, 90), 40);
-  assert.equal(energyCoinsForPlayer("木木", 30_000, 120), 50);
+  assert.equal(energyCoinsForPlayer("木木", 99), 0);
+  assert.equal(energyCoinsForPlayer("木木", 100), 1);
+  assert.equal(energyCoinsForPlayer("木木", 1_999, 30), 19);
+  assert.equal(energyCoinsForPlayer("木木", 2_000, 30), 20);
+  assert.equal(energyCoinsForPlayer("木木", 10_000, 30), 20);
+  assert.equal(energyCoinsForPlayer("木木", 3_000, 60), 30);
+  assert.equal(energyCoinsForPlayer("木木", 4_000, 90), 40);
+  assert.equal(energyCoinsForPlayer("木木", 5_000, 120), 50);
 });
 
 test("双人战报按角色统计比分、胜负并幂等发放能量币", async () => {
@@ -56,15 +58,15 @@ test("双人战报按角色统计比分、胜负并幂等发放能量币", async
 
   const first = await app.inject({ method: "POST", url: "/api/games/fruit-slice/history", payload });
   assert.equal(first.statusCode, 201);
-  assert.equal(first.json().energyCoinsEarned, 2);
-  assert.equal(first.json().energyCoinBalance, 2);
+  assert.equal(first.json().energyCoinsEarned, 12);
+  assert.equal(first.json().energyCoinBalance, 12);
   assert.equal(first.json().session.winnerSide, "right");
 
   const duplicate = await app.inject({ method: "POST", url: "/api/games/fruit-slice/history", payload });
   assert.equal(duplicate.statusCode, 200);
   assert.equal(duplicate.json().alreadySaved, true);
   assert.equal(duplicate.json().energyCoinsEarned, 0);
-  assert.equal(duplicate.json().energyCoinBalance, 2);
+  assert.equal(duplicate.json().energyCoinBalance, 12);
 
   const history = await app.inject({ method: "GET", url: "/api/games/fruit-slice/history" });
   const body = history.json();
@@ -85,7 +87,7 @@ test("双人战报按角色统计比分、胜负并幂等发放能量币", async
   ));
   assert.equal(stored.schemaVersion, 2);
   assert.equal(stored.stableId, "game-fruit-slice-history");
-  assert.equal(stored.energyCoinBalance, 2);
+  assert.equal(stored.energyCoinBalance, 12);
   assert.equal(stored.sessions[0].settings.fruitSize, 256);
   await app.close();
 });
@@ -135,7 +137,7 @@ test("地质锤固定消费30枚能量币并按事件幂等", async () => {
         mode: "single",
         durationMs: 60_000,
         settings: SETTINGS,
-        players: [player("木木", "full", 10_000)],
+        players: [player("木木", "full", 2_000)],
       },
     });
     assert.equal(earned.statusCode, 201);
