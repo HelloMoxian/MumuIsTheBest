@@ -78,7 +78,7 @@ test("accepts a valid empty or populated drawing document", () => {
   assert.equal(populated.elements[0]?.type, "shape");
 });
 
-test("provides number styles plus twelve distinct stickers in every illustrated theme", () => {
+test("provides number styles, twenty-four houses and twelve stickers in every other illustrated theme", () => {
   const themes = new Map<string, number>();
   for (const option of STICKER_OPTIONS) {
     themes.set(option.group, (themes.get(option.group) ?? 0) + 1);
@@ -86,14 +86,19 @@ test("provides number styles plus twelve distinct stickers in every illustrated 
 
   assert.equal(themes.size, 19);
   assert.equal(themes.get("数字"), 40);
+  assert.equal(themes.get("小屋"), 24);
   assert.deepEqual(
-    [...themes.entries()].filter(([group]) => group !== "数字").map(([, count]) => count),
-    Array.from({ length: 18 }, () => 12),
+    [...themes.entries()].filter(([group]) => group !== "数字" && group !== "小屋").map(([, count]) => count),
+    Array.from({ length: 17 }, () => 12),
   );
-  assert.equal(STICKER_BASE_KINDS.length, 64);
+  assert.deepEqual(
+    STICKER_OPTIONS.filter((option) => option.group === "小屋").slice(-12).map((option) => option.label),
+    ["一层平房", "二层小楼", "尖顶小屋", "原木木屋", "湖边木屋", "森林木屋", "三角帐篷", "圆顶帐篷", "露营帐篷", "草顶小屋", "雪地木屋", "树梢小屋"],
+  );
+  assert.equal(STICKER_BASE_KINDS.length, 67);
   assert.equal(STICKER_VARIANTS.length, 4);
-  assert.equal(STICKER_KINDS.length, 256);
-  assert.equal(new Set(STICKER_KINDS).size, 256);
+  assert.equal(STICKER_KINDS.length, 268);
+  assert.equal(new Set(STICKER_KINDS).size, 268);
   assert.deepEqual(
     STICKER_OPTIONS.map((option) => option.id).sort(),
     [...STICKER_KINDS].sort(),
@@ -106,7 +111,7 @@ test("provides number styles plus twelve distinct stickers in every illustrated 
     mirrored: false,
     regionFills: {},
   }));
-  assert.equal(parseDrawingDocument(makeDocument(stickerElements)).elements.length, 256);
+  assert.equal(parseDrawingDocument(makeDocument(stickerElements)).elements.length, 268);
 });
 
 test("preserves sticker mirroring and defaults older stickers to their original direction", () => {

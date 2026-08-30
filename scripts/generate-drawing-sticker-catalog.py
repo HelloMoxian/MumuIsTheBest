@@ -137,6 +137,12 @@ THEMES = [
         "labels": ["乡间小屋", "城堡", "帐篷", "灯塔", "谷仓", "木屋", "树屋", "冰屋", "风车屋", "城市小楼", "蘑菇屋", "小亭子"],
     },
     {
+        "atlas": "home-extra",
+        "group": "小屋",
+        "ids": styled_ids(["home-little", "home-wood", "home-camp"]),
+        "labels": ["一层平房", "二层小楼", "尖顶小屋", "原木木屋", "湖边木屋", "森林木屋", "三角帐篷", "圆顶帐篷", "露营帐篷", "草顶小屋", "雪地木屋", "树梢小屋"],
+    },
+    {
         "atlas": "toy",
         "group": "玩具",
         "ids": styled_ids(["toy-kite", "toy-pinwheel", "toy-blocks"]),
@@ -405,8 +411,8 @@ def validate_theme_metadata() -> None:
         if len(ids) != expected or len(labels) != expected:
             raise ValueError(f"{theme['atlas']} must contain exactly {expected} ids and labels")
         all_ids.extend(ids)
-    if len(all_ids) != 256 or len(set(all_ids)) != 256:
-        raise ValueError("sticker ids must contain 256 unique values")
+    if len(all_ids) != 268 or len(set(all_ids)) != 268:
+        raise ValueError("sticker ids must contain 268 unique values")
 
 
 def main() -> int:
