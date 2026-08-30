@@ -22,6 +22,16 @@ export type ShapeKind =
   | "heart";
 export type SolidKind = "cube" | "cuboid" | "sphere" | "cylinder" | "cone" | "triangular-pyramid";
 export const STICKER_BASE_KINDS = [
+  "digit-0",
+  "digit-1",
+  "digit-2",
+  "digit-3",
+  "digit-4",
+  "digit-5",
+  "digit-6",
+  "digit-7",
+  "digit-8",
+  "digit-9",
   "leaf-oval",
   "leaf-maple",
   "leaf-tropical",
@@ -67,6 +77,15 @@ export const STICKER_BASE_KINDS = [
   "nature-mountain",
   "nature-wave",
   "nature-raindrops",
+  "person-child-school",
+  "person-child-play",
+  "person-child-outdoor",
+  "person-adult-daily",
+  "person-adult-work",
+  "person-adult-active",
+  "animal-pet",
+  "animal-forest",
+  "animal-farm",
 ] as const;
 
 export const STICKER_VARIANTS = ["plain", "airy", "patterned", "detailed"] as const;
@@ -259,7 +278,26 @@ export function instantiateDrawingPreset(preset: DrawingPreset, center: Point): 
   }));
 }
 
-export function createEmptyDrawing(): DrawingDocument {
+export function mergeDrawingPresets(...libraries: readonly DrawingPreset[][]): DrawingPreset[] {
+  const merged: DrawingPreset[] = [];
+  const ids = new Set<string>();
+  let elementCount = 0;
+  for (const library of libraries) {
+    for (const preset of library) {
+      if (
+        ids.has(preset.id)
+        || merged.length >= MAX_DRAWING_PRESETS
+        || elementCount + preset.elements.length > MAX_DRAWING_ELEMENTS
+      ) continue;
+      merged.push(structuredClone(preset));
+      ids.add(preset.id);
+      elementCount += preset.elements.length;
+    }
+  }
+  return merged;
+}
+
+export function createEmptyDrawing(presets: DrawingPreset[] = []): DrawingDocument {
   const now = new Date().toISOString();
   return {
     schemaVersion: DRAWING_SCHEMA_VERSION,
@@ -270,7 +308,7 @@ export function createEmptyDrawing(): DrawingDocument {
     updatedAt: now,
     viewport: { x: 0, y: 0, zoom: 1 },
     elements: [],
-    presets: [],
+    presets: mergeDrawingPresets(presets),
   };
 }
 

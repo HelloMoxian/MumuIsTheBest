@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build scalable, fillable drawing stickers from generated 4x3 line-art atlases."""
+"""Build scalable, fillable drawing stickers from generated line-art atlases."""
 
 from __future__ import annotations
 
@@ -26,6 +26,38 @@ def styled_ids(base_ids: list[str]) -> list[str]:
 
 
 THEMES = [
+    {
+        "atlas": "number-rounded",
+        "group": "数字",
+        "columns": 5,
+        "rows": 2,
+        "ids": [f"digit-{digit}" for digit in range(10)],
+        "labels": [f"{digit} · 圆润" for digit in range(10)],
+    },
+    {
+        "atlas": "number-block",
+        "group": "数字",
+        "columns": 5,
+        "rows": 2,
+        "ids": [f"digit-{digit}-airy" for digit in range(10)],
+        "labels": [f"{digit} · 方正" for digit in range(10)],
+    },
+    {
+        "atlas": "number-serif",
+        "group": "数字",
+        "columns": 5,
+        "rows": 2,
+        "ids": [f"digit-{digit}-patterned" for digit in range(10)],
+        "labels": [f"{digit} · 书本" for digit in range(10)],
+    },
+    {
+        "atlas": "number-chalk",
+        "group": "数字",
+        "columns": 5,
+        "rows": 2,
+        "ids": [f"digit-{digit}-detailed" for digit in range(10)],
+        "labels": [f"{digit} · 手写" for digit in range(10)],
+    },
     {
         "atlas": "leaf",
         "group": "树叶",
@@ -115,6 +147,26 @@ THEMES = [
         "group": "自然",
         "ids": styled_ids(["nature-mountain", "nature-wave", "nature-raindrops"]),
         "labels": ["山峰", "浪花", "雨滴", "火山", "河流", "瀑布", "岩石", "草丛", "湖泊", "沙丘", "峡谷", "山洞"],
+    },
+    {
+        "atlas": "child",
+        "group": "小孩",
+        "ids": styled_ids(["person-child-school", "person-child-play", "person-child-outdoor"]),
+        "labels": ["背书包的小孩", "上学的小孩", "奔跑的小孩", "跳绳的小孩", "阅读的小孩", "踢球的小孩", "静坐的小孩", "挥手的小孩", "雨衣小孩", "冬装小孩", "跳舞的小孩", "种花的小孩"],
+    },
+    {
+        "atlas": "adult",
+        "group": "大人",
+        "autoKey": "border",
+        "ids": styled_ids(["person-adult-daily", "person-adult-work", "person-adult-active"]),
+        "labels": ["购物的大人", "办公的大人", "园艺的大人", "做饭的大人", "医生", "教师", "工匠", "骑车的大人", "散步的长者", "阅读的长者", "遛狗的大人", "运动的大人"],
+    },
+    {
+        "atlas": "animal",
+        "group": "小动物",
+        "autoKey": "border",
+        "ids": styled_ids(["animal-pet", "animal-forest", "animal-farm"]),
+        "labels": ["小猫", "小狗", "小兔", "松鼠", "小狐狸", "小鹿", "小羊", "小鸭", "小鸡", "小猪", "小乌龟", "小刺猬"],
     },
 ]
 
@@ -330,10 +382,10 @@ def extract_theme(theme: dict[str, object], output_dir: Path) -> Path:
         "python3", str(EXTRACTOR),
         "--input", str(ATLAS_ROOT / f"{atlas_name}.atlas.png"),
         "--output-dir", str(theme_dir),
-        "--columns", "4",
-        "--rows", "3",
+        "--columns", str(theme.get("columns", 4)),
+        "--rows", str(theme.get("rows", 3)),
         "--ids", ",".join(ids),
-        "--auto-key", "none",
+        "--auto-key", str(theme.get("autoKey", "none")),
         "--key-color", "#00FF00",
         "--trim",
         "--padding", "6",
@@ -349,11 +401,12 @@ def validate_theme_metadata() -> None:
     for theme in THEMES:
         ids = list(theme["ids"])
         labels = list(theme["labels"])
-        if len(ids) != 12 or len(labels) != 12:
-            raise ValueError(f"{theme['atlas']} must contain exactly 12 ids and labels")
+        expected = int(theme.get("columns", 4)) * int(theme.get("rows", 3))
+        if len(ids) != expected or len(labels) != expected:
+            raise ValueError(f"{theme['atlas']} must contain exactly {expected} ids and labels")
         all_ids.extend(ids)
-    if len(all_ids) != 180 or len(set(all_ids)) != 180:
-        raise ValueError("sticker ids must contain 180 unique values")
+    if len(all_ids) != 256 or len(set(all_ids)) != 256:
+        raise ValueError("sticker ids must contain 256 unique values")
 
 
 def main() -> int:

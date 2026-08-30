@@ -19,6 +19,44 @@ async function createTestApp(dataDirectory: string) {
   return app;
 }
 
+function drawingShape(id: string) {
+  return {
+    id,
+    type: "shape",
+    shape: "circle",
+    x: 12,
+    y: 24,
+    width: 120,
+    height: 120,
+    rotation: 0,
+    stroke: "#171536",
+    strokeWidth: 4,
+    fill: "#ffffff",
+  };
+}
+
+function drawingPayload(elements = [drawingShape("shape-1")]) {
+  const now = new Date().toISOString();
+  return {
+    schemaVersion: 2,
+    id: "drawing-test",
+    title: "测试画布",
+    author: "",
+    createdAt: now,
+    updatedAt: now,
+    viewport: { x: 320, y: 240, zoom: 1.25 },
+    elements,
+    presets: [{
+      id: "preset-1",
+      name: "两个圆",
+      createdAt: now,
+      width: 260,
+      height: 120,
+      elements: [drawingShape("preset-shape-1"), { ...drawingShape("preset-shape-2"), x: 140 }],
+    }],
+  };
+}
+
 describe("persistent user data API", () => {
   it("stores chemistry state in a private, versioned file", async () => {
     const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-persistent-data-"));
@@ -182,6 +220,55 @@ describe("persistent user data API", () => {
         },
       });
       assert.equal(duplicate.statusCode, 400);
+    } finally {
+      await app.close();
+    }
+  });
+
+  it("restores a validated drawing canvas and permanent preset library", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-drawing-studio-"));
+    cleanupPaths.push(dataDirectory);
+    const app = await createTestApp(dataDirectory);
+    try {
+      const empty = await app.inject({
+        method: "GET",
+        url: "/api/persistent-data/drawing-studio",
+      });
+      assert.equal(empty.statusCode, 200);
+      assert.deepEqual(empty.json(), { state: null });
+
+      const payload = drawingPayload();
+      const saved = await app.inject({
+        method: "PUT",
+        url: "/api/persistent-data/drawing-studio",
+        payload: { payload },
+      });
+      assert.equal(saved.statusCode, 200);
+
+      const destination = resolve(dataDirectory, "creative", "drawing-studio-state.json");
+      assert.equal((await stat(destination)).mode & 0o777, 0o600);
+      const stored = JSON.parse(await readFile(destination, "utf8")) as {
+        stableId: string;
+        payload: unknown;
+      };
+      assert.equal(stored.stableId, "drawing-studio");
+      assert.deepEqual(stored.payload, payload);
+
+      const duplicate = await app.inject({
+        method: "PUT",
+        url: "/api/persistent-data/drawing-studio",
+        payload: { payload: drawingPayload([drawingShape("same"), drawingShape("same")]) },
+      });
+      assert.equal(duplicate.statusCode, 400);
+
+      const tooMany = await app.inject({
+        method: "PUT",
+        url: "/api/persistent-data/drawing-studio",
+        payload: {
+          payload: drawingPayload(Array.from({ length: 1_001 }, (_, index) => drawingShape(`shape-${index}`))),
+        },
+      });
+      assert.equal(tooMany.statusCode, 400);
     } finally {
       await app.close();
     }

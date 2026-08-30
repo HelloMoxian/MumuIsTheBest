@@ -80,6 +80,18 @@
   font: 900 17px/1.2 var(--font-display);
 }
 
+.drawing-document-name small {
+  margin-top: 3px;
+  color: var(--ink-secondary);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.drawing-document-name small.is-saving,
+.drawing-document-name small.is-loading { color: var(--cyan-300); }
+.drawing-document-name small.is-saved { color: #79ecc0; }
+.drawing-document-name small.is-error { color: #ffc46b; }
+
 .drawing-top-actions {
   display: flex;
   min-width: 0;
@@ -127,6 +139,31 @@
   min-height: 560px;
   gap: 12px;
   padding: 12px;
+}
+
+.drawing-restore-overlay {
+  position: absolute;
+  z-index: 40;
+  inset: 12px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  border: 1px solid rgba(89,231,255,.3);
+  border-radius: 24px;
+  color: var(--ink-secondary);
+  background: rgba(11, 10, 38, .88);
+  text-align: center;
+  backdrop-filter: blur(16px);
+}
+
+.drawing-restore-overlay span { color: var(--cyan-300); font-size: 38px; animation: drawing-restore-pulse 1.1s ease-in-out infinite alternate; }
+.drawing-restore-overlay strong { color: white; font: 950 23px/1.2 var(--font-display); }
+.drawing-restore-overlay small { font-size: 14px; font-weight: 750; }
+
+@keyframes drawing-restore-pulse {
+  from { opacity: .55; transform: scale(.88); }
+  to { opacity: 1; transform: scale(1.08); }
 }
 
 .drawing-stage {

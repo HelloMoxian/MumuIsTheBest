@@ -7,6 +7,7 @@ import { z } from "zod";
 const stateIdSchema = z.enum([
   "chemistry-reaction-furnace",
   "chemistry-molecule-factory",
+  "drawing-studio",
   "experience-preferences",
   "nature-rock-minerals",
 ]);
@@ -81,6 +82,106 @@ const moleculeFactoryPayloadSchema = z.object({
 const experiencePreferencesPayloadSchema = z.object({
   interfaceMode: z.enum(["zh", "en", "bilingual"]),
   readAloudMode: z.enum(["none", "zh", "en", "bilingual"]),
+});
+
+const drawingColorSchema = z.string().regex(/^#[0-9a-f]{6}$/i);
+const drawingElementIdSchema = z.string().trim().min(1).max(80);
+const drawingCoordinateSchema = z.number().finite().min(-1_000_000).max(1_000_000);
+const drawingColorMapSchema = z.record(
+  z.string().trim().min(1).max(80),
+  drawingColorSchema,
+).refine((colors) => Object.keys(colors).length <= 64, "涂色区域过多。");
+const drawingBaseElementSchema = z.object({
+  id: drawingElementIdSchema,
+  x: drawingCoordinateSchema,
+  y: drawingCoordinateSchema,
+  width: z.number().finite().min(1).max(10_000),
+  height: z.number().finite().min(1).max(10_000),
+  rotation: z.number().finite().min(-3_600).max(3_600),
+  stroke: drawingColorSchema,
+  strokeWidth: z.number().finite().min(1).max(80),
+  groupId: drawingElementIdSchema.optional(),
+});
+const drawingElementSchema = z.discriminatedUnion("type", [
+  drawingBaseElementSchema.extend({
+    type: z.literal("shape"),
+    shape: z.enum([
+      "circle",
+      "ellipse",
+      "semicircle",
+      "triangle",
+      "square",
+      "rectangle",
+      "rounded-rectangle",
+      "trapezoid",
+      "parallelogram",
+      "star",
+      "heart",
+    ]),
+    fill: drawingColorSchema,
+  }),
+  drawingBaseElementSchema.extend({
+    type: z.literal("solid"),
+    solid: z.enum(["cube", "cuboid", "sphere", "cylinder", "cone", "triangular-pyramid"]),
+    yaw: z.number().finite().min(-75).max(75),
+    pitch: z.number().finite().min(-60).max(60),
+    depth: z.number().finite().min(10).max(180),
+    faceFills: drawingColorMapSchema,
+  }),
+  drawingBaseElementSchema.extend({
+    type: z.literal("sticker"),
+    sticker: z.string().regex(/^[a-z0-9-]{1,100}$/),
+    mirrored: z.boolean().default(false),
+    regionFills: drawingColorMapSchema,
+  }),
+  drawingBaseElementSchema.extend({
+    type: z.literal("stroke"),
+    points: z.array(z.object({
+      x: drawingCoordinateSchema,
+      y: drawingCoordinateSchema,
+    })).min(2).max(2_000),
+    lineStyle: z.enum(["smooth", "sharp", "dashed"]),
+    smoothing: z.boolean(),
+  }),
+]);
+
+function drawingElementsHaveUniqueIds(elements: readonly { id: string }[]) {
+  return hasUniqueValues(elements.map((element) => element.id));
+}
+
+const drawingPresetSchema = z.object({
+  id: drawingElementIdSchema,
+  name: z.string().trim().min(1).max(40),
+  createdAt: z.string().datetime(),
+  width: z.number().finite().min(1).max(10_000),
+  height: z.number().finite().min(1).max(10_000),
+  elements: z.array(drawingElementSchema).min(2).max(100),
+}).refine((preset) => drawingElementsHaveUniqueIds(preset.elements), "预制件图元 ID 不能重复。");
+
+const drawingStudioPayloadSchema = z.object({
+  schemaVersion: z.literal(2),
+  id: drawingElementIdSchema,
+  title: z.string().trim().min(1).max(80),
+  author: z.string().max(80),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  viewport: z.object({
+    x: z.number().finite().min(-10_000_000).max(10_000_000),
+    y: z.number().finite().min(-10_000_000).max(10_000_000),
+    zoom: z.number().finite().min(0.25).max(4),
+  }),
+  elements: z.array(drawingElementSchema).max(1_000),
+  presets: z.array(drawingPresetSchema).max(60),
+}).superRefine((payload, context) => {
+  if (!drawingElementsHaveUniqueIds(payload.elements)) {
+    context.addIssue({ code: "custom", message: "画布图元 ID 不能重复。" });
+  }
+  if (!hasUniqueValues(payload.presets.map((preset) => preset.id))) {
+    context.addIssue({ code: "custom", message: "预制件 ID 不能重复。" });
+  }
+  if (payload.presets.reduce((total, preset) => total + preset.elements.length, 0) > 1_000) {
+    context.addIssue({ code: "custom", message: "预制件图元总数不能超过 1000。" });
+  }
 });
 
 const researchAttributeSchema = z.enum([
@@ -178,6 +279,10 @@ const definitions: Record<StateId, { relativePath: string; payloadSchema: z.ZodT
   "chemistry-molecule-factory": {
     relativePath: "learning/chemistry/molecule-factory-state.json",
     payloadSchema: moleculeFactoryPayloadSchema,
+  },
+  "drawing-studio": {
+    relativePath: "creative/drawing-studio-state.json",
+    payloadSchema: drawingStudioPayloadSchema,
   },
   "experience-preferences": {
     relativePath: "preferences/experience.json",

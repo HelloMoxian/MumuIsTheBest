@@ -9,8 +9,10 @@ import {
   STICKER_VARIANTS,
   clampZoom,
   createDrawingPreset,
+  createEmptyDrawing,
   elementIdsInSelection,
   instantiateDrawingPreset,
+  mergeDrawingPresets,
   parseDrawingDocument,
   screenPointToWorld,
   zoomViewportAt,
@@ -75,18 +77,22 @@ test("accepts a valid empty or populated drawing document", () => {
   assert.equal(populated.elements[0]?.type, "shape");
 });
 
-test("provides twelve stickers in every theme and accepts every generated sticker kind", () => {
+test("provides number styles plus twelve distinct stickers in every illustrated theme", () => {
   const themes = new Map<string, number>();
   for (const option of STICKER_OPTIONS) {
     themes.set(option.group, (themes.get(option.group) ?? 0) + 1);
   }
 
-  assert.equal(themes.size, 15);
-  assert.deepEqual([...themes.values()], Array.from({ length: 15 }, () => 12));
-  assert.equal(STICKER_BASE_KINDS.length, 45);
+  assert.equal(themes.size, 19);
+  assert.equal(themes.get("数字"), 40);
+  assert.deepEqual(
+    [...themes.entries()].filter(([group]) => group !== "数字").map(([, count]) => count),
+    Array.from({ length: 18 }, () => 12),
+  );
+  assert.equal(STICKER_BASE_KINDS.length, 64);
   assert.equal(STICKER_VARIANTS.length, 4);
-  assert.equal(STICKER_KINDS.length, 180);
-  assert.equal(new Set(STICKER_KINDS).size, 180);
+  assert.equal(STICKER_KINDS.length, 256);
+  assert.equal(new Set(STICKER_KINDS).size, 256);
   assert.deepEqual(
     STICKER_OPTIONS.map((option) => option.id).sort(),
     [...STICKER_KINDS].sort(),
@@ -99,7 +105,7 @@ test("provides twelve stickers in every theme and accepts every generated sticke
     mirrored: false,
     regionFills: {},
   }));
-  assert.equal(parseDrawingDocument(makeDocument(stickerElements)).elements.length, 180);
+  assert.equal(parseDrawingDocument(makeDocument(stickerElements)).elements.length, 256);
 });
 
 test("preserves sticker mirroring and defaults older stickers to their original direction", () => {
@@ -155,6 +161,18 @@ test("normalizes a multi-element preset and instantiates it as one movable group
   assert.ok(instances[0]?.groupId);
   assert.equal(instances[0]?.groupId, instances[1]?.groupId);
   assert.notEqual(instances[0]?.id, preset.elements[0]?.id);
+});
+
+test("keeps the permanent preset library when a new canvas is created or libraries are merged", () => {
+  const preset = createDrawingPreset("花园", [makeShape("left"), { ...makeShape("right"), x: 180 }]);
+  const newCanvas = createEmptyDrawing([preset]);
+  const importedPreset = { ...preset, id: "imported-preset", name: "小屋" };
+  const merged = mergeDrawingPresets(newCanvas.presets, [preset, importedPreset]);
+
+  assert.equal(newCanvas.elements.length, 0);
+  assert.equal(newCanvas.presets.length, 1);
+  assert.notEqual(newCanvas.presets[0], preset);
+  assert.deepEqual(merged.map((candidate) => candidate.name), ["花园", "小屋"]);
 });
 
 test("rejects unsupported versions, duplicate ids, invalid colors and too many elements", () => {

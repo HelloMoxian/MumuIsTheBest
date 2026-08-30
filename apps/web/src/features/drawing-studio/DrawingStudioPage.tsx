@@ -29,6 +29,7 @@ import {
   getElementsBounds,
   instantiateDrawingPreset,
   makeHistoryNode,
+  mergeDrawingPresets,
   parseDrawingDocument,
   screenPointToWorld,
   selectionBounds,
@@ -47,10 +48,16 @@ import {
   type StrokeElement,
   type Viewport,
 } from "./logic";
+import {
+  loadPersistentData,
+  queuePersistentDataWrite,
+  savePersistentData,
+} from "../../shared/persistent-data";
 import "./drawing-studio.css";
 
 type ToolId = "select" | "pan" | "shape" | "solid" | "sticker" | "preset" | "brush" | "eraser" | "fill";
 type DrawerId = "history" | "works" | "author" | null;
+type AutoSaveStatus = "loading" | "saving" | "saved" | "error";
 type Gesture =
   | { type: "pan"; pointerId: number; start: Point; viewport: Viewport }
   | { type: "move"; pointerId: number; startWorld: Point; elements: DrawingElement[]; moved: boolean }
@@ -120,6 +127,25 @@ const INITIAL_GROUPS = {
   sticker: "树叶",
 };
 
+const DRAWING_STUDIO_STATE_ID = "drawing-studio";
+const AUTO_SAVE_DELAY_MS = 800;
+
+function parsePersistentDrawing(value: unknown): DrawingDocument | undefined {
+  try {
+    return parseDrawingDocument(value);
+  } catch {
+    return undefined;
+  }
+}
+
+function drawingSnapshot(document: DrawingDocument, viewport: Viewport): DrawingDocument {
+  return {
+    ...cloneDocument(document),
+    viewport: { ...viewport },
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 function formatTime(value: string) {
   return new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date(value));
 }
@@ -175,6 +201,9 @@ export function DrawingStudioPage() {
   const [savedWorks, setSavedWorks] = useState<DrawingDocument[]>([]);
   const [titleDraft, setTitleDraft] = useState(document.title);
   const [authorDraft, setAuthorDraft] = useState(document.author);
+  const [persistenceReady, setPersistenceReady] = useState(false);
+  const [persistenceEnabled, setPersistenceEnabled] = useState(true);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<AutoSaveStatus>("loading");
 
   const stageRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -182,9 +211,14 @@ export function DrawingStudioPage() {
   const documentRef = useRef(document);
   const viewportRef = useRef(viewport);
   const spacePressedRef = useRef(false);
+  const persistenceReadyRef = useRef(persistenceReady);
+  const persistenceEnabledRef = useRef(persistenceEnabled);
+  const autoSaveRevisionRef = useRef(0);
 
   documentRef.current = document;
   viewportRef.current = viewport;
+  persistenceReadyRef.current = persistenceReady;
+  persistenceEnabledRef.current = persistenceEnabled;
 
   const selectedElements = useMemo(() => {
     const ids = new Set(selectedIds);
@@ -585,6 +619,76 @@ export function DrawingStudioPage() {
   }, []);
 
   useEffect(() => {
+    let active = true;
+    void loadPersistentData({
+      stableId: DRAWING_STUDIO_STATE_ID,
+      parsePayload: parsePersistentDrawing,
+    }).then((stored) => {
+      if (!active) return;
+      if (stored) {
+        const restored = stored.payload;
+        setDocument(restored);
+        setViewport(restored.viewport);
+        setHistory([makeHistoryNode("恢复上次画布", restored.elements, restored.presets)]);
+        setHistoryIndex(0);
+        setSelectedIds([]);
+        setTitleDraft(restored.title);
+        setAuthorDraft(restored.author);
+        setMessage("已经恢复上次离开时的画布和预制件。");
+      }
+      setAutoSaveStatus("saved");
+      setPersistenceReady(true);
+    }).catch(() => {
+      if (!active) return;
+      setPersistenceEnabled(false);
+      setPersistenceReady(true);
+      setAutoSaveStatus("error");
+      setMessage("本机自动保存暂时不可用，但仍然可以继续画画并手动下载作品。");
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!persistenceReady || !persistenceEnabled) return;
+    const revision = ++autoSaveRevisionRef.current;
+    const snapshot = drawingSnapshot(document, viewport);
+    setAutoSaveStatus("saving");
+    const timer = window.setTimeout(() => {
+      void queuePersistentDataWrite(
+        DRAWING_STUDIO_STATE_ID,
+        snapshot,
+        parsePersistentDrawing,
+      ).then(() => {
+        if (autoSaveRevisionRef.current === revision) setAutoSaveStatus("saved");
+      }).catch(() => {
+        if (autoSaveRevisionRef.current === revision) setAutoSaveStatus("error");
+      });
+    }, AUTO_SAVE_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [document, persistenceEnabled, persistenceReady, viewport]);
+
+  useEffect(() => {
+    const flushLatestDrawing = () => {
+      if (!persistenceReadyRef.current || !persistenceEnabledRef.current) return;
+      const snapshot = drawingSnapshot(documentRef.current, viewportRef.current);
+      const keepAliveFetch: typeof fetch = (input, init) => fetch(input, { ...init, keepalive: true });
+      void savePersistentData(
+        DRAWING_STUDIO_STATE_ID,
+        snapshot,
+        parsePersistentDrawing,
+        keepAliveFetch,
+      ).catch(() => undefined);
+    };
+    window.addEventListener("pagehide", flushLatestDrawing);
+    return () => {
+      window.removeEventListener("pagehide", flushLatestDrawing);
+      flushLatestDrawing();
+    };
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       const editingText = target?.matches("input, textarea, [contenteditable='true']");
@@ -639,25 +743,30 @@ export function DrawingStudioPage() {
     }
     try {
       const parsed = parseDrawingDocument(JSON.parse(await file.text()));
-      setDocument(parsed);
-      setViewport(parsed.viewport);
-      const node = makeHistoryNode("加载作品", parsed.elements, parsed.presets);
+      const loaded = {
+        ...parsed,
+        presets: mergeDrawingPresets(documentRef.current.presets, parsed.presets),
+        updatedAt: new Date().toISOString(),
+      };
+      setDocument(loaded);
+      setViewport(loaded.viewport);
+      const node = makeHistoryNode("加载作品", loaded.elements, loaded.presets);
       setHistory([node]);
       setHistoryIndex(0);
       setSelectedIds([]);
-      setTitleDraft(parsed.title);
-      setAuthorDraft(parsed.author);
-      setMessage(`已经打开“${parsed.title}”`);
+      setTitleDraft(loaded.title);
+      setAuthorDraft(loaded.author);
+      setMessage(`已经打开“${loaded.title}”，原有预制件也继续保留。`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "这份作品暂时不能打开。");
     }
   };
 
   const newDrawing = () => {
-    if ((documentRef.current.elements.length > 0 || documentRef.current.presets.length > 0) && !window.confirm("确定打开新画布吗？没有保存的内容和预制件不会带到新画布。")) return;
-    const next = createEmptyDrawing();
+    if (documentRef.current.elements.length > 0 && !window.confirm("确定打开新画布吗？当前画布内容会被清空，预制件会继续保留。")) return;
+    const next = createEmptyDrawing(documentRef.current.presets);
     setDocument(next);
-    setHistory([makeHistoryNode("打开空白画布", [], [])]);
+    setHistory([makeHistoryNode("打开空白画布", [], next.presets)]);
     setHistoryIndex(0);
     setSelectedIds([]);
     setTitleDraft(next.title);
@@ -740,6 +849,9 @@ export function DrawingStudioPage() {
         <div className="drawing-document-name">
           <span>正在创作</span>
           <strong>{document.title}</strong>
+          <small className={`is-${autoSaveStatus}`} aria-live="polite">
+            {autoSaveStatus === "loading" ? "正在恢复…" : autoSaveStatus === "saving" ? "自动保存中…" : autoSaveStatus === "saved" ? "已自动保存" : "自动保存暂停"}
+          </small>
         </div>
         <nav className="drawing-top-actions" aria-label="作品功能">
           <button className="drawing-top-action" type="button" onClick={newDrawing}><span aria-hidden="true">＋</span>新画布</button>
@@ -756,7 +868,14 @@ export function DrawingStudioPage() {
         <input ref={fileInputRef} className="drawing-file-input" type="file" accept=".json,.mumu-drawing.json,application/json" onChange={loadWork} />
       </header>
 
-      <main className="drawing-workspace">
+      <main className="drawing-workspace" aria-busy={!persistenceReady}>
+        {!persistenceReady && (
+          <div className="drawing-restore-overlay" role="status">
+            <span aria-hidden="true">✦</span>
+            <strong>正在打开上次画布</strong>
+            <small>画布和预制件马上回来</small>
+          </div>
+        )}
         <section
           ref={stageRef}
           className={`drawing-stage tool-${tool}`}
@@ -974,7 +1093,7 @@ export function DrawingStudioPage() {
               savedWorks.length > 0 ? (
                 <div className="drawing-works-list">
                   {savedWorks.map((work) => (
-                    <article key={`${work.id}-${work.updatedAt}`}><div><strong>{work.title}</strong><small>{work.elements.length} 个图元 · {formatTime(work.updatedAt)}</small></div><button type="button" onClick={() => { setDocument(cloneDocument(work)); setViewport(work.viewport); setHistory([makeHistoryNode("打开本次快照", work.elements, work.presets)]); setHistoryIndex(0); setSelectedIds([]); setDrawer(null); }}>打开</button></article>
+                    <article key={`${work.id}-${work.updatedAt}`}><div><strong>{work.title}</strong><small>{work.elements.length} 个图元 · {formatTime(work.updatedAt)}</small></div><button type="button" onClick={() => { const opened = { ...cloneDocument(work), presets: mergeDrawingPresets(documentRef.current.presets, work.presets), updatedAt: new Date().toISOString() }; setDocument(opened); setViewport(opened.viewport); setHistory([makeHistoryNode("打开本次快照", opened.elements, opened.presets)]); setHistoryIndex(0); setSelectedIds([]); setDrawer(null); }}>打开</button></article>
                   ))}
                 </div>
               ) : <div className="drawing-drawer-empty"><span aria-hidden="true">▦</span><strong>还没有保存过作品</strong><p>点击顶部“保存”，这里会出现本次打开页面期间的作品快照。</p></div>
@@ -983,7 +1102,7 @@ export function DrawingStudioPage() {
               <form className="drawing-author-form" onSubmit={(event) => { event.preventDefault(); saveAuthor(); }}>
                 <label><span>作品名称</span><input value={titleDraft} maxLength={80} onChange={(event) => setTitleDraft(event.target.value)} /></label>
                 <label><span>作者（可以不填）</span><input value={authorDraft} maxLength={80} onChange={(event) => setAuthorDraft(event.target.value)} /></label>
-                <p>这些信息只写进你主动保存的作品文件，不会偷偷保存在浏览器里。</p>
+                <p>这些信息会和画布一起保存在本机，也会写进你主动下载的作品文件。</p>
                 <button className="drawing-author-save" type="submit">保存作品信息</button>
               </form>
             )}
