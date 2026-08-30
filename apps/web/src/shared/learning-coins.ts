@@ -74,6 +74,13 @@ export type LearningCoinAward = {
   criticalHit: boolean;
   rewardCoins: number;
   source: LearningCoinSource;
+  autoPlayQuota?: {
+    batchId: string;
+    limit: 20;
+    awardedCoins: number;
+    remainingCoins: number;
+    exhausted: boolean;
+  };
   progress: {
     coinBalance: number;
     updatedAt: string;
@@ -83,6 +90,7 @@ export type LearningCoinAward = {
 export type LearningCoinAwardOptions = {
   sessionId?: string;
   rewardKey?: LearningRewardKey;
+  autoPlayBatchId?: string;
 };
 
 export const LEARNING_COINS_CHANGED_EVENT = "mumu:learning-coins-changed";
@@ -139,7 +147,7 @@ export function awardLearningCoins(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ eventId, source, ...options }),
   }).then((award) => {
-    if (typeof window !== "undefined" && !award.alreadyAwarded) {
+    if (typeof window !== "undefined" && !award.alreadyAwarded && award.rewardCoins > 0) {
       window.dispatchEvent(new CustomEvent(LEARNING_COINS_AWARDED_EVENT, { detail: award }));
     }
     return award;

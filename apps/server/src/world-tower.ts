@@ -203,6 +203,15 @@ const rewardSessionSchema = z.object({
   createdAt: z.string().datetime(),
 });
 
+const autoPlayRewardBatchSchema = z.object({
+  batchId: z.string().uuid(),
+  source: z.literal("english:echo-island"),
+  limit: z.literal(20),
+  awardedCoins: z.number().int().min(0).max(20),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
 const progressSchema = z.object({
   schemaVersion: z.literal(1),
   id: z.string().uuid(),
@@ -215,6 +224,7 @@ const progressSchema = z.object({
   resourceInventory: z.record(z.string(), z.number().int().min(0).max(100_000)),
   appliedGrantIds: z.array(z.string().min(1).max(160)).max(100).default([]),
   rewardSessions: z.array(rewardSessionSchema).max(20_000).default([]),
+  autoPlayRewardBatches: z.array(autoPlayRewardBatchSchema).max(20_000).default([]),
   transactions: z.array(transactionSchema).max(20_000),
 }).superRefine((progress, context) => {
   if (new Set(progress.unlockedNodeIds).size !== progress.unlockedNodeIds.length) {
@@ -249,6 +259,7 @@ const learningRewardSchema = z.object({
   eventId: z.string().uuid(),
   source: learningRewardSourceSchema,
   sessionId: z.string().uuid().optional(),
+  autoPlayBatchId: z.string().uuid().optional(),
   rewardKey: z
     .enum([
       "easy",
@@ -263,6 +274,14 @@ const learningRewardSchema = z.object({
       "100000",
     ])
     .optional(),
+}).superRefine((reward, context) => {
+  if (reward.autoPlayBatchId && reward.source !== "english:echo-island") {
+    context.addIssue({
+      code: "custom",
+      path: ["autoPlayBatchId"],
+      message: "连续播放奖励批次只适用于英语回声岛。",
+    });
+  }
 });
 
 const rewardSessionInputSchema = z.object({
@@ -292,6 +311,7 @@ type GraphNode = z.infer<typeof graphNodeSchema>;
 type LearningRewardSource = z.infer<typeof learningRewardSourceSchema>;
 
 const LEARNING_COIN_RESET_GRANT_ID = "learning-coins-reset-to-zero-v1";
+export const ECHO_ISLAND_AUTO_PLAY_REWARD_LIMIT = 20;
 const LEARNING_REWARDS = {
   "math:add-subtract": 2,
   "math:cat-mouse-game": 20,
@@ -324,6 +344,14 @@ const PROMOTION_SOURCES = [
 
 export function echoIslandRewardMultiplier(random: () => number = Math.random): 1 | 5 {
   return random() < 0.15 ? 5 : 1;
+}
+
+export function cappedEchoIslandAutoPlayReward(
+  alreadyAwardedCoins: number,
+  proposedRewardCoins: number,
+) {
+  const remainingCoins = Math.max(0, ECHO_ISLAND_AUTO_PLAY_REWARD_LIMIT - alreadyAwardedCoins);
+  return Math.min(proposedRewardCoins, remainingCoins);
 }
 
 function promotionAt(time = Date.now()) {
@@ -615,6 +643,7 @@ export function registerWorldTowerApi(
       resourceInventory: {},
       appliedGrantIds: [LEARNING_COIN_RESET_GRANT_ID],
       rewardSessions: [],
+      autoPlayRewardBatches: [],
       transactions: [],
     };
   }
@@ -870,9 +899,38 @@ export function registerWorldTowerApi(
       let baseRewardCoins = 0;
       let multiplier: 1 | 3 | 5 = 1;
       let criticalHit = false;
+      let rewardCoins = 0;
+      let autoPlayQuota: {
+        batchId: string;
+        limit: number;
+        awardedCoins: number;
+        remainingCoins: number;
+        exhausted: boolean;
+      } | undefined;
       const progress = await updateProgress((current) => {
+        const autoPlayTargetId = parsed.data.autoPlayBatchId
+          ? `english:echo-island:auto:${parsed.data.autoPlayBatchId}`
+          : undefined;
+        const existingAutoPlayBatch = parsed.data.autoPlayBatchId
+          ? current.autoPlayRewardBatches.find(
+              (batch) => batch.batchId === parsed.data.autoPlayBatchId,
+            )
+          : undefined;
+        const autoPlayAwardedCoins = existingAutoPlayBatch?.awardedCoins ?? 0;
+        const setAutoPlayQuota = (awardedCoins: number) => {
+          if (!parsed.data.autoPlayBatchId) return;
+          const remainingCoins = Math.max(0, ECHO_ISLAND_AUTO_PLAY_REWARD_LIMIT - awardedCoins);
+          autoPlayQuota = {
+            batchId: parsed.data.autoPlayBatchId,
+            limit: ECHO_ISLAND_AUTO_PLAY_REWARD_LIMIT,
+            awardedCoins,
+            remainingCoins,
+            exhausted: remainingCoins === 0,
+          };
+        };
         if (current.transactions.some((transaction) => transaction.id === parsed.data.eventId)) {
           alreadyAwarded = true;
+          setAutoPlayQuota(autoPlayAwardedCoins);
           return current;
         }
         const session = parsed.data.sessionId
@@ -892,7 +950,12 @@ export function registerWorldTowerApi(
           multiplier = session?.multiplier ?? 1;
         }
         baseRewardCoins = rewardFor(parsed.data.source, parsed.data.rewardKey);
-        const rewardCoins = baseRewardCoins * multiplier;
+        const proposedRewardCoins = baseRewardCoins * multiplier;
+        rewardCoins = autoPlayTargetId
+          ? cappedEchoIslandAutoPlayReward(autoPlayAwardedCoins, proposedRewardCoins)
+          : proposedRewardCoins;
+        if (autoPlayTargetId && rewardCoins < proposedRewardCoins) criticalHit = false;
+        setAutoPlayQuota(autoPlayAwardedCoins + rewardCoins);
         const now = new Date().toISOString();
         const balanceAfter = current.coinBalance + rewardCoins;
         if (balanceAfter > 1_000_000_000) {
@@ -902,12 +965,27 @@ export function registerWorldTowerApi(
           ...current,
           updatedAt: now,
           coinBalance: balanceAfter,
+          autoPlayRewardBatches: parsed.data.autoPlayBatchId
+            ? [
+                ...current.autoPlayRewardBatches.filter(
+                  (batch) => batch.batchId !== parsed.data.autoPlayBatchId,
+                ),
+                {
+                  batchId: parsed.data.autoPlayBatchId,
+                  source: "english:echo-island" as const,
+                  limit: 20 as const,
+                  awardedCoins: autoPlayAwardedCoins + rewardCoins,
+                  createdAt: existingAutoPlayBatch?.createdAt ?? now,
+                  updatedAt: now,
+                },
+              ].slice(-20_000)
+            : current.autoPlayRewardBatches,
           transactions: [...current.transactions, {
             id: parsed.data.eventId,
             kind: "learning-reward" as const,
-            targetId: parsed.data.rewardKey
+            targetId: autoPlayTargetId ?? (parsed.data.rewardKey
               ? `${parsed.data.source}:${parsed.data.rewardKey}`
-              : parsed.data.source,
+              : parsed.data.source),
             quantity: rewardCoins,
             coinDelta: rewardCoins,
             balanceAfter,
@@ -920,8 +998,9 @@ export function registerWorldTowerApi(
         baseRewardCoins: alreadyAwarded ? 0 : baseRewardCoins,
         multiplier,
         criticalHit: alreadyAwarded ? false : criticalHit,
-        rewardCoins: alreadyAwarded ? 0 : baseRewardCoins * multiplier,
+        rewardCoins: alreadyAwarded ? 0 : rewardCoins,
         source: parsed.data.source,
+        ...(autoPlayQuota ? { autoPlayQuota } : {}),
         progress: publicProgress(progress),
       });
     } catch (error) {

@@ -18,6 +18,7 @@ import {
   startLearningRewardSession,
   type LearningRewardKey,
   type LearningCoinAward,
+  type LearningCoinAwardOptions,
   type LearningCoinBalance,
   type LearningCoinSource,
   type LearningRewardSession,
@@ -250,9 +251,17 @@ export function useLearningRewardSession(source: LearningCoinSource) {
     void ensureSession().catch(() => undefined);
   }, [ensureSession]);
 
-  const award = useCallback(async (rewardKey?: LearningRewardKey, eventId: string = crypto.randomUUID()) => {
+  const award = useCallback(async (
+    rewardKey?: LearningRewardKey,
+    eventId: string = crypto.randomUUID(),
+    options: Pick<LearningCoinAwardOptions, "autoPlayBatchId"> = {},
+  ) => {
     const lockedSession = await ensureSession();
-    return awardLearningCoins(source, eventId, { sessionId: lockedSession.id, rewardKey });
+    return awardLearningCoins(source, eventId, {
+      sessionId: lockedSession.id,
+      rewardKey,
+      ...options,
+    });
   }, [ensureSession, source]);
 
   return useMemo(() => ({ session, error, award }), [award, error, session]);

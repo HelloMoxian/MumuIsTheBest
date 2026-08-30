@@ -34,6 +34,26 @@ type PlaybackPhase =
   | "next-ready"
   | "saving";
 type ListFilter = "all" | "marked" | "mastered";
+type AutoPlayState = "off" | "running" | "stopping";
+type AutoPlayQuota = {
+  batchId: string;
+  limit: 20;
+  awardedCoins: number;
+  remainingCoins: number;
+  exhausted: boolean;
+};
+
+const AUTO_PLAY_REWARD_LIMIT = 20 as const;
+
+function createAutoPlayQuota(batchId = crypto.randomUUID()): AutoPlayQuota {
+  return {
+    batchId,
+    limit: AUTO_PLAY_REWARD_LIMIT,
+    awardedCoins: 0,
+    remainingCoins: AUTO_PLAY_REWARD_LIMIT,
+    exhausted: false,
+  };
+}
 
 function friendlyError(error: unknown, fallback: string) {
   return error instanceof Error ? error.message : fallback;
@@ -269,9 +289,14 @@ export function EnglishEchoIslandPage() {
   const [status, setStatus] = useState("正在准备真人录音…");
   const [error, setError] = useState<string | null>(null);
   const [criticalVisible, setCriticalVisible] = useState(false);
+  const [autoPlayState, setAutoPlayState] = useState<AutoPlayState>("off");
+  const [autoPlayQuota, setAutoPlayQuota] = useState<AutoPlayQuota | null>(null);
   const mainAudioRef = useRef<HTMLAudioElement | null>(null);
   const pendingCompletionIdRef = useRef<string | null>(null);
   const criticalTimerRef = useRef<number | null>(null);
+  const autoPlayEnabledRef = useRef(false);
+  const autoPlayBatchIdRef = useRef<string | null>(null);
+  const autoPlayRunRef = useRef<Promise<void> | null>(null);
   const reward = useLearningRewardSession("english:echo-island");
 
   useEffect(() => {
@@ -289,6 +314,7 @@ export function EnglishEchoIslandPage() {
   }, []);
 
   useEffect(() => () => {
+    autoPlayEnabledRef.current = false;
     mainAudioRef.current?.pause();
     if (criticalTimerRef.current !== null) window.clearTimeout(criticalTimerRef.current);
   }, []);
@@ -303,8 +329,42 @@ export function EnglishEchoIslandPage() {
     criticalTimerRef.current = window.setTimeout(() => setCriticalVisible(false), 2_400);
   };
 
-  const completeAndAdvance = async () => {
-    if (!catalog || !selection) return;
+  const playEnglish = async (activeSelection: EchoSelection) => {
+    setPhase("playing-english");
+    setStatus("正在播放英文，认真听它的声音和节奏。 ");
+    try {
+      await playAudio(mainAudioRef, activeSelection.sentence.audio.english);
+      setPhase("chinese-ready");
+      setStatus("英文听完啦，现在可以揭晓中文。 ");
+      return true;
+    } catch (playError) {
+      setError(friendlyError(playError, "英文录音暂时无法播放。"));
+      setPhase("english-ready");
+      return false;
+    }
+  };
+
+  const playChinese = async (activeSelection: EchoSelection) => {
+    setShowChinese(true);
+    setPhase("playing-chinese");
+    setStatus("正在播放中文，把意思和英文声音连起来。 ");
+    try {
+      await playAudio(mainAudioRef, activeSelection.sentence.audio.chinese);
+      setPhase("next-ready");
+      setStatus("中英文都听完啦，完成这句就能收下知识币。 ");
+      return true;
+    } catch (playError) {
+      setError(friendlyError(playError, "中文录音暂时无法播放。"));
+      setPhase("chinese-ready");
+      return false;
+    }
+  };
+
+  const completeAndAdvance = async (
+    activeCatalog: EchoCatalog,
+    activeSelection: EchoSelection,
+    autoPlayBatchId?: string,
+  ) => {
     setPhase("saving");
     setError(null);
     const eventId = pendingCompletionIdRef.current ?? crypto.randomUUID();
@@ -312,28 +372,49 @@ export function EnglishEchoIslandPage() {
     try {
       const completion = await recordEchoCompletion({
         eventId,
-        sentenceId: selection.sentence.id,
-        mode: selection.mode,
+        sentenceId: activeSelection.sentence.id,
+        mode: activeSelection.mode,
         completedAt: new Date().toISOString(),
       });
-      const award = await reward.award(undefined, eventId);
-      const nextCatalog = mergeEchoProgress(catalog, completion.progress);
+      const award = await reward.award(
+        undefined,
+        eventId,
+        autoPlayBatchId ? { autoPlayBatchId } : {},
+      );
+      if (
+        award.autoPlayQuota &&
+        autoPlayBatchIdRef.current === award.autoPlayQuota.batchId
+      ) {
+        setAutoPlayQuota(award.autoPlayQuota);
+      }
+      const nextCatalog = mergeEchoProgress(activeCatalog, completion.progress);
+      const nextSelection = selectNextEchoSentence(
+        nextCatalog,
+        completion.progress,
+        activeSelection.sentence.id,
+      );
       setCatalog(nextCatalog);
-      setSelection(selectNextEchoSentence(nextCatalog, completion.progress, selection.sentence.id));
+      setSelection(nextSelection);
       setShowChinese(false);
       setPhase("english-ready");
       pendingCompletionIdRef.current = null;
       if (award.criticalHit) {
         showCritical();
         setStatus("知识币暴击！这一句获得 5 个知识币。 ");
+      } else if (award.autoPlayQuota?.exhausted && award.rewardCoins === 0) {
+        setStatus("本轮 20 枚知识币已经收满，连续播放会继续。 ");
       } else if (completion.poolChange) {
         setStatus("这句已经学会啦！学习池已自动换入一条练习次数最低的新句子。 ");
+      } else if (award.autoPlayQuota) {
+        setStatus(`连续播放中，本轮已获得 ${award.autoPlayQuota.awardedCoins} / ${award.autoPlayQuota.limit} 枚知识币。`);
       } else {
-        setStatus(selection.mode === "review" ? "温习完成，回到当前学习池。 " : "完成一遍，获得 1 个知识币。 ");
+        setStatus(activeSelection.mode === "review" ? "温习完成，回到当前学习池。 " : "完成一遍，获得 1 个知识币。 ");
       }
+      return { catalog: nextCatalog, selection: nextSelection };
     } catch (saveError) {
       setError(friendlyError(saveError, "这次学习暂时无法保存，请再点一次。"));
       setPhase("next-ready");
+      return null;
     }
   };
 
@@ -342,36 +423,95 @@ export function EnglishEchoIslandPage() {
     browserTts.stop();
     setError(null);
     if (phase === "english-ready") {
-      setPhase("playing-english");
-      setStatus("正在播放英文，认真听它的声音和节奏。 ");
-      try {
-        await playAudio(mainAudioRef, selection.sentence.audio.english);
-        setPhase("chinese-ready");
-        setStatus("英文听完啦，现在可以揭晓中文。 ");
-      } catch (playError) {
-        setError(friendlyError(playError, "英文录音暂时无法播放。"));
-        setPhase("english-ready");
-      }
+      await playEnglish(selection);
       return;
     }
     if (phase === "chinese-ready") {
-      setShowChinese(true);
-      setPhase("playing-chinese");
-      setStatus("正在播放中文，把意思和英文声音连起来。 ");
-      try {
-        await playAudio(mainAudioRef, selection.sentence.audio.chinese);
-        setPhase("next-ready");
-        setStatus("中英文都听完啦，完成这句就能收下知识币。 ");
-      } catch (playError) {
-        setError(friendlyError(playError, "中文录音暂时无法播放。"));
-        setPhase("chinese-ready");
-      }
+      await playChinese(selection);
       return;
     }
-    if (phase === "next-ready") await completeAndAdvance();
+    if (phase === "next-ready") await completeAndAdvance(catalog, selection);
+  };
+
+  const runContinuousPlayback = async (
+    initialCatalog: EchoCatalog,
+    initialSelection: EchoSelection,
+    initialPhase: PlaybackPhase,
+  ) => {
+    let activeCatalog = initialCatalog;
+    let activeSelection = initialSelection;
+    let activePhase = initialPhase;
+    try {
+      while (autoPlayEnabledRef.current) {
+        if (activePhase === "english-ready") {
+          if (!await playEnglish(activeSelection)) break;
+          activePhase = "chinese-ready";
+        }
+        if (!autoPlayEnabledRef.current) break;
+        if (activePhase === "chinese-ready") {
+          if (!await playChinese(activeSelection)) break;
+          activePhase = "next-ready";
+        }
+        if (!autoPlayEnabledRef.current) break;
+        if (activePhase === "next-ready") {
+          const advanced = await completeAndAdvance(
+            activeCatalog,
+            activeSelection,
+            autoPlayBatchIdRef.current ?? undefined,
+          );
+          if (!advanced) break;
+          activeCatalog = advanced.catalog;
+          activeSelection = advanced.selection;
+          activePhase = "english-ready";
+        }
+      }
+    } finally {
+      autoPlayEnabledRef.current = false;
+      autoPlayRunRef.current = null;
+      setAutoPlayState("off");
+      setStatus((current) => current.includes("暂时")
+        ? current
+        : "连续播放已停止，可以手动继续当前步骤。 ");
+    }
+  };
+
+  const startContinuousPlayback = () => {
+    if (!catalog || !selection || autoPlayRunRef.current) return;
+    browserTts.stop();
+    setError(null);
+    let quota = autoPlayQuota;
+    if (!quota) {
+      quota = createAutoPlayQuota();
+      autoPlayBatchIdRef.current = quota.batchId;
+      setAutoPlayQuota(quota);
+    }
+    autoPlayBatchIdRef.current = quota.batchId;
+    autoPlayEnabledRef.current = true;
+    setAutoPlayState("running");
+    setStatus(quota.exhausted
+      ? "连续播放已开启；本轮额度已满，播放会继续但暂不增加知识币。"
+      : "连续播放已开启，英文和中文会自动接着播放。 ");
+    const run = runContinuousPlayback(catalog, selection, phase);
+    autoPlayRunRef.current = run;
+    void run;
+  };
+
+  const stopContinuousPlayback = () => {
+    autoPlayEnabledRef.current = false;
+    setAutoPlayState("stopping");
+    setStatus("会在当前这段真人录音自然结束后停止。 ");
+  };
+
+  const refreshAutoPlayQuota = () => {
+    const quota = createAutoPlayQuota();
+    autoPlayBatchIdRef.current = quota.batchId;
+    setAutoPlayQuota(quota);
+    setStatus("新一轮 20 枚知识币额度已准备好，连续播放没有停止。 ");
   };
 
   const isBusy = phase === "playing-english" || phase === "playing-chinese" || phase === "saving";
+  const autoPlayActive = autoPlayState !== "off";
+  const navigationLocked = isBusy || autoPlayActive;
   const currentCount = catalog && selection
     ? completionCount(catalog.progress, selection.sentence.id)
     : 0;
@@ -393,14 +533,14 @@ export function EnglishEchoIslandPage() {
     <div className="echo-page" data-skip-startup-greeting>
       <div className="echo-stars" aria-hidden="true" />
       <header className="echo-topbar">
-        <button type="button" className="echo-back" disabled={isBusy} onClick={() => { window.location.href = "/"; }}>
+        <button type="button" className="echo-back" disabled={navigationLocked} onClick={() => { window.location.href = "/"; }}>
           <span aria-hidden="true">←</span> 返回学习岛
         </button>
         <div className="echo-heading">
           <span className="echo-kicker">真人声音 · 听懂一整句</span>
           <h1>英语回声岛</h1>
         </div>
-        <button type="button" className="echo-library-launcher" disabled={isBusy} onClick={() => setLibraryOpen(true)}>
+        <button type="button" className="echo-library-launcher" disabled={navigationLocked} onClick={() => setLibraryOpen(true)}>
           <span aria-hidden="true">☷</span>
           <span><strong>全部句子</strong><small>{catalog.counts.sentences} 句</small></span>
         </button>
@@ -432,14 +572,46 @@ export function EnglishEchoIslandPage() {
             <b aria-hidden="true" />
             <span className={phase === "next-ready" || phase === "saving" ? "is-current" : ""}>3<i>下一句</i></span>
           </div>
+          <div className={`echo-autoplay-panel ${autoPlayActive ? "is-active" : ""}`}>
+            <button
+              type="button"
+              className="echo-autoplay-toggle"
+              aria-pressed={autoPlayActive}
+              disabled={autoPlayState === "stopping" || (autoPlayState === "off" && isBusy)}
+              onClick={autoPlayState === "running" ? stopContinuousPlayback : startContinuousPlayback}
+            >
+              <span aria-hidden="true">∞</span>
+              <span>
+                <strong>{autoPlayState === "running" ? "停止连续播放" : autoPlayState === "stopping" ? "正在结束本句…" : "连续自动播放"}</strong>
+                <small>{autoPlayState === "off" ? "英文、中文和下一句自动接着播放" : "每轮最多获得 20 枚知识币"}</small>
+              </span>
+            </button>
+            {autoPlayQuota && (
+              <div className={`echo-autoplay-quota ${autoPlayQuota.exhausted ? "is-exhausted" : ""}`}>
+                <div aria-live="polite">
+                  <span>本轮知识币</span>
+                  <strong>{autoPlayQuota.awardedCoins} / {autoPlayQuota.limit}</strong>
+                </div>
+                <progress max={autoPlayQuota.limit} value={autoPlayQuota.awardedCoins} aria-label={`本轮已获得 ${autoPlayQuota.awardedCoins} 枚，最多 ${autoPlayQuota.limit} 枚`} />
+                {autoPlayQuota.exhausted ? (
+                  <button type="button" onClick={refreshAutoPlayQuota}>继续获取知识币</button>
+                ) : (
+                  <small>还可以获得 {autoPlayQuota.remainingCoins} 枚</small>
+                )}
+              </div>
+            )}
+          </div>
           <button
             type="button"
             className={`echo-main-button phase-${phase}`}
-            disabled={isBusy}
+            disabled={isBusy || autoPlayActive}
             onClick={() => void handleMainAction()}
           >
             <span className="echo-play-symbol" aria-hidden="true">{phase === "next-ready" ? "→" : phase === "saving" ? "◌" : "▶"}</span>
-            <span><strong>{phaseLabel(phase)}</strong><small>{phaseHint(phase)}</small></span>
+            <span>
+              <strong>{autoPlayState === "running" ? "连续播放进行中" : autoPlayState === "stopping" ? "本句结束后停止" : phaseLabel(phase)}</strong>
+              <small>{autoPlayActive ? "当前步骤完成后会自动继续" : phaseHint(phase)}</small>
+            </span>
           </button>
           <p className="echo-status" aria-live="polite">{error ? <strong>{error}</strong> : status}</p>
         </section>

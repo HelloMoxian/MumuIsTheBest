@@ -96,7 +96,8 @@ type LearningRewardSource =
   | "math:arithmetic-battle"
   | "math:multiplication"
   | "math:find-number"
-  | "math:cat-mouse-game";
+  | "math:cat-mouse-game"
+  | "english:echo-island";
 type LearningRewardKey =
   | "easy"
   | "medium"
@@ -113,7 +114,7 @@ async function postLearningReward(
   baseUrl: string,
   source: LearningRewardSource,
   eventId: string = randomUUID(),
-  options: { sessionId?: string; rewardKey?: LearningRewardKey } = {},
+  options: { sessionId?: string; rewardKey?: LearningRewardKey; autoPlayBatchId?: string } = {},
 ) {
   return fetch(`${baseUrl}/api/world-tower/coins/earn`, {
     method: "POST",
@@ -497,6 +498,122 @@ describe("world tower API", () => {
     }
   });
 
+  it("caps continuous English playback at twenty coins until a new batch starts", async () => {
+    const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-echo-autoplay-coins-"));
+    cleanupPaths.push(dataDirectory);
+    const { baseUrl, child } = await startServer(dataDirectory);
+
+    try {
+      const firstBatchId = randomUUID();
+      let firstBatchCoins = 0;
+      for (let index = 0; index < 25; index += 1) {
+        const response = await postLearningReward(
+          baseUrl,
+          "english:echo-island",
+          randomUUID(),
+          { autoPlayBatchId: firstBatchId },
+        );
+        assert.equal(response.status, 201);
+        const award = await response.json() as {
+          rewardCoins: number;
+          autoPlayQuota: {
+            batchId: string;
+            limit: number;
+            awardedCoins: number;
+            remainingCoins: number;
+            exhausted: boolean;
+          };
+          progress: { coinBalance: number };
+        };
+        firstBatchCoins += award.rewardCoins;
+        assert.equal(award.autoPlayQuota.batchId, firstBatchId);
+        assert.equal(award.autoPlayQuota.limit, 20);
+        assert.equal(award.autoPlayQuota.awardedCoins, firstBatchCoins);
+        assert.equal(award.autoPlayQuota.remainingCoins, 20 - firstBatchCoins);
+        assert.ok(firstBatchCoins <= 20);
+      }
+      assert.equal(firstBatchCoins, 20);
+
+      const progressPath = resolve(dataDirectory, "learning", "world-tower", "progress.json");
+      const progressAtCap = JSON.parse(await readFile(progressPath, "utf8")) as {
+        transactions: unknown[];
+        [key: string]: unknown;
+      };
+      await writeFile(progressPath, `${JSON.stringify({
+        ...progressAtCap,
+        transactions: [],
+      }, null, 2)}\n`, { mode: 0o600 });
+
+      const cappedEventId = randomUUID();
+      const cappedResponse = await postLearningReward(
+        baseUrl,
+        "english:echo-island",
+        cappedEventId,
+        { autoPlayBatchId: firstBatchId },
+      );
+      assert.equal(cappedResponse.status, 201);
+      const capped = await cappedResponse.json() as {
+        rewardCoins: number;
+        autoPlayQuota: { awardedCoins: number; remainingCoins: number; exhausted: boolean };
+        progress: { coinBalance: number };
+      };
+      assert.equal(capped.rewardCoins, 0);
+      assert.equal(capped.autoPlayQuota.awardedCoins, 20);
+      assert.equal(capped.autoPlayQuota.remainingCoins, 0);
+      assert.equal(capped.autoPlayQuota.exhausted, true);
+      assert.equal(capped.progress.coinBalance, 20);
+
+      const duplicate = await postLearningReward(
+        baseUrl,
+        "english:echo-island",
+        cappedEventId,
+        { autoPlayBatchId: firstBatchId },
+      );
+      assert.equal(duplicate.status, 200);
+      assert.equal((await duplicate.json() as { rewardCoins: number }).rewardCoins, 0);
+
+      const nextBatchId = randomUUID();
+      const refreshedResponse = await postLearningReward(
+        baseUrl,
+        "english:echo-island",
+        randomUUID(),
+        { autoPlayBatchId: nextBatchId },
+      );
+      assert.equal(refreshedResponse.status, 201);
+      const refreshed = await refreshedResponse.json() as {
+        rewardCoins: number;
+        autoPlayQuota: { batchId: string; awardedCoins: number; remainingCoins: number };
+        progress: { coinBalance: number };
+      };
+      assert.equal(refreshed.autoPlayQuota.batchId, nextBatchId);
+      assert.equal(refreshed.autoPlayQuota.awardedCoins, refreshed.rewardCoins);
+      assert.equal(refreshed.autoPlayQuota.remainingCoins, 20 - refreshed.rewardCoins);
+      assert.equal(refreshed.progress.coinBalance, 20 + refreshed.rewardCoins);
+
+      const stored = JSON.parse(await readFile(progressPath, "utf8")) as {
+        autoPlayRewardBatches: Array<{ batchId: string; awardedCoins: number }>;
+      };
+      assert.equal(
+        stored.autoPlayRewardBatches.find((batch) => batch.batchId === firstBatchId)?.awardedCoins,
+        20,
+      );
+      assert.equal(
+        stored.autoPlayRewardBatches.find((batch) => batch.batchId === nextBatchId)?.awardedCoins,
+        refreshed.rewardCoins,
+      );
+
+      const invalidSource = await postLearningReward(
+        baseUrl,
+        "math:add-subtract",
+        randomUUID(),
+        { autoPlayBatchId: randomUUID() },
+      );
+      assert.equal(invalidSource.status, 400);
+    } finally {
+      await stopServer(child);
+    }
+  });
+
   it("spends one knowledge coin for mineral research exactly once", async () => {
     const dataDirectory = await mkdtemp(resolve(tmpdir(), "mumu-mineral-research-coins-"));
     cleanupPaths.push(dataDirectory);
@@ -698,8 +815,10 @@ describe("world tower API", () => {
       const stored = JSON.parse(await readFile(progressPath, "utf8")) as {
         coinBalance: number;
         appliedGrantIds: string[];
+        autoPlayRewardBatches: unknown[];
       };
       assert.equal(stored.coinBalance, 2);
+      assert.deepEqual(stored.autoPlayRewardBatches, []);
       assert.deepEqual(stored.appliedGrantIds, [
         "knowledge-coin-preview-100000-v1",
         "learning-coins-reset-to-zero-v1",
