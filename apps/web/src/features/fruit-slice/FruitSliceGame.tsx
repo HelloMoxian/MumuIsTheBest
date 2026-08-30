@@ -1,12 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { energyCoinUrl, FRUIT_SLICE_ASSETS, preloadFruitSliceAssets } from "./assets";
+import {
+  energyCoinUrl,
+  FRUIT_SLICE_ASSETS,
+  fruitSliceBgmUrl,
+  fruitSliceHitSoundUrl,
+  preloadCriticalFruitSliceAssets,
+  preloadFruitSliceAssets,
+} from "./assets";
 import {
   loadFruitSliceHistory,
   saveFruitSliceSession,
   type FruitSliceHistory,
 } from "./api";
 import { FruitSliceEngine } from "./game-engine";
-import { MediaPipeBodyHandTracker } from "./mediapipe-tracker";
+import {
+  MediaPipeBodyHandTracker,
+  preloadMediaPipeRuntimeAssets,
+} from "./mediapipe-tracker";
 import {
   FRUIT_SLICE_ROLES,
   type Density,
@@ -21,17 +31,17 @@ import {
 } from "./types";
 import "./fruit-slice.css";
 
-type Phase = "setup" | "loading" | "calibrating" | "countdown" | "playing" | "result";
+type Phase = "setup" | "loading" | "countdown" | "playing" | "result";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 const DEFAULT_SETTINGS: FruitSliceSettings = {
-  durationSeconds: 60,
+  durationSeconds: 30,
   density: "standard",
   speedMultiplier: 1,
   fruitSize: 160,
-  includeBombs: true,
+  includeBombs: false,
   includeLobster: true,
-  swipeSensitivity: "standard",
+  swipeSensitivity: "gentle",
 };
 
 const EMPTY_TRACKING: TrackingFrame = {
@@ -254,7 +264,7 @@ export function FruitSliceGame() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [calibrationStartedAt, setCalibrationStartedAt] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -264,6 +274,8 @@ export function FruitSliceGame() {
   const pendingSaveRef = useRef<Parameters<typeof saveFruitSliceSession>[0] | null>(null);
   const startedAtRef = useRef("");
   const lastTrackingUiAtRef = useRef(0);
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
+  const sliceVoicesRef = useRef<HTMLAudioElement[]>([]);
 
   const selectedPlayers = useMemo(
     () => playersFor(mode, leftRole, rightRole),
@@ -273,11 +285,6 @@ export function FruitSliceGame() {
     () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false,
     [],
   );
-  const bodyReady = mode === "single"
-    ? tracking.bodyCount >= 1
-    : tracking.bodySides.left && tracking.bodySides.right;
-  const canSkipCalibration = calibrationStartedAt > 0 && Date.now() - calibrationStartedAt > 4_000;
-
   const refreshHistory = useCallback(async () => {
     setHistoryLoading(true);
     setHistoryError(null);
@@ -293,6 +300,18 @@ export function FruitSliceGame() {
   useEffect(() => {
     void refreshHistory();
   }, [refreshHistory]);
+
+  useEffect(() => {
+    let active = true;
+    void preloadMediaPipeRuntimeAssets()
+      .catch(() => undefined)
+      .then(() => {
+        if (active) void preloadFruitSliceAssets();
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -315,11 +334,19 @@ export function FruitSliceGame() {
 
   const startTrackingLoop = useCallback(() => {
     let lastVideoTime = -1;
+    let lastDetectionAt = -Infinity;
     const loop = (now: number) => {
       const video = videoRef.current;
       const tracker = trackerRef.current;
-      if (video && tracker && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && video.currentTime !== lastVideoTime) {
+      if (
+        video
+        && tracker
+        && video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+        && video.currentTime !== lastVideoTime
+        && now - lastDetectionAt >= 66
+      ) {
         lastVideoTime = video.currentTime;
+        lastDetectionAt = now;
         try {
           const frame = tracker.detect(video, now);
           engineRef.current?.updateTracking(frame, now);
@@ -336,22 +363,71 @@ export function FruitSliceGame() {
     trackingFrameRef.current = requestAnimationFrame(loop);
   }, []);
 
+  const startGameAudio = useCallback(() => {
+    if (!soundEnabled) return;
+    const bgm = bgmRef.current ?? new Audio(fruitSliceBgmUrl);
+    bgmRef.current = bgm;
+    bgm.loop = true;
+    bgm.volume = 0.18;
+    void bgm.play().catch(() => undefined);
+  }, [soundEnabled]);
+
+  const pauseGameAudio = useCallback(() => {
+    bgmRef.current?.pause();
+  }, []);
+
+  const stopGameAudio = useCallback(() => {
+    const bgm = bgmRef.current;
+    if (bgm) {
+      bgm.pause();
+      bgm.currentTime = 0;
+    }
+    for (const voice of sliceVoicesRef.current) {
+      voice.pause();
+      voice.currentTime = 0;
+    }
+  }, []);
+
+  const playFruitSliceSound = useCallback((swipeSpeed: number) => {
+    if (!soundEnabled) return;
+    let voice = sliceVoicesRef.current.find((candidate) => candidate.paused || candidate.ended);
+    if (!voice && sliceVoicesRef.current.length < 6) {
+      voice = new Audio(fruitSliceHitSoundUrl);
+      sliceVoicesRef.current.push(voice);
+    }
+    voice ??= sliceVoicesRef.current[0];
+    if (!voice) return;
+    voice.currentTime = 0;
+    voice.volume = 0.42;
+    voice.playbackRate = Math.min(1.2, 0.9 + swipeSpeed * 0.08);
+    void voice.play().catch(() => undefined);
+  }, [soundEnabled]);
+
+  const beginCountdown = () => {
+    setCameraError(null);
+    setCountdown(3);
+    setPhase("countdown");
+  };
+
   const enterFullscreen = () => {
     if (!document.fullscreenElement) void document.documentElement.requestFullscreen?.().catch(() => undefined);
   };
 
   const startCamera = async () => {
     enterFullscreen();
+    startGameAudio();
     setCameraError(null);
     setLoadingLabel("正在请求摄像头权限…");
     setUsingCamera(true);
     setPhase("loading");
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
     if (!navigator.mediaDevices?.getUserMedia) {
+      stopGameAudio();
       setCameraError("这个浏览器不能使用摄像头。可以切换到单人鼠标练习模式。");
       return;
     }
     if (!window.isSecureContext && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
+      stopGameAudio();
       setCameraError("摄像头需要在 localhost 或 HTTPS 页面中使用。可以先切换到鼠标练习模式。");
       return;
     }
@@ -360,9 +436,9 @@ export function FruitSliceGame() {
         audio: false,
         video: {
           facingMode: "user",
-          width: { ideal: 1_280 },
-          height: { ideal: 720 },
-          frameRate: { ideal: 30, max: 30 },
+          width: { ideal: 640 },
+          height: { ideal: 360 },
+          frameRate: { ideal: 24, max: 24 },
         },
       });
       streamRef.current = stream;
@@ -370,15 +446,16 @@ export function FruitSliceGame() {
       if (!video) throw new Error("摄像头舞台还没有准备好。");
       video.srcObject = stream;
       await video.play();
-      setLoadingLabel("正在加载本机人体与手部动作模型…");
+      setLoadingLabel("正在加载本机手部动作模型…");
       const tracker = new MediaPipeBodyHandTracker(mode);
       trackerRef.current = tracker;
-      await Promise.all([tracker.initialize(), preloadFruitSliceAssets()]);
-      setCalibrationStartedAt(Date.now());
-      setPhase("calibrating");
+      await Promise.all([tracker.initialize(), preloadCriticalFruitSliceAssets()]);
+      void preloadFruitSliceAssets();
       startTrackingLoop();
+      beginCountdown();
     } catch (error) {
       stopCamera();
+      stopGameAudio();
       const name = error instanceof DOMException ? error.name : "";
       setCameraError(name === "NotAllowedError"
         ? "没有获得摄像头权限。请在地址栏允许摄像头，或使用单人鼠标练习模式。"
@@ -386,20 +463,16 @@ export function FruitSliceGame() {
     }
   };
 
-  const beginCountdown = () => {
-    setCameraError(null);
-    setCountdown(3);
-    setPhase("countdown");
-  };
-
   const startPointerMode = async () => {
     stopCamera();
+    startGameAudio();
     if (mode === "versus") setMode("single");
     setUsingCamera(false);
     setCameraError(null);
     setLoadingLabel("正在准备鼠标练习场…");
     setPhase("loading");
-    await preloadFruitSliceAssets();
+    await preloadCriticalFruitSliceAssets();
+    void preloadFruitSliceAssets();
     beginCountdown();
   };
 
@@ -442,7 +515,9 @@ export function FruitSliceGame() {
       players: selectedPlayers,
       reducedMotion,
       onHud: setHud,
+      onFruitSlice: playFruitSliceSound,
       onEnd: (players, durationMs) => {
+        stopGameAudio();
         setResults(players);
         setPhase("result");
         stopCamera();
@@ -465,17 +540,19 @@ export function FruitSliceGame() {
       engine.dispose();
       if (engineRef.current === engine) engineRef.current = null;
     };
-  }, [mode, persistPendingSession, phase, reducedMotion, selectedPlayers, settings, stopCamera, usingCamera]);
+  }, [mode, persistPendingSession, phase, playFruitSliceSound, reducedMotion, selectedPlayers, settings, stopCamera, stopGameAudio, usingCamera]);
 
   useEffect(() => () => {
     engineRef.current?.dispose();
     stopCamera();
-  }, [stopCamera]);
+    stopGameAudio();
+  }, [stopCamera, stopGameAudio]);
 
   const resetToSetup = () => {
     engineRef.current?.dispose();
     engineRef.current = null;
     stopCamera();
+    stopGameAudio();
     setPhase("setup");
     setHud(null);
     setResults(null);
@@ -492,9 +569,9 @@ export function FruitSliceGame() {
         <div className="fruit-hero-copy">
           <p className="fruit-kicker">体感游戏 · 全身一起动</p>
           <h1 id="fruit-title">挥动双手，<em>切开果能风暴！</em></h1>
-          <p>摄像头只在这台电脑里识别身体和手部位置。快速挥动会留下平滑光轨，挥得越快，切中得分越高。</p>
+          <p>摄像头只在这台电脑里识别手部位置。轻轻挥动就会留下平滑光轨，挥得越快，切中得分越高。</p>
           <div className="fruit-how-to" aria-label="玩法步骤">
-            <span><b>1</b>站进画面</span><span><b>2</b>快速挥手</span><span><b>3</b>连续命中 ×3</span>
+            <span><b>1</b>站进画面</span><span><b>2</b>轻轻挥手</span><span><b>3</b>连续命中 ×3</span>
           </div>
         </div>
         <div className="fruit-hero-art" aria-hidden="true">
@@ -509,32 +586,36 @@ export function FruitSliceGame() {
           <span>所有设置只在下一局生效</span>
         </div>
 
-        <SegmentButtons
-          label="玩家人数"
-          values={["single", "versus"] as const}
-          value={mode}
-          onChange={setMode}
-          render={(value) => value === "single" ? "1 人挑战" : "2 人对战"}
-        />
-        <div className={`fruit-role-grid ${mode === "single" ? "is-single" : ""}`}>
-          <RoleSelect label={mode === "single" ? "我是谁" : "左边是谁"} value={leftRole} onChange={setLeftRole} disabledRole={mode === "versus" ? rightRole : undefined} />
-          {mode === "versus" && <RoleSelect label="右边是谁" value={rightRole} onChange={setRightRole} disabledRole={leftRole} />}
+        <div className="fruit-settings-row">
+          <SegmentButtons
+            label="玩家人数"
+            values={["single", "versus"] as const}
+            value={mode}
+            onChange={setMode}
+            render={(value) => value === "single" ? "1 人挑战" : "2 人对战"}
+          />
+          <div className={`fruit-role-grid ${mode === "single" ? "is-single" : ""}`}>
+            <RoleSelect label={mode === "single" ? "我是谁" : "左边是谁"} value={leftRole} onChange={setLeftRole} disabledRole={mode === "versus" ? rightRole : undefined} />
+            {mode === "versus" && <RoleSelect label="右边是谁" value={rightRole} onChange={setRightRole} disabledRole={leftRole} />}
+          </div>
         </div>
 
-        <SegmentButtons
-          label="游戏时长"
-          values={[30, 60, 90, 120] as const}
-          value={settings.durationSeconds}
-          onChange={(durationSeconds) => setSettings((current) => ({ ...current, durationSeconds }))}
-          render={(value) => `${value} 秒`}
-        />
-        <SegmentButtons
-          label="水果密度"
-          values={["relaxed", "standard", "busy", "storm"] as const}
-          value={settings.density}
-          onChange={(density) => setSettings((current) => ({ ...current, density }))}
-          render={(value) => DENSITY_LABELS[value]}
-        />
+        <div className="fruit-settings-row">
+          <SegmentButtons
+            label="游戏时长 · 能量币上限 20 / 30 / 40 / 50"
+            values={[30, 60, 90, 120] as const}
+            value={settings.durationSeconds}
+            onChange={(durationSeconds) => setSettings((current) => ({ ...current, durationSeconds }))}
+            render={(value) => `${value} 秒`}
+          />
+          <SegmentButtons
+            label="水果密度"
+            values={["relaxed", "standard", "busy", "storm"] as const}
+            value={settings.density}
+            onChange={(density) => setSettings((current) => ({ ...current, density }))}
+            render={(value) => DENSITY_LABELS[value]}
+          />
+        </div>
 
         <div className="fruit-range-grid">
           <label>
@@ -549,17 +630,19 @@ export function FruitSliceGame() {
           </label>
         </div>
 
-        <SegmentButtons
-          label="挥动灵敏度"
-          values={["gentle", "standard", "strong"] as const}
-          value={settings.swipeSensitivity}
-          onChange={(swipeSensitivity) => setSettings((current) => ({ ...current, swipeSensitivity }))}
-          render={(value) => SENSITIVITY_LABELS[value]}
-        />
-
-        <div className="fruit-toggle-grid">
-          <ToggleSetting checked={settings.includeBombs} onChange={(includeBombs) => setSettings((current) => ({ ...current, includeBombs }))} title="加入炸弹" description="炸弹单独出现，切中固定扣 30 分" />
-          <ToggleSetting checked={settings.includeLobster} onChange={(includeLobster) => setSettings((current) => ({ ...current, includeLobster }))} title="加入龙虾" description="同一只可以连续切 3 次得分" />
+        <div className="fruit-settings-row fruit-settings-effects">
+          <SegmentButtons
+            label="挥动灵敏度"
+            values={["gentle", "standard", "strong"] as const}
+            value={settings.swipeSensitivity}
+            onChange={(swipeSensitivity) => setSettings((current) => ({ ...current, swipeSensitivity }))}
+            render={(value) => SENSITIVITY_LABELS[value]}
+          />
+          <div className="fruit-toggle-grid">
+            <ToggleSetting checked={settings.includeBombs} onChange={(includeBombs) => setSettings((current) => ({ ...current, includeBombs }))} title="炸弹" description="切中扣 30 分" />
+            <ToggleSetting checked={settings.includeLobster} onChange={(includeLobster) => setSettings((current) => ({ ...current, includeLobster }))} title="龙虾" description="可以连续切 3 次" />
+            <ToggleSetting checked={soundEnabled} onChange={setSoundEnabled} title="游戏声音" description="欢乐音乐与切中反馈" />
+          </div>
         </div>
 
         <div className="fruit-start-actions">
@@ -572,7 +655,7 @@ export function FruitSliceGame() {
         </div>
         <aside className="fruit-privacy-note">
           <span aria-hidden="true">⌾</span>
-          <p><strong>本机动作识别：</strong>画面不上传、不保存，也不会写进战报；只保存角色、设置和结算分数。Windows 与 Mac 的现代 Chrome、Edge、Safari 均可通过标准摄像头权限使用。</p>
+          <p><strong>轻量本机识别：</strong>只运行手部模型，摄像头使用 640×360、24fps，推理约 15fps；画面不上传、不保存。</p>
         </aside>
       </section>
     </main>
@@ -584,38 +667,16 @@ export function FruitSliceGame() {
       <canvas ref={canvasRef} aria-label="切水果游戏画布" />
       <div className="fruit-vignette" aria-hidden="true" />
 
-      {(phase === "loading" || phase === "calibrating") && (
+      {phase === "loading" && (
         <section className="fruit-calibration" aria-live="polite">
-          {phase === "loading" ? (
-            <>
-              <span className="fruit-loader" aria-hidden="true" /><h2>正在点亮动作雷达</h2><p>{loadingLabel}</p>
-              {cameraError && (
-                <div className="fruit-camera-error" role="alert">
-                  <p>{cameraError}</p>
-                  <button type="button" onClick={() => void startCamera()}>重新打开摄像头</button>
-                  <button type="button" onClick={() => void startPointerMode()}>单人鼠标练习</button>
-                  <button type="button" onClick={resetToSetup}>返回设置</button>
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              <p className="fruit-kicker">站位校准</p>
-              <h2>{mode === "versus" ? "两个人分别站在左右两边" : "站到画面中央，举起双手"}</h2>
-              <div className={`fruit-body-status ${bodyReady ? "is-ready" : ""}`}>
-                {mode === "versus" ? (
-                  <><span className={tracking.bodySides.left ? "is-seen" : ""}>左边 {tracking.bodySides.left ? "已看到" : "请站好"}</span><span className={tracking.bodySides.right ? "is-seen" : ""}>右边 {tracking.bodySides.right ? "已看到" : "请站好"}</span></>
-                ) : <span className={tracking.bodyCount ? "is-seen" : ""}>{tracking.bodyCount ? "已看到身体" : "正在寻找身体"}</span>}
-              </div>
-              <p>动作雷达看到 {tracking.bodyCount} 个人、{tracking.hands.length} 只手。左右玩家的水果会按同一条镜像轨迹飞出。</p>
-              {cameraError && <p className="fruit-inline-warning" role="alert">{cameraError}</p>}
-              <div className="fruit-calibration-actions">
-                <button className="fruit-primary-button" type="button" disabled={!bodyReady && !canSkipCalibration} onClick={beginCountdown}>
-                  {bodyReady ? "站好了，开始倒计时" : canSkipCalibration ? "仍然开始这一局" : "等大家站好…"}
-                </button>
-                <button className="fruit-secondary-button" type="button" onClick={resetToSetup}>返回设置</button>
-              </div>
-            </>
+          <span className="fruit-loader" aria-hidden="true" /><h2>正在点亮手部雷达</h2><p>{loadingLabel}</p>
+          {cameraError && (
+            <div className="fruit-camera-error" role="alert">
+              <p>{cameraError}</p>
+              <button type="button" onClick={() => void startCamera()}>重新打开摄像头</button>
+              <button type="button" onClick={() => void startPointerMode()}>单人鼠标练习</button>
+              <button type="button" onClick={resetToSetup}>返回设置</button>
+            </div>
           )}
         </section>
       )}
@@ -635,14 +696,19 @@ export function FruitSliceGame() {
               <small>剩余</small><strong>{formatTime(hud?.remainingMs ?? settings.durationSeconds * 1_000)}</strong>
             </div>
             <div className="fruit-live-controls">
-              <button type="button" onClick={() => engineRef.current?.setPaused(!(hud?.paused ?? false))}>{hud?.paused ? "继续" : "暂停"}</button>
+              <button type="button" onClick={() => {
+                const paused = !(hud?.paused ?? false);
+                engineRef.current?.setPaused(paused);
+                if (paused) pauseGameAudio();
+                else startGameAudio();
+              }}>{hud?.paused ? "继续" : "暂停"}</button>
               <button type="button" onClick={() => engineRef.current?.finish()}>结束本局</button>
             </div>
           </header>
           <div className="fruit-tracking-chip" aria-live="polite">
-            {usingCamera ? `动作雷达 · ${tracking.bodyCount} 人 · ${tracking.hands.length} 手` : "鼠标练习模式"}
+            {usingCamera ? `轻量手部雷达 · ${tracking.hands.length} 只手` : "鼠标练习模式"}
           </div>
-          {hud?.paused && <div className="fruit-paused-overlay"><h2>游戏已暂停</h2><button type="button" onClick={() => engineRef.current?.setPaused(false)}>继续挥动</button></div>}
+          {hud?.paused && <div className="fruit-paused-overlay"><h2>游戏已暂停</h2><button type="button" onClick={() => { engineRef.current?.setPaused(false); startGameAudio(); }}>继续挥动</button></div>}
         </>
       )}
 

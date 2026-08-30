@@ -3,6 +3,7 @@ import { chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import type { FastifyInstance, FastifyReply } from "fastify";
 import { z } from "zod";
+import { CURRENCY_MANAGEMENT_PASSWORD } from "./currency-management.js";
 
 const requirementSchema = z.object({
   resourceId: z.string().min(1).max(160),
@@ -291,7 +292,6 @@ type GraphNode = z.infer<typeof graphNodeSchema>;
 type LearningRewardSource = z.infer<typeof learningRewardSourceSchema>;
 
 const LEARNING_COIN_RESET_GRANT_ID = "learning-coins-reset-to-zero-v1";
-const COIN_RESET_PASSWORD = "123456";
 const LEARNING_REWARDS = {
   "math:add-subtract": 2,
   "math:cat-mouse-game": 20,
@@ -931,7 +931,7 @@ export function registerWorldTowerApi(
 
   app.post("/api/world-tower/coins/reset", async (request, reply) => {
     const parsed = coinResetSchema.safeParse(request.body);
-    if (!parsed.success || parsed.data.password !== COIN_RESET_PASSWORD) {
+    if (!parsed.success || parsed.data.password !== CURRENCY_MANAGEMENT_PASSWORD) {
       return reply.code(403).send({
         code: "INVALID_COIN_RESET_PASSWORD",
         message: "密码不正确，知识币没有改变。",
@@ -968,7 +968,7 @@ export function registerWorldTowerApi(
 
   app.post("/api/world-tower/coins/set", async (request, reply) => {
     const parsed = coinSetSchema.safeParse(request.body);
-    if (!parsed.success || parsed.data.password !== COIN_RESET_PASSWORD) {
+    if (!parsed.success || parsed.data.password !== CURRENCY_MANAGEMENT_PASSWORD) {
       return reply.code(403).send({
         code: "INVALID_COIN_MANAGEMENT_REQUEST",
         message: parsed.success

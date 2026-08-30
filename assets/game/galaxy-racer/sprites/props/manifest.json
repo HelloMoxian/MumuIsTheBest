@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/assets/game/galaxy-racer/source/track-props-green.v1.png",
+  "sourceWidth": 1448,
+  "sourceHeight": 1086,
+  "columns": 4,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": true,
+  "keyColor": "#0CEF12",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "guardrail",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "guardrail.png",
+      "sourceBox": [
+        2,
+        2,
+        360,
+        360
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.267173,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "arrow-sign",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "arrow-sign.png",
+      "sourceBox": [
+        364,
+        2,
+        722,
+        360
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.326441,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "checkpoint-arch",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "checkpoint-arch.png",
+      "sourceBox": [
+        726,
+        2,
+        1084,
+        360
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.351058,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "finish-arch",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "finish-arch.png",
+      "sourceBox": [
+        1088,
+        2,
+        1446,
+        360
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.325318,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "robot-spectator",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "robot-spectator.png",
+      "sourceBox": [
+        2,
+        364,
+        360,
+        722
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.37175,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "roadside-lamp",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "roadside-lamp.png",
+      "sourceBox": [
+        364,
+        364,
+        722,
+        722
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.154677,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "checkpoint-beacon",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "checkpoint-beacon.png",
+      "sourceBox": [
+        726,
+        364,
+        1084,
+        722
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.20679,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boost-pad",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "boost-pad.png",
+      "sourceBox": [
+        1088,
+        364,
+        1446,
+        722
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.248198,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "safety-bollard",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "safety-bollard.png",
+      "sourceBox": [
+        2,
+        726,
+        360,
+        1084
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.18037,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "ringed-planet",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "ringed-planet.png",
+      "sourceBox": [
+        364,
+        726,
+        722,
+        1084
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.251584,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "city-cluster",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "city-cluster.png",
+      "sourceBox": [
+        726,
+        726,
+        1084,
+        1084
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.32957,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "finish-flag",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "finish-flag.png",
+      "sourceBox": [
+        1088,
+        726,
+        1446,
+        1084
+      ],
+      "trimBox": null,
+      "outputWidth": 358,
+      "outputHeight": 358,
+      "opaqueCoverage": 0.223815,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

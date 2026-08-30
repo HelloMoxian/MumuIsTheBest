@@ -7,62 +7,112 @@ import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
 import "./coin-reset.css";
 
 type ManagementStatus = "idle" | "loading" | "saving" | "success" | "error";
+type BalanceField = "knowledge" | "energy";
+
+type EnergyCoinBalance = {
+  balance: number;
+  updatedAt: string;
+};
+
+type EnergyCoinSetResult = EnergyCoinBalance & {
+  coinDelta: number;
+};
+
+async function requestEnergyCoins<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
+  const response = await fetch(input, init);
+  const body = await response.json().catch(() => null) as { message?: string } | null;
+  if (!response.ok) {
+    throw new Error(body?.message ?? "能量币服务暂时没有回应，请稍后再试。");
+  }
+  return body as T;
+}
+
+function loadEnergyCoinBalance(signal?: AbortSignal) {
+  return requestEnergyCoins<EnergyCoinBalance>("/api/games/fruit-slice/energy-coins", { signal });
+}
+
+function setEnergyCoinBalance(password: string, balance: number) {
+  return requestEnergyCoins<EnergyCoinSetResult>("/api/games/fruit-slice/energy-coins/set", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password, balance }),
+  });
+}
 
 export function CoinResetPage() {
-  const [coinBalance, setCoinBalance] = useState<number | null>(null);
+  const [knowledgeCoinBalance, setKnowledgeCoinBalance] = useState<number | null>(null);
+  const [energyCoinBalance, setEnergyCoinBalanceState] = useState<number | null>(null);
   const [password, setPassword] = useState("");
-  const [targetBalance, setTargetBalance] = useState("");
+  const [targetKnowledgeBalance, setTargetKnowledgeBalance] = useState("");
+  const [targetEnergyBalance, setTargetEnergyBalance] = useState("");
+  const [activeBalanceField, setActiveBalanceField] = useState<BalanceField>("knowledge");
   const [status, setStatus] = useState<ManagementStatus>("loading");
-  const [message, setMessage] = useState("正在读取万物构成塔的知识币余额…");
+  const [message, setMessage] = useState("正在读取知识币和能量币余额…");
 
   useEffect(() => {
     const controller = new AbortController();
-    loadLearningCoinBalance(controller.signal)
-      .then((result) => {
-        setCoinBalance(result.coinBalance);
-        setTargetBalance(String(result.coinBalance));
+    Promise.all([
+      loadLearningCoinBalance(controller.signal),
+      loadEnergyCoinBalance(controller.signal),
+    ])
+      .then(([knowledgeResult, energyResult]) => {
+        setKnowledgeCoinBalance(knowledgeResult.coinBalance);
+        setEnergyCoinBalanceState(energyResult.balance);
+        setTargetKnowledgeBalance(String(knowledgeResult.coinBalance));
+        setTargetEnergyBalance(String(energyResult.balance));
         setStatus("idle");
-        setMessage("输入家长密码和目标余额，可以清零，也可以设置为指定整数。");
+        setMessage("输入一次家长密码，就可以同时保存两种货币的目标余额。");
       })
       .catch((error) => {
         if (controller.signal.aborted) return;
         setStatus("error");
-        setMessage(error instanceof Error ? error.message : "暂时无法读取知识币余额。");
+        setMessage(error instanceof Error ? error.message : "暂时无法读取货币余额。");
       });
     return () => controller.abort();
   }, []);
 
   useNumericKeypadSubmission(({ value }) => {
-    setTargetBalance(String(value));
+    const label = activeBalanceField === "knowledge" ? "知识币" : "能量币";
+    if (activeBalanceField === "knowledge") setTargetKnowledgeBalance(String(value));
+    else setTargetEnergyBalance(String(value));
     setStatus("idle");
-    setMessage(`数字键盘已经放入目标余额 ${value.toLocaleString("zh-CN")}，输入家长密码后确认保存。`);
+    setMessage(`数字键盘已经把${label}目标余额填为 ${value.toLocaleString("zh-CN")}。`);
   });
 
   async function submitBalance(event: FormEvent) {
     event.preventDefault();
-    const parsedBalance = Number(targetBalance);
+    const parsedKnowledgeBalance = Number(targetKnowledgeBalance);
+    const parsedEnergyBalance = Number(targetEnergyBalance);
+    const invalidBalance = (value: number) => (
+      !Number.isInteger(value) || value < 0 || value > 1_000_000_000
+    );
     if (
       !password.trim()
       || status === "saving"
-      || !Number.isInteger(parsedBalance)
-      || parsedBalance < 0
-      || parsedBalance > 1_000_000_000
+      || !targetKnowledgeBalance.trim()
+      || !targetEnergyBalance.trim()
+      || invalidBalance(parsedKnowledgeBalance)
+      || invalidBalance(parsedEnergyBalance)
     ) {
       setStatus("error");
-      setMessage("请输入家长密码，以及 0 至 10 亿之间的整数余额。");
+      setMessage("请输入家长密码，并为知识币和能量币填写 0 至 10 亿之间的整数余额。");
       return;
     }
     setStatus("saving");
-    setMessage("正在安全保存知识币余额…");
+    setMessage("正在安全保存知识币和能量币余额…");
     try {
-      const result = await setLearningCoinBalance(password.trim(), parsedBalance);
-      setCoinBalance(result.progress.coinBalance);
+      const [knowledgeResult, energyResult] = await Promise.all([
+        setLearningCoinBalance(password.trim(), parsedKnowledgeBalance),
+        setEnergyCoinBalance(password.trim(), parsedEnergyBalance),
+      ]);
+      setKnowledgeCoinBalance(knowledgeResult.progress.coinBalance);
+      setEnergyCoinBalanceState(energyResult.balance);
       setPassword("");
       setStatus("success");
-      setMessage(`知识币余额已经设置为 ${parsedBalance.toLocaleString("zh-CN")}，万物构成塔的解锁进度没有改变。`);
+      setMessage(`知识币已设置为 ${parsedKnowledgeBalance.toLocaleString("zh-CN")}，能量币已设置为 ${parsedEnergyBalance.toLocaleString("zh-CN")}；已有学习和游戏进度都没有改变。`);
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "知识币余额暂时没有设置成功。");
+      setMessage(error instanceof Error ? error.message : "货币余额暂时没有设置成功。");
     }
   }
 
@@ -79,20 +129,27 @@ export function CoinResetPage() {
       <main className="coin-reset-main">
         <section className="coin-reset-card" aria-labelledby="coin-reset-title">
           <div className="coin-reset-heading">
-            <span className="coin-reset-chip">万物构成塔 · 知识币管理</span>
-            <h1 id="coin-reset-title">设置知识币</h1>
-            <p>这里只调整知识币余额，不会清除已经点亮的节点、知识或背包道具。</p>
+            <span className="coin-reset-chip">家长功能 · 货币管理</span>
+            <h1 id="coin-reset-title">设置货币余额</h1>
+            <p>这里只调整知识币和能量币余额，不会清除已经点亮的知识、游戏战报或矿物进度。</p>
           </div>
 
-          <div className="coin-balance-panel" aria-live="polite">
-            <span>当前知识币</span>
-            <strong>{coinBalance === null ? "—" : coinBalance.toLocaleString("zh-CN")}</strong>
-            <small>答对数学题获得的币会汇总到这里</small>
+          <div className="coin-balance-overview" aria-live="polite">
+            <div className="coin-balance-panel is-knowledge">
+              <span>当前知识币</span>
+              <strong>{knowledgeCoinBalance === null ? "—" : knowledgeCoinBalance.toLocaleString("zh-CN")}</strong>
+              <small>学习奖励与矿物研究使用</small>
+            </div>
+            <div className="coin-balance-panel is-energy">
+              <span>当前能量币</span>
+              <strong>{energyCoinBalance === null ? "—" : energyCoinBalance.toLocaleString("zh-CN")}</strong>
+              <small>体感游戏奖励与地质锤购买使用</small>
+            </div>
           </div>
 
           <form className="coin-reset-form" onSubmit={(event) => void submitBalance(event)}>
             <div className="coin-reset-fields">
-              <label htmlFor="coin-reset-password">
+              <label className="coin-reset-password-field" htmlFor="coin-reset-password">
                 <span>家长密码</span>
                 <input
                   id="coin-reset-password"
@@ -110,20 +167,41 @@ export function CoinResetPage() {
                   aria-describedby="coin-reset-message"
                 />
               </label>
-              <label htmlFor="coin-target-balance">
-                <span>目标余额</span>
+              <label htmlFor="knowledge-coin-target-balance">
+                <span>知识币目标余额</span>
                 <input
-                  id="coin-target-balance"
+                  id="knowledge-coin-target-balance"
                   type="number"
                   inputMode="numeric"
                   min={0}
                   max={1_000_000_000}
                   step={1}
-                  value={targetBalance}
+                  value={targetKnowledgeBalance}
                   onChange={(event) => {
-                    setTargetBalance(event.target.value);
+                    setTargetKnowledgeBalance(event.target.value);
                     if (status === "error") setStatus("idle");
                   }}
+                  onFocus={() => setActiveBalanceField("knowledge")}
+                  placeholder="输入 0 或指定余额"
+                  disabled={busy}
+                  aria-describedby="coin-reset-message"
+                />
+              </label>
+              <label htmlFor="energy-coin-target-balance">
+                <span>能量币目标余额</span>
+                <input
+                  id="energy-coin-target-balance"
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  max={1_000_000_000}
+                  step={1}
+                  value={targetEnergyBalance}
+                  onChange={(event) => {
+                    setTargetEnergyBalance(event.target.value);
+                    if (status === "error") setStatus("idle");
+                  }}
+                  onFocus={() => setActiveBalanceField("energy")}
                   placeholder="输入 0 或指定余额"
                   disabled={busy}
                   aria-describedby="coin-reset-message"
@@ -135,15 +213,19 @@ export function CoinResetPage() {
               type="button"
               disabled={busy}
               onClick={() => {
-                setTargetBalance("0");
+                setTargetKnowledgeBalance("0");
+                setTargetEnergyBalance("0");
                 setStatus("idle");
-                setMessage("目标余额已填为 0，输入家长密码后确认保存即可清零。");
+                setMessage("两种目标余额都已填为 0，输入家长密码后确认保存即可清零。");
               }}
             >
-              快速填入 0（清零）
+              两种余额都填入 0（清零）
             </button>
-            <button type="submit" disabled={busy || !password.trim() || !targetBalance.trim()}>
-              {status === "saving" ? "正在保存…" : "确认设置余额"}
+            <button
+              type="submit"
+              disabled={busy || !password.trim() || !targetKnowledgeBalance.trim() || !targetEnergyBalance.trim()}
+            >
+              {status === "saving" ? "正在保存两种余额…" : "确认设置两种余额"}
             </button>
           </form>
 

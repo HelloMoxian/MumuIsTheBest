@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/assets/game/galaxy-racer/source/vehicles-green.v1.png",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 4,
+  "rows": 2,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": true,
+  "keyColor": "#0DE710",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "player-neutral",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "player-neutral.png",
+      "sourceBox": [
+        2,
+        2,
+        442,
+        442
+      ],
+      "trimBox": null,
+      "outputWidth": 440,
+      "outputHeight": 440,
+      "opaqueCoverage": 0.34969,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "player-left",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "player-left.png",
+      "sourceBox": [
+        446,
+        2,
+        885,
+        442
+      ],
+      "trimBox": null,
+      "outputWidth": 439,
+      "outputHeight": 440,
+      "opaqueCoverage": 0.340774,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "player-right",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "player-right.png",
+      "sourceBox": [
+        889,
+        2,
+        1328,
+        442
+      ],
+      "trimBox": null,
+      "outputWidth": 439,
+      "outputHeight": 440,
+      "opaqueCoverage": 0.314646,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "player-collision",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "player-collision.png",
+      "sourceBox": [
+        1332,
+        2,
+        1772,
+        442
+      ],
+      "trimBox": null,
+      "outputWidth": 440,
+      "outputHeight": 440,
+      "opaqueCoverage": 0.314323,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "obstacle-coral",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "obstacle-coral.png",
+      "sourceBox": [
+        2,
+        446,
+        442,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 440,
+      "outputHeight": 439,
+      "opaqueCoverage": 0.367674,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "obstacle-purple-pod",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "obstacle-purple-pod.png",
+      "sourceBox": [
+        446,
+        446,
+        885,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 439,
+      "outputHeight": 439,
+      "opaqueCoverage": 0.35774,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "obstacle-yellow-buggy",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "obstacle-yellow-buggy.png",
+      "sourceBox": [
+        889,
+        446,
+        1328,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 439,
+      "outputHeight": 439,
+      "opaqueCoverage": 0.357548,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "obstacle-teal-bus",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "obstacle-teal-bus.png",
+      "sourceBox": [
+        1332,
+        446,
+        1772,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 440,
+      "outputHeight": 439,
+      "opaqueCoverage": 0.434334,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

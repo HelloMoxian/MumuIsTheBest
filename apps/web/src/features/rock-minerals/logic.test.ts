@@ -39,6 +39,10 @@ describe("rock and mineral digging", () => {
     const nextSideCell = branched.board.cells.find((cell) => cell.column === 2 && cell.depth === 2)!;
     assert.equal(isCellAccessible(branched.board, nextSideCell), true);
     assert.ok(branched.board.cells.some((cell) => cell.column === 1 && cell.depth === 1));
+    assert.equal(
+      branched.board.cells.find((cell) => cell.column === 1 && cell.depth === 2)?.status,
+      "cleared",
+    );
   });
 
   it("clears soil without spending hammer durability", () => {
@@ -52,7 +56,11 @@ describe("rock and mineral digging", () => {
     assert.equal(result.progress.board.cells.length, 30);
     assert.equal(
       Math.max(...result.progress.board.cells.filter((cell) => cell.column === 0).map((cell) => cell.depth)),
-      7,
+      6,
+    );
+    assert.equal(
+      result.progress.board.cells.find((cell) => cell.id === target.id)?.status,
+      "cleared",
     );
   });
 
@@ -88,31 +96,72 @@ describe("rock and mineral digging", () => {
     assert.deepEqual(third.progress.discoveredIds, [mineralId]);
   });
 
-  it("can keep moving one column down without clearing the other columns", () => {
+  it("keeps every square fixed when a non-bottom cell becomes a hole", () => {
     const initial = createInitialProgress(catalog, fixedRandom);
+    const stableNeighbor = initial.board.cells.find(
+      (cell) => cell.column === 1 && cell.depth === 2,
+    )!;
     const first = initial.board.cells.find((cell) => cell.column === 0 && cell.depth === 1)!;
-    let progress = strikeCell(initial, first.id, catalog, fixedRandom).progress;
+    const progress = strikeCell(initial, first.id, catalog, fixedRandom).progress;
 
-    assert.deepEqual(
-      progress.board.cells.filter((cell) => cell.column === 0).map((cell) => cell.depth).sort((a, b) => a - b),
-      [2, 3, 4, 5, 6, 7],
-    );
-    assert.deepEqual(
-      progress.board.cells.filter((cell) => cell.column === 1).map((cell) => cell.depth).sort((a, b) => a - b),
-      [1, 2, 3, 4, 5, 6],
-    );
     assert.equal(progress.board.baseDepth, 1);
-
-    const second = progress.board.cells.find((cell) => cell.column === 0 && cell.depth === 2)!;
-    assert.equal(isCellAccessible(progress.board, second), true);
-    progress = strikeCell(progress, second.id, catalog, fixedRandom).progress;
-
-    assert.deepEqual(
-      progress.board.cells.filter((cell) => cell.column === 0).map((cell) => cell.depth).sort((a, b) => a - b),
-      [3, 4, 5, 6, 7, 8],
+    assert.equal(progress.board.cells.find((cell) => cell.id === first.id)?.status, "cleared");
+    assert.equal(
+      progress.board.cells.find((cell) => (
+        cell.column === stableNeighbor.column && cell.depth === stableNeighbor.depth
+      ))?.id,
+      stableNeighbor.id,
     );
-    assert.equal(progress.currentDepth, 2);
+    for (let depth = 1; depth <= 6; depth += 1) {
+      assert.equal(progress.board.cells.filter((cell) => cell.depth === depth).length, 5);
+    }
+  });
+
+  it("advances all five columns together only after the bottom row has a hole", () => {
+    const initial = createInitialProgress(catalog, fixedRandom);
+    const retainedNeighbor = initial.board.cells.find(
+      (cell) => cell.column === 1 && cell.depth === 2,
+    )!;
+    const overflowingTop = initial.board.cells.find(
+      (cell) => cell.column === 1 && cell.depth === 1,
+    )!;
+    let progress = initial;
+
+    for (let depth = 1; depth <= 5; depth += 1) {
+      const target = progress.board.cells.find(
+        (cell) => cell.column === 0 && cell.depth === depth,
+      )!;
+      progress = strikeCell(progress, target.id, catalog, fixedRandom).progress;
+      assert.equal(progress.board.baseDepth, 1);
+    }
+
+    const bottomTarget = progress.board.cells.find(
+      (cell) => cell.column === 0 && cell.depth === 6,
+    )!;
+    progress = strikeCell(progress, bottomTarget.id, catalog, fixedRandom).progress;
+
+    assert.equal(progress.board.baseDepth, 2);
+    assert.equal(progress.currentDepth, 6);
     assert.equal(progress.board.cells.length, 30);
+    assert.equal(progress.board.cells.some((cell) => cell.id === overflowingTop.id), false);
+    assert.equal(
+      progress.board.cells.find((cell) => (
+        cell.column === retainedNeighbor.column && cell.depth === retainedNeighbor.depth
+      ))?.id,
+      retainedNeighbor.id,
+    );
+    for (let depth = 2; depth <= 7; depth += 1) {
+      assert.equal(progress.board.cells.filter((cell) => cell.depth === depth).length, 5);
+    }
+    const newBottomRow = progress.board.cells.filter((cell) => cell.depth === 7);
+    assert.equal(newBottomRow.length, 5);
+    assert.equal(newBottomRow.every((cell) => cell.status !== "cleared"), true);
+    for (let depth = 2; depth <= 6; depth += 1) {
+      assert.equal(
+        progress.board.cells.find((cell) => cell.column === 0 && cell.depth === depth)?.status,
+        "cleared",
+      );
+    }
   });
 });
 
@@ -147,5 +196,36 @@ describe("rock and mineral research", () => {
       ),
       undefined,
     );
+  });
+
+  it("migrates independently refilled legacy columns into fixed coordinates", () => {
+    const initial = createInitialProgress(catalog, fixedRandom);
+    const removedSurface = initial.board.cells.find(
+      (cell) => cell.column === 0 && cell.depth === 1,
+    )!;
+    const legacy = {
+      ...initial,
+      board: {
+        baseDepth: 1,
+        cells: initial.board.cells.map((cell) => (
+          cell.id === removedSurface.id
+            ? { ...cell, id: "legacy-column-zero-depth-seven", depth: 7 }
+            : cell
+        )),
+      },
+    };
+
+    const migrated = parseRockMineralProgress(legacy, catalog);
+    assert.ok(migrated);
+    assert.equal(migrated.board.baseDepth, 1);
+    assert.equal(migrated.board.cells.length, 30);
+    assert.equal(
+      migrated.board.cells.find((cell) => cell.column === 0 && cell.depth === 1)?.status,
+      "cleared",
+    );
+    assert.equal(migrated.board.cells.some((cell) => cell.depth === 7), false);
+    for (let depth = 1; depth <= 6; depth += 1) {
+      assert.equal(migrated.board.cells.filter((cell) => cell.depth === depth).length, 5);
+    }
   });
 });

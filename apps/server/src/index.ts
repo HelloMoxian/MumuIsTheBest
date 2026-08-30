@@ -551,7 +551,15 @@ async function main() {
 
   const webDist = resolve(import.meta.dirname, "../../web/dist");
   if (existsSync(webDist)) {
-    await app.register(fastifyStatic, { root: webDist, wildcard: false });
+    await app.register(fastifyStatic, {
+      root: webDist,
+      wildcard: false,
+      setHeaders(response, path) {
+        if (/[\\/]assets[\\/]/.test(path)) {
+          response.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        }
+      },
+    });
     app.get("/*", async (_request, reply) => reply.sendFile("index.html"));
   }
 

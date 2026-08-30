@@ -26,8 +26,13 @@ export const handLandmarkerModelUrl = new URL(
   import.meta.url,
 ).href;
 
-export const poseLandmarkerModelUrl = new URL(
-  "../../../../../assets/models/mediapipe/pose_landmarker_lite.float16.v1.task",
+export const fruitSliceBgmUrl = new URL(
+  "../../../../../assets/audio/fruit-slice/happy-loop.cc0.mp3",
+  import.meta.url,
+).href;
+
+export const fruitSliceHitSoundUrl = new URL(
+  "../../../../../assets/audio/fruit-slice/fruit-splathit.cc0.wav",
   import.meta.url,
 ).href;
 
@@ -51,6 +56,8 @@ export const FRUIT_SLICE_ASSETS = {
 } as const;
 
 const imageCache = new Map<string, HTMLImageElement>();
+let criticalAssetsPromise: Promise<void> | undefined;
+let allAssetsPromise: Promise<void> | undefined;
 
 export function gameImage(url: string) {
   let image = imageCache.get(url);
@@ -63,8 +70,7 @@ export function gameImage(url: string) {
   return image;
 }
 
-export async function preloadFruitSliceAssets() {
-  const urls = [...new Set(Object.values(rawAssets))];
+async function preloadImages(urls: readonly string[]) {
   await Promise.all(urls.map(async (url) => {
     const image = gameImage(url);
     if (image.complete) return;
@@ -73,4 +79,24 @@ export async function preloadFruitSliceAssets() {
       image.addEventListener("error", () => resolve(), { once: true });
     });
   }));
+}
+
+export function preloadCriticalFruitSliceAssets() {
+  if (!criticalAssetsPromise) {
+    const urls = [
+      ...Object.values(FRUIT_SLICE_ASSETS.fruits).map((fruit) => fruit.whole[0]),
+      FRUIT_SLICE_ASSETS.bomb[0],
+      FRUIT_SLICE_ASSETS.lobster[0],
+      ...FRUIT_SLICE_ASSETS.splashes.map((sequenceUrls) => sequenceUrls[0]),
+    ].filter((url): url is string => Boolean(url));
+    criticalAssetsPromise = preloadImages([...new Set(urls)]);
+  }
+  return criticalAssetsPromise;
+}
+
+export function preloadFruitSliceAssets() {
+  if (!allAssetsPromise) {
+    allAssetsPromise = preloadImages([...new Set(Object.values(rawAssets))]);
+  }
+  return allAssetsPromise;
 }

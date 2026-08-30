@@ -91,6 +91,21 @@ const FruitSliceGame = lazy(async () => {
   return { default: module.FruitSliceGame };
 });
 
+const GalaxyRacerGame = lazy(async () => {
+  const module = await import("./features/galaxy-racer/GalaxyRacerGame");
+  return { default: module.GalaxyRacerGame };
+});
+
+const RedFortressGame = lazy(async () => {
+  const module = await import("./features/red-fortress/RedFortressGame");
+  return { default: module.RedFortressGame };
+});
+
+const DrawingStudioPage = lazy(async () => {
+  const module = await import("./features/drawing-studio/DrawingStudioPage");
+  return { default: module.DrawingStudioPage };
+});
+
 const RockMineralGame = lazy(async () => {
   const module = await import("./features/rock-minerals/RockMineralGame");
   return { default: module.RockMineralGame };
@@ -197,11 +212,32 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     icon: "games",
     games: [
       {
+        title: "星际极速赛",
+        mark: "✦",
+        description: "移动头部换车道，驾驶三套赛车连续点亮六座星门",
+        shape: "wide",
+        href: "/games/galaxy-racer",
+      },
+      {
         title: "切水果",
         mark: "⚡",
         description: "摄像头识别挥手，支持单人和双人对战",
         shape: "wide",
         href: "/games/fruit-slice",
+      },
+      {
+        title: "画图",
+        mark: "✎",
+        description: "在无限白板上画线、摆图元和自由涂色",
+        shape: "wide",
+        href: "/games/drawing-studio",
+      },
+      {
+        title: "赤色要塞",
+        mark: "∞",
+        description: "双车协作闯四关，营救升级并挑战关卡 Boss",
+        shape: "wide",
+        href: "/games/red-fortress",
       },
     ],
   },
@@ -743,7 +779,7 @@ function App() {
                 </a>
                 <a href="/parent/coin-reset" role="menuitem" onClick={() => setMenuOpen(false)}>
                   <span aria-hidden="true">✦</span>
-                  <span><strong>知识币管理</strong><small>密码设置余额</small></span>
+                  <span><strong>货币管理</strong><small>一次设置知识币与能量币</small></span>
                 </a>
               </div>
             )}
@@ -952,8 +988,17 @@ function CurrentPage() {
   if (window.location.pathname === "/universities/top100" || window.location.pathname === "/university/top100") {
     return <Suspense fallback={<ChemistryLoading label="大学 Top100 星图" />}><UniversityTop100Page /></Suspense>;
   }
+  if (window.location.pathname === "/games/drawing-studio") {
+    return <Suspense fallback={<ChemistryLoading label="星空画图舱" />}><DrawingStudioPage /></Suspense>;
+  }
   if (window.location.pathname === "/games/fruit-slice") {
     return <Suspense fallback={<ChemistryLoading label="切水果体感舱" />}><FruitSliceGame /></Suspense>;
+  }
+  if (window.location.pathname === "/games/galaxy-racer") {
+    return <Suspense fallback={<ChemistryLoading label="星际极速赛" />}><GalaxyRacerGame /></Suspense>;
+  }
+  if (window.location.pathname === "/games/red-fortress") {
+    return <Suspense fallback={<ChemistryLoading label="双车远征要塞" />}><RedFortressGame /></Suspense>;
   }
   if (window.location.pathname === "/nature/rock-minerals") {
     return <Suspense fallback={<ChemistryLoading label="岩石与矿物探索舱" />}><RockMineralGame /></Suspense>;
@@ -1001,7 +1046,7 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/parent/coin-reset") {
     return (
-      <Suspense fallback={<ChemistryLoading label="知识币管理" />}>
+      <Suspense fallback={<ChemistryLoading label="货币管理" />}>
         <CoinResetPage />
       </Suspense>
     );

@@ -1,0 +1,747 @@
+.red-fortress-page {
+  --rf-panel: rgba(20, 21, 57, .88);
+  --rf-panel-strong: rgba(13, 14, 43, .96);
+  --rf-line: rgba(214, 220, 255, .2);
+  --rf-text: #f7f7ff;
+  --rf-muted: #b8b7d7;
+  --rf-cyan: #59e7ff;
+  --rf-pink: #ff67c7;
+  --rf-coral: #ff9a68;
+  --rf-green: #4ce0a3;
+  --rf-gold: #ffd166;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--rf-text);
+  background:
+    radial-gradient(circle at 9% 8%, rgba(89, 231, 255, .12), transparent 28%),
+    radial-gradient(circle at 88% 14%, rgba(255, 103, 199, .13), transparent 28%),
+    linear-gradient(180deg, #0e0d2b, #171536 68%, #0d102b);
+  font-family: ui-rounded, "Arial Rounded MT Bold", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+.red-fortress-page *,
+.red-fortress-page *::before,
+.red-fortress-page *::after { box-sizing: border-box; }
+
+.red-fortress-stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.7) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgba(89,231,255,.5) 0 1px, transparent 1.5px);
+  background-position: 0 0, 43px 67px;
+  background-size: 92px 92px, 137px 137px;
+  opacity: .2;
+}
+
+.red-fortress-topbar {
+  position: relative;
+  z-index: 20;
+  display: grid;
+  width: min(100% - 32px, 1480px);
+  min-height: 78px;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+.red-fortress-back,
+.red-fortress-top-actions button,
+.red-fortress-dialog a,
+.red-fortress-help button,
+.red-fortress-dialog button,
+.red-fortress-start {
+  min-height: 48px;
+  border: 1px solid var(--rf-line);
+  border-radius: 15px;
+  color: var(--rf-text);
+  background: rgba(255,255,255,.07);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  text-decoration: none;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+
+.red-fortress-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
+.red-fortress-brand {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 11px;
+}
+
+.red-fortress-brand-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(89,231,255,.5);
+  border-radius: 17px;
+  color: #dffdff;
+  background: linear-gradient(145deg, rgba(89,231,255,.3), rgba(141,115,255,.5));
+  box-shadow: inset 0 1px rgba(255,255,255,.35), 0 0 26px rgba(89,231,255,.2);
+  font-size: 17px;
+  font-weight: 950;
+  letter-spacing: -.05em;
+}
+
+.red-fortress-brand > span:last-child { display: grid; }
+.red-fortress-brand strong { font-size: 21px; line-height: 1; }
+.red-fortress-brand small { margin-top: 5px; color: var(--rf-muted); font-size: 12px; font-weight: 800; }
+
+.red-fortress-top-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.red-fortress-top-actions button { padding: 0 13px; cursor: pointer; white-space: nowrap; }
+.red-fortress-top-actions button.is-active {
+  border-color: rgba(76,224,163,.6);
+  color: #d9ffec;
+  background: rgba(76,224,163,.15);
+  box-shadow: 0 0 19px rgba(76,224,163,.1);
+}
+
+.red-fortress-back:hover,
+.red-fortress-top-actions button:hover,
+.red-fortress-dialog a:hover,
+.red-fortress-dialog button:hover,
+.red-fortress-help button:hover {
+  border-color: rgba(89,231,255,.58);
+  background: rgba(89,231,255,.12);
+  transform: translateY(-2px);
+}
+
+.red-fortress-page button:active,
+.red-fortress-page a:active { transform: translateY(1px); }
+
+.red-fortress-page button:focus-visible,
+.red-fortress-page a:focus-visible,
+.red-fortress-canvas:focus-visible {
+  outline: 3px solid var(--rf-gold);
+  outline-offset: 3px;
+}
+
+.red-fortress-page button:disabled {
+  cursor: not-allowed;
+  filter: grayscale(.55);
+  opacity: .58;
+  transform: none;
+}
+
+.red-fortress-main {
+  position: relative;
+  z-index: 2;
+  width: min(100% - 24px, 1480px);
+  margin: 0 auto;
+  padding: 4px 0 28px;
+}
+
+.red-fortress-stage-shell {
+  position: relative;
+  padding: 10px;
+  border: 1px solid var(--rf-line);
+  border-radius: 30px;
+  background: linear-gradient(145deg, rgba(28,28,66,.9), rgba(10,12,40,.95));
+  box-shadow: 0 26px 70px rgba(0,0,0,.46), inset 0 1px rgba(255,255,255,.08), 0 0 36px var(--stage-glow);
+  backdrop-filter: blur(22px);
+}
+
+.red-fortress-stage-shell:fullscreen {
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  padding: 10px;
+  place-content: center;
+  border: 0;
+  border-radius: 0;
+  background: #0e0d2b;
+}
+
+.red-fortress-stage-shell:fullscreen .red-fortress-canvas-frame { width: min(100vw - 20px, calc((100vh - 170px) * 16 / 9)); }
+.red-fortress-stage-shell:fullscreen .red-fortress-hud { width: min(100vw - 20px, calc((100vh - 170px) * 16 / 9)); margin-inline: auto; }
+
+.red-fortress-hud {
+  display: grid;
+  grid-template-columns: minmax(250px, 1fr) minmax(310px, .9fr) minmax(250px, 1fr);
+  gap: 9px;
+  margin-bottom: 10px;
+}
+
+.red-fortress-player-card,
+.red-fortress-mission-hud,
+.red-fortress-boss-bar {
+  border: 1px solid var(--rf-line);
+  background: linear-gradient(145deg, rgba(37,38,86,.94), rgba(18,20,57,.94));
+  box-shadow: inset 0 1px rgba(255,255,255,.08);
+}
+
+.red-fortress-player-card {
+  position: relative;
+  display: flex;
+  min-height: 92px;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+  padding: 10px 13px;
+  border-radius: 21px;
+}
+
+.red-fortress-player-card.is-scout { border-color: rgba(89,231,255,.32); }
+.red-fortress-player-card.is-heavy { border-color: rgba(255,154,104,.34); }
+
+.red-fortress-player-icon {
+  position: relative;
+  display: block;
+  width: 68px;
+  height: 68px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 19px;
+  background: radial-gradient(circle, rgba(255,255,255,.18), rgba(89,231,255,.06));
+}
+
+.red-fortress-player-icon img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400%;
+  max-width: none;
+  height: 400%;
+  object-fit: fill;
+}
+
+.red-fortress-player-icon img.is-heavy { left: -100%; }
+.red-fortress-player-copy { display: grid; min-width: 0; gap: 3px; }
+.red-fortress-player-copy strong { overflow: hidden; font-size: 16px; text-overflow: ellipsis; white-space: nowrap; }
+.red-fortress-player-copy small { overflow: hidden; color: var(--rf-muted); font-size: 11px; font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+
+.red-fortress-infinity {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 7px;
+  border: 1px solid rgba(255,209,102,.26);
+  border-radius: 999px;
+  color: #fff1ac;
+  background: rgba(255,209,102,.08);
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.red-fortress-infinity small { font-size: 8px; letter-spacing: .03em; }
+.red-fortress-shields { display: flex; align-items: center; gap: 4px; margin-top: 3px; }
+.red-fortress-shields i {
+  display: block;
+  width: 13px;
+  height: 9px;
+  border: 1px solid rgba(255,255,255,.34);
+  border-radius: 5px 5px 8px 8px;
+  background: rgba(255,255,255,.05);
+}
+.red-fortress-shields.is-cyan i.is-filled { border-color: var(--rf-cyan); background: var(--rf-cyan); box-shadow: 0 0 8px rgba(89,231,255,.6); }
+.red-fortress-shields.is-coral i.is-filled { border-color: var(--rf-coral); background: var(--rf-coral); box-shadow: 0 0 8px rgba(255,154,104,.6); }
+.red-fortress-shields b { margin-left: 2px; color: #eefcff; font-size: 10px; }
+.red-fortress-respawn { color: #ffe49a; font-size: 11px; font-weight: 900; }
+
+.red-fortress-mission-hud {
+  display: grid;
+  min-height: 92px;
+  align-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-color: color-mix(in srgb, var(--stage-accent) 44%, transparent);
+  border-radius: 21px;
+}
+
+.red-fortress-mission-hud > div:first-child {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.red-fortress-mission-hud span,
+.red-fortress-mission-hud small { color: var(--rf-muted); font-size: 10px; font-weight: 900; }
+.red-fortress-mission-hud strong { overflow: hidden; font-size: 18px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+.red-fortress-mission-hud progress,
+.red-fortress-boss-bar progress {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  appearance: none;
+  background: rgba(255,255,255,.08);
+}
+.red-fortress-mission-hud progress::-webkit-progress-bar,
+.red-fortress-boss-bar progress::-webkit-progress-bar { border-radius: 999px; background: rgba(255,255,255,.08); }
+.red-fortress-mission-hud progress::-webkit-progress-value { border-radius: 999px; background: linear-gradient(90deg, var(--rf-cyan), var(--stage-accent), var(--rf-pink)); }
+.red-fortress-mission-hud progress::-moz-progress-bar { border-radius: 999px; background: linear-gradient(90deg, var(--rf-cyan), var(--stage-accent), var(--rf-pink)); }
+.red-fortress-team-stats { display: flex; justify-content: center; gap: 15px; }
+.red-fortress-team-stats b { color: #fff; font-size: 11px; }
+
+.red-fortress-boss-bar {
+  position: absolute;
+  z-index: 12;
+  top: 125px;
+  left: 50%;
+  display: grid;
+  width: min(720px, calc(100% - 60px));
+  min-height: 60px;
+  grid-template-columns: auto auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-color: rgba(255,209,102,.56);
+  border-radius: 19px;
+  box-shadow: 0 12px 34px rgba(0,0,0,.35), 0 0 24px rgba(255,103,199,.18);
+  transform: translateX(-50%);
+}
+.red-fortress-boss-bar > span { color: var(--rf-gold); font-size: 24px; }
+.red-fortress-boss-bar > div { display: grid; min-width: 145px; }
+.red-fortress-boss-bar small { color: #ffd8ef; font-size: 9px; font-weight: 900; letter-spacing: .08em; }
+.red-fortress-boss-bar strong { font-size: 15px; }
+.red-fortress-boss-bar progress::-webkit-progress-value { border-radius: 999px; background: linear-gradient(90deg, var(--rf-pink), var(--rf-gold)); }
+.red-fortress-boss-bar progress::-moz-progress-bar { border-radius: 999px; background: linear-gradient(90deg, var(--rf-pink), var(--rf-gold)); }
+.red-fortress-boss-bar > b { min-width: 80px; color: #fff3bb; font-size: 11px; text-align: right; }
+
+.red-fortress-canvas-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 24px;
+  background: #080a21;
+  box-shadow: inset 0 0 40px rgba(0,0,0,.4);
+}
+
+.red-fortress-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: manipulation;
+}
+
+.red-fortress-title-screen,
+.red-fortress-overlay {
+  position: absolute;
+  z-index: 15;
+  inset: 0;
+}
+
+.red-fortress-title-screen > img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.red-fortress-title-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(8,8,34,.95) 0%, rgba(8,8,34,.76) 39%, rgba(8,8,34,.14) 70%),
+    linear-gradient(0deg, rgba(8,8,34,.84), transparent 48%);
+}
+
+.red-fortress-title-content {
+  position: absolute;
+  z-index: 2;
+  top: clamp(24px, 5vw, 66px);
+  left: clamp(24px, 5vw, 68px);
+  width: min(650px, 53%);
+}
+
+.red-fortress-kicker {
+  margin: 0 0 8px;
+  color: #c7c4ec;
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.red-fortress-kicker span { color: var(--rf-cyan); }
+.red-fortress-title-content h1 {
+  margin: 0;
+  font-size: clamp(58px, 7.5vw, 112px);
+  font-weight: 950;
+  letter-spacing: -.08em;
+  line-height: .92;
+  text-shadow: 0 7px 26px rgba(0,0,0,.42), 0 0 26px rgba(89,231,255,.18);
+}
+.red-fortress-title-content h1 span {
+  color: transparent;
+  background: linear-gradient(135deg, #ffb06e, #ff67c7 58%, #b67fff);
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.red-fortress-lead {
+  max-width: 610px;
+  margin: 14px 0 17px;
+  color: #e3e2f6;
+  font-size: clamp(16px, 1.5vw, 21px);
+  font-weight: 750;
+  line-height: 1.55;
+}
+
+.red-fortress-control-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.red-fortress-control-cards article {
+  display: flex;
+  min-height: 73px;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 16px;
+  background: rgba(17,19,54,.69);
+  backdrop-filter: blur(12px);
+}
+.red-fortress-control-cards article.is-infinite { border-color: rgba(255,209,102,.32); }
+.red-fortress-control-cards article > div { display: grid; gap: 4px; }
+.red-fortress-control-cards strong { font-size: 12px; }
+.red-fortress-control-cards small { color: var(--rf-muted); font-size: 9px; font-weight: 800; line-height: 1.3; }
+.control-orb {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 13px;
+  color: #fff4b9;
+  background: rgba(255,209,102,.14);
+  font-size: 14px;
+  font-weight: 950;
+}
+.control-orb.is-blue { color: #dffcff; background: rgba(89,231,255,.2); }
+.control-orb.is-orange { color: #fff0e4; background: rgba(255,154,104,.2); }
+
+.red-fortress-start {
+  min-width: 290px;
+  min-height: 61px;
+  margin-top: 16px;
+  padding: 0 27px;
+  border-color: rgba(255,255,255,.48);
+  border-radius: 18px;
+  color: white;
+  background: linear-gradient(100deg, #6950dc, #d94caa, #ef8a54);
+  box-shadow: 0 7px 0 #4a347a, 0 17px 36px rgba(72,41,135,.42);
+  font-size: 19px;
+  cursor: pointer;
+}
+.red-fortress-start:hover:not(:disabled) { filter: brightness(1.12); transform: translateY(-2px); }
+.red-fortress-start:active:not(:disabled) { box-shadow: 0 3px 0 #4a347a, 0 10px 24px rgba(72,41,135,.38); transform: translateY(4px); }
+.red-fortress-sound-note { display: block; margin-top: 13px; color: #bbb9d5; font-size: 11px; font-weight: 750; }
+
+.red-fortress-route {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.red-fortress-title-screen > .red-fortress-route {
+  position: absolute;
+  z-index: 3;
+  right: 24px;
+  bottom: 23px;
+  width: min(330px, 29%);
+}
+.red-fortress-route li {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 15px;
+  background: rgba(11,13,43,.72);
+  backdrop-filter: blur(12px);
+}
+.red-fortress-route li > span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 12px;
+  color: #c4c1dd;
+  background: rgba(255,255,255,.05);
+  font-weight: 950;
+}
+.red-fortress-route li > div { display: grid; min-width: 0; }
+.red-fortress-route strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.red-fortress-route small { overflow: hidden; margin-top: 2px; color: var(--rf-muted); font-size: 9px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.red-fortress-route li.is-current { border-color: rgba(89,231,255,.6); box-shadow: 0 0 18px rgba(89,231,255,.12); }
+.red-fortress-route li.is-current > span { color: #06293e; border-color: var(--rf-cyan); background: var(--rf-cyan); }
+.red-fortress-route li.is-complete { border-color: rgba(76,224,163,.42); background: rgba(23,72,65,.68); }
+.red-fortress-route li.is-complete > span { color: #073a2b; border-color: var(--rf-green); background: var(--rf-green); }
+
+.red-fortress-overlay {
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: rgba(6,7,29,.72);
+  backdrop-filter: blur(12px);
+}
+.red-fortress-overlay.is-clear { background: radial-gradient(circle, rgba(76,224,163,.2), rgba(6,7,29,.78) 58%); }
+.red-fortress-overlay.is-complete { background: radial-gradient(circle at 50% 30%, rgba(255,209,102,.22), rgba(68,39,116,.28) 37%, rgba(6,7,29,.84) 70%); }
+
+.red-fortress-dialog {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: calc(100% - 14px);
+  overflow-y: auto;
+  padding: clamp(23px, 4vw, 38px);
+  border: 1px solid rgba(214,220,255,.28);
+  border-radius: 28px;
+  background: linear-gradient(145deg, rgba(34,35,82,.97), rgba(15,17,51,.98));
+  box-shadow: 0 28px 80px rgba(0,0,0,.52), inset 0 1px rgba(255,255,255,.1), 0 0 34px var(--stage-glow);
+  text-align: center;
+}
+.red-fortress-dialog-icon {
+  display: grid;
+  width: 65px;
+  height: 65px;
+  place-items: center;
+  margin: 0 auto 13px;
+  border: 2px solid rgba(255,255,255,.34);
+  border-radius: 22px;
+  color: #fff8c9;
+  background: linear-gradient(145deg, rgba(89,231,255,.3), rgba(255,103,199,.38));
+  box-shadow: 0 0 30px rgba(89,231,255,.2);
+  font-size: 31px;
+  font-weight: 950;
+}
+.red-fortress-dialog h2,
+.red-fortress-help h2 { margin: 5px 0 8px; font-size: clamp(30px, 4.2vw, 49px); line-height: 1.04; }
+.red-fortress-dialog > p:not(.red-fortress-kicker) { margin: 0 auto 20px; color: var(--rf-muted); font-size: 16px; line-height: 1.5; }
+.red-fortress-dialog-actions { display: grid; gap: 9px; }
+.red-fortress-dialog-actions.is-row { grid-template-columns: 1fr 1fr; }
+.red-fortress-dialog button,
+.red-fortress-dialog a { display: inline-flex; align-items: center; justify-content: center; padding: 0 18px; cursor: pointer; }
+.red-fortress-dialog .primary,
+.red-fortress-help .primary {
+  border-color: rgba(255,255,255,.35);
+  color: white;
+  background: linear-gradient(100deg, #6950dc, #d94caa);
+  box-shadow: 0 6px 0 #49357c, 0 13px 26px rgba(62,36,123,.32);
+}
+.red-fortress-dialog .danger-confirm { border-color: rgba(255,117,150,.64); color: #ffe3ea; background: rgba(183,49,83,.3); }
+.red-fortress-clear-card,
+.red-fortress-complete-card { width: min(820px, 100%); }
+
+.red-fortress-results {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 15px 0;
+}
+.red-fortress-results span {
+  display: grid;
+  min-height: 72px;
+  place-content: center;
+  gap: 3px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 16px;
+  background: rgba(255,255,255,.05);
+}
+.red-fortress-results small { color: var(--rf-muted); font-size: 10px; font-weight: 850; }
+.red-fortress-results strong { color: #fff6c7; font-size: 22px; }
+.red-fortress-clear-card > .red-fortress-route,
+.red-fortress-complete-card > .red-fortress-route { grid-template-columns: repeat(4, 1fr); margin: 15px 0; }
+.red-fortress-clear-card > .red-fortress-route li,
+.red-fortress-complete-card > .red-fortress-route li { min-width: 0; }
+.red-fortress-clear-card > .primary { width: 100%; }
+
+.red-fortress-mobile-controls { display: none; }
+.red-fortress-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.red-fortress-help-backdrop {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: grid;
+  padding: 22px;
+  place-items: center;
+  background: rgba(5,6,27,.78);
+  backdrop-filter: blur(15px);
+}
+.red-fortress-help {
+  position: relative;
+  width: min(820px, 100%);
+  max-height: min(760px, calc(100vh - 44px));
+  overflow-y: auto;
+  padding: clamp(24px, 4vw, 40px);
+  border: 1px solid var(--rf-line);
+  border-radius: 30px;
+  background: linear-gradient(145deg, rgba(35,35,83,.98), rgba(14,16,49,.99));
+  box-shadow: 0 30px 90px rgba(0,0,0,.54);
+}
+.red-fortress-help-close {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  min-width: 76px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+.red-fortress-help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; margin: 22px 0; }
+.red-fortress-help-grid article {
+  display: grid;
+  min-height: 160px;
+  align-content: start;
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 20px;
+  background: rgba(255,255,255,.05);
+}
+.red-fortress-help-grid article > b { display: grid; width: 43px; height: 43px; place-items: center; border-radius: 14px; color: #e8fdff; background: rgba(89,231,255,.17); font-size: 19px; }
+.red-fortress-help-grid strong { margin-top: 10px; font-size: 18px; }
+.red-fortress-help-grid p { margin: 5px 0 0; color: var(--rf-muted); font-size: 15px; line-height: 1.55; }
+.red-fortress-help > .primary { width: 100%; cursor: pointer; }
+
+@media (max-width: 1120px) {
+  .red-fortress-topbar { grid-template-columns: auto 1fr; }
+  .red-fortress-top-actions { grid-column: 1 / -1; justify-content: flex-end; }
+  .red-fortress-hud { grid-template-columns: 1fr 1fr; }
+  .red-fortress-mission-hud { grid-column: 1 / -1; grid-row: 1; }
+  .red-fortress-title-content { top: 25px; left: 30px; width: 66%; }
+  .red-fortress-title-content h1 { font-size: clamp(50px, 8vw, 84px); }
+  .red-fortress-title-screen > .red-fortress-route { width: 30%; }
+}
+
+@media (max-width: 850px) {
+  .red-fortress-topbar { width: min(100% - 20px, 1480px); gap: 10px; }
+  .red-fortress-back { padding: 0 12px; font-size: 13px; }
+  .red-fortress-brand small { display: none; }
+  .red-fortress-top-actions { overflow-x: auto; justify-content: flex-start; padding-bottom: 3px; }
+  .red-fortress-top-actions button { flex: 0 0 auto; }
+  .red-fortress-main { width: min(100% - 12px, 1480px); }
+  .red-fortress-stage-shell { padding: 7px; border-radius: 23px; }
+  .red-fortress-player-card { min-height: 82px; }
+  .red-fortress-player-icon { width: 56px; height: 56px; }
+  .red-fortress-infinity small { display: none; }
+  .red-fortress-canvas-frame { border-radius: 18px; }
+  .red-fortress-boss-bar { top: 210px; width: calc(100% - 30px); }
+  .red-fortress-title-content { width: 72%; }
+  .red-fortress-control-cards { grid-template-columns: 1fr 1fr; }
+  .red-fortress-control-cards .is-infinite { display: none; }
+  .red-fortress-title-screen > .red-fortress-route { display: none; }
+  .red-fortress-mobile-controls {
+    display: flex;
+    min-height: 118px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 10px;
+  }
+  .red-fortress-dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 52px);
+    grid-template-rows: repeat(2, 52px);
+    gap: 5px;
+  }
+  .red-fortress-mobile-controls button {
+    min-width: 52px;
+    min-height: 52px;
+    border: 1px solid rgba(255,255,255,.24);
+    border-radius: 15px;
+    color: white;
+    background: rgba(255,255,255,.08);
+    font: inherit;
+    font-size: 21px;
+    font-weight: 950;
+    touch-action: none;
+  }
+  .red-fortress-dpad .key-w { grid-column: 2; }
+  .red-fortress-dpad .key-a { grid-column: 1; grid-row: 2; }
+  .red-fortress-dpad .key-s { grid-column: 2; grid-row: 2; }
+  .red-fortress-dpad .key-d { grid-column: 3; grid-row: 2; }
+  .red-fortress-fire-buttons { display: flex; gap: 9px; }
+  .red-fortress-fire-buttons button { display: grid; width: 72px; height: 72px; place-content: center; border-radius: 50%; background: linear-gradient(145deg, rgba(255,154,104,.26), rgba(255,103,199,.2)); }
+  .red-fortress-fire-buttons button:first-child { background: linear-gradient(145deg, rgba(89,231,255,.25), rgba(105,80,220,.22)); }
+  .red-fortress-fire-buttons b { font-size: 22px; }
+  .red-fortress-fire-buttons small { font-size: 10px; }
+}
+
+@media (max-width: 640px) {
+  .red-fortress-brand-mark { width: 43px; height: 43px; }
+  .red-fortress-brand strong { font-size: 18px; }
+  .red-fortress-hud { grid-template-columns: 1fr 1fr; }
+  .red-fortress-player-card { min-width: 0; padding: 7px; }
+  .red-fortress-player-icon { width: 42px; height: 42px; border-radius: 13px; }
+  .red-fortress-player-copy strong { font-size: 12px; }
+  .red-fortress-player-copy small { display: none; }
+  .red-fortress-infinity { top: 5px; right: 5px; padding: 1px 5px; font-size: 14px; }
+  .red-fortress-mission-hud { min-height: 78px; }
+  .red-fortress-mission-hud strong { font-size: 15px; }
+  .red-fortress-canvas-frame { aspect-ratio: 16 / 10; }
+  .red-fortress-title-shade { background: linear-gradient(90deg, rgba(8,8,34,.96), rgba(8,8,34,.68)), linear-gradient(0deg, rgba(8,8,34,.8), transparent); }
+  .red-fortress-title-content { top: 16px; left: 17px; width: calc(100% - 34px); }
+  .red-fortress-title-content h1 { font-size: clamp(47px, 17vw, 70px); }
+  .red-fortress-lead { margin: 7px 0 10px; font-size: 13px; line-height: 1.4; }
+  .red-fortress-control-cards article { min-height: 60px; padding: 7px; }
+  .control-orb { width: 31px; height: 31px; border-radius: 10px; font-size: 11px; }
+  .red-fortress-control-cards strong { font-size: 10px; }
+  .red-fortress-control-cards small { font-size: 8px; }
+  .red-fortress-start { min-width: 0; width: 100%; min-height: 50px; margin-top: 9px; font-size: 15px; }
+  .red-fortress-sound-note { display: none; }
+  .red-fortress-boss-bar { top: 192px; grid-template-columns: auto 1fr auto; min-height: 52px; gap: 7px; padding: 6px 9px; }
+  .red-fortress-boss-bar > span { display: none; }
+  .red-fortress-boss-bar > div { min-width: 0; }
+  .red-fortress-boss-bar progress { grid-column: 1 / -1; grid-row: 2; }
+  .red-fortress-boss-bar > b { min-width: 64px; }
+  .red-fortress-overlay { padding: 10px; }
+  .red-fortress-dialog { padding: 20px 16px; border-radius: 22px; }
+  .red-fortress-dialog-icon { width: 52px; height: 52px; border-radius: 17px; font-size: 25px; }
+  .red-fortress-results { grid-template-columns: 1fr 1fr; }
+  .red-fortress-clear-card > .red-fortress-route,
+  .red-fortress-complete-card > .red-fortress-route { grid-template-columns: 1fr 1fr; }
+  .red-fortress-dialog-actions.is-row { grid-template-columns: 1fr; }
+  .red-fortress-help-grid { grid-template-columns: 1fr; }
+  .red-fortress-help-grid article { min-height: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .red-fortress-page *,
+  .red-fortress-page *::before,
+  .red-fortress-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

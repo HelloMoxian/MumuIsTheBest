@@ -39,7 +39,7 @@ invariant(catalog.gameplay?.columns === 5 && catalog.gameplay?.rows === 6, "地�
 invariant(catalog.gameplay?.mineralProbability === 0.2, "矿物产出概率必须为 0.2");
 invariant(catalog.gameplay?.hammer?.durability === 30, "地质锤默认耐久必须为 30");
 invariant(catalog.gameplay?.hammer?.energyCoinCost === 30, "地质锤价格必须为 30 能量币");
-invariant(catalog.gameplay?.research?.knowledgeCoinCost === 5, "研究价格必须为 5 知识币");
+invariant(catalog.gameplay?.research?.knowledgeCoinCost === 1, "研究价格必须为 1 知识币");
 invariant(
   JSON.stringify(catalog.gameplay?.research?.attributeKeys) === JSON.stringify(requiredResearchKeys),
   "研究词条集合或顺序发生了未记录的变化",

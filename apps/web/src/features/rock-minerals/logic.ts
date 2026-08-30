@@ -108,8 +108,8 @@ export function isCellAccessible(board: DigBoard, cell: DigCell) {
   const activeCells = board.cells.filter((candidate) => candidate.status !== "cleared");
   if (activeCells.length === 0) return false;
   const columnCount = Math.max(...activeCells.map((candidate) => candidate.column)) + 1;
-  const ceilingDepth = Math.min(...activeCells.map((candidate) => candidate.depth)) - 1;
-  const floorDepth = Math.max(...activeCells.map((candidate) => candidate.depth));
+  const ceilingDepth = board.baseDepth - 1;
+  const floorDepth = Math.max(...board.cells.map((candidate) => candidate.depth));
   const coordinate = (column: number, depth: number) => `${column}:${depth}`;
   const occupied = new Set(activeCells.map((candidate) => coordinate(candidate.column, candidate.depth)));
   const reachableAir = new Set<string>();
@@ -142,32 +142,28 @@ export function isCellAccessible(board: DigBoard, cell: DigCell) {
   ));
 }
 
-function refillClearedColumns(
+function advanceWindowIfBottomHasHole(
   catalog: RockMineralCatalog,
   board: DigBoard,
   random: RandomSource,
 ) {
-  const cells = board.cells.filter((cell) => cell.status !== "cleared");
-  const topDepths: number[] = [];
+  const bottomDepth = board.baseDepth + catalog.gameplay.rows - 1;
+  const bottomHasHole = board.cells.some(
+    (cell) => cell.depth === bottomDepth && cell.status === "cleared",
+  );
+  if (!bottomHasHole) return board;
 
+  const nextBaseDepth = board.baseDepth + 1;
+  const cells = board.cells.filter(
+    (cell) => cell.depth >= nextBaseDepth && cell.depth <= bottomDepth,
+  );
+  const nextBottomDepth = bottomDepth + 1;
   for (let column = 0; column < catalog.gameplay.columns; column += 1) {
-    const previousColumn = board.cells.filter((cell) => cell.column === column);
-    const visibleColumn = cells.filter((cell) => cell.column === column);
-    let bottomDepth = previousColumn.reduce(
-      (deepest, cell) => Math.max(deepest, cell.depth),
-      board.baseDepth + catalog.gameplay.rows - 1,
-    );
-    while (visibleColumn.length < catalog.gameplay.rows) {
-      bottomDepth += 1;
-      const cell = makeCell(catalog, bottomDepth, column, random);
-      cells.push(cell);
-      visibleColumn.push(cell);
-    }
-    topDepths.push(Math.min(...visibleColumn.map((cell) => cell.depth)));
+    cells.push(makeCell(catalog, nextBottomDepth, column, random));
   }
 
   return {
-    baseDepth: Math.min(...topDepths),
+    baseDepth: nextBaseDepth,
     cells,
   };
 }
@@ -218,7 +214,7 @@ export function strikeCell(
     return {
       progress: {
         ...progress,
-        board: refillClearedColumns(catalog, { ...progress.board, cells }, random),
+        board: advanceWindowIfBottomHasHole(catalog, { ...progress.board, cells }, random),
         currentDepth: Math.max(progress.currentDepth, cell.depth),
       },
       outcome: "soil",
@@ -273,7 +269,7 @@ export function strikeCell(
       ...equipped,
       currentHammerDurability: durability,
       currentDepth: Math.max(equipped.currentDepth, cell.depth),
-      board: refillClearedColumns(catalog, { ...equipped.board, cells }, random),
+      board: advanceWindowIfBottomHasHole(catalog, { ...equipped.board, cells }, random),
       inventory: {
         ...equipped.inventory,
         [cell.mineralId]: (equipped.inventory[cell.mineralId] ?? 0) + 1,
@@ -364,6 +360,87 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function deterministicCellRandom(depth: number, column: number): RandomSource {
+  let state = (
+    Math.imul(depth + 1, 2_654_435_761)
+    ^ Math.imul(column + 1, 1_597_334_677)
+  ) >>> 0;
+  return () => {
+    state = (Math.imul(state, 1_664_525) + 1_013_904_223) >>> 0;
+    return state / 4_294_967_296;
+  };
+}
+
+function makeMigratedHole(depth: number, column: number): DigCell {
+  return {
+    id: `cleared-depth-${depth}-column-${column}`,
+    depth,
+    column,
+    soilVariant: "deep",
+    mineralId: null,
+    status: "cleared",
+    hitsRemaining: 0,
+    totalHits: 0,
+  };
+}
+
+function normalizeBoardGeometry(
+  catalog: RockMineralCatalog,
+  baseDepth: number,
+  cells: DigCell[],
+): DigBoard {
+  const coordinate = (column: number, depth: number) => `${column}:${depth}`;
+  const cellsByCoordinate = new Map(
+    cells.map((cell) => [coordinate(cell.column, cell.depth), cell]),
+  );
+  const maximumDepths = Array.from(
+    { length: catalog.gameplay.columns },
+    (_, column) => Math.max(
+      baseDepth - 1,
+      ...cells.filter((cell) => cell.column === column).map((cell) => cell.depth),
+    ),
+  );
+
+  let bottomDepth = baseDepth + catalog.gameplay.rows - 1;
+  while (true) {
+    const unsafeColumns = Array.from(
+      { length: catalog.gameplay.columns },
+      (_, column) => column,
+    ).filter((column) => {
+      const existing = cellsByCoordinate.get(coordinate(column, bottomDepth));
+      return existing?.status === "cleared"
+        || (!existing && bottomDepth <= maximumDepths[column]!);
+    });
+    if (unsafeColumns.length === 0) break;
+    bottomDepth = Math.max(
+      bottomDepth + 1,
+      ...unsafeColumns.map((column) => {
+        const deepest = maximumDepths[column]!;
+        const deepestCell = cellsByCoordinate.get(coordinate(column, deepest));
+        return deepestCell?.status === "cleared" ? deepest + 1 : deepest;
+      }),
+    );
+  }
+
+  const normalizedBaseDepth = bottomDepth - catalog.gameplay.rows + 1;
+  const normalizedCells: DigCell[] = [];
+  for (let depth = normalizedBaseDepth; depth <= bottomDepth; depth += 1) {
+    for (let column = 0; column < catalog.gameplay.columns; column += 1) {
+      const existing = cellsByCoordinate.get(coordinate(column, depth));
+      if (existing) {
+        normalizedCells.push(existing);
+      } else if (depth <= maximumDepths[column]!) {
+        normalizedCells.push(makeMigratedHole(depth, column));
+      } else {
+        normalizedCells.push(
+          makeCell(catalog, depth, column, deterministicCellRandom(depth, column)),
+        );
+      }
+    }
+  }
+  return { baseDepth: normalizedBaseDepth, cells: normalizedCells };
+}
+
 export function parseRockMineralProgress(
   value: unknown,
   catalog: RockMineralCatalog,
@@ -436,9 +513,25 @@ export function parseRockMineralProgress(
     || typeof value.soundEnabled !== "boolean"
     || !Number.isInteger(value.board.baseDepth)
   ) return undefined;
+  const uniqueCoordinates = new Set(
+    cells.map((cell) => `${cell.column}:${cell.depth}`),
+  );
+  if (
+    uniqueCoordinates.size !== cells.length
+    || cells.some((cell) => (
+      cell.column < 0
+      || cell.column >= catalog.gameplay.columns
+      || cell.depth < 1
+    ))
+  ) return undefined;
+  const normalizedBoard = normalizeBoardGeometry(
+    catalog,
+    Number(value.board.baseDepth),
+    cells,
+  );
   return {
     schemaVersion: 1,
-    board: { baseDepth: Number(value.board.baseDepth), cells },
+    board: normalizedBoard,
     currentDepth: Number(value.currentDepth),
     currentHammerDurability: Number(value.currentHammerDurability),
     spareHammers: Number(value.spareHammers),

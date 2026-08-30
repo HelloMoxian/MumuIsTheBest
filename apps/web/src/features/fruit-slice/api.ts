@@ -14,7 +14,7 @@ export type StoredFruitSliceSession = {
 };
 
 export type FruitSliceHistory = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   id: string;
   stableId: "game-fruit-slice-history";
   createdAt: string;

@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/assets/game/galaxy-racer/themes/solar/source/vfx-green.v1.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 4,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": true,
+  "keyColor": "#04F20A",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "speed-streak",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "speed-streak.png",
+      "sourceBox": [
+        2,
+        2,
+        312,
+        416
+      ],
+      "trimBox": null,
+      "outputWidth": 310,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.28003,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "turbo-glow",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "turbo-glow.png",
+      "sourceBox": [
+        316,
+        2,
+        625,
+        416
+      ],
+      "trimBox": null,
+      "outputWidth": 309,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.300134,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "collision-burst",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "collision-burst.png",
+      "sourceBox": [
+        629,
+        2,
+        938,
+        416
+      ],
+      "trimBox": null,
+      "outputWidth": 309,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.216094,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "wobble-stars",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "wobble-stars.png",
+      "sourceBox": [
+        942,
+        2,
+        1252,
+        416
+      ],
+      "trimBox": null,
+      "outputWidth": 310,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.0771,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lane-trail-left",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "lane-trail-left.png",
+      "sourceBox": [
+        2,
+        420,
+        312,
+        834
+      ],
+      "trimBox": null,
+      "outputWidth": 310,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.226103,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lane-trail-right",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "lane-trail-right.png",
+      "sourceBox": [
+        316,
+        420,
+        625,
+        834
+      ],
+      "trimBox": null,
+      "outputWidth": 309,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.209262,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hover-dust",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "hover-dust.png",
+      "sourceBox": [
+        629,
+        420,
+        938,
+        834
+      ],
+      "trimBox": null,
+      "outputWidth": 309,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.209832,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "slowdown-ripple",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "slowdown-ripple.png",
+      "sourceBox": [
+        942,
+        420,
+        1252,
+        834
+      ],
+      "trimBox": null,
+      "outputWidth": 310,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.22477,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "finish-sparkle",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "finish-sparkle.png",
+      "sourceBox": [
+        2,
+        838,
+        312,
+        1252
+      ],
+      "trimBox": null,
+      "outputWidth": 310,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.244187,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "confetti",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "confetti.png",
+      "sourceBox": [
+        316,
+        838,
+        625,
+        1252
+      ],
+      "trimBox": null,
+      "outputWidth": 309,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.094555,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "checkpoint-halo",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "checkpoint-halo.png",
+      "sourceBox": [
+        629,
+        838,
+        938,
+        1252
+      ],
+      "trimBox": null,
+      "outputWidth": 309,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.268249,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "vehicle-shadow",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "vehicle-shadow.png",
+      "sourceBox": [
+        942,
+        838,
+        1252,
+        1252
+      ],
+      "trimBox": null,
+      "outputWidth": 310,
+      "outputHeight": 414,
+      "opaqueCoverage": 0.188569,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

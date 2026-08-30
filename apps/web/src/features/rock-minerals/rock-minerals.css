@@ -218,6 +218,7 @@
 
 .geo-grid-wrap {
   position: relative;
+  overflow: hidden;
   padding: clamp(8px, 1.2vw, 15px);
   border: 1px solid rgba(89,231,255,.19);
   border-radius: 25px;
@@ -230,7 +231,12 @@
   background-size: 24px 24px, 24px 24px, auto, auto;
   box-shadow: inset 0 0 42px rgba(0,0,0,.5);
 }
-.geo-grid { display: grid; grid-template-columns: repeat(5, minmax(82px, 1fr)); gap: clamp(5px, .75vw, 9px); }
+.geo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(82px, 1fr));
+  gap: clamp(5px, .75vw, 9px);
+  will-change: transform;
+}
 .geo-cell {
   position: relative;
   aspect-ratio: 1.05 / 1;

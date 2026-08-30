@@ -24,7 +24,10 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
   const [announcement, setAnnouncement] = useState("数字键盘已准备好");
   const placeRowRef = useRef<HTMLDivElement | null>(null);
   const isHome = window.location.pathname === "/";
-  const isImmersiveCameraGame = window.location.pathname === "/games/fruit-slice";
+  const isImmersiveCameraGame = [
+    "/games/fruit-slice",
+    "/games/galaxy-racer",
+  ].includes(window.location.pathname);
   const value = digits ? Number(digits) : null;
   const spokenValue = useMemo(
     () => value === null ? "还没有输入数字" : formatChineseInteger(value),

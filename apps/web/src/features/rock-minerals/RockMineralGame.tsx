@@ -191,16 +191,8 @@ type ImpactBurst = {
 };
 
 function cellsInVisualOrder(cells: DigCell[]) {
-  const visualRows = new Map<string, number>();
-  for (let column = 0; column < catalog.gameplay.columns; column += 1) {
-    cells
-      .filter((cell) => cell.column === column)
-      .sort((left, right) => right.depth - left.depth)
-      .forEach((cell, row) => visualRows.set(cell.id, row));
-  }
   return cells.slice().sort((left, right) => (
-    (visualRows.get(left.id) ?? 0) - (visualRows.get(right.id) ?? 0)
-    || left.column - right.column
+    left.depth - right.depth || left.column - right.column
   ));
 }
 
@@ -222,7 +214,8 @@ export function RockMineralGame() {
   const discoveryTimer = useRef<number | null>(null);
   const burstTimers = useRef<number[]>([]);
   const gridWrapRef = useRef<HTMLDivElement | null>(null);
-  const previousCellRects = useRef<Map<string, DOMRect>>(new Map());
+  const gridRef = useRef<HTMLDivElement | null>(null);
+  const previousBoardBaseDepth = useRef<number | null>(null);
   const detailCloseRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -307,36 +300,29 @@ export function RockMineralGame() {
   }, []);
 
   useLayoutEffect(() => {
-    const previous = previousCellRects.current;
-    if (previous.size === 0 || !gridWrapRef.current) return;
-    previousCellRects.current = new Map();
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    gridWrapRef.current.querySelectorAll<HTMLButtonElement>(".geo-cell[data-cell-id]").forEach((element) => {
-      const cellId = element.dataset.cellId;
-      const before = cellId ? previous.get(cellId) : undefined;
-      if (!before) {
-        element.animate(
-          [
-            { opacity: 0, transform: "translateY(-24px) scale(.96)" },
-            { opacity: 1, transform: "translateY(0) scale(1)" },
-          ],
-          { duration: 300, easing: "cubic-bezier(.2,.82,.24,1)" },
-        );
-        return;
-      }
-      const after = element.getBoundingClientRect();
-      const offsetX = before.left - after.left;
-      const offsetY = before.top - after.top;
-      if (Math.abs(offsetX) < .5 && Math.abs(offsetY) < .5) return;
-      element.animate(
-        [
-          { transform: `translate(${offsetX}px, ${offsetY}px)` },
-          { transform: "translate(0, 0)" },
-        ],
-        { duration: 360, easing: "cubic-bezier(.2,.82,.24,1)" },
-      );
-    });
-  }, [progress?.board.cells]);
+    const previousBaseDepth = previousBoardBaseDepth.current;
+    previousBoardBaseDepth.current = null;
+    if (
+      previousBaseDepth === null
+      || !progress
+      || progress.board.baseDepth <= previousBaseDepth
+      || !gridRef.current
+      || window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) return;
+    const cells = gridRef.current.querySelectorAll<HTMLButtonElement>(".geo-cell");
+    const firstRowCell = cells.item(0);
+    const secondRowCell = cells.item(catalog.gameplay.columns);
+    if (!firstRowCell || !secondRowCell) return;
+    const rowStep = secondRowCell.getBoundingClientRect().top
+      - firstRowCell.getBoundingClientRect().top;
+    gridRef.current.animate(
+      [
+        { transform: `translateY(${rowStep}px)` },
+        { transform: "translateY(0)" },
+      ],
+      { duration: 420, easing: "cubic-bezier(.2,.82,.24,1)" },
+    );
+  }, [progress?.board.baseDepth]);
 
   useEffect(() => {
     if (!selectedId) return;
@@ -371,12 +357,8 @@ export function RockMineralGame() {
     }
   };
 
-  const captureCellPositions = () => {
-    const positions = new Map<string, DOMRect>();
-    gridWrapRef.current?.querySelectorAll<HTMLButtonElement>(".geo-cell[data-cell-id]").forEach((element) => {
-      if (element.dataset.cellId) positions.set(element.dataset.cellId, element.getBoundingClientRect());
-    });
-    previousCellRects.current = positions;
+  const prepareWindowAnimation = () => {
+    previousBoardBaseDepth.current = progress?.board.baseDepth ?? null;
   };
 
   const spawnImpactBurst = (
@@ -473,7 +455,7 @@ export function RockMineralGame() {
       playHitSound(result.outcome === "soil" ? "soil" : "mineral");
     }
     if (result.outcome === "soil") {
-      captureCellPositions();
+      prepareWindowAnimation();
       if (struckCell) spawnImpactBurst(struckCell, sourceElement, "soil");
       void commit(result.progress, `泥土已经清开，现在挖了 ${result.progress.currentDepth} 米。`);
       return;
@@ -490,7 +472,7 @@ export function RockMineralGame() {
       ? itemById.get(result.collectedMineralId)
       : undefined;
     if (item) {
-      captureCellPositions();
+      prepareWindowAnimation();
       if (struckCell) spawnImpactBurst(struckCell, sourceElement, "mineral", item);
       setDiscovery({ item, first: result.firstDiscovery });
       if (discoveryTimer.current !== null) window.clearTimeout(discoveryTimer.current);
@@ -676,7 +658,7 @@ export function RockMineralGame() {
               }}
               onPointerLeave={() => setHammerPointer(null)}
             >
-              <div className="geo-grid" role="grid" aria-label="五列六行未知地层">
+              <div ref={gridRef} className="geo-grid" role="grid" aria-label="五列六行未知地层">
                 {cellsInVisualOrder(progress.board.cells)
                   .map((cell) => {
                     const accessible = isCellAccessible(progress.board, cell);

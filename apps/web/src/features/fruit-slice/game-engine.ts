@@ -90,6 +90,7 @@ type EngineOptions = {
   players: PlayerSelection[];
   reducedMotion: boolean;
   onHud: (hud: GameHud) => void;
+  onFruitSlice?: (swipeSpeed: number) => void;
   onEnd: (players: PlayerResult[], durationMs: number) => void;
 };
 
@@ -298,6 +299,7 @@ export class FruitSliceEngine {
         this.shockwaves.push({ id: this.nextId++, x: item.x, y: item.y, bornAt: now, kind: "super" });
       }
       player.score += scoreForSlice(segment.speed, combo.multiplier);
+      this.options.onFruitSlice?.(segment.speed);
 
       if (item.kind === "lobster") {
         player.lobsterSlices += 1;

@@ -1,7 +1,9 @@
+import { randomUUID } from "node:crypto";
 import { chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
+import { CURRENCY_MANAGEMENT_PASSWORD } from "./currency-management.js";
 
 export const FRUIT_SLICE_ROLES = [
   "爸爸",
@@ -64,7 +66,7 @@ const sessionInputSchema = sessionBaseSchema.superRefine((session, context) => {
 });
 
 const storedPlayerResultSchema = playerResultInputSchema.extend({
-  energyCoinsEarned: z.number().int().min(0).max(20),
+  energyCoinsEarned: z.number().int().min(0).max(50),
 });
 
 const storedSessionSchema = sessionBaseSchema.omit({ eventId: true, players: true }).extend({
@@ -77,7 +79,7 @@ const storedSessionSchema = sessionBaseSchema.omit({ eventId: true, players: tru
   players: z.array(storedPlayerResultSchema).min(1).max(2),
 });
 
-const energyCoinTransactionSchema = z.object({
+const geologyHammerTransactionSchema = z.object({
   eventId: z.string().uuid(),
   kind: z.literal("nature:geology-hammer"),
   amount: z.literal(30),
@@ -85,8 +87,81 @@ const energyCoinTransactionSchema = z.object({
   createdAt: z.string().datetime(),
 });
 
-const historySchema = z.object({
+const adminEnergyCoinTransactionSchema = z.object({
+  eventId: z.string().uuid(),
+  kind: z.literal("admin:coin-set"),
+  coinDelta: z.number().int().min(-1_000_000_000).max(1_000_000_000),
+  balanceAfter: z.number().int().min(0).max(1_000_000_000),
+  createdAt: z.string().datetime(),
+});
+
+const RACER_TARGETS_MS = [80_000, 70_000, 60_000, 55_000, 50_000, 45_000] as const;
+const galaxyRacerAttemptSchema = z.object({
+  level: z.number().int().min(1).max(6),
+  elapsedMs: z.number().int().min(1_000).max(180_000),
+  collisions: z.number().int().min(0).max(10_000),
+  completed: z.literal(true),
+});
+const galaxyRacerSettlementInputSchema = z.object({
+  eventId: z.string().uuid(),
+  startedAt: z.string().datetime(),
+  attempts: z.array(galaxyRacerAttemptSchema).min(1).max(6),
+}).superRefine((run, context) => {
+  let reachedFirstUnlitStage = false;
+  run.attempts.forEach((attempt, index) => {
+    if (attempt.level !== index + 1) {
+      context.addIssue({ code: "custom", message: "赛车关卡必须从第一关开始并连续提交。" });
+    }
+    if (reachedFirstUnlitStage) {
+      context.addIssue({ code: "custom", message: "本轮应在首个未点亮关卡冲线后结算。" });
+    }
+    if (attempt.elapsedMs > RACER_TARGETS_MS[index]) reachedFirstUnlitStage = true;
+  });
+  const last = run.attempts.at(-1);
+  if (
+    last
+    && run.attempts.length < RACER_TARGETS_MS.length
+    && last.elapsedMs <= RACER_TARGETS_MS[last.level - 1]
+  ) {
+    context.addIssue({ code: "custom", message: "点亮当前星门后需要继续下一关再统一结算。" });
+  }
+});
+
+const galaxyRacerRewardTransactionSchema = z.object({
+  eventId: z.string().uuid(),
+  kind: z.literal("games:galaxy-racer"),
+  startedAt: z.string().datetime(),
+  attempts: z.array(galaxyRacerAttemptSchema).min(1).max(6),
+  passedLevels: z.number().int().min(0).max(6),
+  coinDelta: z.number().int().min(0).max(60),
+  balanceAfter: z.number().int().min(0).max(1_000_000_000),
+  createdAt: z.string().datetime(),
+});
+
+const legacyEnergyCoinTransactionSchema = z.union([
+  geologyHammerTransactionSchema,
+  adminEnergyCoinTransactionSchema,
+]);
+
+const energyCoinTransactionSchema = z.union([
+  geologyHammerTransactionSchema,
+  adminEnergyCoinTransactionSchema,
+  galaxyRacerRewardTransactionSchema,
+]);
+
+const historyVersionOneSchema = z.object({
   schemaVersion: z.literal(1),
+  id: z.string().uuid(),
+  stableId: z.literal("game-fruit-slice-history"),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+  energyCoinBalance: z.number().int().min(0).max(1_000_000_000),
+  sessions: z.array(storedSessionSchema).max(100_000),
+  energyCoinTransactions: z.array(legacyEnergyCoinTransactionSchema).max(100_000).default([]),
+});
+
+const historySchema = z.object({
+  schemaVersion: z.literal(2),
   id: z.string().uuid(),
   stableId: z.literal("game-fruit-slice-history"),
   createdAt: z.string().datetime(),
@@ -109,11 +184,15 @@ const energyCoinSpendInputSchema = z.object({
   amount: z.literal(GEOLOGY_HAMMER_COST),
   quantity: z.literal(1),
 });
+const energyCoinSetInputSchema = z.object({
+  password: z.string().min(1).max(64),
+  balance: z.number().int().min(0).max(1_000_000_000),
+});
 
 function emptyHistory(): History {
   const createdAt = new Date(0).toISOString();
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     id: STABLE_HISTORY_UUID,
     stableId: "game-fruit-slice-history",
     createdAt,
@@ -124,9 +203,10 @@ function emptyHistory(): History {
   };
 }
 
-export function energyCoinsForPlayer(role: string, score: number) {
+export function energyCoinsForPlayer(role: string, score: number, durationSeconds = 30) {
   if (role !== "木木" || score < ENERGY_SCORE_STEP) return 0;
-  return Math.min(20, Math.floor(score / ENERGY_SCORE_STEP));
+  const cap = durationSeconds >= 120 ? 50 : durationSeconds >= 90 ? 40 : durationSeconds >= 60 ? 30 : 20;
+  return Math.min(cap, Math.floor(score / ENERGY_SCORE_STEP));
 }
 
 function winnerSide(input: SessionInput): StoredSession["winnerSide"] {
@@ -189,7 +269,17 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
 
   async function readHistory(): Promise<History> {
     try {
-      return historySchema.parse(JSON.parse(await readFile(historyPath, "utf8")));
+      const raw: unknown = JSON.parse(await readFile(historyPath, "utf8"));
+      if (
+        typeof raw === "object"
+        && raw !== null
+        && "schemaVersion" in raw
+        && raw.schemaVersion === 1
+      ) {
+        const legacy = historyVersionOneSchema.parse(raw);
+        return historySchema.parse({ ...legacy, schemaVersion: 2 });
+      }
+      return historySchema.parse(raw);
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === "ENOENT") return emptyHistory();
       throw error;
@@ -213,7 +303,7 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
       const now = new Date().toISOString();
       const players = input.players.map((player) => ({
         ...player,
-        energyCoinsEarned: energyCoinsForPlayer(player.role, player.score),
+        energyCoinsEarned: energyCoinsForPlayer(player.role, player.score, input.settings.durationSeconds),
       }));
       const session = storedSessionSchema.parse({
         ...input,
@@ -267,6 +357,78 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
     return operation;
   }
 
+  function setEnergyCoinBalance(balance: number) {
+    let coinDelta = 0;
+    const operation = writeQueue.then(async () => {
+      const history = await readHistory();
+      const now = new Date().toISOString();
+      coinDelta = balance - history.energyCoinBalance;
+      const next = historySchema.parse({
+        ...history,
+        updatedAt: now,
+        energyCoinBalance: balance,
+        energyCoinTransactions: [...history.energyCoinTransactions, {
+          eventId: randomUUID(),
+          kind: "admin:coin-set" as const,
+          coinDelta,
+          balanceAfter: balance,
+          createdAt: now,
+        }].slice(-100_000),
+      });
+      await saveHistory(next);
+      return { history: next, coinDelta };
+    });
+    writeQueue = operation.then(() => undefined, () => undefined);
+    return operation;
+  }
+
+  function settleGalaxyRacer(
+    input: z.infer<typeof galaxyRacerSettlementInputSchema>,
+  ) {
+    const operation = writeQueue.then(async () => {
+      const history = await readHistory();
+      const existing = history.energyCoinTransactions.find(
+        (transaction) => transaction.eventId === input.eventId,
+      );
+      if (existing) {
+        if (existing.kind !== "games:galaxy-racer") {
+          throw new Error("ENERGY_COIN_EVENT_ID_COLLISION");
+        }
+        return { history, transaction: existing, alreadySaved: true };
+      }
+
+      let passedLevels = 0;
+      for (const attempt of input.attempts) {
+        if (
+          attempt.level !== passedLevels + 1
+          || attempt.elapsedMs > RACER_TARGETS_MS[attempt.level - 1]
+        ) break;
+        passedLevels += 1;
+      }
+      const now = new Date().toISOString();
+      const coinDelta = passedLevels * 10;
+      const balanceAfter = history.energyCoinBalance + coinDelta;
+      const transaction = galaxyRacerRewardTransactionSchema.parse({
+        ...input,
+        kind: "games:galaxy-racer",
+        passedLevels,
+        coinDelta,
+        balanceAfter,
+        createdAt: now,
+      });
+      const next = historySchema.parse({
+        ...history,
+        updatedAt: now,
+        energyCoinBalance: balanceAfter,
+        energyCoinTransactions: [...history.energyCoinTransactions, transaction].slice(-100_000),
+      });
+      await saveHistory(next);
+      return { history: next, transaction, alreadySaved: false };
+    });
+    writeQueue = operation.then(() => undefined, () => undefined);
+    return operation;
+  }
+
   app.get("/api/games/fruit-slice/history", async (_request, reply) => {
     try {
       const history = await readHistory();
@@ -283,7 +445,7 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
     try {
       const history = await readHistory();
       return {
-        schemaVersion: 1,
+        schemaVersion: 2,
         balance: history.energyCoinBalance,
         updatedAt: history.updatedAt,
       };
@@ -291,6 +453,35 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
       return reply.code(500).send({
         code: "ENERGY_COIN_READ_FAILED",
         message: "能量币余额暂时无法读取，请让家长检查本机数据目录。",
+      });
+    }
+  });
+
+  app.post("/api/games/fruit-slice/energy-coins/set", async (request, reply) => {
+    const parsed = energyCoinSetInputSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        code: "INVALID_ENERGY_COIN_MANAGEMENT_REQUEST",
+        message: "请输入有效的家长密码和 0 至 10 亿之间的整数余额。",
+      });
+    }
+    if (parsed.data.password !== CURRENCY_MANAGEMENT_PASSWORD) {
+      return reply.code(403).send({
+        code: "INVALID_ENERGY_COIN_MANAGEMENT_PASSWORD",
+        message: "密码不正确，能量币没有改变。",
+      });
+    }
+    try {
+      const result = await setEnergyCoinBalance(parsed.data.balance);
+      return reply.code(201).send({
+        coinDelta: result.coinDelta,
+        balance: result.history.energyCoinBalance,
+        updatedAt: result.history.updatedAt,
+      });
+    } catch {
+      return reply.code(500).send({
+        code: "ENERGY_COIN_SET_FAILED",
+        message: "能量币余额暂时没有设置成功，请让家长检查本机数据目录。",
       });
     }
   });
@@ -353,6 +544,32 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
       return reply.code(500).send({
         code: "FRUIT_SLICE_HISTORY_WRITE_FAILED",
         message: "本局已经结束，但战报暂时无法保存，请让家长检查本机数据目录。",
+      });
+    }
+  });
+
+  app.post("/api/games/galaxy-racer/settlements", async (request, reply) => {
+    const parsed = galaxyRacerSettlementInputSchema.safeParse(request.body);
+    if (!parsed.success) {
+      return reply.code(400).send({
+        code: "INVALID_GALAXY_RACER_SETTLEMENT",
+        message: "本轮赛程还不完整，能量币没有变化，请从当前页面重新尝试结算。",
+      });
+    }
+    try {
+      const result = await settleGalaxyRacer(parsed.data);
+      return reply.code(result.alreadySaved ? 200 : 201).send({
+        alreadySaved: result.alreadySaved,
+        eventId: result.transaction.eventId,
+        passedLevels: result.transaction.passedLevels,
+        energyCoinsEarned: result.transaction.coinDelta,
+        energyCoinBalance: result.history.energyCoinBalance,
+        updatedAt: result.history.updatedAt,
+      });
+    } catch {
+      return reply.code(500).send({
+        code: "GALAXY_RACER_SETTLEMENT_WRITE_FAILED",
+        message: "本轮赛程已经完成，奖励暂时还在星际途中，请稍后再送一次。",
       });
     }
   });

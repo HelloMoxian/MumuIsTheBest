@@ -1,14 +1,40 @@
 import {
   HandLandmarker,
-  PoseLandmarker,
   type NormalizedLandmark,
 } from "@mediapipe/tasks-vision";
 import visionWasmLoaderUrl from "@mediapipe/tasks-vision/vision_wasm_internal.js?url";
 import visionWasmBinaryUrl from "@mediapipe/tasks-vision/vision_wasm_internal.wasm?url";
-import { handLandmarkerModelUrl, poseLandmarkerModelUrl } from "./assets";
+import { handLandmarkerModelUrl } from "./assets";
 import type { GameMode, PlayerSide, Point, TrackingFrame, TrackingHand } from "./types";
 
 type TrackedHand = TrackingHand & { lastSeenAt: number };
+
+const wasmFileset = {
+  wasmLoaderPath: visionWasmLoaderUrl,
+  wasmBinaryPath: visionWasmBinaryUrl,
+};
+
+const runtimeAssetUrls = [
+  visionWasmLoaderUrl,
+  visionWasmBinaryUrl,
+  handLandmarkerModelUrl,
+] as const;
+
+let runtimePreloadPromise: Promise<void> | undefined;
+
+export function preloadMediaPipeRuntimeAssets() {
+  if (!runtimePreloadPromise) {
+    runtimePreloadPromise = Promise.all(runtimeAssetUrls.map(async (url) => {
+      const response = await fetch(url, { cache: "force-cache" });
+      if (!response.ok) throw new Error(`动作识别本地资源读取失败：${response.status}`);
+      await response.arrayBuffer();
+    })).then(() => undefined).catch((error: unknown) => {
+      runtimePreloadPromise = undefined;
+      throw error;
+    });
+  }
+  return runtimePreloadPromise;
+}
 
 function mirroredPoint(landmarks: NormalizedLandmark[]): Point {
   const palmIndexes = [0, 5, 9, 13, 17];
@@ -19,82 +45,44 @@ function mirroredPoint(landmarks: NormalizedLandmark[]): Point {
   };
 }
 
-function poseCenter(landmarks: NormalizedLandmark[]) {
-  const torso = [11, 12, 23, 24]
-    .map((index) => landmarks[index])
-    .filter((point) => point && (point.visibility ?? 1) >= 0.3);
-  if (torso.length < 2) return null;
-  return 1 - torso.reduce((total, point) => total + point.x, 0) / torso.length;
-}
-
 export class MediaPipeBodyHandTracker {
   private handLandmarker?: HandLandmarker;
-  private poseLandmarker?: PoseLandmarker;
-  private lastPoseAt = -Infinity;
-  private bodyCenters: number[] = [];
   private trackedHands = new Map<string, TrackedHand>();
   private nextHandId = 1;
 
   constructor(private readonly mode: GameMode) {}
 
   async initialize() {
-    const wasmFileset = {
-      wasmLoaderPath: visionWasmLoaderUrl,
-      wasmBinaryPath: visionWasmBinaryUrl,
-    };
-    const create = async (delegate: "GPU" | "CPU") => {
-      const handLandmarker = await HandLandmarker.createFromOptions(wasmFileset, {
-        baseOptions: { modelAssetPath: handLandmarkerModelUrl, delegate },
-        runningMode: "VIDEO",
-        numHands: this.mode === "versus" ? 4 : 2,
-        minHandDetectionConfidence: 0.35,
-        minHandPresenceConfidence: 0.35,
-        minTrackingConfidence: 0.35,
-      });
-      try {
-        const poseLandmarker = await PoseLandmarker.createFromOptions(wasmFileset, {
-          baseOptions: { modelAssetPath: poseLandmarkerModelUrl, delegate },
-          runningMode: "VIDEO",
-          numPoses: this.mode === "versus" ? 2 : 1,
-          minPoseDetectionConfidence: 0.35,
-          minPosePresenceConfidence: 0.35,
-          minTrackingConfidence: 0.35,
-          outputSegmentationMasks: false,
-        });
-        return { handLandmarker, poseLandmarker };
-      } catch (error) {
-        handLandmarker.close();
-        throw error;
-      }
-    };
+    // 设置页会提前预热这些同源文件；直接进入时也会在这里与初始化共用同一份请求。
+    await preloadMediaPipeRuntimeAssets().catch(() => undefined);
+    const create = (delegate: "GPU" | "CPU") => HandLandmarker.createFromOptions(wasmFileset, {
+      baseOptions: { modelAssetPath: handLandmarkerModelUrl, delegate },
+      runningMode: "VIDEO",
+      numHands: this.mode === "versus" ? 4 : 2,
+      minHandDetectionConfidence: 0.35,
+      minHandPresenceConfidence: 0.35,
+      minTrackingConfidence: 0.35,
+    });
 
     try {
-      ({ handLandmarker: this.handLandmarker, poseLandmarker: this.poseLandmarker } = await create("GPU"));
+      this.handLandmarker = await create("GPU");
     } catch {
-      ({ handLandmarker: this.handLandmarker, poseLandmarker: this.poseLandmarker } = await create("CPU"));
+      this.handLandmarker = await create("CPU");
     }
   }
 
   detect(video: HTMLVideoElement, now: number): TrackingFrame {
-    if (!this.handLandmarker || !this.poseLandmarker) {
+    if (!this.handLandmarker) {
       return { hands: [], bodyCount: 0, bodySides: { left: false, right: false } };
-    }
-
-    if (now - this.lastPoseAt >= 120) {
-      this.lastPoseAt = now;
-      this.bodyCenters = this.poseLandmarker.detectForVideo(video, now).landmarks
-        .map(poseCenter)
-        .filter((center): center is number => center !== null)
-        .sort((left, right) => left - right);
     }
 
     const points = this.handLandmarker.detectForVideo(video, now).landmarks.map(mirroredPoint);
     const hands = this.assignStableHands(points, now);
     const bodySides = {
-      left: this.mode === "single" ? this.bodyCenters.length > 0 : this.bodyCenters.some((x) => x < 0.5),
-      right: this.mode === "single" ? this.bodyCenters.length > 0 : this.bodyCenters.some((x) => x >= 0.5),
+      left: hands.some((hand) => hand.side === "left"),
+      right: hands.some((hand) => hand.side === "right"),
     };
-    return { hands, bodyCount: this.bodyCenters.length, bodySides };
+    return { hands, bodyCount: 0, bodySides };
   }
 
   private assignStableHands(points: Point[], now: number) {
@@ -127,9 +115,7 @@ export class MediaPipeBodyHandTracker {
 
   close() {
     this.handLandmarker?.close();
-    this.poseLandmarker?.close();
     this.handLandmarker = undefined;
-    this.poseLandmarker = undefined;
     this.trackedHands.clear();
   }
 }

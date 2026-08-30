@@ -63,7 +63,7 @@
 
 .coin-reset-card {
   display: grid;
-  width: min(680px, 100%);
+  width: min(760px, 100%);
   gap: 24px;
   padding: clamp(24px, 5vw, 48px);
   border: 1px solid var(--line-glow);
@@ -98,26 +98,41 @@
   font-weight: 700;
 }
 
+.coin-balance-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
 .coin-balance-panel {
   display: grid;
-  min-height: 175px;
+  min-height: 164px;
   place-items: center;
   padding: 22px;
   border: 1px solid rgba(255, 209, 102, .28);
   border-radius: 25px;
   background: radial-gradient(circle at 50% 32%, rgba(255, 209, 102, .15), transparent 62%), rgba(10, 13, 42, .56);
 }
+.coin-balance-panel.is-energy {
+  border-color: rgba(89, 231, 255, .3);
+  background: radial-gradient(circle at 50% 32%, rgba(89, 231, 255, .16), transparent 62%), rgba(10, 13, 42, .56);
+}
 
 .coin-balance-panel span,
 .coin-balance-panel small { color: var(--ink-secondary); font-weight: 800; }
 .coin-balance-panel strong {
   color: var(--warning-300);
-  font: 950 clamp(48px, 10vw, 78px)/1 var(--font-display);
+  font: 950 clamp(44px, 7vw, 68px)/1 var(--font-display);
   text-shadow: 0 0 34px rgba(255, 209, 102, .25);
+}
+.coin-balance-panel.is-energy strong {
+  color: var(--cyan-300);
+  text-shadow: 0 0 34px rgba(89, 231, 255, .25);
 }
 
 .coin-reset-form { display: grid; gap: 10px; }
 .coin-reset-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.coin-reset-password-field { grid-column: 1 / -1; }
 .coin-reset-form label { display: grid; gap: 8px; color: #e7e6fa; font-weight: 900; }
 .coin-reset-form input {
   min-height: 62px;
@@ -208,7 +223,10 @@
   .coin-reset-main { width: min(100% - 24px, 960px); }
   .coin-reset-topbar strong { padding: 0 11px; font-size: 14px; }
   .coin-reset-card { gap: 18px; border-radius: 25px; }
+  .coin-balance-overview { grid-template-columns: 1fr; }
+  .coin-balance-panel { min-height: 140px; }
   .coin-reset-fields { grid-template-columns: 1fr; }
+  .coin-reset-password-field { grid-column: auto; }
   .coin-reward-rules { grid-template-columns: 1fr; }
   .coin-reward-rules span { min-height: 58px; grid-template-columns: auto 1fr; gap: 10px; }
 }
