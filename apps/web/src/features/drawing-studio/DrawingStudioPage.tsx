@@ -31,6 +31,7 @@ import {
   makeHistoryNode,
   mergeDrawingPresets,
   parseDrawingDocument,
+  renameDrawingPreset,
   screenPointToWorld,
   selectionBounds,
   zoomViewportAt,
@@ -204,6 +205,7 @@ export function DrawingStudioPage() {
   const [persistenceReady, setPersistenceReady] = useState(false);
   const [persistenceEnabled, setPersistenceEnabled] = useState(true);
   const [autoSaveStatus, setAutoSaveStatus] = useState<AutoSaveStatus>("loading");
+  const [presetRename, setPresetRename] = useState<{ id: string; draft: string } | null>(null);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -261,6 +263,7 @@ export function DrawingStudioPage() {
 
   const chooseTool = (nextTool: ToolId) => {
     setTool(nextTool);
+    if (nextTool !== "preset") setPresetRename(null);
     if (nextTool !== "select") setSelectedIds([]);
     setMessage(TOOL_OPTIONS.find((option) => option.id === nextTool)?.label ?? "工具已切换");
   };
@@ -424,6 +427,29 @@ export function DrawingStudioPage() {
     const preset = documentRef.current.presets.find((candidate) => candidate.id === presetId);
     if (!preset) return;
     commitElements(`删除预制件“${preset.name}”`, documentRef.current.elements, documentRef.current.presets.filter((candidate) => candidate.id !== presetId));
+    if (presetRename?.id === presetId) setPresetRename(null);
+  };
+
+  const savePresetRename = (presetId: string) => {
+    if (presetRename?.id !== presetId) return;
+    const preset = documentRef.current.presets.find((candidate) => candidate.id === presetId);
+    if (!preset) {
+      setPresetRename(null);
+      setMessage("没有找到这个预制件，请重新打开目录后再试。");
+      return;
+    }
+    try {
+      const renamed = renameDrawingPreset(documentRef.current.presets, presetId, presetRename.draft);
+      const nextName = renamed.find((candidate) => candidate.id === presetId)?.name ?? preset.name;
+      setPresetRename(null);
+      if (nextName === preset.name) {
+        setMessage(`“${preset.name}”的名称没有变化。`);
+        return;
+      }
+      commitElements(`把预制件“${preset.name}”重命名为“${nextName}”`, documentRef.current.elements, renamed);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "这个名字暂时不能使用。");
+    }
   };
 
   const fillRegion = (elementId: string, regionId: string | null) => {
@@ -996,14 +1022,45 @@ export function DrawingStudioPage() {
                   {document.presets.length > 0 ? (
                     <div className="drawing-preset-grid">
                       {document.presets.map((preset) => (
-                        <article key={preset.id}>
+                        <article className={presetRename?.id === preset.id ? "is-renaming" : ""} key={preset.id}>
                           <button className="drawing-preset-insert" type="button" onClick={() => addPreset(preset)} aria-label={`放入${preset.name}`}>
                             <svg viewBox={`0 0 ${preset.width} ${preset.height}`} aria-hidden="true" preserveAspectRatio="xMidYMid meet">
                               {preset.elements.map((element) => renderElement(element, false))}
                             </svg>
                             <span><strong>{preset.name}</strong><small>{preset.elements.length} 个图元</small></span>
                           </button>
-                          <button className="drawing-preset-delete" type="button" onClick={() => deletePreset(preset.id)} aria-label={`删除${preset.name}`}>删除</button>
+                          <div className="drawing-preset-actions">
+                            <button
+                              className="drawing-preset-rename"
+                              type="button"
+                              onClick={() => setPresetRename({ id: preset.id, draft: preset.name })}
+                              aria-expanded={presetRename?.id === preset.id}
+                              aria-controls={`drawing-preset-rename-${preset.id}`}
+                            >重命名</button>
+                            <button className="drawing-preset-delete" type="button" onClick={() => deletePreset(preset.id)} aria-label={`删除${preset.name}`}>删除</button>
+                          </div>
+                          {presetRename?.id === preset.id && (
+                            <form
+                              className="drawing-preset-rename-form"
+                              id={`drawing-preset-rename-${preset.id}`}
+                              onSubmit={(event) => { event.preventDefault(); savePresetRename(preset.id); }}
+                            >
+                              <label htmlFor={`drawing-preset-name-${preset.id}`}>预制件名称</label>
+                              <input
+                                id={`drawing-preset-name-${preset.id}`}
+                                type="text"
+                                maxLength={40}
+                                value={presetRename.draft}
+                                autoFocus
+                                onChange={(event) => setPresetRename({ id: preset.id, draft: event.target.value })}
+                                onKeyDown={(event) => { if (event.key === "Escape") setPresetRename(null); }}
+                              />
+                              <div>
+                                <button type="submit">保存名字</button>
+                                <button type="button" onClick={() => setPresetRename(null)}>取消</button>
+                              </div>
+                            </form>
+                          )}
                         </article>
                       ))}
                     </div>

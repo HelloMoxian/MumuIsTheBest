@@ -300,7 +300,10 @@
 
 .drawing-toolbox {
   position: relative;
+  display: flex;
+  min-height: 0;
   flex: 0 0 354px;
+  flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--line-glow);
   border-radius: 25px;
@@ -384,7 +387,15 @@
 .drawing-catalog,
 .drawing-tool-settings,
 .drawing-selection-tools,
-.drawing-preset-library { max-height: calc(100svh - 420px); overflow-y: auto; padding: 12px; scrollbar-width: thin; }
+.drawing-preset-library {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 12px 12px max(28px, env(safe-area-inset-bottom));
+  scroll-padding-block: 12px 28px;
+  scrollbar-width: thin;
+}
 
 .drawing-level-label { display: flex; align-items: center; gap: 8px; margin: 2px 1px 9px; }
 .drawing-level-label > span { padding: 3px 7px; border-radius: 999px; color: #b9f6ff; background: rgba(89,231,255,.11); font-size: 10px; font-weight: 950; letter-spacing: .08em; }
@@ -523,18 +534,50 @@
 .drawing-preset-insert > span { display: grid; min-width: 0; gap: 5px; }
 .drawing-preset-insert strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
 .drawing-preset-insert small { color: var(--ink-secondary); font-size: 11px; }
-.drawing-preset-delete {
-  min-width: 54px;
+.drawing-preset-actions { display: grid; align-self: center; gap: 7px; }
+.drawing-preset-actions button {
+  min-width: 62px;
   min-height: 48px;
-  align-self: center;
-  border: 1px solid rgba(255,117,150,.3);
   border-radius: 13px;
-  color: #ffd7e0;
-  background: rgba(255,117,150,.08);
   font-size: 12px;
   font-weight: 900;
 }
+.drawing-preset-rename {
+  border: 1px solid rgba(89,231,255,.3);
+  color: #c9f8ff;
+  background: rgba(89,231,255,.08);
+}
+.drawing-preset-rename:hover { border-color: rgba(89,231,255,.62); background: rgba(89,231,255,.14); }
+.drawing-preset-delete {
+  border: 1px solid rgba(255,117,150,.3);
+  color: #ffd7e0;
+  background: rgba(255,117,150,.08);
+}
 .drawing-preset-delete:hover { border-color: rgba(255,117,150,.62); background: rgba(255,117,150,.14); }
+.drawing-preset-grid article.is-renaming { border-color: rgba(89,231,255,.45); background: rgba(89,231,255,.06); }
+.drawing-preset-rename-form {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 7px;
+  padding: 10px;
+  border-top: 1px solid rgba(202,204,255,.14);
+}
+.drawing-preset-rename-form label { color: #deddf1; font-size: 12px; font-weight: 900; }
+.drawing-preset-rename-form input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid rgba(89,231,255,.35);
+  border-radius: 12px;
+  color: white;
+  background: rgba(9,8,35,.6);
+  font-size: 16px;
+  font-weight: 800;
+}
+.drawing-preset-rename-form input:focus-visible { border-color: var(--cyan-300); outline: 3px solid rgba(89,231,255,.16); }
+.drawing-preset-rename-form > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.drawing-preset-rename-form button { min-height: 48px; border: 1px solid rgba(89,231,255,.28); border-radius: 12px; color: white; background: rgba(89,231,255,.1); font-size: 12px; font-weight: 900; }
+.drawing-preset-rename-form button[type="submit"] { border-color: rgba(141,115,255,.55); background: rgba(141,115,255,.24); }
 
 .drawing-drawer-backdrop {
   position: fixed;
@@ -611,7 +654,7 @@
   .drawing-catalog,
   .drawing-tool-settings,
   .drawing-selection-tools,
-  .drawing-preset-library { max-height: calc(43svh - 170px); padding: 8px 10px 12px; }
+  .drawing-preset-library { padding: 8px 10px max(24px, env(safe-area-inset-bottom)); }
   .drawing-catalog-grid { grid-template-columns: repeat(4, minmax(92px, 1fr)); overflow-x: auto; }
   .drawing-catalog-grid button { min-height: 91px; }
   .drawing-catalog-grid button svg { width: 57px; height: 57px; }

@@ -14,6 +14,7 @@ import {
   instantiateDrawingPreset,
   mergeDrawingPresets,
   parseDrawingDocument,
+  renameDrawingPreset,
   screenPointToWorld,
   zoomViewportAt,
   type DrawingElement,
@@ -173,6 +174,17 @@ test("keeps the permanent preset library when a new canvas is created or librari
   assert.equal(newCanvas.presets.length, 1);
   assert.notEqual(newCanvas.presets[0], preset);
   assert.deepEqual(merged.map((candidate) => candidate.name), ["花园", "小屋"]);
+});
+
+test("renames one preset without changing the saved source library", () => {
+  const preset = createDrawingPreset("花园", [makeShape("left"), { ...makeShape("right"), x: 180 }]);
+  const renamed = renameDrawingPreset([preset], preset.id, `  ${"星".repeat(45)}  `);
+
+  assert.equal(renamed[0]?.name, "星".repeat(40));
+  assert.equal(preset.name, "花园");
+  assert.notEqual(renamed[0], preset);
+  assert.throws(() => renameDrawingPreset([preset], preset.id, "   "), /不能为空/);
+  assert.throws(() => renameDrawingPreset([preset], "missing-preset", "新名字"), /没有找到/);
 });
 
 test("rejects unsupported versions, duplicate ids, invalid colors and too many elements", () => {

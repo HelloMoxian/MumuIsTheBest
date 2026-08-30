@@ -278,6 +278,21 @@ export function instantiateDrawingPreset(preset: DrawingPreset, center: Point): 
   }));
 }
 
+export function renameDrawingPreset(presets: DrawingPreset[], presetId: string, name: string): DrawingPreset[] {
+  const nextName = name.trim().slice(0, 40);
+  if (!nextName) throw new Error("预制件名称不能为空。");
+
+  let found = false;
+  const renamed = presets.map((preset) => {
+    const copy = structuredClone(preset);
+    if (preset.id !== presetId) return copy;
+    found = true;
+    return { ...copy, name: nextName };
+  });
+  if (!found) throw new Error("没有找到这个预制件，请重新打开目录后再试。");
+  return renamed;
+}
+
 export function mergeDrawingPresets(...libraries: readonly DrawingPreset[][]): DrawingPreset[] {
   const merged: DrawingPreset[] = [];
   const ids = new Set<string>();
