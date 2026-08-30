@@ -35,6 +35,15 @@ await readFile(path.join(webDistDirectory, "index.html"), "utf8");
 await rm(sitesDistDirectory, { recursive: true, force: true });
 await mkdir(serverDirectory, { recursive: true });
 await cp(webDistDirectory, sitesDistDirectory, { recursive: true });
+await Promise.all([
+  "images/world-tower/source-atlases",
+  "images/game-sideview-library/source-atlases",
+  "images/tom-and-jerry-library/source-atlases",
+  "images/nature/rock-minerals/atlases",
+].map((relativePath) => rm(path.join(sitesDistDirectory, relativePath), {
+  recursive: true,
+  force: true,
+})));
 await writeFile(path.join(serverDirectory, "index.js"), workerSource, "utf8");
 
 console.log("Prepared the Sites-compatible static build in dist/.");
