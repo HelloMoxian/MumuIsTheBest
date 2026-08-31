@@ -6,6 +6,7 @@ import {
   findNumberResultSpeech,
   numberToChinese,
   numberToEnglish,
+  speakLearningMoment,
 } from "./learning-speech";
 
 describe("bilingual learning speech semantics", () => {
@@ -50,5 +51,43 @@ describe("bilingual learning speech semantics", () => {
     assert.match(speech.zh, /十八 除以 三 等于 六/);
     assert.match(speech.en, /Share the cheese equally into three groups/);
     assert.match(speech.en, /eighteen divided by three equals six/);
+  });
+
+  it("prefers a bundled bilingual action recording when one is available", async () => {
+    const originalAudio = Object.getOwnPropertyDescriptor(globalThis, "Audio");
+    const playedSources: string[] = [];
+    class FakeAudio {
+      currentTime = 0;
+      preload = "";
+      onended: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+
+      constructor(public readonly src: string) {}
+
+      play() {
+        playedSources.push(this.src);
+        queueMicrotask(() => this.onended?.());
+        return Promise.resolve();
+      }
+
+      pause() {}
+    }
+
+    Object.defineProperty(globalThis, "Audio", {
+      configurable: true,
+      value: FakeAudio as unknown as typeof Audio,
+    });
+    try {
+      const result = await speakLearningMoment({
+        zh: "画笔",
+        en: "Brush",
+        bilingualAudioSrc: "/audio/ui-actions/drawing-studio/tool-brush.m4a",
+      }, "bilingual");
+      assert.deepEqual(result, { status: "completed" });
+      assert.deepEqual(playedSources, ["/audio/ui-actions/drawing-studio/tool-brush.m4a"]);
+    } finally {
+      if (originalAudio) Object.defineProperty(globalThis, "Audio", originalAudio);
+      else Reflect.deleteProperty(globalThis, "Audio");
+    }
   });
 });

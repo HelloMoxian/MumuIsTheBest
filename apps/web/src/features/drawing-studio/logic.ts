@@ -1,13 +1,16 @@
-export const DRAWING_SCHEMA_VERSION = 2 as const;
+export const DRAWING_SCHEMA_VERSION = 3 as const;
 export const MAX_DRAWING_ELEMENTS = 1_000;
 export const MAX_DRAWING_PRESETS = 60;
 export const MAX_DRAWING_PRESET_ELEMENTS = 100;
+export const MIN_DRAWING_LAYER = -1_000;
+export const MAX_DRAWING_LAYER = 1_000;
 export const MIN_ZOOM = 0.25;
 export const MAX_ZOOM = 4;
 
 export type Point = { x: number; y: number };
 export type Viewport = { x: number; y: number; zoom: number };
 export type LineStyle = "smooth" | "sharp" | "dashed";
+export type TextLayout = "horizontal" | "vertical";
 export type ShapeKind =
   | "circle"
   | "ellipse"
@@ -19,7 +22,21 @@ export type ShapeKind =
   | "trapezoid"
   | "parallelogram"
   | "star"
-  | "heart";
+  | "heart"
+  | "tian-grid"
+  | "round-tian-grid"
+  | "rice-grid"
+  | "round-rice-grid"
+  | "nine-grid"
+  | "paw-print"
+  | "footprint"
+  | "scalloped-frame"
+  | "cloud-frame"
+  | "speech-bubble"
+  | "banner"
+  | "crown"
+  | "clover"
+  | "bow";
 export type SolidKind = "cube" | "cuboid" | "sphere" | "cylinder" | "cone" | "triangular-pyramid";
 export const STICKER_BASE_KINDS = [
   "digit-0",
@@ -124,6 +141,8 @@ type BaseElement = {
   rotation: number;
   stroke: string;
   strokeWidth: number;
+  layer: number;
+  createdOrder: number;
   groupId?: string;
 };
 
@@ -156,7 +175,15 @@ export type StrokeElement = BaseElement & {
   smoothing: boolean;
 };
 
-export type DrawingElement = ShapeElement | SolidElement | StickerElement | StrokeElement;
+export type TextElement = BaseElement & {
+  type: "text";
+  text: string;
+  fontSize: number;
+  color: string;
+  layout: TextLayout;
+};
+
+export type DrawingElement = ShapeElement | SolidElement | StickerElement | StrokeElement | TextElement;
 
 export type DrawingPreset = {
   id: string;
@@ -214,6 +241,46 @@ export function cloneElements(elements: DrawingElement[]): DrawingElement[] {
   return structuredClone(elements);
 }
 
+export function nextCreatedOrder(elements: readonly DrawingElement[]): number {
+  return elements.reduce((largest, element) => Math.max(largest, element.createdOrder), -1) + 1;
+}
+
+export function sortDrawingElements(elements: readonly DrawingElement[]): DrawingElement[] {
+  return [...elements].sort((first, second) => (
+    first.layer - second.layer || first.createdOrder - second.createdOrder
+  ));
+}
+
+export function measureTextElement(text: string, fontSize: number, layout: TextLayout): { width: number; height: number } {
+  const characters = Array.from(text.trim() || "文字");
+  if (layout === "vertical") {
+    return {
+      width: Math.max(24, fontSize * 1.3),
+      height: Math.max(24, characters.length * fontSize * 1.15),
+    };
+  }
+  return {
+    width: Math.max(24, characters.length * fontSize * 0.95),
+    height: Math.max(24, fontSize * 1.3),
+  };
+}
+
+export function updateTextElement(
+  element: TextElement,
+  update: Pick<TextElement, "text" | "fontSize" | "color" | "layout">,
+): TextElement {
+  const center = { x: element.x + element.width / 2, y: element.y + element.height / 2 };
+  const size = measureTextElement(update.text, update.fontSize, update.layout);
+  return {
+    ...element,
+    ...update,
+    width: size.width,
+    height: size.height,
+    x: center.x - size.width / 2,
+    y: center.y - size.height / 2,
+  };
+}
+
 export function getElementBounds(element: DrawingElement): Bounds {
   return { x: element.x, y: element.y, width: element.width, height: element.height };
 }
@@ -225,6 +292,49 @@ export function getElementsBounds(elements: DrawingElement[]): Bounds | null {
   const right = Math.max(...elements.map((element) => element.x + element.width));
   const bottom = Math.max(...elements.map((element) => element.y + element.height));
   return { x: left, y: top, width: Math.max(1, right - left), height: Math.max(1, bottom - top) };
+}
+
+export function transformDrawingElements(
+  elements: readonly DrawingElement[],
+  scale: number,
+  rotationDelta: number,
+): DrawingElement[] {
+  const bounds = getElementsBounds([...elements]);
+  if (!bounds) return [];
+  const center = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+  const radians = rotationDelta * Math.PI / 180;
+  return elements.map((element) => {
+    const elementCenter = { x: element.x + element.width / 2, y: element.y + element.height / 2 };
+    const scaledX = (elementCenter.x - center.x) * scale;
+    const scaledY = (elementCenter.y - center.y) * scale;
+    const rotatedX = scaledX * Math.cos(radians) - scaledY * Math.sin(radians);
+    const rotatedY = scaledX * Math.sin(radians) + scaledY * Math.cos(radians);
+    const minimumSize = element.type === "stroke" ? 1 : 24;
+    const width = Math.min(2_400, Math.max(minimumSize, element.width * scale));
+    const height = Math.min(2_400, Math.max(minimumSize, element.height * scale));
+    const transformed = {
+      ...element,
+      width,
+      height,
+      x: center.x + rotatedX - width / 2,
+      y: center.y + rotatedY - height / 2,
+      rotation: element.rotation + rotationDelta,
+    };
+    if (element.type === "stroke") {
+      return {
+        ...transformed,
+        points: element.points.map((point) => ({ x: point.x * scale, y: point.y * scale })),
+        strokeWidth: Math.min(80, Math.max(1, element.strokeWidth * scale)),
+      };
+    }
+    if (element.type === "text") {
+      return {
+        ...transformed,
+        fontSize: Math.min(240, Math.max(12, element.fontSize * scale)),
+      };
+    }
+    return transformed;
+  }) as DrawingElement[];
 }
 
 export function selectionBounds(start: Point, end: Point): Bounds {
@@ -268,16 +378,17 @@ export function createDrawingPreset(name: string, elements: DrawingElement[]): D
   };
 }
 
-export function instantiateDrawingPreset(preset: DrawingPreset, center: Point): DrawingElement[] {
+export function instantiateDrawingPreset(preset: DrawingPreset, center: Point, startOrder = 0): DrawingElement[] {
   const groupId = crypto.randomUUID();
   const offsetX = center.x - preset.width / 2;
   const offsetY = center.y - preset.height / 2;
-  return cloneElements(preset.elements).map((element) => ({
+  return cloneElements(preset.elements).map((element, index) => ({
     ...element,
     id: crypto.randomUUID(),
     groupId,
     x: offsetX + element.x,
     y: offsetY + element.y,
+    createdOrder: startOrder + index,
   }));
 }
 
@@ -384,12 +495,26 @@ const SHAPES = new Set<ShapeKind>([
   "parallelogram",
   "star",
   "heart",
+  "tian-grid",
+  "round-tian-grid",
+  "rice-grid",
+  "round-rice-grid",
+  "nine-grid",
+  "paw-print",
+  "footprint",
+  "scalloped-frame",
+  "cloud-frame",
+  "speech-bubble",
+  "banner",
+  "crown",
+  "clover",
+  "bow",
 ]);
 const SOLIDS = new Set<SolidKind>(["cube", "cuboid", "sphere", "cylinder", "cone", "triangular-pyramid"]);
 const STICKERS = new Set<StickerKind>(STICKER_KINDS);
 const LINE_STYLES = new Set<LineStyle>(["smooth", "sharp", "dashed"]);
 
-function parseBaseElement(value: Record<string, unknown>): BaseElement | undefined {
+function parseBaseElement(value: Record<string, unknown>, fallbackOrder: number): BaseElement | undefined {
   if (
     !isShortString(value.id, 80)
     || !isFiniteInRange(value.x, -1_000_000, 1_000_000)
@@ -399,6 +524,8 @@ function parseBaseElement(value: Record<string, unknown>): BaseElement | undefin
     || !isFiniteInRange(value.rotation, -3_600, 3_600)
     || !isColor(value.stroke)
     || !isFiniteInRange(value.strokeWidth, 1, 80)
+    || (value.layer !== undefined && (!Number.isInteger(value.layer) || !isFiniteInRange(value.layer, MIN_DRAWING_LAYER, MAX_DRAWING_LAYER)))
+    || (value.createdOrder !== undefined && (!Number.isInteger(value.createdOrder) || !isFiniteInRange(value.createdOrder, 0, 1_000_000_000)))
     || (value.groupId !== undefined && !isShortString(value.groupId, 80))
   ) return undefined;
 
@@ -411,13 +538,15 @@ function parseBaseElement(value: Record<string, unknown>): BaseElement | undefin
     rotation: value.rotation,
     stroke: value.stroke,
     strokeWidth: value.strokeWidth,
+    layer: typeof value.layer === "number" ? value.layer : 0,
+    createdOrder: typeof value.createdOrder === "number" ? value.createdOrder : fallbackOrder,
     ...(typeof value.groupId === "string" ? { groupId: value.groupId } : {}),
   };
 }
 
-function parseElement(value: unknown): DrawingElement | undefined {
+function parseElement(value: unknown, fallbackOrder: number): DrawingElement | undefined {
   if (!isObject(value)) return undefined;
-  const base = parseBaseElement(value);
+  const base = parseBaseElement(value, fallbackOrder);
   if (!base) return undefined;
 
   if (value.type === "shape" && typeof value.shape === "string" && SHAPES.has(value.shape as ShapeKind) && isColor(value.fill)) {
@@ -442,6 +571,23 @@ function parseElement(value: unknown): DrawingElement | undefined {
       pitch: value.pitch,
       depth: value.depth,
       faceFills,
+    };
+  }
+
+  if (
+    value.type === "text"
+    && isShortString(value.text, 200)
+    && isFiniteInRange(value.fontSize, 12, 240)
+    && isColor(value.color)
+    && (value.layout === "horizontal" || value.layout === "vertical")
+  ) {
+    return {
+      ...base,
+      type: "text",
+      text: value.text,
+      fontSize: value.fontSize,
+      color: value.color,
+      layout: value.layout,
     };
   }
 
@@ -499,8 +645,8 @@ function parsePreset(value: unknown): DrawingPreset | undefined {
   ) return undefined;
   const elements: DrawingElement[] = [];
   const ids = new Set<string>();
-  for (const candidate of value.elements) {
-    const element = parseElement(candidate);
+  for (const [index, candidate] of value.elements.entries()) {
+    const element = parseElement(candidate, index);
     if (!element || ids.has(element.id)) return undefined;
     ids.add(element.id);
     elements.push(element);
@@ -516,7 +662,7 @@ function parsePreset(value: unknown): DrawingPreset | undefined {
 }
 
 export function parseDrawingDocument(value: unknown): DrawingDocument {
-  if (!isObject(value) || (value.schemaVersion !== 1 && value.schemaVersion !== DRAWING_SCHEMA_VERSION)) {
+  if (!isObject(value) || (value.schemaVersion !== 1 && value.schemaVersion !== 2 && value.schemaVersion !== DRAWING_SCHEMA_VERSION)) {
     throw new Error("这份作品的版本暂时不能打开。");
   }
   if (
@@ -537,8 +683,8 @@ export function parseDrawingDocument(value: unknown): DrawingDocument {
 
   const elements: DrawingElement[] = [];
   const ids = new Set<string>();
-  for (const candidate of value.elements) {
-    const element = parseElement(candidate);
+  for (const [index, candidate] of value.elements.entries()) {
+    const element = parseElement(candidate, index);
     if (!element || ids.has(element.id)) {
     throw new Error("这份作品里有无法识别或重复的图元。");
     }

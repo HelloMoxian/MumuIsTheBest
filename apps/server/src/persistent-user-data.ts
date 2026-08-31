@@ -100,6 +100,8 @@ const drawingBaseElementSchema = z.object({
   rotation: z.number().finite().min(-3_600).max(3_600),
   stroke: drawingColorSchema,
   strokeWidth: z.number().finite().min(1).max(80),
+  layer: z.number().int().min(-1_000).max(1_000).optional(),
+  createdOrder: z.number().int().min(0).max(1_000_000_000).optional(),
   groupId: drawingElementIdSchema.optional(),
 });
 const drawingElementSchema = z.discriminatedUnion("type", [
@@ -143,6 +145,13 @@ const drawingElementSchema = z.discriminatedUnion("type", [
     lineStyle: z.enum(["smooth", "sharp", "dashed"]),
     smoothing: z.boolean(),
   }),
+  drawingBaseElementSchema.extend({
+    type: z.literal("text"),
+    text: z.string().trim().min(1).max(200),
+    fontSize: z.number().finite().min(12).max(240),
+    color: drawingColorSchema,
+    layout: z.enum(["horizontal", "vertical"]),
+  }),
 ]);
 
 function drawingElementsHaveUniqueIds(elements: readonly { id: string }[]) {
@@ -158,8 +167,8 @@ const drawingPresetSchema = z.object({
   elements: z.array(drawingElementSchema).min(2).max(100),
 }).refine((preset) => drawingElementsHaveUniqueIds(preset.elements), "预制件图元 ID 不能重复。");
 
-const drawingStudioPayloadSchema = z.object({
-  schemaVersion: z.literal(2),
+export const drawingStudioPayloadSchema = z.object({
+  schemaVersion: z.union([z.literal(2), z.literal(3)]),
   id: drawingElementIdSchema,
   title: z.string().trim().min(1).max(80),
   author: z.string().max(80),
@@ -173,6 +182,13 @@ const drawingStudioPayloadSchema = z.object({
   elements: z.array(drawingElementSchema).max(1_000),
   presets: z.array(drawingPresetSchema).max(60),
 }).superRefine((payload, context) => {
+  if (
+    payload.schemaVersion === 3
+    && [...payload.elements, ...payload.presets.flatMap((preset) => preset.elements)]
+      .some((element) => element.layer === undefined || element.createdOrder === undefined)
+  ) {
+    context.addIssue({ code: "custom", message: "新版画图图元必须包含层级与创建顺序。" });
+  }
   if (!drawingElementsHaveUniqueIds(payload.elements)) {
     context.addIssue({ code: "custom", message: "画布图元 ID 不能重复。" });
   }

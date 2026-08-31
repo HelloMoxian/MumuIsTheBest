@@ -20,8 +20,10 @@ import {
 } from "./art";
 import {
   MAX_DRAWING_ELEMENTS,
+  MAX_DRAWING_LAYER,
   MAX_DRAWING_PRESET_ELEMENTS,
   MAX_DRAWING_PRESETS,
+  MIN_DRAWING_LAYER,
   cloneElements,
   createDrawingPreset,
   createEmptyDrawing,
@@ -29,11 +31,16 @@ import {
   getElementsBounds,
   instantiateDrawingPreset,
   makeHistoryNode,
+  measureTextElement,
   mergeDrawingPresets,
+  nextCreatedOrder,
   parseDrawingDocument,
   renameDrawingPreset,
   screenPointToWorld,
   selectionBounds,
+  sortDrawingElements,
+  transformDrawingElements,
+  updateTextElement,
   zoomViewportAt,
   type Bounds,
   type DrawingDocument,
@@ -47,6 +54,8 @@ import {
   type SolidKind,
   type StickerKind,
   type StrokeElement,
+  type TextElement,
+  type TextLayout,
   type Viewport,
 } from "./logic";
 import {
@@ -54,9 +63,25 @@ import {
   queuePersistentDataWrite,
   savePersistentData,
 } from "../../shared/persistent-data";
+import {
+  listDrawingWorks,
+  loadDrawingWork,
+  saveDrawingWork,
+  type DrawingWorkSummary,
+} from "./works-api";
+import {
+  SpokenActionButton,
+  announceSpokenAction,
+  type LearningSpeechMoment,
+} from "../../shared/experience";
+import {
+  DRAWING_TOOL_SHORTCUTS,
+  drawingToolForShortcut,
+  type DrawingShortcutTool,
+} from "./shortcuts";
 import "./drawing-studio.css";
 
-type ToolId = "select" | "pan" | "shape" | "solid" | "sticker" | "preset" | "brush" | "eraser" | "fill";
+type ToolId = DrawingShortcutTool | "text";
 type DrawerId = "history" | "works" | "author" | null;
 type AutoSaveStatus = "loading" | "saving" | "saved" | "error";
 type Gesture =
@@ -66,17 +91,65 @@ type Gesture =
   | { type: "draw"; pointerId: number; points: Point[] }
   | null;
 
-const TOOL_OPTIONS: Array<{ id: ToolId; label: string; mark: string }> = [
-  { id: "select", label: "选择", mark: "↖" },
-  { id: "pan", label: "画布", mark: "✥" },
-  { id: "shape", label: "形状", mark: "△" },
-  { id: "solid", label: "立体", mark: "◇" },
-  { id: "sticker", label: "贴纸", mark: "✦" },
-  { id: "preset", label: "预制件", mark: "▦" },
-  { id: "brush", label: "画笔", mark: "╱" },
-  { id: "eraser", label: "橡皮擦", mark: "⌫" },
-  { id: "fill", label: "填色", mark: "●" },
+const DRAWING_ACTION_AUDIO_BASE = "/audio/ui-actions/drawing-studio";
+
+function drawingActionSpeech(id: string, zh: string, en: string): LearningSpeechMoment {
+  return { zh, en, bilingualAudioSrc: `${DRAWING_ACTION_AUDIO_BASE}/${id}.m4a` };
+}
+
+const TOOL_OPTIONS: Array<{
+  id: ToolId;
+  label: string;
+  mark: string;
+  shortcut?: string;
+  speech: LearningSpeechMoment;
+}> = [
+  { id: "select", label: "选择", mark: "↖", shortcut: DRAWING_TOOL_SHORTCUTS.select, speech: drawingActionSpeech("tool-select", "选择", "Select") },
+  { id: "pan", label: "画布", mark: "✥", shortcut: DRAWING_TOOL_SHORTCUTS.pan, speech: drawingActionSpeech("tool-canvas", "画布", "Canvas") },
+  { id: "shape", label: "形状", mark: "△", shortcut: DRAWING_TOOL_SHORTCUTS.shape, speech: drawingActionSpeech("tool-shape", "形状", "Shapes") },
+  { id: "solid", label: "立体", mark: "◇", shortcut: DRAWING_TOOL_SHORTCUTS.solid, speech: drawingActionSpeech("tool-solid", "立体", "3D shapes") },
+  { id: "sticker", label: "贴纸", mark: "✦", shortcut: DRAWING_TOOL_SHORTCUTS.sticker, speech: drawingActionSpeech("tool-sticker", "贴纸", "Stickers") },
+  { id: "preset", label: "预制件", mark: "▦", shortcut: DRAWING_TOOL_SHORTCUTS.preset, speech: drawingActionSpeech("tool-preset", "预制件", "Presets") },
+  { id: "text", label: "文字", mark: "文", speech: drawingActionSpeech("tool-text", "文字", "Text") },
+  { id: "brush", label: "画笔", mark: "╱", shortcut: DRAWING_TOOL_SHORTCUTS.brush, speech: drawingActionSpeech("tool-brush", "画笔", "Brush") },
+  { id: "eraser", label: "橡皮擦", mark: "⌫", shortcut: DRAWING_TOOL_SHORTCUTS.eraser, speech: drawingActionSpeech("tool-eraser", "橡皮擦", "Eraser") },
+  { id: "fill", label: "填色", mark: "●", shortcut: DRAWING_TOOL_SHORTCUTS.fill, speech: drawingActionSpeech("tool-fill", "填色", "Fill") },
 ];
+
+const TOP_ACTION_SPEECH = {
+  save: drawingActionSpeech("action-save", "保存", "Save"),
+  edit: drawingActionSpeech("action-edit", "编辑", "Edit"),
+  undo: drawingActionSpeech("action-undo", "撤销", "Undo"),
+} as const;
+
+const GROUP_SPEECH: Record<string, LearningSpeechMoment> = Object.fromEntries([
+  ["圆与弧", "Circles and arcs", "group-circles-arcs"],
+  ["基础形状", "Basic shapes", "group-basic-shapes"],
+  ["四边形", "Quadrilaterals", "group-quadrilaterals"],
+  ["装饰形状", "Decorative shapes", "group-decorative-shapes"],
+  ["棱柱", "Prisms", "group-prisms"],
+  ["棱锥", "Pyramids", "group-pyramids"],
+  ["曲面立体", "Curved solids", "group-curved-solids"],
+  ["数字", "Numbers", "group-digits"],
+  ["树叶", "Leaves", "group-leaves"],
+  ["蝴蝶", "Butterflies", "group-butterflies"],
+  ["云彩", "Clouds", "group-clouds"],
+  ["花朵", "Flowers", "group-flowers"],
+  ["天空", "Sky", "group-sky"],
+  ["天气", "Weather", "group-weather"],
+  ["小虫子", "Insects", "group-insects"],
+  ["海洋", "Ocean", "group-ocean"],
+  ["果实", "Fruit", "group-fruit"],
+  ["树木", "Trees", "group-trees"],
+  ["庭院", "Garden", "group-garden"],
+  ["出行", "Transport", "group-transport"],
+  ["小屋", "Houses", "group-houses"],
+  ["玩具", "Toys", "group-toys"],
+  ["自然", "Nature", "group-nature"],
+  ["小孩", "Children", "group-children"],
+  ["大人", "Adults", "group-adults"],
+  ["小动物", "Animals", "group-animals"],
+].map(([zh, en, id]) => [zh, drawingActionSpeech(id, zh, en)]));
 
 type PaletteColor = { value: string; label: string };
 
@@ -151,6 +224,52 @@ function formatTime(value: string) {
   return new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date(value));
 }
 
+function formatCreationTime(value: string) {
+  return new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+async function createCanvasThumbnail(canvas: SVGSVGElement | null): Promise<string | null> {
+  if (!canvas) return null;
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width < 1 || rect.height < 1) return null;
+  const clone = canvas.cloneNode(true) as SVGSVGElement;
+  clone.querySelectorAll(".drawing-selection-box, .drawing-marquee-box, .drawing-draft-stroke")
+    .forEach((node) => node.remove());
+  clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  clone.setAttribute("width", String(rect.width));
+  clone.setAttribute("height", String(rect.height));
+  clone.setAttribute("viewBox", `0 0 ${rect.width} ${rect.height}`);
+  const blob = new Blob([new XMLSerializer().serializeToString(clone)], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  try {
+    const image = new Image();
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error("THUMBNAIL_RENDER_FAILED"));
+      image.src = url;
+    });
+    const output = window.document.createElement("canvas");
+    output.width = 360;
+    output.height = 220;
+    const context = output.getContext("2d");
+    if (!context) return null;
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, output.width, output.height);
+    context.drawImage(image, 0, 0, output.width, output.height);
+    return output.toDataURL("image/jpeg", 0.82);
+  } catch {
+    return null;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 function pathFromPoints(points: Point[], smoothing: boolean) {
   if (points.length === 0) return "";
   if (!smoothing || points.length < 3) {
@@ -197,9 +316,15 @@ export function DrawingStudioPage() {
   const [lineStyle, setLineStyle] = useState<LineStyle>("smooth");
   const [smoothing, setSmoothing] = useState(true);
   const [draftPoints, setDraftPoints] = useState<Point[]>([]);
+  const [textDraft, setTextDraft] = useState("木木的画");
+  const [textColor, setTextColor] = useState("#171536");
+  const [textSize, setTextSize] = useState(48);
+  const [textLayout, setTextLayout] = useState<TextLayout>("horizontal");
   const [marquee, setMarquee] = useState<Bounds | null>(null);
   const [message, setMessage] = useState("从右边选一个图元，开始第一笔创作吧。");
-  const [savedWorks, setSavedWorks] = useState<DrawingDocument[]>([]);
+  const [savedWorks, setSavedWorks] = useState<DrawingWorkSummary[]>([]);
+  const [worksLoading, setWorksLoading] = useState(false);
+  const [workSaving, setWorkSaving] = useState(false);
   const [titleDraft, setTitleDraft] = useState(document.title);
   const [authorDraft, setAuthorDraft] = useState(document.author);
   const [persistenceReady, setPersistenceReady] = useState(false);
@@ -208,6 +333,7 @@ export function DrawingStudioPage() {
   const [presetRename, setPresetRename] = useState<{ id: string; draft: string } | null>(null);
 
   const stageRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<SVGSVGElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const gestureRef = useRef<Gesture>(null);
   const documentRef = useRef(document);
@@ -261,12 +387,13 @@ export function DrawingStudioPage() {
     goToHistory(historyIndex + 1);
   }, [goToHistory, history.length, historyIndex]);
 
-  const chooseTool = (nextTool: ToolId) => {
+  const chooseTool = useCallback((nextTool: ToolId) => {
     setTool(nextTool);
+    setDrawer(null);
     if (nextTool !== "preset") setPresetRename(null);
     if (nextTool !== "select") setSelectedIds([]);
     setMessage(TOOL_OPTIONS.find((option) => option.id === nextTool)?.label ?? "工具已切换");
-  };
+  }, []);
 
   const viewCenterWorld = () => {
     const rect = stageRef.current?.getBoundingClientRect();
@@ -289,6 +416,8 @@ export function DrawingStudioPage() {
       rotation: 0,
       stroke: "#171536",
       strokeWidth: 3.5,
+      layer: 0,
+      createdOrder: nextCreatedOrder(documentRef.current.elements),
     };
     let element: DrawingElement;
     if (type === "shape") {
@@ -307,6 +436,39 @@ export function DrawingStudioPage() {
       element = { ...common, type: "sticker", sticker: id as StickerKind, mirrored: false, regionFills: {} };
     }
     commitElements(`放入${type === "shape" ? "形状" : type === "solid" ? "立体" : "贴纸"}`, [...documentRef.current.elements, element]);
+    setSelectedIds([element.id]);
+  };
+
+  const addTextElement = () => {
+    const text = textDraft.trim().slice(0, 200);
+    if (!text) {
+      setMessage("先写一点文字，再把它放进画布吧。");
+      return;
+    }
+    if (documentRef.current.elements.length >= MAX_DRAWING_ELEMENTS) {
+      setMessage("这张画已经有 1000 个图元啦，可以先擦掉一些再继续。");
+      return;
+    }
+    const center = viewCenterWorld();
+    const size = measureTextElement(text, textSize, textLayout);
+    const element: TextElement = {
+      id: crypto.randomUUID(),
+      type: "text",
+      text,
+      fontSize: textSize,
+      color: textColor,
+      layout: textLayout,
+      x: center.x - size.width / 2,
+      y: center.y - size.height / 2,
+      width: size.width,
+      height: size.height,
+      rotation: 0,
+      stroke: textColor,
+      strokeWidth: 1,
+      layer: 0,
+      createdOrder: nextCreatedOrder(documentRef.current.elements),
+    };
+    commitElements("放入文字", [...documentRef.current.elements, element]);
     setSelectedIds([element.id]);
   };
 
@@ -329,27 +491,30 @@ export function DrawingStudioPage() {
   };
 
   const transformSelection = (label: string, scale: number, rotationDelta: number) => {
-    const bounds = getElementsBounds(selectedElements);
-    if (!bounds) return;
-    const center = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
-    const radians = rotationDelta * Math.PI / 180;
-    updateSelection(label, (element) => {
-      const elementCenter = { x: element.x + element.width / 2, y: element.y + element.height / 2 };
-      const scaledX = (elementCenter.x - center.x) * scale;
-      const scaledY = (elementCenter.y - center.y) * scale;
-      const rotatedX = scaledX * Math.cos(radians) - scaledY * Math.sin(radians);
-      const rotatedY = scaledX * Math.sin(radians) + scaledY * Math.cos(radians);
-      const width = Math.min(2_400, Math.max(24, element.width * scale));
-      const height = Math.min(2_400, Math.max(24, element.height * scale));
-      return {
+    const transformed = transformDrawingElements(selectedElements, scale, rotationDelta);
+    if (transformed.length === 0) return;
+    const replacements = new Map(transformed.map((element) => [element.id, element]));
+    commitElements(label, documentRef.current.elements.map((element) => replacements.get(element.id) ?? element));
+  };
+
+  const setSelectionLayer = (requestedLayer: number, label = "修改渲染层级") => {
+    const layer = Math.min(MAX_DRAWING_LAYER, Math.max(MIN_DRAWING_LAYER, Math.round(requestedLayer)));
+    updateSelection(label, (element) => ({ ...element, layer }));
+  };
+
+  const moveSelectionLayer = (direction: "top" | "bottom" | "up" | "down") => {
+    if (selectedElements.length === 0) return;
+    const layers = documentRef.current.elements.map((element) => element.layer);
+    if (direction === "top") {
+      setSelectionLayer(Math.min(MAX_DRAWING_LAYER, Math.max(...layers) + 1), "把选中内容置顶");
+    } else if (direction === "bottom") {
+      setSelectionLayer(Math.max(MIN_DRAWING_LAYER, Math.min(...layers) - 1), "把选中内容置底");
+    } else {
+      updateSelection(direction === "up" ? "把选中内容提高一层" : "把选中内容降低一层", (element) => ({
         ...element,
-        width,
-        height,
-        x: center.x + rotatedX - width / 2,
-        y: center.y + rotatedY - height / 2,
-        rotation: element.rotation + rotationDelta,
-      };
-    });
+        layer: Math.min(MAX_DRAWING_LAYER, Math.max(MIN_DRAWING_LAYER, element.layer + (direction === "up" ? 1 : -1))),
+      }));
+    }
   };
 
   const mirrorSelectedSticker = () => {
@@ -367,11 +532,13 @@ export function DrawingStudioPage() {
     const sources = documentRef.current.elements.filter((element) => ids.has(element.id));
     if (sources.length === 0 || documentRef.current.elements.length + sources.length > MAX_DRAWING_ELEMENTS) return;
     const groupId = sources.length > 1 ? crypto.randomUUID() : undefined;
-    const duplicates = sources.map((source) => ({
+    const startOrder = nextCreatedOrder(documentRef.current.elements);
+    const duplicates = sources.map((source, index) => ({
       ...structuredClone(source),
       id: crypto.randomUUID(),
       x: source.x + 24,
       y: source.y + 24,
+      createdOrder: startOrder + index,
       ...(groupId ? { groupId } : {}),
     })) as DrawingElement[];
     commitElements(sources.length === 1 ? "复制一个图元" : `复制 ${sources.length} 个图元`, [...documentRef.current.elements, ...duplicates]);
@@ -418,7 +585,7 @@ export function DrawingStudioPage() {
       setMessage("放入这个预制件会超过 1000 个图元，可以先删掉一些内容。");
       return;
     }
-    const instances = instantiateDrawingPreset(preset, viewCenterWorld());
+    const instances = instantiateDrawingPreset(preset, viewCenterWorld(), nextCreatedOrder(documentRef.current.elements));
     commitElements(`放入“${preset.name}”`, [...documentRef.current.elements, ...instances]);
     setSelectedIds(instances.map((element) => element.id));
   };
@@ -612,6 +779,8 @@ export function DrawingStudioPage() {
           points: gesture.points.map((point) => ({ x: point.x - minX, y: point.y - minY })),
           lineStyle,
           smoothing,
+          layer: 0,
+          createdOrder: nextCreatedOrder(documentRef.current.elements),
         };
         commitElements("画下一笔", [...documentRef.current.elements, stroke]);
       }
@@ -644,6 +813,21 @@ export function DrawingStudioPage() {
     resetView();
   }, []);
 
+  const refreshWorks = useCallback(async () => {
+    setWorksLoading(true);
+    try {
+      setSavedWorks(await listDrawingWorks());
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "作品清单暂时打不开。");
+    } finally {
+      setWorksLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshWorks();
+  }, [refreshWorks]);
+
   useEffect(() => {
     let active = true;
     void loadPersistentData({
@@ -669,7 +853,7 @@ export function DrawingStudioPage() {
       setPersistenceEnabled(false);
       setPersistenceReady(true);
       setAutoSaveStatus("error");
-      setMessage("本机自动保存暂时不可用，但仍然可以继续画画并手动下载作品。");
+      setMessage("本机自动保存暂时不可用，但仍然可以继续画画并尝试手动保存作品。");
     });
     return () => {
       active = false;
@@ -717,12 +901,26 @@ export function DrawingStudioPage() {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      const editingText = target?.matches("input, textarea, [contenteditable='true']");
+      const editingText = target?.matches("input, textarea, select, [contenteditable='true']");
       if (event.code === "Space" && !editingText) {
         spacePressedRef.current = true;
         event.preventDefault();
       }
       if (editingText) return;
+      const shortcutTool = drawingToolForShortcut(event.key, {
+        blocked: event.defaultPrevented,
+        metaKey: event.metaKey,
+        ctrlKey: event.ctrlKey,
+        altKey: event.altKey,
+        repeat: event.repeat,
+      });
+      if (shortcutTool) {
+        event.preventDefault();
+        chooseTool(shortcutTool);
+        const option = TOOL_OPTIONS.find((candidate) => candidate.id === shortcutTool);
+        if (option) void announceSpokenAction(option.speech);
+        return;
+      }
       const modifier = event.metaKey || event.ctrlKey;
       if (modifier && event.key.toLowerCase() === "z") {
         event.preventDefault();
@@ -744,19 +942,94 @@ export function DrawingStudioPage() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [copySelected, deleteSelected, redo, undo]);
+  }, [chooseTool, copySelected, deleteSelected, redo, undo]);
 
-  const downloadWork = () => {
-    const work = { ...cloneDocument(documentRef.current), viewport: viewportRef.current, updatedAt: new Date().toISOString() };
-    const blob = new Blob([`${JSON.stringify(work, null, 2)}\n`], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const anchor = window.document.createElement("a");
-    anchor.href = url;
-    anchor.download = `${work.title.replace(/[\\/:*?"<>|]/g, "-") || "木木画作"}.mumu-drawing.json`;
-    anchor.click();
-    URL.revokeObjectURL(url);
-    setSavedWorks((current) => [work, ...current.filter((candidate) => candidate.id !== work.id)].slice(0, 12));
-    setMessage("作品文件已经保存，可以从下载文件夹找到它。");
+  const storeWork = async (source: DrawingDocument, successMessage: string, adoptWork: boolean) => {
+    if (workSaving) return;
+    setWorkSaving(true);
+    try {
+      const snapshot = drawingSnapshot(source, viewportRef.current);
+      const thumbnail = await createCanvasThumbnail(canvasRef.current);
+      const summary = await saveDrawingWork(snapshot, thumbnail);
+      if (adoptWork) {
+        setDocument(snapshot);
+        setTitleDraft(snapshot.title);
+        setAuthorDraft(snapshot.author);
+      }
+      setSavedWorks((current) => [summary, ...current.filter((work) => work.id !== summary.id)]);
+      setMessage(successMessage);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "作品暂时没有保存成功。");
+    } finally {
+      setWorkSaving(false);
+    }
+  };
+
+  const saveCurrentWork = () => {
+    const current = cloneDocument(documentRef.current);
+    if (!/^[0-9a-f-]{36}$/i.test(current.id)) {
+      const now = new Date().toISOString();
+      current.id = crypto.randomUUID();
+      current.createdAt = now;
+    }
+    void storeWork(current, `“${current.title}”已经保存到本机作品清单。`, true);
+  };
+
+  const saveWorkAsCopy = () => {
+    const now = new Date().toISOString();
+    const copy = {
+      ...cloneDocument(documentRef.current),
+      id: crypto.randomUUID(),
+      title: `${documentRef.current.title} 副本`.slice(0, 80),
+      createdAt: now,
+      updatedAt: now,
+    };
+    void storeWork(copy, `已经另存为“${copy.title}”，接下来的编辑会写入这个副本。`, true);
+  };
+
+  const openSavedWork = async (workId: string) => {
+    try {
+      const work = await loadDrawingWork(workId);
+      const opened = {
+        ...cloneDocument(work.document),
+        presets: mergeDrawingPresets(documentRef.current.presets, work.document.presets),
+        updatedAt: new Date().toISOString(),
+      };
+      setDocument(opened);
+      setViewport(opened.viewport);
+      setHistory([makeHistoryNode("打开已保存作品", opened.elements, opened.presets)]);
+      setHistoryIndex(0);
+      setSelectedIds([]);
+      setTitleDraft(opened.title);
+      setAuthorDraft(opened.author);
+      setDrawer(null);
+      setMessage(`已经继续编辑“${opened.title}”。`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "这幅作品暂时打不开。");
+    }
+  };
+
+  const copySavedWork = async (workId: string) => {
+    if (workSaving) return;
+    setWorkSaving(true);
+    try {
+      const source = await loadDrawingWork(workId);
+      const now = new Date().toISOString();
+      const copy = {
+        ...cloneDocument(source.document),
+        id: crypto.randomUUID(),
+        title: `${source.document.title} 副本`.slice(0, 80),
+        createdAt: now,
+        updatedAt: now,
+      };
+      const summary = await saveDrawingWork(copy, source.thumbnailDataUrl);
+      setSavedWorks((current) => [summary, ...current]);
+      setMessage(`已经创建“${copy.title}”，原作品没有改变。`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "作品副本暂时没有创建成功。");
+    } finally {
+      setWorkSaving(false);
+    }
   };
 
   const loadWork = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -771,6 +1044,8 @@ export function DrawingStudioPage() {
       const parsed = parseDrawingDocument(JSON.parse(await file.text()));
       const loaded = {
         ...parsed,
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
         presets: mergeDrawingPresets(documentRef.current.presets, parsed.presets),
         updatedAt: new Date().toISOString(),
       };
@@ -828,6 +1103,42 @@ export function DrawingStudioPage() {
         />
       );
     }
+    if (element.type === "text") {
+      const characters = Array.from(element.text);
+      return (
+        <g
+          key={element.id}
+          data-element-id={interactive ? element.id : undefined}
+          transform={`translate(${element.x} ${element.y}) rotate(${element.rotation} ${element.width / 2} ${element.height / 2})`}
+        >
+          <rect width={element.width} height={element.height} fill="transparent" pointerEvents="all" />
+          {element.layout === "horizontal" ? (
+            <text
+              x={element.width / 2}
+              y={element.height / 2}
+              fill={element.color}
+              fontFamily="'Nunito Sans', 'Noto Sans SC', sans-serif"
+              fontSize={element.fontSize}
+              fontWeight="800"
+              textAnchor="middle"
+              dominantBaseline="central"
+            >{element.text}</text>
+          ) : (
+            <text
+              fill={element.color}
+              fontFamily="'Nunito Sans', 'Noto Sans SC', sans-serif"
+              fontSize={element.fontSize}
+              fontWeight="800"
+              textAnchor="middle"
+            >
+              {characters.map((character, index) => (
+                <tspan key={`${character}-${index}`} x={element.width / 2} y={(index + 0.86) * element.fontSize * 1.15}>{character}</tspan>
+              ))}
+            </text>
+          )}
+        </g>
+      );
+    }
     return (
       <g
         key={element.id}
@@ -865,7 +1176,11 @@ export function DrawingStudioPage() {
     }
   };
   const gridSize = Math.max(10, 26 * viewport.zoom);
-  const drawerTitle = drawer === "history" ? "历史编辑记录" : drawer === "works" ? "本次作品清单" : "作品信息";
+  const drawerTitle = drawer === "history" ? "历史编辑记录" : drawer === "works" ? "作品清单" : "作品信息";
+  const selectedLayers = selectedElements.map((element) => element.layer);
+  const selectedLayerMinimum = selectedLayers.length > 0 ? Math.min(...selectedLayers) : 0;
+  const selectedLayerMaximum = selectedLayers.length > 0 ? Math.max(...selectedLayers) : 0;
+  const selectionHasOneLayer = selectedLayerMinimum === selectedLayerMaximum;
 
   return (
     <div className="drawing-page">
@@ -882,13 +1197,14 @@ export function DrawingStudioPage() {
         <nav className="drawing-top-actions" aria-label="作品功能">
           <button className="drawing-top-action" type="button" onClick={newDrawing}><span aria-hidden="true">＋</span>新画布</button>
           <button className="drawing-top-action" type="button" onClick={() => fileInputRef.current?.click()}><span aria-hidden="true">⇧</span>加载</button>
-          <button className={topActionClass(tool === "select")} type="button" onClick={() => chooseTool("select")}><span aria-hidden="true">↖</span>编辑</button>
+          <SpokenActionButton speech={TOP_ACTION_SPEECH.edit} className={topActionClass(tool === "select")} onClick={() => chooseTool("select")}><span aria-hidden="true">↖</span>编辑</SpokenActionButton>
           <button className="drawing-top-action" type="button" disabled={selectedElements.length === 0} onClick={copySelected}><span aria-hidden="true">⧉</span>复制</button>
-          <button className="drawing-top-action is-primary" type="button" onClick={downloadWork}><span aria-hidden="true">↓</span>保存</button>
-          <button className="drawing-top-action" type="button" disabled={historyIndex <= 0} onClick={undo}><span aria-hidden="true">↶</span>撤销</button>
+          <SpokenActionButton speech={TOP_ACTION_SPEECH.save} className="drawing-top-action is-primary" disabled={workSaving} onClick={saveCurrentWork}><span aria-hidden="true">↓</span>{workSaving ? "保存中" : "保存"}</SpokenActionButton>
+          <button className="drawing-top-action" type="button" disabled={workSaving} onClick={saveWorkAsCopy}><span aria-hidden="true">⧉</span>另存为</button>
+          <SpokenActionButton speech={TOP_ACTION_SPEECH.undo} className="drawing-top-action" disabled={historyIndex <= 0} onClick={undo}><span aria-hidden="true">↶</span>撤销</SpokenActionButton>
           <button className="drawing-top-action" type="button" disabled={historyIndex >= history.length - 1} onClick={redo}><span aria-hidden="true">↷</span>重做</button>
           <button className={topActionClass(drawer === "history")} type="button" onClick={() => setDrawer(drawer === "history" ? null : "history")}><span aria-hidden="true">≡</span>历史</button>
-          <button className={topActionClass(drawer === "works")} type="button" onClick={() => setDrawer(drawer === "works" ? null : "works")}><span aria-hidden="true">▦</span>作品</button>
+          <button className={topActionClass(drawer === "works")} type="button" onClick={() => { const opening = drawer !== "works"; setDrawer(opening ? "works" : null); if (opening) void refreshWorks(); }}><span aria-hidden="true">▦</span>作品</button>
           <button className={topActionClass(drawer === "author")} type="button" onClick={() => setDrawer(drawer === "author" ? null : "author")}><span aria-hidden="true">○</span>作者</button>
         </nav>
         <input ref={fileInputRef} className="drawing-file-input" type="file" accept=".json,.mumu-drawing.json,application/json" onChange={loadWork} />
@@ -921,6 +1237,7 @@ export function DrawingStudioPage() {
             </div>
           )}
           <svg
+            ref={canvasRef}
             className="drawing-canvas"
             aria-label={`画布中有 ${document.elements.length} 个图元`}
             onPointerDown={handlePointerDown}
@@ -929,7 +1246,7 @@ export function DrawingStudioPage() {
             onPointerCancel={finishGesture}
           >
             <g transform={`translate(${viewport.x} ${viewport.y}) scale(${viewport.zoom})`}>
-              {document.elements.map((element) => renderElement(element))}
+              {sortDrawingElements(document.elements).map((element) => renderElement(element))}
               {selectedBounds && (
                 <rect
                   className="drawing-selection-box"
@@ -953,6 +1270,7 @@ export function DrawingStudioPage() {
               )}
               {draftPoints.length > 0 && (
                 <path
+                  className="drawing-draft-stroke"
                   d={pathFromPoints(draftPoints, smoothing)}
                   fill="none"
                   stroke={brushColor}
@@ -984,15 +1302,19 @@ export function DrawingStudioPage() {
               <div className="drawing-toolbox-heading"><span>创作工具</span><strong>{TOOL_OPTIONS.find((option) => option.id === tool)?.label}</strong></div>
               <div className="drawing-tool-level-one" aria-label="一级工具">
                 {TOOL_OPTIONS.map((option) => (
-                  <button
+                  <SpokenActionButton
+                    speech={option.speech}
                     className={tool === option.id ? "is-active" : ""}
-                    type="button"
                     key={option.id}
                     onClick={() => chooseTool(option.id)}
                     aria-pressed={tool === option.id}
+                    aria-keyshortcuts={option.shortcut}
+                    aria-label={option.shortcut ? `${option.label}，快捷键 ${option.shortcut}` : option.label}
                   >
-                    <span aria-hidden="true">{option.mark}</span>{option.label}{tool === option.id && <i aria-hidden="true">✓</i>}
-                  </button>
+                    <span aria-hidden="true">{option.mark}</span>{option.label}
+                    {option.shortcut && <kbd aria-hidden="true">{option.shortcut}</kbd>}
+                    {tool === option.id && <i aria-hidden="true">✓</i>}
+                  </SpokenActionButton>
                 ))}
               </div>
 
@@ -1001,7 +1323,13 @@ export function DrawingStudioPage() {
                   <div className="drawing-level-label"><span>二级</span><strong>选择类别</strong></div>
                   <div className="drawing-group-tabs">
                     {groups.map((group) => (
-                      <button type="button" className={activeGroup === group ? "is-active" : ""} onClick={() => chooseGroup(group)} key={group} aria-pressed={activeGroup === group}>{group}</button>
+                      <SpokenActionButton
+                        speech={GROUP_SPEECH[group] ?? { zh: group, en: group }}
+                        className={activeGroup === group ? "is-active" : ""}
+                        onClick={() => chooseGroup(group)}
+                        key={group}
+                        aria-pressed={activeGroup === group}
+                      >{group}</SpokenActionButton>
                     ))}
                   </div>
                   <div className="drawing-level-label"><span>三级</span><strong>放到画布</strong></div>
@@ -1025,7 +1353,7 @@ export function DrawingStudioPage() {
                         <article className={presetRename?.id === preset.id ? "is-renaming" : ""} key={preset.id}>
                           <button className="drawing-preset-insert" type="button" onClick={() => addPreset(preset)} aria-label={`放入${preset.name}`}>
                             <svg viewBox={`0 0 ${preset.width} ${preset.height}`} aria-hidden="true" preserveAspectRatio="xMidYMid meet">
-                              {preset.elements.map((element) => renderElement(element, false))}
+                              {sortDrawingElements(preset.elements).map((element) => renderElement(element, false))}
                             </svg>
                             <span><strong>{preset.name}</strong><small>{preset.elements.length} 个图元</small></span>
                           </button>
@@ -1067,6 +1395,24 @@ export function DrawingStudioPage() {
                   ) : (
                     <p className="drawing-tool-tip">还没有预制件。进入“选择”，在白板空白处拖出选择框，选中多个图元后点击“打包为预制件”。</p>
                   )}
+                </div>
+              )}
+
+              {tool === "text" && (
+                <div className="drawing-tool-settings drawing-text-tool">
+                  <div className="drawing-level-label"><span>二级</span><strong>文字内容</strong></div>
+                  <label className="drawing-text-field">
+                    <span>写下要放进画布的文字</span>
+                    <textarea maxLength={200} rows={3} value={textDraft} onChange={(event) => setTextDraft(event.target.value)} />
+                  </label>
+                  <div className="drawing-level-label"><span>三级</span><strong>排列方式</strong></div>
+                  <div className="drawing-segmented">
+                    <button type="button" className={textLayout === "horizontal" ? "is-active" : ""} aria-pressed={textLayout === "horizontal"} onClick={() => setTextLayout("horizontal")}>横排</button>
+                    <button type="button" className={textLayout === "vertical" ? "is-active" : ""} aria-pressed={textLayout === "vertical"} onClick={() => setTextLayout("vertical")}>竖排</button>
+                  </div>
+                  <label className="drawing-range"><span>文字大小 <strong>{textSize}px</strong></span><input type="range" min="18" max="160" value={textSize} onChange={(event) => setTextSize(Number(event.target.value))} /></label>
+                  <ColorPalette value={textColor} onChange={setTextColor} colors={FILL_PALETTE} allowCustom />
+                  <button className="drawing-insert-text" type="button" disabled={!textDraft.trim()} onClick={addTextElement}>放入文字</button>
                 </div>
               )}
 
@@ -1119,11 +1465,54 @@ export function DrawingStudioPage() {
                         <button className="is-gentle-danger" type="button" onClick={deleteSelected}>擦掉</button>
                       </div>
                       <button className="drawing-make-preset" type="button" disabled={selectedElements.length < 2} onClick={saveSelectionAsPreset}>打包为预制件</button>
+                      <div className="drawing-layer-controls">
+                        <div className="drawing-level-label"><span>三级</span><strong>渲染层级</strong></div>
+                        <label className="drawing-layer-input">
+                          <span>{selectionHasOneLayer ? `当前层级 ${selectedLayerMinimum}` : `层级 ${selectedLayerMinimum} 至 ${selectedLayerMaximum}`}</span>
+                          <input
+                            key={`${selectedIds.join("-")}-${selectedLayerMinimum}-${selectedLayerMaximum}`}
+                            type="number"
+                            min={MIN_DRAWING_LAYER}
+                            max={MAX_DRAWING_LAYER}
+                            defaultValue={selectionHasOneLayer ? selectedLayerMinimum : undefined}
+                            placeholder={selectionHasOneLayer ? undefined : "统一层级"}
+                            aria-label="手动修改渲染层级"
+                            onBlur={(event) => { if (event.currentTarget.value !== "") setSelectionLayer(Number(event.currentTarget.value)); }}
+                            onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+                          />
+                        </label>
+                        <div className="drawing-layer-buttons">
+                          <button type="button" onClick={() => moveSelectionLayer("top")}>置顶</button>
+                          <button type="button" onClick={() => moveSelectionLayer("bottom")}>置底</button>
+                          <button type="button" onClick={() => moveSelectionLayer("up")}>提高一层</button>
+                          <button type="button" onClick={() => moveSelectionLayer("down")}>降低一层</button>
+                        </div>
+                      </div>
+                      {selectedElement?.type === "stroke" && (
+                        <div className="drawing-selection-color">
+                          <div className="drawing-level-label"><span>三级</span><strong>画笔颜色</strong></div>
+                          <ColorPalette
+                            value={selectedElement.stroke}
+                            colors={FILL_PALETTE}
+                            allowCustom
+                            onChange={(color) => updateSelection("修改画笔颜色", (element) => element.type === "stroke" ? { ...element, stroke: color } : element)}
+                          />
+                        </div>
+                      )}
                       {selectedElement?.type === "solid" && (
                         <SolidControls
                           element={selectedElement}
                           onLiveChange={replaceElementLive}
                           onCommit={() => commitElements("调整立体观察角度", documentRef.current.elements)}
+                        />
+                      )}
+                      {selectedElement?.type === "text" && (
+                        <TextControls
+                          element={selectedElement}
+                          onCommit={(next) => {
+                            const elements = documentRef.current.elements.map((element) => element.id === next.id ? next : element);
+                            commitElements("编辑文字", elements);
+                          }}
                         />
                       )}
                     </>
@@ -1147,19 +1536,35 @@ export function DrawingStudioPage() {
               </ol>
             )}
             {drawer === "works" && (
-              savedWorks.length > 0 ? (
+              worksLoading ? (
+                <div className="drawing-drawer-empty"><span aria-hidden="true">✦</span><strong>正在打开作品清单</strong><p>保存在本机数据目录里的作品马上出现。</p></div>
+              ) : savedWorks.length > 0 ? (
                 <div className="drawing-works-list">
                   {savedWorks.map((work) => (
-                    <article key={`${work.id}-${work.updatedAt}`}><div><strong>{work.title}</strong><small>{work.elements.length} 个图元 · {formatTime(work.updatedAt)}</small></div><button type="button" onClick={() => { const opened = { ...cloneDocument(work), presets: mergeDrawingPresets(documentRef.current.presets, work.presets), updatedAt: new Date().toISOString() }; setDocument(opened); setViewport(opened.viewport); setHistory([makeHistoryNode("打开本次快照", opened.elements, opened.presets)]); setHistoryIndex(0); setSelectedIds([]); setDrawer(null); }}>打开</button></article>
+                    <article key={`${work.id}-${work.updatedAt}`}>
+                      <div className="drawing-work-thumbnail">
+                        {work.thumbnailDataUrl ? <img src={work.thumbnailDataUrl} alt={`${work.title}的作品缩略图`} /> : <span aria-hidden="true">✦</span>}
+                      </div>
+                      <div className="drawing-work-summary">
+                        <strong>{work.title}</strong>
+                        <small>作者：{work.author || "未填写"}</small>
+                        <small>创作于 {formatCreationTime(work.createdAt)}</small>
+                        <small>{work.elementCount} 个图元</small>
+                      </div>
+                      <div className="drawing-work-actions">
+                        <button type="button" onClick={() => void openSavedWork(work.id)}>继续编辑</button>
+                        <button type="button" disabled={workSaving} onClick={() => void copySavedWork(work.id)}>复制作品</button>
+                      </div>
+                    </article>
                   ))}
                 </div>
-              ) : <div className="drawing-drawer-empty"><span aria-hidden="true">▦</span><strong>还没有保存过作品</strong><p>点击顶部“保存”，这里会出现本次打开页面期间的作品快照。</p></div>
+              ) : <div className="drawing-drawer-empty"><span aria-hidden="true">▦</span><strong>还没有保存过作品</strong><p>给作品取好名字，点击顶部“保存”，以后刷新页面也能从这里继续编辑。</p></div>
             )}
             {drawer === "author" && (
               <form className="drawing-author-form" onSubmit={(event) => { event.preventDefault(); saveAuthor(); }}>
                 <label><span>作品名称</span><input value={titleDraft} maxLength={80} onChange={(event) => setTitleDraft(event.target.value)} /></label>
                 <label><span>作者（可以不填）</span><input value={authorDraft} maxLength={80} onChange={(event) => setAuthorDraft(event.target.value)} /></label>
-                <p>这些信息会和画布一起保存在本机，也会写进你主动下载的作品文件。</p>
+                <p>这些信息会和画布一起自动保存在本机；点击顶部“保存”后，也会写入独立作品文件。</p>
                 <button className="drawing-author-save" type="submit">保存作品信息</button>
               </form>
             )}
@@ -1204,6 +1609,48 @@ function ColorPalette({
           <input type="color" value={value} onChange={(event) => onChange(event.target.value)} aria-label="打开自由色盘选择任意颜色" />
         </label>
       )}
+    </div>
+  );
+}
+
+function TextControls({
+  element,
+  onCommit,
+}: {
+  element: TextElement;
+  onCommit: (element: TextElement) => void;
+}) {
+  const [draft, setDraft] = useState(element.text);
+  const [fontSize, setFontSize] = useState(element.fontSize);
+  const [color, setColor] = useState(element.color);
+  const [layout, setLayout] = useState<TextLayout>(element.layout);
+
+  useEffect(() => {
+    setDraft(element.text);
+    setFontSize(element.fontSize);
+    setColor(element.color);
+    setLayout(element.layout);
+  }, [element.color, element.fontSize, element.id, element.layout, element.text]);
+
+  return (
+    <div className="drawing-text-controls">
+      <div className="drawing-level-label"><span>三级</span><strong>编辑文字</strong></div>
+      <label className="drawing-text-field">
+        <span>文字内容</span>
+        <textarea maxLength={200} rows={3} value={draft} onChange={(event) => setDraft(event.target.value)} />
+      </label>
+      <div className="drawing-segmented">
+        <button type="button" className={layout === "horizontal" ? "is-active" : ""} aria-pressed={layout === "horizontal"} onClick={() => setLayout("horizontal")}>横排</button>
+        <button type="button" className={layout === "vertical" ? "is-active" : ""} aria-pressed={layout === "vertical"} onClick={() => setLayout("vertical")}>竖排</button>
+      </div>
+      <label className="drawing-range"><span>文字大小 <strong>{Math.round(fontSize)}px</strong></span><input type="range" min="12" max="240" value={fontSize} onChange={(event) => setFontSize(Number(event.target.value))} /></label>
+      <ColorPalette value={color} onChange={setColor} colors={FILL_PALETTE} allowCustom />
+      <button
+        className="drawing-insert-text"
+        type="button"
+        disabled={!draft.trim()}
+        onClick={() => onCommit(updateTextElement(element, { text: draft.trim().slice(0, 200), fontSize, color, layout }))}
+      >更新文字</button>
     </div>
   );
 }

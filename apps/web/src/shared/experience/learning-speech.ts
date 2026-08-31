@@ -9,6 +9,7 @@ import { translateUiText } from "./translations";
 export type LearningSpeechMoment = {
   zh: string;
   en: string;
+  bilingualAudioSrc?: string;
 };
 
 const CHINESE_DIGITS = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九"] as const;
@@ -237,6 +238,48 @@ export const STARTUP_GREETINGS: readonly LearningSpeechMoment[] = [
 ] as const;
 
 let activeSpeechId = 0;
+let activeRecordedAudio: {
+  audio: HTMLAudioElement;
+  resolve: (result: TtsResult) => void;
+} | null = null;
+
+function stopRecordedAudio() {
+  const active = activeRecordedAudio;
+  activeRecordedAudio = null;
+  if (!active) return;
+  active.audio.pause();
+  try {
+    active.audio.currentTime = 0;
+  } catch {
+    // Some browsers reject seeking before media metadata is ready.
+  }
+  active.resolve({ status: "cancelled" });
+}
+
+function playRecordedAudio(source: string): Promise<TtsResult> {
+  if (typeof Audio === "undefined") return Promise.resolve({ status: "unavailable" });
+  const audio = new Audio(source);
+  audio.preload = "auto";
+  return new Promise<TtsResult>((resolve) => {
+    let settled = false;
+    const finish = (result: TtsResult) => {
+      if (settled) return;
+      settled = true;
+      if (activeRecordedAudio?.audio === audio) activeRecordedAudio = null;
+      audio.onended = null;
+      audio.onerror = null;
+      resolve(result);
+    };
+    activeRecordedAudio = { audio, resolve: finish };
+    audio.onended = () => finish({ status: "completed" });
+    audio.onerror = () => finish({ status: "error" });
+    try {
+      void Promise.resolve(audio.play()).catch(() => finish({ status: "error" }));
+    } catch {
+      finish({ status: "error" });
+    }
+  });
+}
 
 function statusForResult(result: TtsResult) {
   if (result.status === "unavailable") setGlobalSpeechStatus("unavailable");
@@ -251,9 +294,20 @@ export async function speakLearningMoment(
   const mode = requestedMode ?? getExperienceSnapshot().readAloudMode;
   const speechId = ++activeSpeechId;
   browserTts.stop();
+  stopRecordedAudio();
   if (mode === "none") {
     setGlobalSpeechStatus("idle");
     return { status: "cancelled" };
+  }
+
+  if (mode === "bilingual" && moment.bilingualAudioSrc) {
+    setGlobalSpeechStatus("speaking-zh");
+    const recordedResult = await playRecordedAudio(moment.bilingualAudioSrc);
+    if (speechId !== activeSpeechId || recordedResult.status === "cancelled") return { status: "cancelled" };
+    if (recordedResult.status === "completed") {
+      setGlobalSpeechStatus("idle");
+      return recordedResult;
+    }
   }
 
   if (mode === "zh" || mode === "bilingual") {
@@ -290,6 +344,7 @@ export async function speakLearningMoment(
 
 export function stopLearningSpeech() {
   activeSpeechId += 1;
+  stopRecordedAudio();
   browserTts.stop();
   setGlobalSpeechStatus("idle");
 }

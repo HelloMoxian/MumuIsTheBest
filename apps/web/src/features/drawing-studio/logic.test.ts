@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { STICKER_OPTIONS } from "./art";
+import { renderToStaticMarkup } from "react-dom/server";
+import { SHAPE_OPTIONS, STICKER_OPTIONS, ShapeArt } from "./art";
 import {
   DRAWING_SCHEMA_VERSION,
   MAX_DRAWING_ELEMENTS,
@@ -16,10 +17,15 @@ import {
   parseDrawingDocument,
   renameDrawingPreset,
   screenPointToWorld,
+  sortDrawingElements,
+  transformDrawingElements,
+  updateTextElement,
   zoomViewportAt,
   type DrawingElement,
   type DrawingDocument,
   type ShapeElement,
+  type StrokeElement,
+  type TextElement,
 } from "./logic";
 
 function makeShape(id: string): ShapeElement {
@@ -35,6 +41,8 @@ function makeShape(id: string): ShapeElement {
     fill: "#ffffff",
     stroke: "#16142f",
     strokeWidth: 4,
+    layer: 0,
+    createdOrder: 0,
   };
 }
 
@@ -76,6 +84,43 @@ test("accepts a valid empty or populated drawing document", () => {
 
   assert.equal(empty.elements.length, 0);
   assert.equal(populated.elements[0]?.type, "shape");
+});
+
+test("provides a varied set of child-friendly decorative structures", () => {
+  const decorative = SHAPE_OPTIONS.filter((option) => option.group === "装饰形状");
+  assert.equal(SHAPE_OPTIONS.length, 25);
+  assert.equal(new Set(SHAPE_OPTIONS.map((option) => option.id)).size, 25);
+  assert.deepEqual(decorative.map((option) => option.label), [
+    "五角星",
+    "爱心",
+    "田字格",
+    "圆形田字格",
+    "米字格",
+    "圆形米字格",
+    "九宫格",
+    "小爪印",
+    "小脚印",
+    "花边圆框",
+    "云朵边框",
+    "对话框",
+    "小横幅",
+    "小皇冠",
+    "四叶草",
+    "蝴蝶结",
+  ]);
+
+  const shapeElements = SHAPE_OPTIONS.map((option, index) => ({
+    ...makeShape(`shape-${index}`),
+    shape: option.id,
+    createdOrder: index,
+  }));
+  assert.equal(parseDrawingDocument(makeDocument(shapeElements)).elements.length, 25);
+
+  for (const option of decorative) {
+    const markup = renderToStaticMarkup(ShapeArt({ kind: option.id, fill: "#ffd166" }));
+    assert.match(markup, /data-region-id="fill"/);
+    assert.doesNotMatch(markup, /undefined|NaN/);
+  }
 });
 
 test("provides number styles, twenty-four houses and twelve stickers in every other illustrated theme", () => {
@@ -141,6 +186,86 @@ test("migrates a version 1 drawing by adding an empty preset library", () => {
 
   assert.equal(migrated.schemaVersion, DRAWING_SCHEMA_VERSION);
   assert.deepEqual(migrated.presets, []);
+});
+
+test("migrates version 2 elements by assigning layer and stable creation order", () => {
+  const first = makeShape("first") as unknown as Record<string, unknown>;
+  const second = { ...makeShape("second"), x: 180 } as unknown as Record<string, unknown>;
+  delete first.layer;
+  delete first.createdOrder;
+  delete second.layer;
+  delete second.createdOrder;
+  const migrated = parseDrawingDocument({ ...makeDocument(), schemaVersion: 2, elements: [first, second] });
+
+  assert.deepEqual(migrated.elements.map((element) => element.layer), [0, 0]);
+  assert.deepEqual(migrated.elements.map((element) => element.createdOrder), [0, 1]);
+});
+
+test("scales brush points and width together with the rest of a preset", () => {
+  const stroke: StrokeElement = {
+    id: "stroke",
+    type: "stroke",
+    x: 200,
+    y: 40,
+    width: 100,
+    height: 40,
+    rotation: 0,
+    stroke: "#171536",
+    strokeWidth: 10,
+    layer: 0,
+    createdOrder: 1,
+    points: [{ x: 0, y: 0 }, { x: 100, y: 40 }],
+    lineStyle: "smooth",
+    smoothing: true,
+  };
+  const transformed = transformDrawingElements([{ ...makeShape("shape"), width: 100, height: 100 }, stroke], 0.5, 0);
+  const transformedStroke = transformed.find((element) => element.type === "stroke");
+
+  assert.equal(transformedStroke?.type, "stroke");
+  if (transformedStroke?.type === "stroke") {
+    assert.deepEqual(transformedStroke.points, [{ x: 0, y: 0 }, { x: 50, y: 20 }]);
+    assert.equal(transformedStroke.strokeWidth, 5);
+    assert.equal(transformedStroke.width, 50);
+    assert.equal(transformedStroke.height, 20);
+  }
+});
+
+test("sorts rendering by layer and then original creation order", () => {
+  const newestBottom = { ...makeShape("newest-bottom"), layer: -1, createdOrder: 9 };
+  const olderTop = { ...makeShape("older-top"), layer: 2, createdOrder: 1 };
+  const newerTop = { ...makeShape("newer-top"), layer: 2, createdOrder: 5 };
+
+  assert.deepEqual(
+    sortDrawingElements([newerTop, newestBottom, olderTop]).map((element) => element.id),
+    ["newest-bottom", "older-top", "newer-top"],
+  );
+});
+
+test("parses and updates editable horizontal or vertical text elements", () => {
+  const text: TextElement = {
+    id: "text-1",
+    type: "text",
+    text: "木木",
+    fontSize: 48,
+    color: "#171536",
+    layout: "horizontal",
+    x: 100,
+    y: 100,
+    width: 92,
+    height: 62,
+    rotation: 15,
+    stroke: "#171536",
+    strokeWidth: 1,
+    layer: 3,
+    createdOrder: 7,
+  };
+  const parsed = parseDrawingDocument(makeDocument([text]));
+  assert.equal(parsed.elements[0]?.type, "text");
+  const updated = updateTextElement(text, { text: "星球", fontSize: 64, color: "#6950dc", layout: "vertical" });
+  assert.equal(updated.layout, "vertical");
+  assert.equal(updated.color, "#6950dc");
+  assert.ok(updated.height > updated.width);
+  assert.equal(updated.rotation, 15);
 });
 
 test("finds every element touched by a drag-selection rectangle", () => {

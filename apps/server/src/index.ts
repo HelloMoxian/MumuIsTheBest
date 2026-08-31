@@ -14,6 +14,7 @@ import {
 } from "./app-data.js";
 import { registerArithmeticBattleHistoryApi } from "./arithmetic-battle-history.js";
 import { registerCommonCharacterProgressApi } from "./common-character-progress.js";
+import { registerDrawingStudioWorksApi } from "./drawing-studio-works.js";
 import { registerEnglishEchoIslandApi } from "./english-echo-island.js";
 import { registerFruitSliceHistoryApi } from "./fruit-slice-history.js";
 import { registerMathKnowledgeTowerApi } from "./math-knowledge-tower.js";
@@ -542,6 +543,7 @@ async function main() {
   registerMultiplicationHistoryApi(app, appDataDir);
   registerCommonCharacterProgressApi(app, appDataDir);
   registerPersistentUserDataApi(app, appDataDir);
+  registerDrawingStudioWorksApi(app, appDataDir);
   registerFruitSliceHistoryApi(app, appDataDir);
   registerWorldTowerApi(app, appDataDir, projectRoot);
   await registerEnglishEchoIslandApi(app, appDataDir, projectRoot);

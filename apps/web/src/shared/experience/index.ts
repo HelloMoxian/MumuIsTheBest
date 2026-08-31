@@ -4,6 +4,11 @@ export {
 } from "./GlobalExperienceLayer";
 export { LocalizedLines } from "./LocalizedLines";
 export {
+  SpokenActionButton,
+  announceSpokenAction,
+  type SpokenActionButtonProps,
+} from "./SpokenActionButton";
+export {
   getExperienceSnapshot,
   setInterfaceMode,
   setReadAloudMode,

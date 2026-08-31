@@ -32,6 +32,7 @@ apps/web/src/shared/experience/
 ├── experience-store.ts
 ├── GlobalExperienceLayer.tsx
 ├── learning-speech.ts
+├── SpokenActionButton.tsx
 └── translations.ts
 ```
 
@@ -77,6 +78,37 @@ Hook 提供：
 - `speak / stop / pause / resume`；
 - 当前浏览器可用的声音列表；
 - 不包含密钥、远程服务配置或持久化操作。
+
+## 通用双语点击按钮
+
+菜单、工具和保存等短操作统一使用 `SpokenActionButton`，不要在业务页面重复拼接中文和英文朗读队列：
+
+```tsx
+import { SpokenActionButton } from "../../shared/experience";
+
+<SpokenActionButton
+  speech={{
+    zh: "画笔",
+    en: "Brush",
+    bilingualAudioSrc: "/audio/ui-actions/drawing-studio/tool-brush.m4a",
+  }}
+  onClick={() => setTool("brush")}
+>
+  画笔 <kbd>B</kbd>
+</SpokenActionButton>
+```
+
+组件先执行原按钮动作，再按全局“无/中/英/中英”偏好朗读；按钮被禁用或业务回调取消事件时不朗读。中英模式提供 `bilingualAudioSrc` 时优先播放随应用分发的短音频，播放失败自动回退到 `browserTts` 的中文、英文顺序队列。没有录音、浏览器 TTS 或扬声器时只降级声音，点击、键盘和页面状态仍须正常工作。
+
+非点击入口（例如工具快捷键）调用同一协议：
+
+```ts
+import { announceSpokenAction } from "../../shared/experience";
+
+void announceSpokenAction({ zh: "画笔", en: "Brush", bilingualAudioSrc: "/audio/ui-actions/drawing-studio/tool-brush.m4a" });
+```
+
+静态 UI 录音放在 `apps/web/public/audio/ui-actions/<功能>/`，文件名使用稳定语义 ID，不用可见文案直接命名。录音仅用于固定公开短语；题目、孩子姓名、作品名和其他动态或个人内容仍必须经过统一 TTS，并按隐私规则决定 `localOnly`。
 
 ## 文本规则
 

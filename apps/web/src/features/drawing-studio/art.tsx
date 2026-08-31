@@ -24,6 +24,20 @@ export const SHAPE_OPTIONS: CatalogOption<ShapeKind>[] = [
   { id: "parallelogram", label: "平行四边形", group: "四边形" },
   { id: "star", label: "五角星", group: "装饰形状" },
   { id: "heart", label: "爱心", group: "装饰形状" },
+  { id: "tian-grid", label: "田字格", group: "装饰形状" },
+  { id: "round-tian-grid", label: "圆形田字格", group: "装饰形状" },
+  { id: "rice-grid", label: "米字格", group: "装饰形状" },
+  { id: "round-rice-grid", label: "圆形米字格", group: "装饰形状" },
+  { id: "nine-grid", label: "九宫格", group: "装饰形状" },
+  { id: "paw-print", label: "小爪印", group: "装饰形状" },
+  { id: "footprint", label: "小脚印", group: "装饰形状" },
+  { id: "scalloped-frame", label: "花边圆框", group: "装饰形状" },
+  { id: "cloud-frame", label: "云朵边框", group: "装饰形状" },
+  { id: "speech-bubble", label: "对话框", group: "装饰形状" },
+  { id: "banner", label: "小横幅", group: "装饰形状" },
+  { id: "crown", label: "小皇冠", group: "装饰形状" },
+  { id: "clover", label: "四叶草", group: "装饰形状" },
+  { id: "bow", label: "蝴蝶结", group: "装饰形状" },
 ];
 
 export const SOLID_OPTIONS: CatalogOption<SolidKind>[] = [
@@ -126,12 +140,108 @@ export function ShapeArt({
   if (kind === "trapezoid") return <polygon points="26,14 74,14 92,86 8,86" {...shared} data-region-id="fill" />;
   if (kind === "parallelogram") return <polygon points="29,14 93,14 71,86 7,86" {...shared} data-region-id="fill" />;
   if (kind === "star") return <polygon points={starPoints} {...shared} data-region-id="fill" />;
-  return (
+  if (kind === "heart") return (
     <path
       d="M50 88 C43 80 12 60 12 35 C12 17 34 9 50 28 C66 9 88 17 88 35 C88 60 57 80 50 88 Z"
       {...shared}
       data-region-id="fill"
     />
+  );
+  if (kind === "tian-grid" || kind === "rice-grid") return (
+    <g>
+      <rect x="9" y="9" width="82" height="82" rx="3" {...shared} data-region-id="fill" />
+      <path
+        d={kind === "rice-grid" ? "M50 9 V91 M9 50 H91 M10 10 L90 90 M90 10 L10 90" : "M50 9 V91 M9 50 H91"}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={strokeWidth * 0.78}
+        strokeLinecap="round"
+      />
+    </g>
+  );
+  if (kind === "round-tian-grid" || kind === "round-rice-grid") return (
+    <g>
+      <circle cx="50" cy="50" r="41" {...shared} data-region-id="fill" />
+      <path
+        d={kind === "round-rice-grid" ? "M50 9 V91 M9 50 H91 M21 21 L79 79 M79 21 L21 79" : "M50 9 V91 M9 50 H91"}
+        fill="none"
+        stroke={stroke}
+        strokeWidth={strokeWidth * 0.78}
+        strokeLinecap="round"
+      />
+    </g>
+  );
+  if (kind === "nine-grid") return (
+    <g>
+      <rect x="8" y="8" width="84" height="84" rx="3" {...shared} data-region-id="fill" />
+      <path d="M36 8 V92 M64 8 V92 M8 36 H92 M8 64 H92" fill="none" stroke={stroke} strokeWidth={strokeWidth * 0.72} />
+    </g>
+  );
+  if (kind === "paw-print") return (
+    <g>
+      <ellipse cx="50" cy="66" rx="25" ry="20" {...shared} data-region-id="fill" />
+      <ellipse cx="22" cy="42" rx="10" ry="13" transform="rotate(-24 22 42)" {...shared} data-region-id="fill" />
+      <ellipse cx="41" cy="29" rx="10" ry="14" transform="rotate(-8 41 29)" {...shared} data-region-id="fill" />
+      <ellipse cx="61" cy="29" rx="10" ry="14" transform="rotate(8 61 29)" {...shared} data-region-id="fill" />
+      <ellipse cx="80" cy="42" rx="10" ry="13" transform="rotate(24 80 42)" {...shared} data-region-id="fill" />
+    </g>
+  );
+  if (kind === "footprint") return (
+    <g transform="rotate(-16 50 53)">
+      <path d="M31 75 C25 63 29 45 40 34 C49 25 66 31 70 45 C74 59 67 78 55 86 C46 92 36 86 31 75 Z" {...shared} data-region-id="fill" />
+      <circle cx="37" cy="20" r="7" {...shared} data-region-id="fill" />
+      <circle cx="49" cy="15" r="7.5" {...shared} data-region-id="fill" />
+      <circle cx="62" cy="16" r="7" {...shared} data-region-id="fill" />
+      <circle cx="73" cy="22" r="6" {...shared} data-region-id="fill" />
+      <circle cx="81" cy="31" r="5" {...shared} data-region-id="fill" />
+    </g>
+  );
+  if (kind === "scalloped-frame") return (
+    <g>
+      <path d="M50 6 C58 6 62 14 68 16 C75 12 84 16 86 24 C94 28 95 38 89 44 C94 51 91 61 84 64 C84 73 76 80 68 77 C63 86 54 91 47 85 C40 91 30 86 28 78 C18 80 11 72 14 63 C6 59 5 49 11 43 C6 35 10 25 19 23 C21 14 31 11 38 16 C41 10 45 6 50 6 Z" {...shared} data-region-id="fill" />
+      <ellipse cx="50" cy="49" rx="28" ry="25" fill="#ffffff" stroke={stroke} strokeWidth={strokeWidth * 0.78} />
+    </g>
+  );
+  if (kind === "cloud-frame") return (
+    <g>
+      <path d="M19 79 C8 79 4 69 9 60 C3 49 11 38 23 38 C24 25 36 18 48 24 C56 11 77 16 79 31 C92 31 98 45 91 55 C99 66 91 80 78 80 Z" {...shared} data-region-id="fill" />
+      <rect x="23" y="43" width="55" height="24" rx="12" fill="#ffffff" stroke={stroke} strokeWidth={strokeWidth * 0.72} />
+    </g>
+  );
+  if (kind === "speech-bubble") return (
+    <path d="M12 16 H88 Q95 16 95 24 V66 Q95 74 87 74 H53 L35 91 L38 74 H12 Q5 74 5 66 V24 Q5 16 12 16 Z" {...shared} data-region-id="fill" />
+  );
+  if (kind === "banner") return (
+    <g>
+      <path d="M7 24 H28 V17 H72 V24 H93 L83 42 L93 60 H72 V72 H28 V60 H7 L17 42 Z" {...shared} data-region-id="fill" />
+      <rect x="22" y="18" width="56" height="48" rx="5" fill={fill} stroke={stroke} strokeWidth={strokeWidth} data-region-id="fill" />
+    </g>
+  );
+  if (kind === "crown") return (
+    <g>
+      <polygon points="12,27 32,47 50,16 68,47 88,27 80,78 20,78" {...shared} data-region-id="fill" />
+      <path d="M20 65 H80" fill="none" stroke={stroke} strokeWidth={strokeWidth * 0.8} />
+      <circle cx="12" cy="25" r="5" fill={fill} stroke={stroke} strokeWidth={strokeWidth * 0.72} data-region-id="fill" />
+      <circle cx="50" cy="14" r="5" fill={fill} stroke={stroke} strokeWidth={strokeWidth * 0.72} data-region-id="fill" />
+      <circle cx="88" cy="25" r="5" fill={fill} stroke={stroke} strokeWidth={strokeWidth * 0.72} data-region-id="fill" />
+    </g>
+  );
+  if (kind === "clover") return (
+    <g>
+      <circle cx="36" cy="35" r="19" {...shared} data-region-id="fill" />
+      <circle cx="64" cy="35" r="19" {...shared} data-region-id="fill" />
+      <circle cx="36" cy="62" r="19" {...shared} data-region-id="fill" />
+      <circle cx="64" cy="62" r="19" {...shared} data-region-id="fill" />
+      <path d="M51 61 C54 72 61 81 72 88" fill="none" stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" />
+    </g>
+  );
+  return (
+    <g>
+      <path d="M43 45 C29 26 10 22 10 43 C10 65 29 69 43 54 Z" {...shared} data-region-id="fill" />
+      <path d="M57 45 C71 26 90 22 90 43 C90 65 71 69 57 54 Z" {...shared} data-region-id="fill" />
+      <circle cx="50" cy="50" r="10" fill={fill} stroke={stroke} strokeWidth={strokeWidth} data-region-id="fill" />
+      <path d="M45 58 L35 83 M55 58 L65 83" fill="none" stroke={stroke} strokeWidth={strokeWidth * 0.8} strokeLinecap="round" />
+    </g>
   );
 }
 

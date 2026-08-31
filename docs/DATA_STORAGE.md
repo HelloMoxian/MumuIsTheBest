@@ -39,6 +39,7 @@
 | 反应熔炉 | `learning/chemistry/reaction-furnace-state.json` | 当前批次、原子、稳定结构与批次编号 |
 | 分子工厂 | `learning/chemistry/molecule-factory-state.json` | 原子、原子团、收藏、选项与中断状态 |
 | 画图 | `creative/drawing-studio-state.json` | 进行中的画布、视口、作品信息、图元和永久预制件目录 |
+| 画图作品清单 | `creative/drawing-studio-works/<作品 UUID>.json` | 主动保存的独立作品、缩略图、名称、作者、创作时间、全部图元与预制件 |
 | 界面偏好 | `preferences/experience.json` | 界面语言与朗读模式 |
 | 启动辅助 | `run/mumu-dev.pid`、`logs/mumu-dev.log` | 当前启动进程号与不含个人内容/密钥的日志 |
 
