@@ -73,7 +73,7 @@ export type LearningCoinAward = {
   multiplier: 1 | 3 | 5;
   criticalHit: boolean;
   rewardCoins: number;
-  source: LearningCoinSource;
+  source: LearningCoinSource | "games:gem-connect";
   autoPlayQuota?: {
     batchId: string;
     limit: 20;

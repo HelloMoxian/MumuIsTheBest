@@ -1,0 +1,11 @@
+{
+  "name": "mumu-sudoku-story-prototype",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test engine.test.mjs http.test.mjs",
+    "check": "node --check app.mjs && node --check art.mjs && node --check engine.mjs && node --check store.mjs && node --check server.mjs"
+  }
+}

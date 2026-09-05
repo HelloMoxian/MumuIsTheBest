@@ -1,0 +1,122 @@
+{
+  "source": "gems-atlas.png",
+  "placements": [
+    {
+      "id": "symbol-01",
+      "sourceBox": [
+        91,
+        32,
+        359,
+        393
+      ],
+      "alignedPosition": [
+        122,
+        75
+      ]
+    },
+    {
+      "id": "symbol-02",
+      "sourceBox": [
+        436,
+        61,
+        818,
+        367
+      ],
+      "alignedPosition": [
+        577,
+        103
+      ]
+    },
+    {
+      "id": "symbol-03",
+      "sourceBox": [
+        888,
+        34,
+        1186,
+        390
+      ],
+      "alignedPosition": [
+        1131,
+        78
+      ]
+    },
+    {
+      "id": "symbol-04",
+      "sourceBox": [
+        40,
+        450,
+        411,
+        764
+      ],
+      "alignedPosition": [
+        70,
+        611
+      ]
+    },
+    {
+      "id": "symbol-05",
+      "sourceBox": [
+        466,
+        447,
+        789,
+        776
+      ],
+      "alignedPosition": [
+        606,
+        603
+      ]
+    },
+    {
+      "id": "symbol-06",
+      "sourceBox": [
+        840,
+        494,
+        1233,
+        744
+      ],
+      "alignedPosition": [
+        1083,
+        643
+      ]
+    },
+    {
+      "id": "symbol-07",
+      "sourceBox": [
+        36,
+        818,
+        412,
+        1188
+      ],
+      "alignedPosition": [
+        68,
+        1095
+      ]
+    },
+    {
+      "id": "symbol-08",
+      "sourceBox": [
+        497,
+        812,
+        761,
+        1200
+      ],
+      "alignedPosition": [
+        636,
+        1086
+      ]
+    },
+    {
+      "id": "symbol-09",
+      "sourceBox": [
+        880,
+        849,
+        1193,
+        1173
+      ],
+      "alignedPosition": [
+        1123,
+        1118
+      ]
+    }
+  ]
+}

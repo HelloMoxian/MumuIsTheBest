@@ -35,6 +35,7 @@
 | 英语回声岛 | `learning/english/echo-island-progress.json` | 学习池、完成次数、标记与幂等事件 |
 | 宝石迷阵 | `learning/games/bejeweled-state.json` | 完整续玩棋盘、模式、等级、总得分、总消除数、七色消除数与幂等版本；详见 `BEJEWELED.md` |
 | 切水果、星际极速赛与能量币 | `learning/games/fruit-slice-history.json` | 六个家庭角色的切水果逐局战报、星际极速赛批量关卡奖励、独立能量币余额与幂等收支账本 |
+| 宝石连连看 | `learning/games/gem-connect-history.json` | 新版 60—180 颗通关时间、规则版本、提示/重排次数、幂等 ID 与双钱包待发状态；不保存姓名或未完成棋盘 |
 | 物质塔与知识币 | `learning/world-tower/progress.json` | 节点、知识币余额、奖励场次、英语连续播放批次额度、幂等标记与交易 |
 | 岩石与矿物 | `learning/nature/rock-minerals-state.json` | 当前 5 × 6 地层、深度、地质锤、样本库存、发现与研究词条 |
 | 反应熔炉 | `learning/chemistry/reaction-furnace-state.json` | 当前批次、原子、稳定结构与批次编号 |
@@ -51,6 +52,8 @@
 反应熔炉、分子工厂及界面偏好旧版本曾写入浏览器 `localStorage`。新版本只把它作为一次性迁移来源：当服务端文件为空时读取旧记录、校验后写入上表对应文件；服务端已有记录时始终以服务端为准。会话内“本次已播放欢迎语”只使用 `sessionStorage`，关闭会话即失效，不属于长期数据。
 
 宝石迷阵当前为 `schemaVersion: 2`，新增双币累计奖励与待补发状态。第一版棋盘保留全部历史数据，首次升级写入前在同目录保存 `.v1.bak` 恢复点，历史消除不补发奖励。知识币与能量币原文件增加默认 0 的 `bejeweledRewardTotal` 游标，仍各用原有写队列与原子替换；游标不随消费、管理余额或日志截断而改变。备份/恢复须同时包含宝石存档与两个钱包，不能单独回滚一种文件；详见 `BEJEWELED.md`。
+
+宝石连连看历史为 `schemaVersion: 2`，旧版成绩保留为 `rulesVersion: 1`，首次升级写入前在同目录生成不可覆盖的 `gem-connect-history.json.v1.bak` 私有恢复点。新版每关发放关卡号 × 10 枚知识币和同量能量币；历史先持久化待发记录，再通过两个钱包原有队列发币。知识币、能量币文件新增可缺省的 `gemConnectRewards`（UUID→关卡）去重收据，旧文件默认空；启动与读取历史会恢复未完全结算记录。备份和恢复必须同时保留两钱包收据和历史，不能单删收据或只回滚余额。详见 `GEM_CONNECT.md`。
 
 ## 3. 旧 `var/` 迁移
 

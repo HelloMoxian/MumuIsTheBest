@@ -21,6 +21,11 @@ import {
 } from "./shared/experience";
 import "./styles.css";
 
+const TetrisGame = lazy(async () => {
+  const module = await import("./features/tetris/TetrisGame");
+  return { default: module.TetrisGame };
+});
+
 const FindNumberGame = lazy(async () => {
   const module = await import("./features/find-number/FindNumberGame");
   return { default: module.FindNumberGame };
@@ -89,6 +94,11 @@ const EnglishEchoIslandPage = lazy(async () => {
 const BejeweledGame = lazy(async () => {
   const module = await import("./features/bejeweled/BejeweledGame");
   return { default: module.BejeweledGame };
+});
+
+const GemConnectGame = lazy(async () => {
+  const module = await import("./features/gem-connect/GemConnectGame");
+  return { default: module.GemConnectGame };
 });
 
 const FruitSliceGame = lazy(async () => {
@@ -213,9 +223,16 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "games",
     title: "游戏",
-    caption: "让身体动起来，把运动变成家庭挑战",
+    caption: "动一动、想一想，一起探索游戏星河",
     icon: "games",
     games: [
+      {
+        title: "俄罗斯方块",
+        mark: "▦",
+        description: "拼出晶莹水晶，单人双人自由玩，消行听中英鼓励",
+        shape: "wide",
+        href: "/games/tetris",
+      },
       {
         title: "星际极速赛",
         mark: "✦",
@@ -236,6 +253,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "在无限白板上画线、摆图元和自由涂色",
         shape: "wide",
         href: "/games/drawing-studio",
+      },
+      {
+        title: "宝石连连看",
+        mark: "◆",
+        description: "连接彩色宝石，轻松探索十关，记录每一次通关时间",
+        shape: "wide",
+        href: "/games/gem-connect",
       },
       {
         title: "赤色要塞",
@@ -997,6 +1021,12 @@ function App() {
 }
 
 function CurrentPage() {
+  if (window.location.pathname === "/games/tetris") {
+    return <Suspense fallback={<ChemistryLoading label="水晶俄罗斯方块" />}><TetrisGame /></Suspense>;
+  }
+  if (window.location.pathname === "/games/gem-connect") {
+    return <Suspense fallback={<ChemistryLoading label="宝石连连看" />}><GemConnectGame /></Suspense>;
+  }
   if (window.location.pathname === "/games/bejeweled") {
     return <Suspense fallback={<ChemistryLoading label="宝石迷阵" />}><BejeweledGame /></Suspense>;
   }

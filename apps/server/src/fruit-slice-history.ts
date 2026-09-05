@@ -163,6 +163,7 @@ const historyVersionOneSchema = z.object({
 const historySchema = z.object({
   schemaVersion: z.literal(2),
   bejeweledRewardTotal: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
+  gemConnectRewards: z.record(z.string().uuid(), z.number().int().min(1).max(10)).default({}),
   id: z.string().uuid(),
   stableId: z.literal("game-fruit-slice-history"),
   createdAt: z.string().datetime(),
@@ -197,6 +198,7 @@ function emptyHistory(): History {
     schemaVersion: 2,
     id: STABLE_HISTORY_UUID,
     stableId: "game-fruit-slice-history",
+    gemConnectRewards: {},
     createdAt,
     updatedAt: createdAt,
     energyCoinBalance: 0,
@@ -586,6 +588,24 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
         const next = historySchema.parse({
           ...history, updatedAt: new Date().toISOString(),
           energyCoinBalance: history.energyCoinBalance + amount, bejeweledRewardTotal: total,
+        });
+        await saveHistory(next);
+        return { balance: next.energyCoinBalance, updatedAt: next.updatedAt };
+      });
+      writeQueue = operation.then(() => undefined, () => undefined);
+      return operation;
+    },
+    awardGemConnect(eventId: string, level: number) {
+      const input = z.object({ eventId: z.string().uuid(), level: z.number().int().min(1).max(10) }).parse({ eventId, level });
+      const operation = writeQueue.then(async () => {
+        const history = await readHistory();
+        const prior = history.gemConnectRewards[input.eventId];
+        if (prior !== undefined && prior !== input.level) throw new Error("ENERGY_COIN_EVENT_ID_COLLISION");
+        if (prior !== undefined) return { balance: history.energyCoinBalance, updatedAt: history.updatedAt };
+        const next = historySchema.parse({
+          ...history, updatedAt: new Date().toISOString(),
+          energyCoinBalance: history.energyCoinBalance + input.level * 10,
+          gemConnectRewards: { ...history.gemConnectRewards, [input.eventId]: input.level },
         });
         await saveHistory(next);
         return { balance: next.energyCoinBalance, updatedAt: next.updatedAt };

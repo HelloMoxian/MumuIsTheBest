@@ -1,0 +1,122 @@
+{
+  "source": "crew-atlas.png",
+  "placements": [
+    {
+      "id": "symbol-01",
+      "sourceBox": [
+        45,
+        0,
+        365,
+        412
+      ],
+      "alignedPosition": [
+        96,
+        50
+      ]
+    },
+    {
+      "id": "symbol-02",
+      "sourceBox": [
+        441,
+        1,
+        806,
+        411
+      ],
+      "alignedPosition": [
+        585,
+        51
+      ]
+    },
+    {
+      "id": "symbol-03",
+      "sourceBox": [
+        883,
+        13,
+        1209,
+        412
+      ],
+      "alignedPosition": [
+        1117,
+        56
+      ]
+    },
+    {
+      "id": "symbol-04",
+      "sourceBox": [
+        34,
+        421,
+        375,
+        828
+      ],
+      "alignedPosition": [
+        85,
+        564
+      ]
+    },
+    {
+      "id": "symbol-05",
+      "sourceBox": [
+        455,
+        423,
+        805,
+        832
+      ],
+      "alignedPosition": [
+        593,
+        563
+      ]
+    },
+    {
+      "id": "symbol-06",
+      "sourceBox": [
+        888,
+        419,
+        1238,
+        829
+      ],
+      "alignedPosition": [
+        1105,
+        563
+      ]
+    },
+    {
+      "id": "symbol-07",
+      "sourceBox": [
+        20,
+        835,
+        386,
+        1251
+      ],
+      "alignedPosition": [
+        73,
+        1072
+      ]
+    },
+    {
+      "id": "symbol-08",
+      "sourceBox": [
+        445,
+        834,
+        809,
+        1251
+      ],
+      "alignedPosition": [
+        586,
+        1071
+      ]
+    },
+    {
+      "id": "symbol-09",
+      "sourceBox": [
+        888,
+        833,
+        1236,
+        1251
+      ],
+      "alignedPosition": [
+        1106,
+        1071
+      ]
+    }
+  ]
+}

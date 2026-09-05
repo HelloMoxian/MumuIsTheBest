@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "source": "assets/game/gem-connect/gems-atlas.v1.png",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 4,
+  "rows": 2,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "ruby",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "ruby.png",
+      "sourceBox": [
+        2,
+        2,
+        442,
+        442
+      ],
+      "trimBox": null,
+      "outputWidth": 440,
+      "outputHeight": 440,
+      "opaqueCoverage": 0.432185,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "sapphire",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "sapphire.png",
+      "sourceBox": [
+        446,
+        2,
+        885,
+        442
+      ],
+      "trimBox": null,
+      "outputWidth": 439,
+      "outputHeight": 440,
+      "opaqueCoverage": 0.342317,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "emerald",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "emerald.png",
+      "sourceBox": [
+        889,
+        2,
+        1328,
+        442
+      ],
+      "trimBox": null,
+      "outputWidth": 439,
+      "outputHeight": 440,
+      "opaqueCoverage": 0.487197,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "gold",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "gold.png",
+      "sourceBox": [
+        1332,
+        2,
+        1772,
+        442
+      ],
+      "trimBox": null,
+      "outputWidth": 440,
+      "outputHeight": 440,
+      "opaqueCoverage": 0.374406,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "amethyst",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "amethyst.png",
+      "sourceBox": [
+        2,
+        446,
+        442,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 440,
+      "outputHeight": 439,
+      "opaqueCoverage": 0.434779,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "amber",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "amber.png",
+      "sourceBox": [
+        446,
+        446,
+        885,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 439,
+      "outputHeight": 439,
+      "opaqueCoverage": 0.467749,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "rose",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "rose.png",
+      "sourceBox": [
+        889,
+        446,
+        1328,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 439,
+      "outputHeight": 439,
+      "opaqueCoverage": 0.452509,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "moon",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "moon.png",
+      "sourceBox": [
+        1332,
+        446,
+        1772,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 440,
+      "outputHeight": 439,
+      "opaqueCoverage": 0.354038,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

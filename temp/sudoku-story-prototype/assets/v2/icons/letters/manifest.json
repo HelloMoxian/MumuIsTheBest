@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "source": "../../../source-v2/letters-aligned.png",
+  "sourceWidth": 1536,
+  "sourceHeight": 1536,
+  "columns": 3,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 0,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "symbol-01",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "symbol-01.png",
+      "sourceBox": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.300591,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symbol-02",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "symbol-02.png",
+      "sourceBox": [
+        512,
+        0,
+        1024,
+        512
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.344566,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symbol-03",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "symbol-03.png",
+      "sourceBox": [
+        1024,
+        0,
+        1536,
+        512
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.274426,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symbol-04",
+      "index": 3,
+      "row": 1,
+      "column": 0,
+      "filename": "symbol-04.png",
+      "sourceBox": [
+        0,
+        512,
+        512,
+        1024
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.330578,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symbol-05",
+      "index": 4,
+      "row": 1,
+      "column": 1,
+      "filename": "symbol-05.png",
+      "sourceBox": [
+        512,
+        512,
+        1024,
+        1024
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.316906,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symbol-06",
+      "index": 5,
+      "row": 1,
+      "column": 2,
+      "filename": "symbol-06.png",
+      "sourceBox": [
+        1024,
+        512,
+        1536,
+        1024
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.272717,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symbol-07",
+      "index": 6,
+      "row": 2,
+      "column": 0,
+      "filename": "symbol-07.png",
+      "sourceBox": [
+        0,
+        1024,
+        512,
+        1536
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.330662,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symbol-08",
+      "index": 7,
+      "row": 2,
+      "column": 1,
+      "filename": "symbol-08.png",
+      "sourceBox": [
+        512,
+        1024,
+        1024,
+        1536
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.370819,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symbol-09",
+      "index": 8,
+      "row": 2,
+      "column": 2,
+      "filename": "symbol-09.png",
+      "sourceBox": [
+        1024,
+        1024,
+        1536,
+        1536
+      ],
+      "trimBox": null,
+      "outputWidth": 512,
+      "outputHeight": 512,
+      "opaqueCoverage": 0.22884,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

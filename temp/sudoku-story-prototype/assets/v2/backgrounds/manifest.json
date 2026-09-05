@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "source": "../../source-v2/backgrounds-atlas.png",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 2,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 0,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "gems",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "gems.png",
+      "sourceBox": [
+        0,
+        0,
+        887,
+        296
+      ],
+      "trimBox": null,
+      "outputWidth": 887,
+      "outputHeight": 296,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "elements",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "elements.png",
+      "sourceBox": [
+        887,
+        0,
+        1774,
+        296
+      ],
+      "trimBox": null,
+      "outputWidth": 887,
+      "outputHeight": 296,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "numbers",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "numbers.png",
+      "sourceBox": [
+        0,
+        296,
+        887,
+        591
+      ],
+      "trimBox": null,
+      "outputWidth": 887,
+      "outputHeight": 295,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "letters",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "letters.png",
+      "sourceBox": [
+        887,
+        296,
+        1774,
+        591
+      ],
+      "trimBox": null,
+      "outputWidth": 887,
+      "outputHeight": 295,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "crew",
+      "index": 4,
+      "row": 2,
+      "column": 0,
+      "filename": "crew.png",
+      "sourceBox": [
+        0,
+        591,
+        887,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 887,
+      "outputHeight": 296,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hub",
+      "index": 5,
+      "row": 2,
+      "column": 1,
+      "filename": "hub.png",
+      "sourceBox": [
+        887,
+        591,
+        1774,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 887,
+      "outputHeight": 296,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

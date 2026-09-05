@@ -1,0 +1,122 @@
+{
+  "source": "letters-atlas.png",
+  "placements": [
+    {
+      "id": "symbol-01",
+      "sourceBox": [
+        41,
+        31,
+        420,
+        395
+      ],
+      "alignedPosition": [
+        66,
+        74
+      ]
+    },
+    {
+      "id": "symbol-02",
+      "sourceBox": [
+        470,
+        34,
+        795,
+        395
+      ],
+      "alignedPosition": [
+        605,
+        75
+      ]
+    },
+    {
+      "id": "symbol-03",
+      "sourceBox": [
+        876,
+        32,
+        1198,
+        395
+      ],
+      "alignedPosition": [
+        1119,
+        74
+      ]
+    },
+    {
+      "id": "symbol-04",
+      "sourceBox": [
+        47,
+        443,
+        385,
+        797
+      ],
+      "alignedPosition": [
+        87,
+        591
+      ]
+    },
+    {
+      "id": "symbol-05",
+      "sourceBox": [
+        479,
+        442,
+        790,
+        797
+      ],
+      "alignedPosition": [
+        612,
+        590
+      ]
+    },
+    {
+      "id": "symbol-06",
+      "sourceBox": [
+        897,
+        441,
+        1204,
+        798
+      ],
+      "alignedPosition": [
+        1126,
+        589
+      ]
+    },
+    {
+      "id": "symbol-07",
+      "sourceBox": [
+        44,
+        834,
+        393,
+        1207
+      ],
+      "alignedPosition": [
+        81,
+        1093
+      ]
+    },
+    {
+      "id": "symbol-08",
+      "sourceBox": [
+        448,
+        842,
+        807,
+        1204
+      ],
+      "alignedPosition": [
+        588,
+        1099
+      ]
+    },
+    {
+      "id": "symbol-09",
+      "sourceBox": [
+        925,
+        841,
+        1161,
+        1205
+      ],
+      "alignedPosition": [
+        1162,
+        1098
+      ]
+    }
+  ]
+}

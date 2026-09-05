@@ -215,6 +215,7 @@ const autoPlayRewardBatchSchema = z.object({
 const progressSchema = z.object({
   schemaVersion: z.literal(1),
   bejeweledRewardTotal: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
+  gemConnectRewards: z.record(z.string().uuid(), z.number().int().min(1).max(10)).default({}),
   id: z.string().uuid(),
   graphId: z.string().min(1).max(160),
   createdAt: z.string().datetime(),
@@ -644,6 +645,7 @@ export function registerWorldTowerApi(
       permanentResourceIds: [],
       resourceInventory: {},
       appliedGrantIds: [LEARNING_COIN_RESET_GRANT_ID],
+      gemConnectRewards: {},
       rewardSessions: [],
       autoPlayRewardBatches: [],
       transactions: [],
@@ -1425,5 +1427,25 @@ export function registerWorldTowerApi(
       return sendKnownError(error, reply);
     }
   });
-  return { creditBejeweled };
+  return {
+    creditBejeweled,
+    async awardGemConnect(eventId: string, level: number) {
+      const input = z.object({ eventId: z.string().uuid(), level: z.number().int().min(1).max(10) }).parse({ eventId, level });
+      const progress = await updateProgress(current => {
+        const prior = current.gemConnectRewards[input.eventId];
+        if (prior !== undefined && prior !== input.level) throw new Error("KNOWLEDGE_COIN_EVENT_ID_COLLISION");
+        if (prior !== undefined) return current;
+        const now = new Date().toISOString(), amount = input.level * 10;
+        return {
+          ...current, updatedAt: now, coinBalance: current.coinBalance + amount,
+          gemConnectRewards: { ...current.gemConnectRewards, [input.eventId]: input.level },
+          transactions: [...current.transactions, {
+            id: input.eventId, kind: "learning-reward" as const, targetId: "games:gem-connect:" + input.level,
+            quantity: amount, coinDelta: amount, balanceAfter: current.coinBalance + amount, createdAt: now,
+          }].slice(-20_000),
+        };
+      });
+      return { balance: progress.coinBalance, updatedAt: progress.updatedAt };
+    },
+  };
 }

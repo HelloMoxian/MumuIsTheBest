@@ -1,0 +1,122 @@
+{
+  "source": "elements-atlas.png",
+  "placements": [
+    {
+      "id": "symbol-01",
+      "sourceBox": [
+        34,
+        38,
+        414,
+        408
+      ],
+      "alignedPosition": [
+        66,
+        71
+      ]
+    },
+    {
+      "id": "symbol-02",
+      "sourceBox": [
+        464,
+        36,
+        790,
+        410
+      ],
+      "alignedPosition": [
+        605,
+        69
+      ]
+    },
+    {
+      "id": "symbol-03",
+      "sourceBox": [
+        870,
+        61,
+        1208,
+        394
+      ],
+      "alignedPosition": [
+        1111,
+        89
+      ]
+    },
+    {
+      "id": "symbol-04",
+      "sourceBox": [
+        31,
+        446,
+        414,
+        800
+      ],
+      "alignedPosition": [
+        64,
+        591
+      ]
+    },
+    {
+      "id": "symbol-05",
+      "sourceBox": [
+        469,
+        428,
+        786,
+        823
+      ],
+      "alignedPosition": [
+        609,
+        570
+      ]
+    },
+    {
+      "id": "symbol-06",
+      "sourceBox": [
+        850,
+        441,
+        1229,
+        814
+      ],
+      "alignedPosition": [
+        1090,
+        581
+      ]
+    },
+    {
+      "id": "symbol-07",
+      "sourceBox": [
+        43,
+        837,
+        403,
+        1209
+      ],
+      "alignedPosition": [
+        76,
+        1094
+      ]
+    },
+    {
+      "id": "symbol-08",
+      "sourceBox": [
+        449,
+        840,
+        805,
+        1197
+      ],
+      "alignedPosition": [
+        590,
+        1101
+      ]
+    },
+    {
+      "id": "symbol-09",
+      "sourceBox": [
+        876,
+        843,
+        1204,
+        1203
+      ],
+      "alignedPosition": [
+        1116,
+        1100
+      ]
+    }
+  ]
+}

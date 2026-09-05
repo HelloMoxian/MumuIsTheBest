@@ -1,0 +1,70 @@
+{
+  "assets": [
+    {
+      "file": "move.cc0.wav",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/digital-audio",
+      "originalName": "phaseJump2",
+      "sourceFile": "assets/audio/galaxy-racer/lane-whoosh-alt.cc0.ogg",
+      "sourceSha256": "5d85717cfca231f7da7887cef5f44b2131bbe3308eb0c1fee0b4f9e61d59b571",
+      "sha256": "95e18059361f8c4a3cf0dd4f85c786d44c8602e0ea2cb8e3a6b1528837aa02b1",
+      "processing": "First 0.1s, 0.75 gain, 6ms fade-in, 30ms fade-out, mono 22050Hz PCM16"
+    },
+    {
+      "file": "rotate.cc0.wav",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/digital-audio",
+      "originalName": "phaseJump2",
+      "sourceFile": "assets/audio/galaxy-racer/lane-whoosh-alt.cc0.ogg",
+      "sourceSha256": "5d85717cfca231f7da7887cef5f44b2131bbe3308eb0c1fee0b4f9e61d59b571",
+      "sha256": "2a01a9e563ae9955acbc8e1baaae522562420cd40c49d26bf6bedda481974eb9",
+      "processing": "First 0.28s, 0.75 gain, 6ms fade-in, 30ms fade-out, mono 22050Hz PCM16"
+    },
+    {
+      "file": "lock.cc0.wav",
+      "author": "qubodup",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/crash-collision",
+      "originalName": "qubodup-crash.ogg",
+      "sourceFile": "assets/audio/galaxy-racer/collision-soft.cc0.ogg",
+      "sourceSha256": "e468ee00a6c94313cf4efcf347b5f4e51e98e629608be277a8f58feb5e2267ff",
+      "sha256": "dc282dadb19a45faa48843cf80e163954ef8bd6b3dfb5435c654a830fff1e857",
+      "processing": "First 0.28s, 0.75 gain, 6ms fade-in, 30ms fade-out, mono 22050Hz PCM16"
+    },
+    {
+      "file": "clear.cc0.wav",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/digital-audio",
+      "originalName": "threeTone1",
+      "sourceFile": "assets/audio/galaxy-racer/checkpoint.cc0.ogg",
+      "sourceSha256": "bdf21eb12e65507f091d074886fdac820e1ccae51d060caa168e5567acadb84b",
+      "sha256": "c3999b68c0f7a881298dc822546a7c27b95406b9fc3e391cd15ab5f0e830165f",
+      "processing": "First 0.827s, 0.75 gain, 6ms fade-in, 30ms fade-out, mono 22050Hz PCM16"
+    },
+    {
+      "file": "level.cc0.wav",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/digital-audio",
+      "originalName": "powerUp3",
+      "sourceFile": "assets/audio/galaxy-racer/reward.cc0.ogg",
+      "sourceSha256": "59e7591f7a068882767bc1fd61edabf479b78787466d3a70bc49dfa0533777d2",
+      "sha256": "960ea490aed9ada3c2d94b8ea0c3e4a8f2b8ed30b79fa70c63869ab4c05d1e0a",
+      "processing": "First 1.149s, 0.75 gain, 6ms fade-in, 30ms fade-out, mono 22050Hz PCM16"
+    },
+    {
+      "file": "music.cc0.mp3",
+      "author": "wipics",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/city-loop-0",
+      "originalName": "city-loop.mp3",
+      "sourceFile": "assets/audio/galaxy-racer/theme-solar-loop.cc0.mp3",
+      "sourceSha256": "9349982fb8e365167bc5c89f2ac50d3b5376b9f627d506ba30a9b26c8230597e",
+      "sha256": "9349982fb8e365167bc5c89f2ac50d3b5376b9f627d506ba30a9b26c8230597e",
+      "processing": "Unmodified copy"
+    }
+  ]
+}

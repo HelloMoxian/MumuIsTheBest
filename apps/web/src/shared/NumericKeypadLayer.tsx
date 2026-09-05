@@ -25,6 +25,8 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
   const placeRowRef = useRef<HTMLDivElement | null>(null);
   const isHome = window.location.pathname === "/";
   const isImmersiveCameraGame = [
+    "/games/tetris",
+    "/games/gem-connect",
     "/games/fruit-slice",
     "/games/galaxy-racer",
     "/games/bejeweled",

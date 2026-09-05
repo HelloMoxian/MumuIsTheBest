@@ -17,6 +17,7 @@ import { registerCommonCharacterProgressApi } from "./common-character-progress.
 import { registerDrawingStudioWorksApi } from "./drawing-studio-works.js";
 import { registerEnglishEchoIslandApi } from "./english-echo-island.js";
 import { registerFruitSliceHistoryApi } from "./fruit-slice-history.js";
+import { registerGemConnectHistoryApi } from "./gem-connect-history.js";
 import { registerBejeweledApi } from "./bejeweled.js";
 import { registerMathKnowledgeTowerApi } from "./math-knowledge-tower.js";
 import { registerMultiplicationHistoryApi } from "./multiplication-history.js";
@@ -550,6 +551,10 @@ async function main() {
   registerBejeweledApi(app, appDataDir, {
     knowledge: knowledgeWallet.creditBejeweled,
     energy: energyWallet.creditBejeweled,
+  });
+  registerGemConnectHistoryApi(app, appDataDir, {
+    knowledge: knowledgeWallet.awardGemConnect,
+    energy: energyWallet.awardGemConnect,
   });
   await registerEnglishEchoIslandApi(app, appDataDir, projectRoot);
   await registerMathKnowledgeTowerApi(app, appDataDir, projectRoot);
