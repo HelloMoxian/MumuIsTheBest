@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "source": "assets/game/bejeweled/gem-atlas.png",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 4,
+  "rows": 2,
+  "indexOrder": "row-major-zero-based",
+  "inset": 0,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "red",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "red.png",
+      "sourceBox": [
+        0,
+        0,
+        444,
+        444
+      ],
+      "trimBox": null,
+      "outputWidth": 444,
+      "outputHeight": 444,
+      "opaqueCoverage": 0.43717,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "orange",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "orange.png",
+      "sourceBox": [
+        444,
+        0,
+        887,
+        444
+      ],
+      "trimBox": null,
+      "outputWidth": 443,
+      "outputHeight": 444,
+      "opaqueCoverage": 0.394769,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "yellow",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "yellow.png",
+      "sourceBox": [
+        887,
+        0,
+        1330,
+        444
+      ],
+      "trimBox": null,
+      "outputWidth": 443,
+      "outputHeight": 444,
+      "opaqueCoverage": 0.369207,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "green",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "green.png",
+      "sourceBox": [
+        1330,
+        0,
+        1774,
+        444
+      ],
+      "trimBox": null,
+      "outputWidth": 444,
+      "outputHeight": 444,
+      "opaqueCoverage": 0.425458,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "blue",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "blue.png",
+      "sourceBox": [
+        0,
+        444,
+        444,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 444,
+      "outputHeight": 443,
+      "opaqueCoverage": 0.370096,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "purple",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "purple.png",
+      "sourceBox": [
+        444,
+        444,
+        887,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 443,
+      "outputHeight": 443,
+      "opaqueCoverage": 0.479335,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "white",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "white.png",
+      "sourceBox": [
+        887,
+        444,
+        1330,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 443,
+      "outputHeight": 443,
+      "opaqueCoverage": 0.409103,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "cube",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "cube.png",
+      "sourceBox": [
+        1330,
+        444,
+        1774,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 444,
+      "outputHeight": 443,
+      "opaqueCoverage": 0.538309,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

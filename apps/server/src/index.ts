@@ -17,6 +17,7 @@ import { registerCommonCharacterProgressApi } from "./common-character-progress.
 import { registerDrawingStudioWorksApi } from "./drawing-studio-works.js";
 import { registerEnglishEchoIslandApi } from "./english-echo-island.js";
 import { registerFruitSliceHistoryApi } from "./fruit-slice-history.js";
+import { registerBejeweledApi } from "./bejeweled.js";
 import { registerMathKnowledgeTowerApi } from "./math-knowledge-tower.js";
 import { registerMultiplicationHistoryApi } from "./multiplication-history.js";
 import { registerPersistentUserDataApi } from "./persistent-user-data.js";
@@ -544,8 +545,12 @@ async function main() {
   registerCommonCharacterProgressApi(app, appDataDir);
   registerPersistentUserDataApi(app, appDataDir);
   registerDrawingStudioWorksApi(app, appDataDir);
-  registerFruitSliceHistoryApi(app, appDataDir);
-  registerWorldTowerApi(app, appDataDir, projectRoot);
+  const energyWallet = registerFruitSliceHistoryApi(app, appDataDir);
+  const knowledgeWallet = registerWorldTowerApi(app, appDataDir, projectRoot);
+  registerBejeweledApi(app, appDataDir, {
+    knowledge: knowledgeWallet.creditBejeweled,
+    energy: energyWallet.creditBejeweled,
+  });
   await registerEnglishEchoIslandApi(app, appDataDir, projectRoot);
   await registerMathKnowledgeTowerApi(app, appDataDir, projectRoot);
 

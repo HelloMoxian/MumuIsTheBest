@@ -86,6 +86,11 @@ const EnglishEchoIslandPage = lazy(async () => {
   return { default: module.EnglishEchoIslandPage };
 });
 
+const BejeweledGame = lazy(async () => {
+  const module = await import("./features/bejeweled/BejeweledGame");
+  return { default: module.BejeweledGame };
+});
+
 const FruitSliceGame = lazy(async () => {
   const module = await import("./features/fruit-slice/FruitSliceGame");
   return { default: module.FruitSliceGame };
@@ -238,6 +243,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "双车协作闯四关，营救升级并挑战关卡 Boss",
         shape: "wide",
         href: "/games/red-fortress",
+      },
+      {
+        title: "宝石迷阵",
+        mark: "◆",
+        description: "交换闪亮宝石，触发连锁消除，永久收藏每一份星光",
+        shape: "wide",
+        href: "/games/bejeweled",
       },
     ],
   },
@@ -985,6 +997,9 @@ function App() {
 }
 
 function CurrentPage() {
+  if (window.location.pathname === "/games/bejeweled") {
+    return <Suspense fallback={<ChemistryLoading label="宝石迷阵" />}><BejeweledGame /></Suspense>;
+  }
   if (window.location.pathname === "/universities/top100" || window.location.pathname === "/university/top100") {
     return <Suspense fallback={<ChemistryLoading label="大学 Top100 星图" />}><UniversityTop100Page /></Suspense>;
   }

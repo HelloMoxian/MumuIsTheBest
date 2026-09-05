@@ -162,6 +162,7 @@ const historyVersionOneSchema = z.object({
 
 const historySchema = z.object({
   schemaVersion: z.literal(2),
+  bejeweledRewardTotal: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
   id: z.string().uuid(),
   stableId: z.literal("game-fruit-slice-history"),
   createdAt: z.string().datetime(),
@@ -192,6 +193,7 @@ const energyCoinSetInputSchema = z.object({
 function emptyHistory(): History {
   const createdAt = new Date(0).toISOString();
   return {
+    bejeweledRewardTotal: 0,
     schemaVersion: 2,
     id: STABLE_HISTORY_UUID,
     stableId: "game-fruit-slice-history",
@@ -573,4 +575,23 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
       });
     }
   });
+  return {
+    creditBejeweled(total: number) {
+      z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).parse(total);
+      const operation = writeQueue.then(async () => {
+        const history = await readHistory();
+        if (total < history.bejeweledRewardTotal) throw new Error("BEJEWELED_REWARD_CURSOR_AHEAD");
+        const amount = total - history.bejeweledRewardTotal;
+        if (!amount) return { balance: history.energyCoinBalance, updatedAt: history.updatedAt };
+        const next = historySchema.parse({
+          ...history, updatedAt: new Date().toISOString(),
+          energyCoinBalance: history.energyCoinBalance + amount, bejeweledRewardTotal: total,
+        });
+        await saveHistory(next);
+        return { balance: next.energyCoinBalance, updatedAt: next.updatedAt };
+      });
+      writeQueue = operation.then(() => undefined, () => undefined);
+      return operation;
+    },
+  };
 }

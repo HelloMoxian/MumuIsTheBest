@@ -27,6 +27,7 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
   const isImmersiveCameraGame = [
     "/games/fruit-slice",
     "/games/galaxy-racer",
+    "/games/bejeweled",
   ].includes(window.location.pathname);
   const value = digits ? Number(digits) : null;
   const spokenValue = useMemo(

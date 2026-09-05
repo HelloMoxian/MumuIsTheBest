@@ -214,6 +214,7 @@ const autoPlayRewardBatchSchema = z.object({
 
 const progressSchema = z.object({
   schemaVersion: z.literal(1),
+  bejeweledRewardTotal: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
   id: z.string().uuid(),
   graphId: z.string().min(1).max(160),
   createdAt: z.string().datetime(),
@@ -632,6 +633,7 @@ export function registerWorldTowerApi(
 
   function emptyProgress(graph: WorldGraph, catalog: UnlockCatalog, now = new Date().toISOString()): Progress {
     return {
+      bejeweledRewardTotal: 0,
       schemaVersion: 1,
       id: randomUUID(),
       graphId: graph.graphId,
@@ -724,6 +726,25 @@ export function registerWorldTowerApi(
       permanentResourceIds: progress.permanentResourceIds,
       resourceInventory: progress.resourceInventory,
     };
+  }
+
+  async function creditBejeweled(total: number) {
+    z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).parse(total);
+    const progress = await updateProgress(current => {
+      if (total < current.bejeweledRewardTotal) throw new Error("BEJEWELED_REWARD_CURSOR_AHEAD");
+      const amount = total - current.bejeweledRewardTotal;
+      if (!amount) return current;
+      const now = new Date().toISOString();
+      return {
+        ...current, updatedAt: now, coinBalance: current.coinBalance + amount,
+        bejeweledRewardTotal: total,
+        transactions: [...current.transactions, {
+          id: randomUUID(), kind: "learning-reward" as const, targetId: "games:bejeweled",
+          quantity: amount, coinDelta: amount, balanceAfter: current.coinBalance + amount, createdAt: now,
+        }].slice(-20_000),
+      };
+    });
+    return { balance: progress.coinBalance, updatedAt: progress.updatedAt };
   }
 
   app.get("/api/world-tower/manifest", async (_request, reply) => {
@@ -1404,4 +1425,5 @@ export function registerWorldTowerApi(
       return sendKnownError(error, reply);
     }
   });
+  return { creditBejeweled };
 }
