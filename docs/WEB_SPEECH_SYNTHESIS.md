@@ -110,6 +110,14 @@ void announceSpokenAction({ zh: "画笔", en: "Brush", bilingualAudioSrc: "/audi
 
 静态 UI 录音放在 `apps/web/public/audio/ui-actions/<功能>/`，文件名使用稳定语义 ID，不用可见文案直接命名。录音仅用于固定公开短语；题目、孩子姓名、作品名和其他动态或个人内容仍必须经过统一 TTS，并按隐私规则决定 `localOnly`。
 
+固定双语录音必须把中文和英文分别交给对应声音生成，再在音频层按“中文 → 短停顿 → 英文”拼接。禁止把 `[[voice=...]]`、声音名称、语言标签或其他引擎控制文本嵌入朗读字符串；部分语音引擎会把它们直接念成 `voice ...`，破坏词义对应关系。画图按钮的唯一短语清单位于 `content/drawing-studio/ui-action-speech.v1.json`，通过以下命令重建：
+
+```bash
+node scripts/generate-drawing-ui-action-audio.mjs
+```
+
+清单与生成器会拒绝控制标记和重复 ID。每个成品只允许包含清单中的中文短语、160ms 停顿和英文直接翻译，不添加“中文”“英文”“voice”、声音名称、解释句或提示语。
+
 ## 文本规则
 
 - 业务层提供“适合听”的语义文本，不直接读取整个页面的 `innerText`。

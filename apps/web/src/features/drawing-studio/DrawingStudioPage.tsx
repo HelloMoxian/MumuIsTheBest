@@ -79,6 +79,7 @@ import {
   drawingToolForShortcut,
   type DrawingShortcutTool,
 } from "./shortcuts";
+import drawingActionSpeechCatalog from "../../../../../content/drawing-studio/ui-action-speech.v1.json";
 import "./drawing-studio.css";
 
 type ToolId = DrawingShortcutTool | "text";
@@ -92,9 +93,14 @@ type Gesture =
   | null;
 
 const DRAWING_ACTION_AUDIO_BASE = "/audio/ui-actions/drawing-studio";
+const DRAWING_ACTION_SPEECH = new Map(
+  drawingActionSpeechCatalog.actions.map((action) => [action.id, action]),
+);
 
-function drawingActionSpeech(id: string, zh: string, en: string): LearningSpeechMoment {
-  return { zh, en, bilingualAudioSrc: `${DRAWING_ACTION_AUDIO_BASE}/${id}.m4a` };
+function drawingActionSpeech(id: string): LearningSpeechMoment {
+  const phrase = DRAWING_ACTION_SPEECH.get(id);
+  if (!phrase) throw new Error(`Missing drawing action speech phrase: ${id}`);
+  return { zh: phrase.zh, en: phrase.en, bilingualAudioSrc: `${DRAWING_ACTION_AUDIO_BASE}/${id}.m4a` };
 }
 
 const TOOL_OPTIONS: Array<{
@@ -104,52 +110,52 @@ const TOOL_OPTIONS: Array<{
   shortcut?: string;
   speech: LearningSpeechMoment;
 }> = [
-  { id: "select", label: "选择", mark: "↖", shortcut: DRAWING_TOOL_SHORTCUTS.select, speech: drawingActionSpeech("tool-select", "选择", "Select") },
-  { id: "pan", label: "画布", mark: "✥", shortcut: DRAWING_TOOL_SHORTCUTS.pan, speech: drawingActionSpeech("tool-canvas", "画布", "Canvas") },
-  { id: "shape", label: "形状", mark: "△", shortcut: DRAWING_TOOL_SHORTCUTS.shape, speech: drawingActionSpeech("tool-shape", "形状", "Shapes") },
-  { id: "solid", label: "立体", mark: "◇", shortcut: DRAWING_TOOL_SHORTCUTS.solid, speech: drawingActionSpeech("tool-solid", "立体", "3D shapes") },
-  { id: "sticker", label: "贴纸", mark: "✦", shortcut: DRAWING_TOOL_SHORTCUTS.sticker, speech: drawingActionSpeech("tool-sticker", "贴纸", "Stickers") },
-  { id: "preset", label: "预制件", mark: "▦", shortcut: DRAWING_TOOL_SHORTCUTS.preset, speech: drawingActionSpeech("tool-preset", "预制件", "Presets") },
-  { id: "text", label: "文字", mark: "文", speech: drawingActionSpeech("tool-text", "文字", "Text") },
-  { id: "brush", label: "画笔", mark: "╱", shortcut: DRAWING_TOOL_SHORTCUTS.brush, speech: drawingActionSpeech("tool-brush", "画笔", "Brush") },
-  { id: "eraser", label: "橡皮擦", mark: "⌫", shortcut: DRAWING_TOOL_SHORTCUTS.eraser, speech: drawingActionSpeech("tool-eraser", "橡皮擦", "Eraser") },
-  { id: "fill", label: "填色", mark: "●", shortcut: DRAWING_TOOL_SHORTCUTS.fill, speech: drawingActionSpeech("tool-fill", "填色", "Fill") },
+  { id: "select", label: "选择", mark: "↖", shortcut: DRAWING_TOOL_SHORTCUTS.select, speech: drawingActionSpeech("tool-select") },
+  { id: "pan", label: "画布", mark: "✥", shortcut: DRAWING_TOOL_SHORTCUTS.pan, speech: drawingActionSpeech("tool-canvas") },
+  { id: "shape", label: "形状", mark: "△", shortcut: DRAWING_TOOL_SHORTCUTS.shape, speech: drawingActionSpeech("tool-shape") },
+  { id: "solid", label: "立体", mark: "◇", shortcut: DRAWING_TOOL_SHORTCUTS.solid, speech: drawingActionSpeech("tool-solid") },
+  { id: "sticker", label: "贴纸", mark: "✦", shortcut: DRAWING_TOOL_SHORTCUTS.sticker, speech: drawingActionSpeech("tool-sticker") },
+  { id: "preset", label: "预制件", mark: "▦", shortcut: DRAWING_TOOL_SHORTCUTS.preset, speech: drawingActionSpeech("tool-preset") },
+  { id: "text", label: "文字", mark: "文", speech: drawingActionSpeech("tool-text") },
+  { id: "brush", label: "画笔", mark: "╱", shortcut: DRAWING_TOOL_SHORTCUTS.brush, speech: drawingActionSpeech("tool-brush") },
+  { id: "eraser", label: "橡皮擦", mark: "⌫", shortcut: DRAWING_TOOL_SHORTCUTS.eraser, speech: drawingActionSpeech("tool-eraser") },
+  { id: "fill", label: "填色", mark: "●", shortcut: DRAWING_TOOL_SHORTCUTS.fill, speech: drawingActionSpeech("tool-fill") },
 ];
 
 const TOP_ACTION_SPEECH = {
-  save: drawingActionSpeech("action-save", "保存", "Save"),
-  edit: drawingActionSpeech("action-edit", "编辑", "Edit"),
-  undo: drawingActionSpeech("action-undo", "撤销", "Undo"),
+  save: drawingActionSpeech("action-save"),
+  edit: drawingActionSpeech("action-edit"),
+  undo: drawingActionSpeech("action-undo"),
 } as const;
 
 const GROUP_SPEECH: Record<string, LearningSpeechMoment> = Object.fromEntries([
-  ["圆与弧", "Circles and arcs", "group-circles-arcs"],
-  ["基础形状", "Basic shapes", "group-basic-shapes"],
-  ["四边形", "Quadrilaterals", "group-quadrilaterals"],
-  ["装饰形状", "Decorative shapes", "group-decorative-shapes"],
-  ["棱柱", "Prisms", "group-prisms"],
-  ["棱锥", "Pyramids", "group-pyramids"],
-  ["曲面立体", "Curved solids", "group-curved-solids"],
-  ["数字", "Numbers", "group-digits"],
-  ["树叶", "Leaves", "group-leaves"],
-  ["蝴蝶", "Butterflies", "group-butterflies"],
-  ["云彩", "Clouds", "group-clouds"],
-  ["花朵", "Flowers", "group-flowers"],
-  ["天空", "Sky", "group-sky"],
-  ["天气", "Weather", "group-weather"],
-  ["小虫子", "Insects", "group-insects"],
-  ["海洋", "Ocean", "group-ocean"],
-  ["果实", "Fruit", "group-fruit"],
-  ["树木", "Trees", "group-trees"],
-  ["庭院", "Garden", "group-garden"],
-  ["出行", "Transport", "group-transport"],
-  ["小屋", "Houses", "group-houses"],
-  ["玩具", "Toys", "group-toys"],
-  ["自然", "Nature", "group-nature"],
-  ["小孩", "Children", "group-children"],
-  ["大人", "Adults", "group-adults"],
-  ["小动物", "Animals", "group-animals"],
-].map(([zh, en, id]) => [zh, drawingActionSpeech(id, zh, en)]));
+  ["圆与弧", "group-circles-arcs"],
+  ["基础形状", "group-basic-shapes"],
+  ["四边形", "group-quadrilaterals"],
+  ["装饰形状", "group-decorative-shapes"],
+  ["棱柱", "group-prisms"],
+  ["棱锥", "group-pyramids"],
+  ["曲面立体", "group-curved-solids"],
+  ["数字", "group-digits"],
+  ["树叶", "group-leaves"],
+  ["蝴蝶", "group-butterflies"],
+  ["云彩", "group-clouds"],
+  ["花朵", "group-flowers"],
+  ["天空", "group-sky"],
+  ["天气", "group-weather"],
+  ["小虫子", "group-insects"],
+  ["海洋", "group-ocean"],
+  ["果实", "group-fruit"],
+  ["树木", "group-trees"],
+  ["庭院", "group-garden"],
+  ["出行", "group-transport"],
+  ["小屋", "group-houses"],
+  ["玩具", "group-toys"],
+  ["自然", "group-nature"],
+  ["小孩", "group-children"],
+  ["大人", "group-adults"],
+  ["小动物", "group-animals"],
+].map(([zh, id]) => [zh, drawingActionSpeech(id)]));
 
 type PaletteColor = { value: string; label: string };
 
