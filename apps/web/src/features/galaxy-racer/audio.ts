@@ -1,4 +1,5 @@
 import { racerSounds, type RacerThemeAssets } from "./assets";
+import { audioFocus } from "../../shared/audio/audio-focus";
 
 function makeAudio(url: string, loop = false) {
   const audio = new Audio(url);
@@ -16,6 +17,12 @@ export class RacerAudio {
   private checkpointIndex = 0;
   private finalLapPlayed = false;
   private crossfadeFrame = 0;
+  private readonly releaseFocus = audioFocus.subscribe(() => this.syncMusicFocus());
+  private syncMusicFocus() {
+    const muted = audioFocus.isMusicActive() || audioFocus.isMicrophoneActive();
+    if (this.music) this.music.muted = muted;
+    if (this.climaxMusic) this.climaxMusic.muted = muted;
+  }
 
   constructor() {
     this.engine.volume = 0.12;
@@ -36,6 +43,7 @@ export class RacerAudio {
     this.climaxMusic = makeAudio(theme.climaxMusic, true);
     this.music.volume = 0.2;
     this.climaxMusic.volume = 0.18;
+    this.syncMusicFocus();
     this.checkpointIndex = 0;
     this.finalLapPlayed = false;
     if (this.enabled && wasPlaying) void this.music.play().catch(() => undefined);
@@ -105,6 +113,7 @@ export class RacerAudio {
   }
 
   dispose() {
+    this.releaseFocus();
     this.stopLoops();
     this.countdown.pause();
   }

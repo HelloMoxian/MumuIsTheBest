@@ -3,8 +3,10 @@ import { chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
+import { parseAudioPreferences, type AudioPreferences } from "./audio-preferences.js";
 
 const stateIdSchema = z.enum([
+  "audio-preferences",
   "chemistry-reaction-furnace",
   "chemistry-molecule-factory",
   "drawing-studio",
@@ -288,6 +290,10 @@ type StateId = z.infer<typeof stateIdSchema>;
 type StoredState = z.infer<typeof storedStateBaseSchema>;
 
 const definitions: Record<StateId, { relativePath: string; payloadSchema: z.ZodType }> = {
+  "audio-preferences": {
+    relativePath: "preferences/audio.json",
+    payloadSchema: z.custom<AudioPreferences>(value => parseAudioPreferences(value) !== undefined),
+  },
   "chemistry-reaction-furnace": {
     relativePath: "learning/chemistry/reaction-furnace-state.json",
     payloadSchema: reactionFurnacePayloadSchema,

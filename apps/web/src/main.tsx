@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { GlobalMusicLayer } from "./shared/audio/GlobalMusicLayer";
+import { audioFocus } from "./shared/audio/audio-focus";
 import { AddSubtractGame } from "./features/add-subtract/AddSubtractGame";
 import { ArithmeticBattleGame } from "./features/arithmetic-battle/ArithmeticBattleGame";
 import { MultiplicationGame } from "./features/multiplication/MultiplicationGame";
@@ -576,6 +578,9 @@ function App() {
   const [configuration, setConfiguration] = useState<AsrConfiguration | null>(null);
   const [isSavingConfiguration, setIsSavingConfiguration] = useState(false);
   const [state, setState] = useState<SessionState>("idle");
+  useEffect(() => {
+    if (state === "connecting" || state === "listening" || state === "finishing") return audioFocus.acquireMicrophone();
+  }, [state]);
   const [statusDetail, setStatusDetail] = useState("先保存本机配置，然后按下开始录入。");
   const [error, setError] = useState<{ code: string; message: string } | null>(null);
   const [finalLines, setFinalLines] = useState<TranscriptLine[]>([]);
@@ -1183,11 +1188,13 @@ function CurrentPage() {
 }
 
 createRoot(document.getElementById("root")!).render(
-  <GlobalExperienceLayer>
-    <LearningCoinLayer>
-      <NumericKeypadLayer>
-        <CurrentPage />
-      </NumericKeypadLayer>
-    </LearningCoinLayer>
-  </GlobalExperienceLayer>,
+  <GlobalMusicLayer>
+    <GlobalExperienceLayer>
+      <LearningCoinLayer>
+        <NumericKeypadLayer>
+          <CurrentPage />
+        </NumericKeypadLayer>
+      </LearningCoinLayer>
+    </GlobalExperienceLayer>
+  </GlobalMusicLayer>,
 );

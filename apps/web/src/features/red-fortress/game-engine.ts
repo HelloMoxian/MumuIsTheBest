@@ -1,3 +1,4 @@
+import { audioFocus } from "../../shared/audio/audio-focus";
 import {
   ROAD_BOUNDS,
   STAGES,
@@ -203,6 +204,7 @@ class ExpeditionAudio {
     if (!this.enabled || !this.context) return;
     this.beatTimer -= deltaSeconds;
     this.effectThrottle = Math.max(0, this.effectThrottle - deltaSeconds);
+    if (audioFocus.isMusicActive() || audioFocus.isMicrophoneActive()) return;
     if (this.beatTimer > 0) return;
     const melody = intense
       ? [196, 247, 294, 392, 330, 294, 440, 330]

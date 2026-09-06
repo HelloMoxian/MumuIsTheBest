@@ -1,3 +1,4 @@
+import { audioFocus } from "../../shared/audio/audio-focus";
 export type RecognitionState =
   | "connecting"
   | "listening"
@@ -90,6 +91,7 @@ function socketUrl() {
 }
 
 export class AsrRecognitionSession {
+  private releaseAudioFocus?: () => void;
   private readonly capture = new PcmCapture();
   private readonly consumedFinals = new Set<string>();
   private socket?: WebSocket;
@@ -105,8 +107,15 @@ export class AsrRecognitionSession {
       return;
     }
 
+    this.releaseAudioFocus ??= audioFocus.acquireMicrophone();
     this.handlers.onState("connecting", "正在建立安全的语音通道…");
-    const socket = new WebSocket(socketUrl());
+    let socket: WebSocket;
+    try { socket = new WebSocket(socketUrl()); }
+    catch {
+      this.releaseAudioFocus?.(); this.releaseAudioFocus = undefined;
+      this.handlers.onError("语音通道暂时无法打开，请稍后重试。");
+      return;
+    }
     this.socket = socket;
 
     socket.onopen = () => {
@@ -136,9 +145,12 @@ export class AsrRecognitionSession {
           await this.capture.start((chunk) => {
             if (!this.disposed && socket.readyState === WebSocket.OPEN) socket.send(chunk);
           });
+          if (this.disposed || !this.releaseAudioFocus) { await this.capture.stop(); return; }
           this.captureStarted = true;
           this.handlers.onState("listening", "正在听你说话");
         } catch {
+          await this.capture.stop();
+          this.releaseAudioFocus?.(); this.releaseAudioFocus = undefined;
           this.handlers.onError("没有拿到麦克风权限，请在地址栏允许麦克风后再试。");
           if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "stop" }));
         }
@@ -187,8 +199,10 @@ export class AsrRecognitionSession {
     };
 
     socket.onerror = () => {
+      void this.stopCapture();
       if (!this.disposed) this.handlers.onError("本机语音服务连接失败，请确认项目服务已经启动。");
     };
+    socket.onclose = () => { void this.stopCapture(); };
   }
 
   async stop() {
@@ -203,9 +217,10 @@ export class AsrRecognitionSession {
   }
 
   private async stopCapture() {
-    if (!this.captureStarted) return;
+    const release = this.releaseAudioFocus; this.releaseAudioFocus = undefined;
+    if (!this.captureStarted) { release?.(); return; }
     this.captureStarted = false;
-    await this.capture.stop();
+    try { await this.capture.stop(); } finally { release?.(); }
   }
 }
 

@@ -17,10 +17,11 @@ export function GemIcon({ gem, small = false }: { gem: Pick<Gem, "color" | "spec
     {gem.special !== "normal" && <span className="bj-special">{({ flame: "火", star: "✦", cube: "虹", nova: "新星" })[gem.special]}</span>}
   </span>;
 }
-export function GemSwapBoard({ board, selected, hint, cleared, created, disabled, onSelect, onSwap, frame = null, stopped = false, rejected = 0 }: {
+export function GemSwapBoard({ board, selected, hint, cleared, created, disabled, onSelect, onSwap, onInteract, frame = null, stopped = false, rejected = 0 }: {
   board: Board; selected: number | null; hint: number[]; cleared: number[]; created: number[];
   disabled: boolean; onSelect: (index: number) => void; onSwap: (a: number, b: number) => void;
   frame?: Frame | null; stopped?: boolean; rejected?: number;
+  onInteract?: () => void;
 }) {
   const root = useRef<HTMLDivElement>(null);
   const previous = useRef<Board>([]);
@@ -63,6 +64,7 @@ export function GemSwapBoard({ board, selected, hint, cleared, created, disabled
         aria-pressed={selected === index} aria-disabled={disabled} tabIndex={focus === index ? 0 : -1}
         onFocus={() => setFocus(index)}
         onKeyDown={event => {
+          if (!disabled && ["Enter", " ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) onInteract?.();
           const offsets: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -8, ArrowDown: 8 };
           const offset = offsets[event.key];
           if (offset !== undefined) {
@@ -75,6 +77,7 @@ export function GemSwapBoard({ board, selected, hint, cleared, created, disabled
         }}
         onPointerDown={event => {
           if (disabled || event.button !== 0) return;
+          onInteract?.();
           gesture.current = { index, x: event.clientX, y: event.clientY, id: event.pointerId };
           suppressClick.current = false;
           event.currentTarget.setPointerCapture(event.pointerId);

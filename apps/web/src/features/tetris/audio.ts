@@ -1,4 +1,5 @@
 import type { TetrisSound } from "./logic";
+import { audioFocus } from "../../shared/audio/audio-focus";
 export type { TetrisSound } from "./logic";
 export type AudioOptions = { music: boolean; effects: boolean };
 export interface AudioClip {
@@ -22,6 +23,7 @@ export class TetrisAudio {
   private readonly active = new Set<AudioClip>();
   private musicGeneration = 0;
   private musicActive = false;
+  private releaseFocus: () => void;
 
   constructor(
     create: AudioFactory = source => new Audio(source),
@@ -36,6 +38,7 @@ export class TetrisAudio {
     };
     this.music = make("music");
     this.music.loop = true;
+    this.releaseFocus = audioFocus.subscribe(() => this.setDucked(this.ducked));
     for (const name of Object.keys(SOUND_VOLUME) as TetrisSound[]) {
       this.effects.set(name, Array.from({ length: 3 }, () => {
         const clip = make(name);
@@ -56,7 +59,7 @@ export class TetrisAudio {
   }
   setDucked(ducked: boolean) {
     this.ducked = ducked;
-    this.music.volume = ducked ? .06 : .24;
+    this.music.volume = audioFocus.isMusicActive() || audioFocus.isMicrophoneActive() ? 0 : ducked ? .06 : .24;
     for (const [name, clips] of this.effects) for (const clip of clips) clip.volume = SOUND_VOLUME[name] * (ducked ? .4 : 1);
   }
   private syncMusic() {
@@ -104,6 +107,7 @@ export class TetrisAudio {
   }
   restart() { this.rewind(this.music); this.stopEffects(); }
   dispose() {
+    this.releaseFocus();
     this.disposed = true;
     this.setPlaying(false);
     this.music.onerror = null;

@@ -7,6 +7,9 @@ import { LEARNING_COINS_CHANGED_EVENT } from "../../shared/learning-coins";
 import type { GemReward } from "../../../../server/src/bejeweled-rewards";
 import { frameDuration, SWAP_MS } from "./motion";
 import { BejeweledRewardTrail } from "./BejeweledRewardTrail";
+import { GemAudio, frameSound } from "./audio";
+import { useAudioPreferences, setAudioPreferences } from "../../shared/audio/audio-store";
+import { audioFocus } from "../../shared/audio/audio-focus";
 import "./bejeweled.css";
 
 const number = (value: number) => value.toLocaleString("zh-CN");
@@ -46,14 +49,14 @@ export function BejeweledGame() {
   const [saveStatus, setSaveStatus] = useState("正在恢复");
   const [paused, setPaused] = useState(false);
   const [help, setHelp] = useState(false);
-  const [sound, setSound] = useState(false);
+  const audioSettings = useAudioPreferences();
+  const sound = audioSettings.ready && audioSettings.preferences.effectsEnabled;
   const [newMode, setNewMode] = useState<Mode | null>(null);
   const pending = useRef<BejeweledCommand | null>(null);
   const lock = useRef(true);
   const mounted = useRef(true);
   const playback = useRef(new AbortController());
-  const audio = useRef<AudioContext | null>(null);
-  const audioEnabled = useRef(false);
+  const audio = useRef<GemAudio | null>(null);
   const pauseRef = useRef(false);
   const latest = useRef<BejeweledState | null>(null);
   const helpDialog = useRef<HTMLDialogElement>(null);
@@ -76,25 +79,18 @@ export function BejeweledGame() {
     latest.current = next; setState(next); setBoard(next.game.board);
     setSelected(null); setHint([]); setFrame(null);
   }
-  function chime(cascade: number) {
-    if (!audioEnabled.current || pauseRef.current || document.hidden) return;
-    try {
-      const context = audio.current;
-      if (!context || context.state !== "running") return;
-      const gain = context.createGain();
-      gain.gain.setValueAtTime(0.035, context.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.23);
-      gain.connect(context.destination);
-      for (const multiplier of [1, 1.25, 1.5]) {
-        const oscillator = context.createOscillator();
-        oscillator.type = "sine";
-        oscillator.frequency.value = (440 + Math.min(cascade, 10) * 55) * multiplier;
-        oscillator.connect(gain); oscillator.start(); oscillator.stop(context.currentTime + 0.24);
-        oscillator.onended = () => oscillator.disconnect();
-      }
-      window.setTimeout(() => gain.disconnect(), 300);
-    } catch { /* Sound failure never interrupts a move. */ }
-  }
+  useEffect(() => {
+    const effects = new GemAudio(() => { if (mounted.current) setMessage("音效暂时不可用，仍然可以继续玩；下次点击会重试。"); });
+    audio.current = effects;
+    effects.prepare();
+    return () => { effects.dispose(); audio.current = null; };
+  }, []);
+  useEffect(() => { audio.current?.configure(sound, audioSettings.preferences.effectsVolume); }, [sound, audioSettings.preferences.effectsVolume]);
+  useEffect(() => {
+    const update = () => audio.current?.setStopped(paused || help || newMode !== null || document.hidden || audioFocus.isMicrophoneActive());
+    update();
+    return audioFocus.subscribe(update);
+  }, [paused, help, newMode]);
   async function restore() {
     lock.current = true; setBusy(true); setError(""); setSaveStatus("正在恢复");
     try {
@@ -117,15 +113,13 @@ export function BejeweledGame() {
     const visibility = () => {
       if (document.hidden) {
         pauseRef.current = true; setPaused(true); playback.current.abort();
-        void audio.current?.suspend().catch(() => undefined);
+        audio.current?.setStopped(true);
       }
     };
     document.addEventListener("visibilitychange", visibility);
     return () => {
       mounted.current = false; playback.current.abort();
       document.removeEventListener("visibilitychange", visibility);
-      void audio.current?.close().catch(() => undefined);
-      audio.current = null;
     };
   }, []);
 
@@ -158,11 +152,14 @@ export function BejeweledGame() {
         for (const next of data.move.frames) {
           if (signal.aborted || !mounted.current) break;
           setBoard(next.board); setFrame(next);
-          if (next.points) { setMessage("第 " + next.cascade + " 次连锁 · +" + number(next.points) + " 分"); chime(next.cascade); }
+          const soundName = frameSound(next);
+          if (soundName) audio.current?.play(soundName, next.cascade);
+          if (next.points) setMessage("第 " + next.cascade + " 次连锁 · +" + number(next.points) + " 分");
           await delay(frameDuration(next, previousBoard), signal);
+          if (next.phase === "fall" && !signal.aborted) audio.current?.play("land");
           previousBoard = next.board;
         }
-      } else if (data.move) chime(1);
+      } else if (data.move && !data.replayed) audio.current?.play("clear");
       if (!mounted.current) return;
       accept(data.state);
       if (command.type === "swap" && !data.replayed) setReward({ ...data.state.lastReward, id: command.operationId });
@@ -180,6 +177,7 @@ export function BejeweledGame() {
   function swap(a: number, b: number) {
     const current = latest.current;
     if (!current || lock.current || paused || help || newMode || pending.current || current.game.status === "finished") return;
+    audio.current?.unlock();
     setSelected(null); setHint([]);
     if (!canSwap(current.game.board, a, b)) {
       setMessage("这两个交换后还不能连成三个，试试另一对吧。");
@@ -189,7 +187,8 @@ export function BejeweledGame() {
     void submit({ type: "swap", a, b, revision: current.revision, operationId: crypto.randomUUID() });
   }
   async function rejectSwap(original: Board, a: number, b: number) {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { setRejected(value => value + 1); return; }
+    audio.current?.play("swap");
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { audio.current?.play("return"); setRejected(value => value + 1); return; }
     lock.current = true; setBusy(true);
     playback.current.abort(); playback.current = new AbortController();
     const signal = playback.current.signal;
@@ -198,12 +197,14 @@ export function BejeweledGame() {
     setFrame(visual(swapped)); setBoard(swapped);
     await delay(SWAP_MS + 30, signal);
     if (!mounted.current) return;
+    if (!signal.aborted) audio.current?.play("return");
     setFrame(visual(original)); setBoard(original);
     await delay(SWAP_MS + 30, signal);
     if (!mounted.current) return;
     setFrame(null); setRejected(value => value + 1); lock.current = false; setBusy(false);
   }
   function choose(index: number) {
+    audio.current?.play("select");
     if (selected === null) setSelected(index);
     else if (selected === index) setSelected(null);
     else if (adjacent(selected, index)) swap(selected, index);
@@ -212,18 +213,13 @@ export function BejeweledGame() {
   function togglePause() {
     const next = !paused;
     pauseRef.current = next; setPaused(next);
-    if (next) { playback.current.abort(); void audio.current?.suspend().catch(() => undefined); }
-    else if (sound) void audio.current?.resume().catch(() => undefined);
+    if (next) { playback.current.abort(); audio.current?.setStopped(true); }
+    else { audio.current?.setStopped(false); audio.current?.unlock(); }
   }
   function toggleSound() {
-    const next = !sound;
-    setSound(next); audioEnabled.current = next;
-    try {
-      if (next) {
-        audio.current ??= new AudioContext();
-        if (!paused) void audio.current.resume().catch(() => setMessage("声音暂时不可用，仍然可以继续玩。"));
-      } else void audio.current?.suspend().catch(() => undefined);
-    } catch { setMessage("声音暂时不可用，仍然可以继续玩。"); }
+    setAudioPreferences({ effectsEnabled: !sound });
+    audio.current?.configure(!sound, audioSettings.preferences.effectsVolume);
+    if (!sound) audio.current?.unlock();
   }
   const disabled = busy || !!error || paused || help || newMode !== null || state?.game.status === "finished";
   const progress = state ? state.game.cleared % 100 : 0;
@@ -236,7 +232,7 @@ export function BejeweledGame() {
         <div data-bj-currency="knowledge"><LearningCoinBalancePill /></div>
         <div className="bj-energy-wallet" data-bj-currency="energy" aria-label={"能量币余额 " + (balances?.energy ?? "正在读取")}><span aria-hidden="true">ϟ</span><span><small>能量币</small><strong>{balances ? number(balances.energy) : "…"}</strong></span></div>
         <span className="bj-save" role="status">{saveStatus === "已自动保存" ? "✓ " : ""}{saveStatus}</span>
-        <button className="bj-button" onClick={toggleSound} aria-pressed={sound}>声音{sound ? "：开" : "：关"}</button>
+        <button className="bj-button" onClick={toggleSound} disabled={!audioSettings.ready} aria-pressed={sound}>音效{sound ? "：开" : "：关"}</button>
         <button className="bj-button" onClick={() => setHelp(!help)} aria-expanded={help}>玩法说明</button>
       </div>
     </header>
@@ -260,7 +256,7 @@ export function BejeweledGame() {
       <section className="bj-play" aria-label="宝石消除游戏">
         <div className="bj-board-caption"><span>交换相邻宝石 · 三颗同色连成线</span><span>8 × 8</span></div>
         <div className="bj-board-frame">
-          {board.length === 64 && <GemSwapBoard board={board} selected={selected} hint={hint} cleared={frame?.cleared ?? []} created={frame?.created ?? []} disabled={disabled} onSelect={choose} onSwap={swap} frame={frame} stopped={paused} rejected={rejected} />}
+          {board.length === 64 && <GemSwapBoard board={board} selected={selected} hint={hint} cleared={frame?.cleared ?? []} created={frame?.created ?? []} disabled={disabled} onSelect={choose} onSwap={swap} onInteract={() => audio.current?.unlock()} frame={frame} stopped={paused} rejected={rejected} />}
           {!state && <div className="bj-overlay bj-loading"><h2>{busy ? "正在恢复宝石…" : "暂时无法打开棋盘"}</h2><p>你的长期收藏会保存在本机。</p></div>}
           {paused && state && <div className="bj-overlay"><span className="bj-overlay-symbol">Ⅱ</span><h2>星光休息一下</h2><p>棋盘和收藏都在这里等你。</p><button className="bj-button bj-primary" onClick={togglePause}>继续探索</button></div>}
           {state?.game.status === "finished" && !paused && <div className="bj-overlay"><h2>这一局收集完成！</h2><p>棋盘已经没有可用交换。</p><strong className="bj-score">{number(state.game.score)} 分</strong><button className="bj-button bj-primary" disabled={busy || !!error} onClick={() => setNewMode("classic")}>再开一局</button></div>}

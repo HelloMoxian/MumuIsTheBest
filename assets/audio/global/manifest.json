@@ -1,0 +1,123 @@
+{
+  "assets": [
+    {
+      "file": "apps/web/public/audio/bejeweled/select.wav",
+      "sourceFile": "assets/audio/bejeweled/click_001.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "click_001.ogg",
+      "sourceSha256": "ccfb7fa0cccdd9faec0eb16033c732b1e308d139d80f799161495d58f7adcdb9",
+      "sha256": "63bdbf962d762e1ac2d515a0e0752e58de73699e084ac1204d710dbf9c690ce0",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/bejeweled/swap.wav",
+      "sourceFile": "assets/audio/bejeweled/maximize_006.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "maximize_006.ogg",
+      "sourceSha256": "f050b3bb77cb0b901bc8df43d2cc1872c353aebae10b4030cf8ae681726ad343",
+      "sha256": "0f7077c06f8a80ec20d6ca96dfd4a033b5693e27c25fa6dd35bffe34f60c9864",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/bejeweled/return.wav",
+      "sourceFile": "assets/audio/bejeweled/back_001.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "back_001.ogg",
+      "sourceSha256": "07db973f79f6ae0f2edc34561e7592e24d0577455919fb602cb8ecc0da991dcf",
+      "sha256": "1204652bd871ed4b2d60ebbbbd49964cae4f356e5ad4e49cad88a16d3af71eb3",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/bejeweled/clear.wav",
+      "sourceFile": "assets/audio/bejeweled/glass_001.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "glass_001.ogg",
+      "sourceSha256": "183eebee20eb0a532b0b85104d139cbf2673eb66d95c3cc733ac9ea98362e7e8",
+      "sha256": "1baf0ffb0d28d03a275d536bc996955701d634ce90259346803cbb2c50ac5fce",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/bejeweled/cascade.wav",
+      "sourceFile": "assets/audio/bejeweled/confirmation_001.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "confirmation_001.ogg",
+      "sourceSha256": "063564703b6094d70718a3e787a55cc9141611e4ecd6b6637f8828f79b4a8c3a",
+      "sha256": "d58aae859e66cf89513a2fe37fa4f80f1c81fe9b9fab5e13f0cc545510a68e1c",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/bejeweled/flame.wav",
+      "sourceFile": "assets/audio/bejeweled/glass_004.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "glass_004.ogg",
+      "sourceSha256": "2379b58f953e3d86982aa8cddcae763022c6258e9820171bf905ce58b4e97766",
+      "sha256": "33176a8033fd744b24bdc258f45d29b988f3ffbffa801b0a0f5ec8dbd0165cd3",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/bejeweled/star.wav",
+      "sourceFile": "assets/audio/bejeweled/confirmation_004.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "confirmation_004.ogg",
+      "sourceSha256": "568967a3d9f8a8f6af54ea01729c4882284308f2a27d78c07ffd7ee0d6951661",
+      "sha256": "6525ea8a63f4b4e9f624ada68c864818b2a8ba3ba6be223b1e36adc8c8daa6c4",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/bejeweled/cube.wav",
+      "sourceFile": "assets/audio/bejeweled/maximize_001.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "maximize_001.ogg",
+      "sourceSha256": "fd3e75e1de2f2fda90aceeacaeb0427ac8bddd3b07a6ce2a8f9ba923df3771f9",
+      "sha256": "7421a66b76cbccf19b73dda39a188d6e67cbf43ebaa8cb3ecbadd331f27a5127",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/bejeweled/land.wav",
+      "sourceFile": "assets/audio/bejeweled/pluck_001.ogg",
+      "author": "Kenney",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "original": "pluck_001.ogg",
+      "sourceSha256": "be97ec4893a02d6eccfb678daa76c83e34cb2583b834ec2593d2641def739fa4",
+      "sha256": "b1b197a0e73a5d7eb27b47a78af697cb8ad8424021a33ce30befad31d6019291",
+      "processing": "Trim, -22 LUFS / -3 dBTP loudness target, 4ms attack/25ms release, 22050Hz mono PCM16"
+    },
+    {
+      "file": "apps/web/public/audio/global/puzzling.mp3",
+      "sourceFile": "assets/audio/global/puzzling.mp3",
+      "author": "Ruskerdax",
+      "source": "https://opengameart.org/content/puzzling",
+      "license": "CC0-1.0",
+      "sourceSha256": "30e0b3fb95445181250ae9a5c1a6932cb49cbfffaa6d8f06d7360fe88b601f98",
+      "sha256": "6a4c45cd86cd589ff1e264a29ddd4a2ce6a22cbb955f9d9e66405108e86ee1b9",
+      "processing": "-20 LUFS / -3 dBTP loudness target, 44100Hz stereo MP3 128kbps, original duration retained"
+    },
+    {
+      "file": "apps/web/public/audio/global/scifi.mp3",
+      "sourceFile": "assets/audio/global/scifi.mp3",
+      "author": "MintoDog",
+      "source": "https://opengameart.org/content/sci-fi-puzzle-in-game-3",
+      "license": "CC0-1.0",
+      "sourceSha256": "236fbb611496a3fe969349990635c018e98e666da3de31550552b85a701e1c85",
+      "sha256": "c95129f10ce40154a24f942f27b60914a827cda75f95950b4b3cee66361c6a41",
+      "processing": "-20 LUFS / -3 dBTP loudness target, 44100Hz stereo MP3 128kbps, original duration retained"
+    }
+  ]
+}
