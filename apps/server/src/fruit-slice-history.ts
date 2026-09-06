@@ -163,6 +163,7 @@ const historyVersionOneSchema = z.object({
 
 const historySchema = z.object({
   schemaVersion: z.literal(2),
+  workoutRewardTotal: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).default(0),
   bejeweledRewardTotal: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
   gemConnectRewards: z.record(z.string().uuid(), z.number().int().min(1).max(10)).default({}),
   sudokuRewards: z.record(z.string().uuid(), z.number().int().min(1).max(6)).default({}),
@@ -196,6 +197,7 @@ const energyCoinSetInputSchema = z.object({
 function emptyHistory(): History {
   const createdAt = new Date(0).toISOString();
   return {
+    workoutRewardTotal: 0,
     bejeweledRewardTotal: 0,
     schemaVersion: 2,
     id: STABLE_HISTORY_UUID,
@@ -592,6 +594,21 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
           ...history, updatedAt: new Date().toISOString(),
           energyCoinBalance: history.energyCoinBalance + amount, bejeweledRewardTotal: total,
         });
+        await saveHistory(next);
+        return { balance: next.energyCoinBalance, updatedAt: next.updatedAt };
+      });
+      writeQueue = operation.then(() => undefined, () => undefined);
+      return operation;
+    },
+    creditWorkout(total: number) {
+      z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).multipleOf(200).parse(total);
+      const operation = writeQueue.then(async () => {
+        const history = await readHistory();
+        if (total < history.workoutRewardTotal) throw new Error("WORKOUT_REWARD_CURSOR_AHEAD");
+        const amount = total - history.workoutRewardTotal;
+        if (!amount) return { balance: history.energyCoinBalance, updatedAt: history.updatedAt };
+        const next = historySchema.parse({ ...history, updatedAt: new Date().toISOString(),
+          energyCoinBalance: history.energyCoinBalance + amount, workoutRewardTotal: total });
         await saveHistory(next);
         return { balance: next.energyCoinBalance, updatedAt: next.updatedAt };
       });

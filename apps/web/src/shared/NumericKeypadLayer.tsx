@@ -28,6 +28,7 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
     "/games/sudoku",
     "/games/tetris",
     "/games/gem-connect",
+    "/games/workout",
     "/games/fruit-slice",
     "/games/galaxy-racer",
     "/games/bejeweled",

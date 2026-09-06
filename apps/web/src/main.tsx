@@ -107,6 +107,10 @@ const GemConnectGame = lazy(async () => {
   const module = await import("./features/gem-connect/GemConnectGame");
   return { default: module.GemConnectGame };
 });
+const WorkoutGame = lazy(async () => {
+  const module = await import("./features/workout/WorkoutGame");
+  return { default: module.WorkoutGame };
+});
 
 const FruitSliceGame = lazy(async () => {
   const module = await import("./features/fruit-slice/FruitSliceGame");
@@ -233,6 +237,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "动一动、想一想，一起探索游戏星河",
     icon: "games",
     games: [
+      { title: "跳操", mark: "✦", description: "跟着双视角小教练动起来，五分钟收获 200 能量币", shape: "wide", href: "/games/workout" },
       { title: "星页数独", mark: "▦", description: "用精美图案拼故事，六档推理挑战赢取知识币和能量币", shape: "wide", href: "/games/sudoku" },
       {
         title: "俄罗斯方块",
@@ -703,7 +708,7 @@ function App() {
                     );
                     const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""} ${isTripleReward ? "is-triple-reward" : ""}`;
                     return gameHref ? (
-                      <a className={className} href={gameHref} key={game.title}>{content}</a>
+                      <a className={className} href={gameHref} key={game.title} data-skip-startup-greeting={game.href === "/games/workout" ? true : undefined}>{content}</a>
                     ) : (
                       <article className={className} key={game.title}>{content}</article>
                     );
@@ -1059,6 +1064,9 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/games/gem-connect") {
     return <Suspense fallback={<ChemistryLoading label="宝石连连看" />}><GemConnectGame /></Suspense>;
+  }
+  if (window.location.pathname === "/games/workout") {
+    return <Suspense fallback={<ChemistryLoading label="跳操" />}><WorkoutGame /></Suspense>;
   }
   if (window.location.pathname === "/games/bejeweled") {
     return <Suspense fallback={<ChemistryLoading label="宝石迷阵" />}><BejeweledGame /></Suspense>;
