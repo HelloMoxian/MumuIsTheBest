@@ -1,11 +1,19 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  appendEchoSelectionHistory,
   completionCount,
+  ECHO_SELECTION_HISTORY_LIMIT,
   echoCompletionMap,
   selectNextEchoSentence,
+  takePreviousEchoSelection,
 } from "./logic";
-import type { EchoCatalog, EchoProgress, EchoSentence } from "./types";
+import type {
+  EchoCatalog,
+  EchoProgress,
+  EchoSelection,
+  EchoSentence,
+} from "./types";
 
 function sentence(index: number): EchoSentence {
   return {
@@ -15,6 +23,10 @@ function sentence(index: number): EchoSentence {
     topic: { lesson: 1, chinese: "测试", english: "Test" },
     audio: { english: `/en/${index}.mp3`, chinese: `/zh/${index}.mp3`, sourceFile: `${index}.mp3` },
   };
+}
+
+function selection(index: number): EchoSelection {
+  return { sentence: sentence(index), mode: "regular" };
 }
 
 function progress(overrides: Partial<EchoProgress> = {}): EchoProgress {
@@ -97,5 +109,36 @@ describe("English Echo Island progress helpers", () => {
     assert.equal(echoCompletionMap(records).get("echo-0002"), 12);
     assert.equal(completionCount(progress({ records }), "echo-0002"), 12);
     assert.equal(completionCount(progress({ records }), "echo-0001"), 0);
+  });
+});
+
+describe("English Echo Island previous sentence history", () => {
+  it("returns the most recent sentence and removes it from the history", () => {
+    const history = appendEchoSelectionHistory(
+      appendEchoSelectionHistory([], selection(1)),
+      selection(2),
+    );
+
+    const previous = takePreviousEchoSelection(history);
+
+    assert.equal(previous.selection?.sentence.id, "echo-0002");
+    assert.deepEqual(
+      previous.remainingHistory.map((item) => item.sentence.id),
+      ["echo-0001"],
+    );
+  });
+
+  it("keeps only the most recent one hundred sentences and handles an empty history", () => {
+    let history: EchoSelection[] = [];
+    for (let index = 1; index <= ECHO_SELECTION_HISTORY_LIMIT + 1; index += 1) {
+      history = appendEchoSelectionHistory(history, selection(index));
+    }
+
+    assert.equal(history.length, ECHO_SELECTION_HISTORY_LIMIT);
+    assert.equal(history[0]?.sentence.id, "echo-0002");
+    assert.deepEqual(takePreviousEchoSelection([]), {
+      selection: null,
+      remainingHistory: [],
+    });
   });
 });

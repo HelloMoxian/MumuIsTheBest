@@ -14,9 +14,11 @@ import {
   setEchoSentenceMarked,
 } from "./api";
 import {
+  appendEchoSelectionHistory,
   completionCount,
   mergeEchoProgress,
   selectNextEchoSentence,
+  takePreviousEchoSelection,
 } from "./logic";
 import type {
   EchoCatalog,
@@ -283,6 +285,7 @@ function SentenceLibrary({
 export function EnglishEchoIslandPage() {
   const [catalog, setCatalog] = useState<EchoCatalog | null>(null);
   const [selection, setSelection] = useState<EchoSelection | null>(null);
+  const [selectionHistory, setSelectionHistory] = useState<EchoSelection[]>([]);
   const [phase, setPhase] = useState<PlaybackPhase>("english-ready");
   const [showChinese, setShowChinese] = useState(false);
   const [libraryOpen, setLibraryOpen] = useState(false);
@@ -394,6 +397,9 @@ export function EnglishEchoIslandPage() {
         activeSelection.sentence.id,
       );
       setCatalog(nextCatalog);
+      setSelectionHistory((current) =>
+        appendEchoSelectionHistory(current, activeSelection),
+      );
       setSelection(nextSelection);
       setShowChinese(false);
       setPhase("english-ready");
@@ -515,6 +521,22 @@ export function EnglishEchoIslandPage() {
   const currentCount = catalog && selection
     ? completionCount(catalog.progress, selection.sentence.id)
     : 0;
+  const previousSelection = selectionHistory[selectionHistory.length - 1] ?? null;
+
+  const returnToPreviousSentence = () => {
+    if (navigationLocked) return;
+    const previous = takePreviousEchoSelection(selectionHistory);
+    if (!previous.selection) return;
+    browserTts.stop();
+    pendingCompletionIdRef.current = null;
+    setSelectionHistory(previous.remainingHistory);
+    setSelection(previous.selection);
+    setShowChinese(false);
+    setPhase("english-ready");
+    setCriticalVisible(false);
+    setError(null);
+    setStatus("已经回到上一句，先重新听一遍英文吧。 ");
+  };
 
   if (!catalog || !selection) {
     return (
@@ -571,6 +593,23 @@ export function EnglishEchoIslandPage() {
             <span className={showChinese ? "is-done" : phase === "chinese-ready" ? "is-current" : ""}>2<i>听中文</i></span>
             <b aria-hidden="true" />
             <span className={phase === "next-ready" || phase === "saving" ? "is-current" : ""}>3<i>下一句</i></span>
+          </div>
+          <div className="echo-sentence-navigation">
+            <button
+              type="button"
+              className="echo-previous-sentence"
+              disabled={!previousSelection || navigationLocked}
+              aria-label={previousSelection
+                ? "返回上一句，从播放英文重新开始"
+                : "返回上一句，当前还没有上一句"}
+              onClick={returnToPreviousSentence}
+            >
+              <span aria-hidden="true">↶</span>
+              <span>
+                <strong>返回上一句</strong>
+                <small>{previousSelection ? "重新从听英文开始" : "还没有可以返回的句子"}</small>
+              </span>
+            </button>
           </div>
           <div className={`echo-autoplay-panel ${autoPlayActive ? "is-active" : ""}`}>
             <button

@@ -6,6 +6,25 @@ import type {
   EchoSentence,
 } from "./types";
 
+export const ECHO_SELECTION_HISTORY_LIMIT = 100;
+
+export function appendEchoSelectionHistory(
+  history: readonly EchoSelection[],
+  selection: EchoSelection,
+) {
+  return [...history, selection].slice(-ECHO_SELECTION_HISTORY_LIMIT);
+}
+
+export function takePreviousEchoSelection(history: readonly EchoSelection[]) {
+  if (history.length === 0) {
+    return { selection: null, remainingHistory: [] as EchoSelection[] };
+  }
+  return {
+    selection: history[history.length - 1]!,
+    remainingHistory: history.slice(0, -1),
+  };
+}
+
 export function echoCompletionMap(records: readonly EchoProgressRecord[]) {
   return new Map(records.map((record) => [record.sentenceId, record.completionCount]));
 }
