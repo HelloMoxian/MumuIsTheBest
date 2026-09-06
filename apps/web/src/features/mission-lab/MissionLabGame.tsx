@@ -570,7 +570,7 @@ export function MissionLabGame({
             </button>
           )}
           {voiceState === "unconfigured" && (
-            <a className="continue-voice-button" href="/#asr-lab">请家长配置语音</a>
+            <a className="continue-voice-button" href="/tools/asr-lab">请家长配置语音</a>
           )}
         </section>
       </main>

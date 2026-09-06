@@ -1,0 +1,41 @@
+.controller-setup { color: var(--ink-primary); font-size: 18px; min-width: 0; }
+.controller-setup button, .controller-setup select { min-height: 48px; border: 1px solid var(--line-glow); border-radius: 14px; padding: 10px 14px; color: var(--ink-primary); background: var(--glass-500); font: inherit; transition: border-color .16s, background .16s, transform .16s; }
+.controller-setup button { cursor: pointer; }
+.controller-setup button:hover:not(:disabled), .controller-setup select:hover:not(:disabled) { border-color: var(--violet-400); background: color-mix(in srgb, var(--violet-400) 15%, var(--space-850)); }
+.controller-setup button:active:not(:disabled) { transform: translateY(2px); }
+.controller-setup :is(button, select, summary):focus-visible { outline: 3px solid var(--cyan-300); outline-offset: 3px; }
+.controller-setup :disabled { opacity: .45; cursor: not-allowed; }
+.controller-setup button[aria-pressed=true] { border-color: var(--cyan-300); background: color-mix(in srgb, var(--cyan-300) 12%, var(--space-850)); }
+.controller-setup p { margin: 10px 0; color: var(--ink-secondary); font-size: 18px; }
+.controller-mode { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.controller-mode > button { flex: 1; }
+.controller-seats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 12px; margin: 14px 0; }
+.controller-seat { padding: 14px; border: 1px solid var(--line-glow); border-radius: 18px; background: var(--glass-500); min-width: 0; }
+.controller-seat p { overflow-wrap: anywhere; }
+.controller-details { border-block: 1px solid var(--line-glow); margin: 12px 0; padding: 4px 0; }
+.controller-details summary { min-height: 48px; padding: 12px 0; cursor: pointer; color: var(--cyan-300); }
+.controller-mapping { min-width: 0; margin: 18px 0; padding: 16px; border: 1px solid var(--line-glow); border-radius: 18px; }
+.controller-mapping legend { font-weight: 800; padding: 0 8px; }
+.controller-mapping label { display: grid; gap: 8px; }
+.controller-mapping select { width: 100%; min-width: 0; text-overflow: ellipsis; }
+.controller-mapping option { background: var(--space-850); }
+.controller-live { padding: 12px; margin: 12px 0; border-radius: 12px; color: var(--cyan-300); background: var(--glass-500); overflow-wrap: anywhere; min-height: 48px; }
+.controller-binding { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line-glow); }
+.controller-binding span, .controller-binding b { display: block; font-size: 18px; font-weight: 400; }
+.controller-binding span { color: var(--ink-secondary); }
+.controller-binding b { color: var(--cyan-300); margin-top: 6px; }
+.controller-binding-buttons { display: flex; gap: 8px; flex-shrink: 0; }
+.controller-save { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--ink-secondary); padding: 8px 0; }
+.controller-setup .controller-error { color: var(--rose-400); }
+.controller-capture { padding: 18px; border: 2px solid var(--cyan-300); border-radius: 18px; background: var(--glass-700); }
+.controller-help { margin: 12px 0; color: var(--ink-secondary); }
+.controller-help summary { min-height: 48px; cursor: pointer; padding: 12px 0; }
+.controller-help dl { margin: 0; }
+.controller-help dl > div { display: flex; gap: 12px; justify-content: space-between; border-top: 1px solid var(--line-glow); padding: 8px 0; }
+.controller-help dd { margin: 0; text-align: right; }
+@media (max-width: 600px) {
+  .controller-binding { align-items: flex-start; flex-direction: column; }
+  .controller-binding-buttons { width: 100%; }
+  .controller-binding-buttons > button { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .controller-setup :is(button, select) { transition: none; } }

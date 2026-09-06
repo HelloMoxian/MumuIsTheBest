@@ -4,6 +4,11 @@ import { act, cells, createGame, HEIGHT, KEY_BINDINGS, landing, levelFor, SHAPES
 import { createPraisePicker, PraisePlayback, type PraiseEvent } from "./praise";
 import { TetrisHeldInput } from "./input";
 import { TetrisAudio, type AudioOptions } from "./audio";
+import { ControllerSetup } from "../../shared/controllers/ControllerSetup";
+import { useGameControllers } from "../../shared/controllers/useGameControllers";
+import { bindingLabel, type PlayerControls } from "../../shared/controllers/registry";
+import { sameDevice } from "../../shared/controllers/input";
+import { TETRIS_CONTROLS, tetrisControllerIntent } from "./controls";
 import "./tetris.css";
 
 const KINDS = Object.keys(SHAPES) as Kind[];
@@ -23,8 +28,9 @@ export function CrystalPiece({ kind }: { kind: Kind }) {
   </span>;
 }
 
-function PlayerBoard({ game, index, phase, praise, move }: {
+function PlayerBoard({ game, index, phase, praise, move, controls, connected }: {
   game: Game; index: number; phase: Phase; praise?: PraiseEvent;
+  controls: PlayerControls; connected: boolean;
   move: (index: number, action: Action) => void;
 }) {
   const active = new Set(cells(game.piece).map(([x, y]) => y * WIDTH + x));
@@ -32,7 +38,7 @@ function PlayerBoard({ game, index, phase, praise, move }: {
   const covered = phase === "paused" || game.ended;
   const speed = speedFor(game.settings, game.lines);
   return <section className={`tetris-player player-${index + 1}`} aria-label={`玩家 ${index + 1} 棋盘`}>
-    <header className="tetris-player-heading"><span className="tetris-player-number">0{index + 1}</span><div><h2>玩家 {index + 1}</h2><span>{index === 0 ? "方向键控制" : "A S D 控制"}</span></div><div className="tetris-score"><span>得分</span><strong>{game.score.toLocaleString()}</strong></div></header>
+    <header className="tetris-player-heading"><span className="tetris-player-number">0{index + 1}</span><div><h2>玩家 {index + 1}</h2><span>{controls.mode === "gamepad" ? connected ? "✓ 手柄 + 键盘" : "手柄待连接 · 键盘可用" : index === 0 ? "方向键控制" : "A S D 控制"}</span></div><div className="tetris-score"><span>得分</span><strong>{game.score.toLocaleString()}</strong></div></header>
     <div className="tetris-playfield-layout">
       <div className="tetris-board-frame">
         <div className="tetris-board" role="img" aria-label={`玩家 ${index + 1}，${game.lines} 行，${game.score} 分，${game.ended ? "本局完成" : `当前 ${game.piece.kind} 形方块`}`}>
@@ -59,11 +65,13 @@ function PlayerBoard({ game, index, phase, praise, move }: {
     <div className="tetris-controls" aria-label={`玩家 ${index + 1} 触控操作`}>
       {CONTROLS.map(control => <button key={control.action} type="button" disabled={phase !== "playing" || game.ended} onClick={() => move(index, control.action)} aria-label={`玩家 ${index + 1} ${control.label}`}><kbd>{control.keys[index]}</kbd><span>{control.label}</span></button>)}
     </div>
+    {controls.mode === "gamepad" && <details className="controller-help"><summary>玩家 {index + 1} · 我的手柄键位</summary><dl>{TETRIS_CONTROLS.actions.map(action => <div key={action.id}><dt>{action.label}</dt><dd>{controls.bindings[action.id]?.map(b => bindingLabel(b, controls.device?.mapping !== "")).join(" / ") || "尚未设置"}</dd></div>)}</dl></details>}
   </section>;
 }
 
 export function TetrisGame() {
-  const [players, setPlayers] = useState(1);
+  const [showControllerSettings, setShowControllerSettings] = useState(false);
+  const [controllerNotice, setControllerNotice] = useState("");
   const [initialSpeed, setInitialSpeed] = useState("10");
   const [increment, setIncrement] = useState("1");
   const [sound, setSound] = useState(false);
@@ -80,6 +88,28 @@ export function TetrisGame() {
   const pickPraise = useRef(createPraisePicker());
   const playback = useRef<PraisePlayback | null>(null);
   const gameAudio = useRef<TetrisAudio | null>(null);
+  const controllers = useGameControllers(TETRIS_CONTROLS, {
+    enabled: (phase === "playing" || phase === "paused") && !confirmReset && !showControllerSettings,
+    editing: phase === "ready" || showControllerSettings,
+    onActions: events => {
+      if (confirmReset || showControllerSettings) return;
+      const intent = tetrisControllerIntent(events);
+      if (intent.pause && (model.current.phase === "playing" || model.current.phase === "paused")) {
+        changePhase(model.current.phase === "playing" ? "paused" : "playing");
+      } else if (model.current.phase === "playing") {
+        let changed = false;
+        for (const { player, action } of intent.moves) if (model.current.games[player]) changed = act(model.current.games[player], action) || changed;
+        if (changed) refresh();
+      }
+    },
+    onDisconnect: () => {
+      if (model.current.phase === "playing") {
+        changePhase("paused");
+        setControllerNotice("手柄连接中断，游戏已暂停。重新连接后点继续，也可以用对应键盘接着玩。");
+      }
+    },
+  });
+  const players = controllers.profile.playerCount;
   const valid = [initialSpeed, increment].every(value => /^\d{1,3}$/.test(value) && Number(value) <= 100);
 
   useEffect(() => { if (phase === "playing") arena.current?.focus(); }, [phase]);
@@ -87,6 +117,8 @@ export function TetrisGame() {
   function changePhase(next: Phase) {
     model.current.phase = next;
     model.current.held.clear();
+    controllers.reset();
+    if (next === "playing") setControllerNotice("");
     setPhase(next);
     gameAudio.current?.setPlaying(next === "playing");
     setSpeechPaused(next === "paused" || next === "ready");
@@ -114,7 +146,8 @@ export function TetrisGame() {
     arena.current?.focus();
   }
   function start() {
-    if (!valid) return;
+    if (!valid || controllers.saved.status === "loading" || controllers.capture) return;
+    setShowControllerSettings(false);
     playback.current?.clear();
     playback.current?.setEnabled(sound);
     gameAudio.current?.restart();
@@ -128,6 +161,9 @@ export function TetrisGame() {
     arena.current?.focus();
   }
   function reset() {
+    setShowControllerSettings(false);
+    setControllerNotice("");
+    controllers.cancelCapture();
     playback.current?.clear();
     changePhase("ready");
     model.current.games = [];
@@ -135,8 +171,8 @@ export function TetrisGame() {
     setPraises([]);
   }
   // Event callbacks use the current model through refs, so held keys never depend on render timing.
-  const callbacks = useRef({ refresh, changePhase, confirmReset });
-  callbacks.current = { refresh, changePhase, confirmReset };
+  const callbacks = useRef({ refresh, changePhase, confirmReset, showControllerSettings });
+  callbacks.current = { refresh, changePhase, confirmReset, showControllerSettings };
   useEffect(() => {
     try { gameAudio.current = new TetrisAudio(undefined, () => setAudioUnavailable(true)); }
     catch { setAudioUnavailable(true); }
@@ -158,7 +194,7 @@ export function TetrisGame() {
     };
     const visibility = () => { if (document.hidden) pause(); };
     const keydown = (event: KeyboardEvent) => {
-      if (event.isComposing || event.altKey || event.metaKey || event.ctrlKey || callbacks.current.confirmReset) return;
+      if (event.isComposing || event.altKey || event.metaKey || event.ctrlKey || callbacks.current.confirmReset || callbacks.current.showControllerSettings) return;
       if (event.target instanceof Element && event.target.closest("input, select, textarea, button, a, summary, [contenteditable=true]")) return;
       if ((event.code === "Escape" || event.code === "KeyP") && model.current.phase !== "ready" && model.current.phase !== "finished") {
         event.preventDefault();
@@ -220,11 +256,17 @@ export function TetrisGame() {
             if (phase === "finished") { playback.current?.setPaused(false); setSpeechPaused(false); }
             if (phase === "playing") arena.current?.focus();
           }}>{sound ? "✓ 中英表扬" : "表扬声音：关"}</button>
-          {phase !== "ready" && <button type="button" className="tetris-button" disabled={phase === "finished" || confirmReset} onClick={() => { changePhase(phase === "paused" ? "playing" : "paused"); arena.current?.focus(); }}>{phase === "paused" ? "继续游戏" : "暂停"}</button>}
-          {phase !== "ready" && <button type="button" className="tetris-button" onClick={() => { if (phase === "finished") reset(); else { changePhase("paused"); setConfirmReset(true); } }}>重新设置</button>}
+          {phase !== "ready" && <button type="button" className="tetris-button" disabled={phase === "finished" || confirmReset || showControllerSettings} onClick={() => { changePhase(phase === "paused" ? "playing" : "paused"); arena.current?.focus(); }}>{phase === "paused" ? "继续游戏" : "暂停"}</button>}
+          {phase !== "ready" && <button type="button" className="tetris-button" disabled={confirmReset} aria-expanded={showControllerSettings} onClick={() => {
+            if (phase === "playing") changePhase("paused");
+            controllers.cancelCapture(); setShowControllerSettings(!showControllerSettings);
+          }}>{showControllerSettings ? "收起手柄设置" : "手柄设置"}</button>}
+          {phase !== "ready" && <button type="button" className="tetris-button" onClick={() => { controllers.cancelCapture(); setShowControllerSettings(false); if (phase === "finished") reset(); else { changePhase("paused"); setConfirmReset(true); } }}>重新设置</button>}
         </div>
       </header>
       {audioUnavailable && <p className="tetris-validation" role="status">音乐或音效暂时不可用，游戏可以继续。可关闭后重新打开声音试试。</p>}
+      {controllerNotice && <p className="tetris-validation" role="status">{controllerNotice}</p>}
+      {showControllerSettings && <section className="tetris-controller-settings"><ControllerSetup definition={TETRIS_CONTROLS} session={controllers} lockPlayerCount /><button type="button" className="tetris-button" onClick={() => { controllers.cancelCapture(); setShowControllerSettings(false); arena.current?.focus(); }}>完成设置</button></section>}
       {phase === "ready" ? <div className="tetris-welcome">
         <section className="tetris-intro">
           <span className="tetris-eyebrow">晶莹相遇 · 一起拼出惊喜</span>
@@ -235,7 +277,7 @@ export function TetrisGame() {
         </section>
         <section className="tetris-settings" aria-labelledby="tetris-settings-title">
           <span className="tetris-eyebrow">准备好你的节奏</span><h2 id="tetris-settings-title">一起玩，或慢慢想</h2>
-          <div className="tetris-mode" aria-label="游戏人数">{[1, 2].map(count => <button type="button" key={count} aria-pressed={players === count} onClick={() => setPlayers(count)}>{players === count ? "✓ " : ""}{count === 1 ? "单人探索" : "双人同玩"}</button>)}</div>
+          <ControllerSetup definition={TETRIS_CONTROLS} session={controllers} />
           <label className="tetris-speed-label" htmlFor="tetris-speed">初始下落速度 <span>0—100</span></label>
           <div className="tetris-speed-input"><input aria-label="初始下落速度滑杆" type="range" min="0" max="100" step="1" value={valid ? initialSpeed : 0} onChange={event => setInitialSpeed(event.target.value)} /><input id="tetris-speed" type="number" min="0" max="100" step="1" value={initialSpeed} onChange={event => setInitialSpeed(event.target.value)} aria-describedby="tetris-speed-help" /></div>
           <p id="tetris-speed-help" className="tetris-field-help">设为 0，就不会自己下落。100 约一秒落到底。</p>
@@ -244,12 +286,12 @@ export function TetrisGame() {
           <p className="tetris-field-help">每消 20 行升一级；增速为 0 时始终保持当前速度。</p>
           {!valid && <p role="alert" className="tetris-validation">请输入 0 到 100 的整数。</p>}
           <div className="tetris-key-guide"><p><strong>玩家 1</strong>　← → 移动 · ↓ 下移<br />M 左旋 · N 右旋 · Enter 直落</p>{players === 2 && <p><strong>玩家 2</strong>　A D 移动 · S 下移<br />J 左旋 · K 右旋 · E 直落</p>}<p>{players === 2 ? "两组旋转键均可和方向键同时按；两个键盘仍各用一组。" : "也可以点击棋盘下方的按钮。"}</p></div>
-          <button type="button" className="tetris-start" disabled={!valid} onClick={start}>开始{players === 2 ? "双人" : "单人"}游戏 <span aria-hidden="true">↗</span></button>
+          <button type="button" className="tetris-start" disabled={!valid || controllers.saved.status === "loading" || !!controllers.capture} onClick={start}>开始{players === 2 ? "双人" : "单人"}游戏 <span aria-hidden="true">↗</span></button>
           <p className="tetris-field-help">{sound ? "每消一行，先听中文，再听英文。" : "想听双语鼓励，可以打开顶部“表扬声音”。"}</p>
         </section>
       </div> : null}
       <div ref={arena} tabIndex={-1} className={`tetris-arena ${model.current.games.length === 2 ? "is-duo" : ""}`} aria-label="俄罗斯方块游戏区" hidden={phase === "ready"} onPointerDown={event => { if (!(event.target instanceof Element) || !event.target.closest("button, a")) arena.current?.focus(); }}>
-        {model.current.games.map((game, index) => <PlayerBoard key={index} game={game} index={index} phase={phase} praise={praises[index]} move={move} />)}
+        {model.current.games.map((game, index) => <PlayerBoard key={index} game={game} index={index} phase={phase} praise={praises[index]} move={move} controls={controllers.profile.players[index]} connected={controllers.devices.some(d => sameDevice(d.device, controllers.profile.players[index]?.device ?? null))} />)}
       </div>
       {confirmReset && <div className="tetris-confirm" role="alert"><p>重新设置会结束当前这一局。</p><button type="button" className="tetris-button" onClick={() => { setConfirmReset(false); changePhase("playing"); arena.current?.focus(); }}>继续这一局</button><button type="button" className="tetris-button" onClick={reset}>确认重新设置</button></div>}
       {phase === "finished" && <section className="tetris-finish" aria-live="polite"><div><h2>这次的拼图旅程完成啦</h2><p>{model.current.games.map((game, index) => `玩家 ${index + 1}：${game.score} 分 / ${game.lines} 行`).join("　·　")}</p></div><button type="button" className="tetris-start" onClick={start}>再玩一次 ↗</button></section>}

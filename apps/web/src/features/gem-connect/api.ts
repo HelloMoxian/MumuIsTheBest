@@ -3,7 +3,7 @@ import { LEGACY_PAIRS, LEVELS, type Completion, type RecordEntry } from "./logic
 export function parseHistory(value: unknown): RecordEntry[] {
   if (!value || typeof value !== "object") throw new Error("记录格式不正确");
   const history = value as { schemaVersion?: unknown; records?: unknown };
-  if (history.schemaVersion !== 2 || !Array.isArray(history.records)) throw new Error("记录版本暂不支持");
+  if (history.schemaVersion !== 3 || !Array.isArray(history.records)) throw new Error("记录版本暂不支持");
   const ids = new Set<string>();
   return history.records.map((item: unknown) => {
     if (!item || typeof item !== "object") throw new Error("记录格式不正确");
@@ -14,7 +14,7 @@ export function parseHistory(value: unknown): RecordEntry[] {
       || !Number.isSafeInteger(record.durationMs) || record.durationMs <= 0
       || !Number.isSafeInteger(record.hints) || record.hints < 0
       || !Number.isSafeInteger(record.shuffles) || record.shuffles < 0
-      || ![1, 2].includes(record.rulesVersion)
+      || ![1, 2, 3].includes(record.rulesVersion)
       || !["legacy", "pending", "granted"].includes(record.rewardStatus)
       || (record.rulesVersion === 1 ? record.rewardStatus !== "legacy" : record.rewardStatus === "legacy")
       || record.pairCount !== (record.rulesVersion === 1 ? LEGACY_PAIRS[record.level - 1] : config.rows * config.cols / 2)

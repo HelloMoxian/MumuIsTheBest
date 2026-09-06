@@ -7,21 +7,30 @@ export const GEMS = [
   { id: "amber", name: "橙六角宝石", symbol: "⬡" },
   { id: "rose", name: "粉椭圆宝石", symbol: "●" },
   { id: "moon", name: "月牙宝石", symbol: "☾" },
+  { id: "pearl", name: "珍珠宝石", symbol: "◉" },
+  { id: "triangle", name: "三角宝石", symbol: "▲" },
+  { id: "clover", name: "四叶宝石", symbol: "♣" },
+  { id: "flower", name: "花朵宝石", symbol: "✿" },
+  { id: "lightning", name: "闪电宝石", symbol: "ϟ" },
+  { id: "butterfly", name: "蝴蝶宝石", symbol: "⋈" },
+  { id: "shell", name: "贝壳宝石", symbol: "♧" },
+  { id: "shield", name: "盾牌宝石", symbol: "⬟" },
+  { id: "comet", name: "彗星宝石", symbol: "☄" },
 ] as const;
 
-export const RULES_VERSION = 2 as const;
+export const RULES_VERSION = 3 as const;
 export const LEGACY_PAIRS = [6, 8, 10, 12, 15, 18, 21, 24, 27, 30] as const;
 export const LEVELS = [
-  { name: "初见星光", rows: 6, cols: 10, kinds: 4 },
-  { name: "水晶花园", rows: 6, cols: 12, kinds: 4 },
-  { name: "彩虹溪流", rows: 7, cols: 12, kinds: 5 },
-  { name: "月光小径", rows: 8, cols: 12, kinds: 5 },
-  { name: "极光山谷", rows: 9, cols: 12, kinds: 6 },
-  { name: "星砂海岸", rows: 10, cols: 12, kinds: 6 },
-  { name: "云端宝库", rows: 10, cols: 14, kinds: 7 },
-  { name: "银河漫游", rows: 11, cols: 14, kinds: 7 },
-  { name: "彗星奇遇", rows: 12, cols: 14, kinds: 8 },
-  { name: "璀璨星河", rows: 12, cols: 15, kinds: 8 },
+  { name: "初见星光", rows: 6, cols: 10, baseKinds: 4, kinds: 4 },
+  { name: "水晶花园", rows: 6, cols: 12, baseKinds: 4, kinds: 5 },
+  { name: "彩虹溪流", rows: 7, cols: 12, baseKinds: 5, kinds: 7 },
+  { name: "月光小径", rows: 8, cols: 12, baseKinds: 5, kinds: 8 },
+  { name: "极光山谷", rows: 9, cols: 12, baseKinds: 6, kinds: 10 },
+  { name: "星砂海岸", rows: 10, cols: 12, baseKinds: 6, kinds: 11 },
+  { name: "云端宝库", rows: 10, cols: 14, baseKinds: 7, kinds: 13 },
+  { name: "银河漫游", rows: 11, cols: 14, baseKinds: 7, kinds: 14 },
+  { name: "彗星奇遇", rows: 12, cols: 14, baseKinds: 8, kinds: 16 },
+  { name: "璀璨星河", rows: 12, cols: 15, baseKinds: 8, kinds: 17 },
 ] as const;
 export const IDLE_HINT_MS = 20_000;
 export const MATCH_ANIMATION_MS = 620;
@@ -99,20 +108,38 @@ export function shuffleBoard(board: Board, random = Math.random): Board {
   }
   throw new Error("棋盘缺少可连接的位置");
 }
+export function levelGemKinds(level: number): number[] {
+  const config = LEVELS[level - 1];
+  if (!config) throw new Error("关卡应为 1 至 10");
+  return [...Array.from({ length: config.baseKinds }, (_, i) => i),
+    ...Array.from({ length: level - 1 }, (_, i) => 8 + i)];
+}
+export function adjacentPairs(board: Board) {
+  return board.tiles.reduce<number>((count, kind, index) => count + (kind === null ? 0 :
+    Number(index % board.cols < board.cols - 1 && kind === board.tiles[index + 1])
+    + Number(index + board.cols < board.tiles.length && kind === board.tiles[index + board.cols])), 0);
+}
 export function createBoard(level: number, random = Math.random): Board {
   const config = LEVELS[level - 1];
   if (!config) throw new Error("关卡应为 1 至 10");
-  const tiles = Array.from({ length: config.rows * config.cols }, (_, i) => Math.floor(i / 2) % config.kinds);
-  return shuffleBoard({ rows: config.rows, cols: config.cols, tiles }, random);
+  const kinds = levelGemKinds(level);
+  const tiles = Array.from({ length: config.rows * config.cols }, (_, i) => kinds[Math.floor(i / 2) % kinds.length]);
+  let board = shuffleBoard({ rows: config.rows, cols: config.cols, tiles }, random);
+  // Compare a bounded set of valid deals to avoid large clusters of identical neighbours.
+  if (level > 1) for (let attempt = 0; attempt < 5; attempt++) {
+    const candidate = shuffleBoard({ rows: config.rows, cols: config.cols, tiles }, random);
+    if (adjacentPairs(candidate) < adjacentPairs(board)) board = candidate;
+  }
+  return board;
 }
 export function formatTime(ms: number) {
   const seconds = Math.floor(ms / 1000);
   return `${Math.floor(seconds / 60).toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}`;
 }
 export type Completion = {
-  id: string; rulesVersion: 2; level: number; durationMs: number; hints: number; shuffles: number; pairCount: number;
+  id: string; rulesVersion: 3; level: number; durationMs: number; hints: number; shuffles: number; pairCount: number;
 };
-export type RecordEntry = Omit<Completion, "rulesVersion"> & { rulesVersion: 1 | 2; rewardStatus: "legacy" | "pending" | "granted"; createdAt: string; updatedAt: string };
+export type RecordEntry = Omit<Completion, "rulesVersion"> & { rulesVersion: 1 | 2 | 3; rewardStatus: "legacy" | "pending" | "granted"; createdAt: string; updatedAt: string };
 export function rankRecords(records: RecordEntry[], level: number) {
   return records.filter(record => record.level === level && record.rulesVersion === RULES_VERSION)
     .sort((a, b) => a.durationMs - b.durationMs || a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));

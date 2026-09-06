@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "generator": "built-in image_gen",
+  "sourceSize": [
+    1254,
+    1254
+  ],
+  "runtimeSize": [
+    384,
+    384
+  ],
+  "processing": "Uniform resolution conversion preserving original transparent canvas and alpha. Original artwork retained.",
+  "assets": [
+    {
+      "id": "pearl",
+      "introducedAtLevel": 2,
+      "source": "assets/game/gem-connect/expansion.v1/pearl.png",
+      "runtime": "apps/web/public/images/gem-connect/pearl.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: a pearl-white ROUND BRILLIANT gemstone, with a genuinely circular outer silhouette (not oval), polished circular brilliant-cut crystal with visible broad triangular facets; white pearlescent body, faint ice-blue and lilac refractions. This is a faceted gemstone with a circular face, not a smooth pearl bead."
+    },
+    {
+      "id": "triangle",
+      "introducedAtLevel": 3,
+      "source": "assets/game/gem-connect/expansion.v1/triangle.png",
+      "runtime": "apps/web/public/images/gem-connect/triangle.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: a vivid CORAL-RED EQUILATERAL TRIANGLE gemstone, one point facing directly up, two bottom corners and a straight horizontal bottom edge. Make exactly three dominant straight sides; chunky dimensional beveled triangular cut. Warm coral-red facets with bright rose-white glints. Never a diamond, rhombus or heart."
+    },
+    {
+      "id": "clover",
+      "introducedAtLevel": 4,
+      "source": "assets/game/gem-connect/expansion.v1/clover.png",
+      "runtime": "apps/web/public/images/gem-connect/clover.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: a MINT-GREEN FOUR-LOBED CLOVER gemstone. A single solid crystal carved into a symmetric clover silhouette with exactly four large round lobes at top, right, bottom and left, with deep enough small concave notches between lobes to be obvious at tiny icon size. No stem. Bold mint-green faceted body with pale green-white glints. Not a circle, flower with six petals, or four-point star."
+    },
+    {
+      "id": "flower",
+      "introducedAtLevel": 5,
+      "source": "assets/game/gem-connect/expansion.v1/flower.png",
+      "runtime": "apps/web/public/images/gem-connect/flower.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: a LAVENDER SIX-PETAL FLOWER gemstone. One solid chunky crystal carved into a flower silhouette with exactly six large rounded petals evenly spaced around a broad central faceted lavender core, visible concave valleys between petals. Broad simple radial facets, lavender and lilac body with violet depth and pale white-purple glints. No stem, leaves, natural flower texture, or separate jewel in the center. The outer contour must clearly have six petals and be different from a four-leaf clover."
+    },
+    {
+      "id": "lightning",
+      "introducedAtLevel": 6,
+      "source": "assets/game/gem-connect/expansion.v1/lightning.png",
+      "runtime": "apps/web/public/images/gem-connect/lightning.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: an ELECTRIC-YELLOW LIGHTNING BOLT gemstone, single iconic chunky zigzag silhouette with a pointed upper-right end, one broad angular middle step, and pointed lower-left tip, descending diagonally. Thick solid beveled crystal, bold electric lemon-yellow with golden yellow depth and white glints. Keep the bolt thick enough to read at 32px, not a thin line, star, rhombus, triangle or smooth flame."
+    },
+    {
+      "id": "butterfly",
+      "introducedAtLevel": 7,
+      "source": "assets/game/gem-connect/expansion.v1/butterfly.png",
+      "runtime": "apps/web/public/images/gem-connect/butterfly.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: a SKY-BLUE BUTTERFLY-SHAPED gemstone, one continuous solid crystal with a clear symmetric butterfly silhouette, two broad upper wings and two smaller rounded lower wings, wide inward notches at each side separating upper and lower wings, and a short thick central body, front-facing with wings spread. The silhouette itself must unmistakably be a butterfly; the wings and body are entirely blue faceted crystal, no insect realism or appendages. Bright sky-blue facets with pale blue-white glints; no delicate antennae or separate floating parts."
+    },
+    {
+      "id": "shell",
+      "introducedAtLevel": 8,
+      "source": "assets/game/gem-connect/expansion.v1/shell.png",
+      "runtime": "apps/web/public/images/gem-connect/shell.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: a PEACH-PINK SCALLOP-SHELL-SHAPED gemstone. One solid faceted crystal whose unmistakable scallop shell outer silhouette has a wide rounded fan-like top with seven broad scalloped lobes, narrowing to a small flat hinge base at the bottom with short triangular shoulders. Radiating large faceted ridges spread upward from the base. Warm peach-pink crystalline body, soft rosy-orange facets and bright pearl-white glints. This is a gemstone carved as a shell, never an actual textured seashell, no pearl inside, no extra objects."
+    },
+    {
+      "id": "shield",
+      "introducedAtLevel": 9,
+      "source": "assets/game/gem-connect/expansion.v1/shield.png",
+      "runtime": "apps/web/public/images/gem-connect/shield.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: a DEEP-TEAL SHIELD-PENTAGON gemstone. One solid five-sided crystal, flat horizontal top edge, two short straight vertical sides, and two sloping lower edges meeting at a single downward central tip. Symmetric classic broad heraldic shield silhouette, unmistakably five-sided and distinct from triangle, rhombus or hexagon. Rich deep teal transparent crystal with turquoise edge facets and bright icy-white glints; clearly visible lit center, chunky bevel. No heraldic symbol, text, emblem, handle, metal border or setting."
+    },
+    {
+      "id": "comet",
+      "introducedAtLevel": 10,
+      "source": "assets/game/gem-connect/expansion.v1/comet.png",
+      "runtime": "apps/web/public/images/gem-connect/comet.png",
+      "prompt": "Use case: stylized-concept. Asset type: one production gemstone sprite for a children's cosmic connect-pairs game. Create exactly ONE isolated chunky faceted 3D crystal, front-facing, in a square 1024 × 1024 PNG image with a genuinely transparent alpha background. Style: polished luminous jewel like a premium gem-matching game sprite, crisp triangular facets, jewel-depth, saturated colored refractions, bright white glints and restrained internal glow, visually clean and friendly. Composition: precisely centered, entire silhouette visible; roughly 72% of canvas width or height occupied by the longest dimension and 14% transparent padding around it. Big simple outer contour immediately recognizable at 32 px. No text, labels, extra gems, sparkles floating outside the silhouette, cast shadows outside the icon, metal settings, props, scene, background color, gradient backdrop, or baked-in checkerboard. Preserve clean transparent pixels around every edge. Subject: an ORANGE COMET-SHAPED gemstone. One continuous chunky crystal with an unmistakably round broad head at the lower-left and exactly THREE thick tapered trailing points extending diagonally toward the upper-right, all fused to the round head and separated by two deep V-shaped gaps near their tips. The central trailing point is longest; the two side trailing points are shorter. Bold orange crystalline body with amber depth, tangerine bright facets, white-gold glints. The outer silhouette must read as a round-headed comet with three chunky tails at 32px. No extra stars, separate particles, wispy smoke, flames outside the crystal, lightning-bolt silhouette, or straight arrow."
+    }
+  ]
+}

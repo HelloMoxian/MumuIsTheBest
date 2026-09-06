@@ -1,3 +1,4 @@
+import { rewardForLevel } from "./sudoku-engine.js";
 import { randomUUID } from "node:crypto";
 import { chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
@@ -164,6 +165,7 @@ const historySchema = z.object({
   schemaVersion: z.literal(2),
   bejeweledRewardTotal: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
   gemConnectRewards: z.record(z.string().uuid(), z.number().int().min(1).max(10)).default({}),
+  sudokuRewards: z.record(z.string().uuid(), z.number().int().min(1).max(6)).default({}),
   id: z.string().uuid(),
   stableId: z.literal("game-fruit-slice-history"),
   createdAt: z.string().datetime(),
@@ -199,6 +201,7 @@ function emptyHistory(): History {
     id: STABLE_HISTORY_UUID,
     stableId: "game-fruit-slice-history",
     gemConnectRewards: {},
+      sudokuRewards: {},
     createdAt,
     updatedAt: createdAt,
     energyCoinBalance: 0,
@@ -588,6 +591,24 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
         const next = historySchema.parse({
           ...history, updatedAt: new Date().toISOString(),
           energyCoinBalance: history.energyCoinBalance + amount, bejeweledRewardTotal: total,
+        });
+        await saveHistory(next);
+        return { balance: next.energyCoinBalance, updatedAt: next.updatedAt };
+      });
+      writeQueue = operation.then(() => undefined, () => undefined);
+      return operation;
+    },
+    awardSudoku(eventId: string, level: number) {
+      const input = z.object({ eventId: z.string().uuid(), level: z.number().int().min(1).max(6) }).parse({ eventId, level });
+      const operation = writeQueue.then(async () => {
+        const history = await readHistory();
+        const prior = history.sudokuRewards[input.eventId];
+        if (prior !== undefined && prior !== input.level) throw new Error("ENERGY_COIN_EVENT_ID_COLLISION");
+        if (prior !== undefined) return { balance: history.energyCoinBalance, updatedAt: history.updatedAt };
+        const next = historySchema.parse({
+          ...history, updatedAt: new Date().toISOString(),
+          energyCoinBalance: history.energyCoinBalance + rewardForLevel(input.level - 1),
+          sudokuRewards: { ...history.sudokuRewards, [input.eventId]: input.level },
         });
         await saveHistory(next);
         return { balance: next.energyCoinBalance, updatedAt: next.updatedAt };

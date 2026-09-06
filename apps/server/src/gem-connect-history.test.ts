@@ -10,7 +10,7 @@ import { emptyHistory, historySchema, registerGemConnectHistoryApi, migrateHisto
 import { registerFruitSliceHistoryApi } from "./fruit-slice-history.js";
 import { registerWorldTowerApi } from "./world-tower.js";
 
-const payload = () => ({ rulesVersion: 2 as const, id: randomUUID(), level: 1, durationMs: 12345, hints: 1, shuffles: 2, pairCount: 30 });
+const payload = () => ({ rulesVersion: 3 as const, id: randomUUID(), level: 1, durationMs: 12345, hints: 1, shuffles: 2, pairCount: 30 });
 async function setup(t: TestContext) {
   const dir = await mkdtemp(join(tmpdir(), "mumu-gem-test-"));
   const app = Fastify();
@@ -44,7 +44,7 @@ test("拒绝非法输入、损坏文件和未来版本，不能覆盖原记录",
     assert.equal((await app.inject({ method: "POST", url: "/api/games/gem-connect/history", payload: invalid })).statusCode, 400);
   }
   await mkdir(join(path, ".."), { recursive: true });
-  for (const contents of ["{ broken", JSON.stringify({ ...emptyHistory(), schemaVersion: 3 })]) {
+  for (const contents of ["{ broken", JSON.stringify({ ...emptyHistory(), schemaVersion: 4 })]) {
     await writeFile(path, contents);
     assert.equal((await app.inject({ url: "/api/games/gem-connect/history" })).statusCode, 503);
     assert.equal((await app.inject({ method: "POST", url: "/api/games/gem-connect/history", payload: payload() })).statusCode, 503);
@@ -126,4 +126,27 @@ test("版本1迁移保留成绩及原文件恢复点，不给旧小棋盘补币"
   if (process.platform !== "win32") assert.equal((await stat(path + ".v1.bak")).mode & 0o777, 0o600);
   assert.equal(JSON.parse(await readFile(path, "utf8")).records.length, 2);
   assert.equal(JSON.parse(await readFile(join(dir, "learning/world-tower/progress.json"), "utf8")).coinBalance, 10);
+});
+
+test("版本2升级保留原成绩和钱包收据，创建不可覆盖恢复点，新难度单独记录", async t => {
+  const { app, path, dir } = await setup(t);
+  const now = "2026-01-01T00:00:00.000Z";
+  const older = { ...payload(), rulesVersion: 2, rewardStatus: "granted", createdAt: now, updatedAt: now };
+  const previous = { ...emptyHistory(), schemaVersion: 2, records: [older] };
+  const bytes = JSON.stringify(previous);
+  await mkdir(join(path, ".."), { recursive: true });
+  await writeFile(path, bytes);
+  const restored = await app.inject({ url: "/api/games/gem-connect/history" });
+  assert.equal(restored.statusCode, 200);
+  assert.equal(restored.json().schemaVersion, 3);
+  assert.deepEqual(restored.json().records, [older]);
+  assert.equal(await readFile(path, "utf8"), bytes, "只读旧历史不改文件");
+  const result = await app.inject({ method: "POST", url: "/api/games/gem-connect/history", payload: payload() });
+  assert.equal(result.statusCode, 200);
+  assert.deepEqual(result.json().records.map((record: { rulesVersion: number }) => record.rulesVersion), [2, 3]);
+  assert.equal(await readFile(path + ".v2.bak", "utf8"), bytes);
+  assert.equal(JSON.parse(await readFile(join(dir, "learning/world-tower/progress.json"), "utf8")).coinBalance, 10);
+  if (process.platform !== "win32") assert.equal((await stat(path + ".v2.bak")).mode & 0o777, 0o600);
+  assert.throws(() => migrateHistory({ ...previous, records: [{ ...older, rulesVersion: 3 }] }));
+  assert.throws(() => migrateHistory({ ...previous, records: [older, older] }));
 });

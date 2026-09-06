@@ -675,7 +675,7 @@ export function ArithmeticBattleGame({
           {phase === "playing" && recognitionState === "unconfigured" && (
             <aside className="battle-recovery">
               <div><strong>还没有配置语音识别</strong><span>先保存阿里云 API Key，再回来挑战。</span></div>
-              <a href="/#asr-lab">打开语音配置</a>
+              <a href="/tools/asr-lab">打开语音配置</a>
             </aside>
           )}
 

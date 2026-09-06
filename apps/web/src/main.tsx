@@ -98,6 +98,11 @@ const BejeweledGame = lazy(async () => {
   return { default: module.BejeweledGame };
 });
 
+const SudokuGame = lazy(async () => {
+  const module = await import("./features/sudoku/SudokuGame");
+  return { default: module.SudokuGame };
+});
+
 const GemConnectGame = lazy(async () => {
   const module = await import("./features/gem-connect/GemConnectGame");
   return { default: module.GemConnectGame };
@@ -228,6 +233,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "动一动、想一想，一起探索游戏星河",
     icon: "games",
     games: [
+      { title: "星页数独", mark: "▦", description: "用精美图案拼故事，六档推理挑战赢取知识币和能量币", shape: "wide", href: "/games/sudoku" },
       {
         title: "俄罗斯方块",
         mark: "▦",
@@ -568,11 +574,152 @@ function stateCopy(state: SessionState) {
   return copy[state];
 }
 
+function HomeHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  return (
+    <header className="topbar">
+      <a className="brand" href="/" aria-label="木木学习岛首页">
+        <span className="brand-mark" aria-hidden="true">🚀</span>
+        <span>木木学习岛</span>
+      </a>
+      <CompactExperienceControls />
+      <nav className="nav-actions" aria-label="主导航">
+        <a className="nav-link" href="/">学习大厅</a>
+        <button
+          className="test-trigger numeric-keypad-nav-button"
+          type="button"
+          onClick={openNumericKeypad}
+          aria-label="打开或收起右侧数字键盘"
+        >
+          数字键盘
+        </button>
+        <div className="test-menu">
+          <button
+            className="test-trigger"
+            type="button"
+            aria-expanded={menuOpen}
+            aria-controls="test-menu-items"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            功能测试 <span aria-hidden="true">⌄</span>
+          </button>
+          {menuOpen && (
+            <div id="test-menu-items" className="test-menu-items" role="menu">
+              <a href="/tools/asr-lab" role="menuitem" onClick={() => setMenuOpen(false)}>
+                <span aria-hidden="true">🎙️</span>
+                <span><strong>语音识别测试</strong><small>边说边出字</small></span>
+              </a>
+              <a href="/parent/coin-reset" role="menuitem" onClick={() => setMenuOpen(false)}>
+                <span aria-hidden="true">✦</span>
+                <span><strong>货币管理</strong><small>一次设置知识币与能量币</small></span>
+              </a>
+            </div>
+          )}
+        </div>
+        <LearningCoinBalancePill className="home-learning-coin-balance" />
+        <EnergyCoinBalancePill />
+        <button className="avatar" type="button" aria-label="小小宇航员资料">👩‍🚀</button>
+      </nav>
+    </header>
+  );
+}
+
 function App() {
   const { status: learningCoinStatus } = useLearningCoinStatus();
   const [encouragement] = useState(
     () => ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)],
   );
+
+  return (
+    <div className="app-shell">
+      <div className="star-field" aria-hidden="true" />
+      <HomeHeader />
+      <main id="top">
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="hero-art" aria-hidden="true" />
+          <div className="hero-content">
+            <p className="eyebrow"><span aria-hidden="true">✦</span> 木木的学习乐园 · 每天进步一点点</p>
+            <h1 id="hero-title" data-no-ui-translation>
+              <LocalizedLines
+                zh={<>木木最努力，<em>{encouragement}</em></>}
+                en={<>Mumu keeps trying. <em>{translateUiText(encouragement)}</em></>}
+              />
+            </h1>
+            <p className="hero-copy">
+              把好玩的小任务、知识问答和探索挑战，装进同一座星际学习岛。每一次认真尝试，都会让木木更有力量。
+            </p>
+            <a className="hero-button" href="#subject-board">开始今天的小冒险 <span aria-hidden="true">↓</span></a>
+          </div>
+        </section>
+
+        <section id="subject-board" className="subject-board" aria-labelledby="subject-board-title">
+          <div className="subject-board-heading">
+            <div>
+              <p className="eyebrow"><span aria-hidden="true">✦</span> 学科探索地图 · 玩法正在集合</p>
+              <h2 id="subject-board-title" data-no-ui-translation>
+                <LocalizedLines
+                  zh={<>挑一块星图，<em>开始努力闯关。</em></>}
+                  en={<>Choose a star map. <em>Start your learning mission.</em></>}
+                />
+              </h2>
+            </div>
+            <p>每一门学科都有不同的好玩入口。先从想试试的那一块开始吧！</p>
+          </div>
+
+          <div className="subject-rows">
+            {SUBJECT_BOARDS.map((subject) => (
+              <section className={`subject-row subject-${subject.id}`} key={subject.id} aria-labelledby={`${subject.id}-title`}>
+                <div className="subject-intro">
+                  <SubjectGlyph kind={subject.icon} />
+                  <div>
+                    <span className="subject-kicker">探索学科</span>
+                    <h3 id={`${subject.id}-title`}>{subject.title}</h3>
+                    <p>{subject.caption}</p>
+                  </div>
+                  <span className="subject-spark" aria-hidden="true">✦</span>
+                </div>
+                <div className="game-cluster" aria-label={`${subject.title}小游戏`}>
+                  {subject.games.map((game) => {
+                    const activePromotion = game.rewardSource
+                      && learningCoinStatus?.promotion.source === game.rewardSource
+                      ? learningCoinStatus.promotion
+                      : null;
+                    const isTripleReward = Boolean(activePromotion);
+                    const gameHref = game.href && activePromotion
+                      ? `${game.href}?promotion=${encodeURIComponent(activePromotion.id)}`
+                      : game.href;
+                    const content = (
+                      <>
+                        {isTripleReward && <span className="game-triple-badge">×3 知识币</span>}
+                        <span className="game-mark" aria-hidden="true">{game.mark}</span>
+                        <div>
+                          <h4>{game.title}</h4>
+                          <p>{game.description}</p>
+                        </div>
+                        <span className="game-status">
+                          {game.href ? "开始练习 →" : game.comingSoon ? "正在准备" : "即将开放"}
+                        </span>
+                      </>
+                    );
+                    const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""} ${isTripleReward ? "is-triple-reward" : ""}`;
+                    return gameHref ? (
+                      <a className={className} href={gameHref} key={game.title}>{content}</a>
+                    ) : (
+                      <article className={className} key={game.title}>{content}</article>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
+        </section>
+      </main>
+      <footer>木木学习岛 · 努力让每一天都有新收获</footer>
+    </div>
+  );
+}
+
+function AsrLabPage() {
   const [apiKey, setApiKey] = useState("");
   const [endpoint, setEndpoint] = useState(DEFAULT_ENDPOINT);
   const [configuration, setConfiguration] = useState<AsrConfiguration | null>(null);
@@ -585,7 +732,6 @@ function App() {
   const [error, setError] = useState<{ code: string; message: string } | null>(null);
   const [finalLines, setFinalLines] = useState<TranscriptLine[]>([]);
   const [interim, setInterim] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(MAX_ASR_SECONDS);
   const socketRef = useRef<WebSocket | null>(null);
   const captureRef = useRef(new PcmCapture());
@@ -786,248 +932,130 @@ function App() {
   return (
     <div className="app-shell">
       <div className="star-field" aria-hidden="true" />
-      <header className="topbar">
-        <a className="brand" href="#top" aria-label="木木学习岛首页">
-          <span className="brand-mark" aria-hidden="true">🚀</span>
-          <span>木木学习岛</span>
-        </a>
-        <CompactExperienceControls />
-        <nav className="nav-actions" aria-label="主导航">
-          <a className="nav-link" href="#top">学习大厅</a>
-          <button
-            className="test-trigger numeric-keypad-nav-button"
-            type="button"
-            onClick={openNumericKeypad}
-            aria-label="打开或收起右侧数字键盘"
-          >
-            数字键盘
-          </button>
-          <div className="test-menu">
+      <HomeHeader />
+      <main id="asr-lab" className="asr-lab" aria-labelledby="asr-title">
+        <a className="test-trigger" href="/">← 返回学习大厅</a>
+        <div className="section-title-row">
+          <div>
+            <p className="eyebrow"><span aria-hidden="true">◉</span> ALIYUN FUN-ASR REALTIME</p>
+            <h1 id="asr-title">语音识别实验室</h1>
+          </div>
+          <span className={`connection-pill state-${state}`}><i aria-hidden="true" />{stateCopy(state)}</span>
+        </div>
+
+        <section className="credential-panel" aria-label="本机识别配置">
+          <div className="credential-copy">
+            <span className="security-orb" aria-hidden="true">🔐</span>
+            <div>
+              <strong>{configuration?.isConfigured ? "本机识别配置已就绪" : "配置你的识别引擎"}</strong>
+              <p>{configuration?.isConfigured ? "密钥只保存在这台电脑的受保护文件中，不会显示、上传或写入 Git。" : "首次粘贴 API Key 后，点击保存；之后无需重复粘贴。"}</p>
+            </div>
+          </div>
+          <label className="field api-key-field">
+            <span>阿里云 API Key</span>
+            <input
+              type="password"
+              value={apiKey}
+              onChange={(event) => setApiKey(event.target.value)}
+              placeholder={configuration?.isConfigured ? "已安全保存；如需更换，请粘贴新 Key" : "粘贴 sk-… API Key"}
+              autoComplete="off"
+              spellCheck="false"
+              disabled={busy || recording}
+              aria-describedby="api-key-help"
+            />
+            <small id="api-key-help">仅在点击“保存本机配置”时发送给本机服务；保存后不会回显明文。</small>
+          </label>
+          <label className="field endpoint-field">
+            <span>实时 API 地址</span>
+            <input
+              type="url"
+              value={endpoint}
+              onChange={(event) => setEndpoint(event.target.value)}
+              autoComplete="off"
+              spellCheck="false"
+              disabled={busy || recording}
+            />
+            <small>仅接受阿里云百炼业务空间的安全 WebSocket 地址。</small>
+          </label>
+          <div className="credential-actions">
+            <span className={`config-chip ${configuration?.isConfigured ? "is-configured" : ""}`}>
+              <i aria-hidden="true" />{configuration?.isConfigured ? "已保存到本机" : "等待配置"}
+            </span>
             <button
-              className="test-trigger"
+              className="save-config-button"
               type="button"
-              aria-expanded={menuOpen}
-              aria-controls="test-menu-items"
-              onClick={() => setMenuOpen((open) => !open)}
+              onClick={() => void saveConfiguration()}
+              disabled={busy || recording || isSavingConfiguration}
             >
-              功能测试 <span aria-hidden="true">⌄</span>
+              {isSavingConfiguration ? "正在保存…" : "保存本机配置"}
             </button>
-            {menuOpen && (
-              <div id="test-menu-items" className="test-menu-items" role="menu">
-                <a href="#asr-lab" role="menuitem" onClick={() => setMenuOpen(false)}>
-                  <span aria-hidden="true">🎙️</span>
-                  <span><strong>语音识别测试</strong><small>边说边出字</small></span>
-                </a>
-                <a href="/parent/coin-reset" role="menuitem" onClick={() => setMenuOpen(false)}>
-                  <span aria-hidden="true">✦</span>
-                  <span><strong>货币管理</strong><small>一次设置知识币与能量币</small></span>
-                </a>
-              </div>
-            )}
-          </div>
-          <LearningCoinBalancePill className="home-learning-coin-balance" />
-          <EnergyCoinBalancePill />
-          <button className="avatar" type="button" aria-label="小小宇航员资料">👩‍🚀</button>
-        </nav>
-      </header>
-
-      <main id="top">
-        <section className="hero" aria-labelledby="hero-title">
-          <div className="hero-art" aria-hidden="true" />
-          <div className="hero-content">
-            <p className="eyebrow"><span aria-hidden="true">✦</span> 木木的学习乐园 · 每天进步一点点</p>
-            <h1 id="hero-title" data-no-ui-translation>
-              <LocalizedLines
-                zh={<>木木最努力，<em>{encouragement}</em></>}
-                en={<>Mumu keeps trying. <em>{translateUiText(encouragement)}</em></>}
-              />
-            </h1>
-            <p className="hero-copy">
-              把好玩的小任务、知识问答和探索挑战，装进同一座星际学习岛。每一次认真尝试，都会让木木更有力量。
-            </p>
-            <a className="hero-button" href="#subject-board">开始今天的小冒险 <span aria-hidden="true">↓</span></a>
           </div>
         </section>
 
-        <section id="subject-board" className="subject-board" aria-labelledby="subject-board-title">
-          <div className="subject-board-heading">
-            <div>
-              <p className="eyebrow"><span aria-hidden="true">✦</span> 学科探索地图 · 玩法正在集合</p>
-              <h2 id="subject-board-title" data-no-ui-translation>
-                <LocalizedLines
-                  zh={<>挑一块星图，<em>开始努力闯关。</em></>}
-                  en={<>Choose a star map. <em>Start your learning mission.</em></>}
-                />
-              </h2>
+        <div className="lab-grid">
+          <article className="console-card microphone-card">
+            <div className="card-heading"><span>声音采集器</span><span className="tiny-chip">上限 {timeLabel} · PCM</span></div>
+            <div className={`microphone-stage ${recording ? "is-listening" : ""}`} aria-hidden="true">
+              <span className="orbit orbit-one" /><span className="orbit orbit-two" /><span className="floating-atom atom-a">+</span>
+              <span className="floating-atom atom-b">•</span><span className="floating-atom atom-c">✦</span>
+              <div className="mic-orb"><span>🎙️</span></div>
+              <div className="wave-bars"><i /><i /><i /><i /><i /><i /><i /></div>
             </div>
-            <p>每一门学科都有不同的好玩入口。先从想试试的那一块开始吧！</p>
-          </div>
-
-          <div className="subject-rows">
-            {SUBJECT_BOARDS.map((subject) => (
-              <section className={`subject-row subject-${subject.id}`} key={subject.id} aria-labelledby={`${subject.id}-title`}>
-                <div className="subject-intro">
-                  <SubjectGlyph kind={subject.icon} />
-                  <div>
-                    <span className="subject-kicker">探索学科</span>
-                    <h3 id={`${subject.id}-title`}>{subject.title}</h3>
-                    <p>{subject.caption}</p>
-                  </div>
-                  <span className="subject-spark" aria-hidden="true">✦</span>
-                </div>
-                <div className="game-cluster" aria-label={`${subject.title}小游戏`}>
-                  {subject.games.map((game) => {
-                    const activePromotion = game.rewardSource
-                      && learningCoinStatus?.promotion.source === game.rewardSource
-                      ? learningCoinStatus.promotion
-                      : null;
-                    const isTripleReward = Boolean(activePromotion);
-                    const gameHref = game.href && activePromotion
-                      ? `${game.href}?promotion=${encodeURIComponent(activePromotion.id)}`
-                      : game.href;
-                    const content = (
-                      <>
-                        {isTripleReward && <span className="game-triple-badge">×3 知识币</span>}
-                        <span className="game-mark" aria-hidden="true">{game.mark}</span>
-                        <div>
-                          <h4>{game.title}</h4>
-                          <p>{game.description}</p>
-                        </div>
-                        <span className="game-status">
-                          {game.href ? "开始练习 →" : game.comingSoon ? "正在准备" : "即将开放"}
-                        </span>
-                      </>
-                    );
-                    const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""} ${isTripleReward ? "is-triple-reward" : ""}`;
-                    return gameHref ? (
-                      <a className={className} href={gameHref} key={game.title}>{content}</a>
-                    ) : (
-                      <article className={className} key={game.title}>{content}</article>
-                    );
-                  })}
-                </div>
-              </section>
-            ))}
-          </div>
-        </section>
-
-        <section id="asr-lab" className="asr-lab" aria-labelledby="asr-title">
-          <div className="section-title-row">
-            <div>
-              <p className="eyebrow"><span aria-hidden="true">◉</span> ALIYUN FUN-ASR REALTIME</p>
-              <h2 id="asr-title">语音识别实验室</h2>
-            </div>
-            <span className={`connection-pill state-${state}`}><i aria-hidden="true" />{stateCopy(state)}</span>
-          </div>
-
-          <section className="credential-panel" aria-label="本机识别配置">
-            <div className="credential-copy">
-              <span className="security-orb" aria-hidden="true">🔐</span>
-              <div>
-                <strong>{configuration?.isConfigured ? "本机识别配置已就绪" : "配置你的识别引擎"}</strong>
-                <p>{configuration?.isConfigured ? "密钥只保存在这台电脑的受保护文件中，不会显示、上传或写入 Git。" : "首次粘贴 API Key 后，点击保存；之后无需重复粘贴。"}</p>
-              </div>
-            </div>
-            <label className="field api-key-field">
-              <span>阿里云 API Key</span>
-              <input
-                type="password"
-                value={apiKey}
-                onChange={(event) => setApiKey(event.target.value)}
-                placeholder={configuration?.isConfigured ? "已安全保存；如需更换，请粘贴新 Key" : "粘贴 sk-… API Key"}
-                autoComplete="off"
-                spellCheck="false"
-                disabled={busy || recording}
-                aria-describedby="api-key-help"
-              />
-              <small id="api-key-help">仅在点击“保存本机配置”时发送给本机服务；保存后不会回显明文。</small>
-            </label>
-            <label className="field endpoint-field">
-              <span>实时 API 地址</span>
-              <input
-                type="url"
-                value={endpoint}
-                onChange={(event) => setEndpoint(event.target.value)}
-                autoComplete="off"
-                spellCheck="false"
-                disabled={busy || recording}
-              />
-              <small>仅接受阿里云百炼业务空间的安全 WebSocket 地址。</small>
-            </label>
-            <div className="credential-actions">
-              <span className={`config-chip ${configuration?.isConfigured ? "is-configured" : ""}`}>
-                <i aria-hidden="true" />{configuration?.isConfigured ? "已保存到本机" : "等待配置"}
-              </span>
-              <button
-                className="save-config-button"
-                type="button"
-                onClick={() => void saveConfiguration()}
-                disabled={busy || recording || isSavingConfiguration}
-              >
-                {isSavingConfiguration ? "正在保存…" : "保存本机配置"}
+            <p className="status-copy" aria-live="polite">{statusDetail}</p>
+            {recording ? (
+              <button className="record-button stop" type="button" onClick={() => void stopRecognition()}>
+                <span aria-hidden="true">■</span> 停止录入
               </button>
+            ) : (
+              <button className="record-button" type="button" disabled={busy} onClick={() => void beginListening()}>
+                <span aria-hidden="true">●</span> {busy ? "正在准备…" : "开始录入"}
+              </button>
+            )}
+            <p className="microphone-note">建议一次说一句话，说完后稍停一停。每次识别最多 10 分钟。</p>
+          </article>
+
+          <article className="console-card transcript-card" aria-labelledby="transcript-title">
+            <div className="card-heading">
+              <span id="transcript-title">实时识别文字</span>
+              <span className="live-dot"><i />LIVE</span>
             </div>
-          </section>
+            <div className="transcript-output" aria-live="polite" aria-atomic="false">
+              {!hasTranscript && <div className="empty-transcript"><span aria-hidden="true">🛰️</span><strong>文字会出现在这里</strong><p>开始录入后，边说边看结果。</p></div>}
+              {finalLines.map((line) => <p className="final-line" key={line.id}>{line.text}</p>)}
+              {interim && <p className="interim-line">{interim}<span className="cursor" /></p>}
+            </div>
+            <div className="transcript-footer"><span>结果只停留在当前页面</span><span>不自动保存</span></div>
+          </article>
+        </div>
 
-          <div className="lab-grid">
-            <article className="console-card microphone-card">
-              <div className="card-heading"><span>声音采集器</span><span className="tiny-chip">上限 {timeLabel} · PCM</span></div>
-              <div className={`microphone-stage ${recording ? "is-listening" : ""}`} aria-hidden="true">
-                <span className="orbit orbit-one" /><span className="orbit orbit-two" /><span className="floating-atom atom-a">+</span>
-                <span className="floating-atom atom-b">•</span><span className="floating-atom atom-c">✦</span>
-                <div className="mic-orb"><span>🎙️</span></div>
-                <div className="wave-bars"><i /><i /><i /><i /><i /><i /><i /></div>
-              </div>
-              <p className="status-copy" aria-live="polite">{statusDetail}</p>
-              {recording ? (
-                <button className="record-button stop" type="button" onClick={() => void stopRecognition()}>
-                  <span aria-hidden="true">■</span> 停止录入
-                </button>
-              ) : (
-                <button className="record-button" type="button" disabled={busy} onClick={() => void beginListening()}>
-                  <span aria-hidden="true">●</span> {busy ? "正在准备…" : "开始录入"}
-                </button>
-              )}
-              <p className="microphone-note">建议一次说一句话，说完后稍停一停。每次识别最多 10 分钟。</p>
-            </article>
-
-            <article className="console-card transcript-card" aria-labelledby="transcript-title">
-              <div className="card-heading">
-                <span id="transcript-title">实时识别文字</span>
-                <span className="live-dot"><i />LIVE</span>
-              </div>
-              <div className="transcript-output" aria-live="polite" aria-atomic="false">
-                {!hasTranscript && <div className="empty-transcript"><span aria-hidden="true">🛰️</span><strong>文字会出现在这里</strong><p>开始录入后，边说边看结果。</p></div>}
-                {finalLines.map((line) => <p className="final-line" key={line.id}>{line.text}</p>)}
-                {interim && <p className="interim-line">{interim}<span className="cursor" /></p>}
-              </div>
-              <div className="transcript-footer"><span>结果只停留在当前页面</span><span>不自动保存</span></div>
-            </article>
-          </div>
-
-          {error && (
-            <aside className="error-panel" role="alert">
-              <span aria-hidden="true">⚠️</span>
-              <div><strong>{error.code}</strong><p>{error.message}</p></div>
-              <button type="button" onClick={() => { setError(null); setState("idle"); }}>知道了</button>
-            </aside>
-          )}
-
-          <aside className="safety-note">
-            <span aria-hidden="true">🪐</span>
-            <p><strong>给家长的小提示：</strong>这是连通性测试，不会保存孩子的音频或识别文本。若出现错误，会显示可理解的原因，但不会显示或回传 API Key。</p>
+        {error && (
+          <aside className="error-panel" role="alert">
+            <span aria-hidden="true">⚠️</span>
+            <div><strong>{error.code}</strong><p>{error.message}</p></div>
+            <button type="button" onClick={() => { setError(null); setState("idle"); }}>知道了</button>
           </aside>
-        </section>
-      </main>
+        )}
 
+        <aside className="safety-note">
+          <span aria-hidden="true">🪐</span>
+          <p><strong>给家长的小提示：</strong>这是连通性测试，不会保存孩子的音频或识别文本。若出现错误，会显示可理解的原因，但不会显示或回传 API Key。</p>
+        </aside>
+      </main>
       <footer>木木学习岛 · 努力让每一天都有新收获</footer>
     </div>
   );
 }
 
 function CurrentPage() {
+  if (window.location.pathname === "/" && window.location.hash === "#asr-lab") {
+    window.history.replaceState({}, "", "/tools/asr-lab");
+  }
+  if (window.location.pathname === "/tools/asr-lab") return <AsrLabPage />;
   if (window.location.pathname === "/games/tetris") {
     return <Suspense fallback={<ChemistryLoading label="水晶俄罗斯方块" />}><TetrisGame /></Suspense>;
+  }
+  if (window.location.pathname === "/games/sudoku") {
+    return <Suspense fallback={<ChemistryLoading label="星页数独" />}><SudokuGame /></Suspense>;
   }
   if (window.location.pathname === "/games/gem-connect") {
     return <Suspense fallback={<ChemistryLoading label="宝石连连看" />}><GemConnectGame /></Suspense>;

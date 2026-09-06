@@ -431,7 +431,7 @@ export function FindNumberGame() {
               <span aria-hidden="true">▶</span> 开始一局
             </button>
             {asrConfigured === false && (
-              <a href="/#asr-lab" className="find-number-config-link">先去配置语音识别 →</a>
+              <a href="/tools/asr-lab" className="find-number-config-link">先去配置语音识别 →</a>
             )}
           </section>
         </main>
@@ -683,7 +683,7 @@ export function FindNumberGame() {
             {(voiceState === "limited" || voiceState === "stopped" || voiceState === "error") && asrConfigured && (
               <button type="button" onClick={() => void toggleRecognition()}>继续识别</button>
             )}
-            {voiceState === "unconfigured" && <a href="/#asr-lab">配置语音</a>}
+            {voiceState === "unconfigured" && <a href="/tools/asr-lab">配置语音</a>}
           </div>
         </aside>
       </main>

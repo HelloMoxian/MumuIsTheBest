@@ -577,7 +577,7 @@ export function CommonCharactersGame() {
               {progressLoading ? "正在整理文字星图…" : "▶ 开始练习"}
             </button>
             {asrConfigured === false && (
-              <a href="/#asr-lab" className="characters-config-link">
+              <a href="/tools/asr-lab" className="characters-config-link">
                 先去配置语音识别 →
               </a>
             )}

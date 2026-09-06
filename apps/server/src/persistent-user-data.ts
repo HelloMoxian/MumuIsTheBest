@@ -4,9 +4,11 @@ import { dirname, resolve } from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { parseAudioPreferences, type AudioPreferences } from "./audio-preferences.js";
+import { parseControllerPreferences, type ControllerPreferences } from "./game-controller-preferences.js";
 
 const stateIdSchema = z.enum([
   "audio-preferences",
+  "game-controller-preferences",
   "chemistry-reaction-furnace",
   "chemistry-molecule-factory",
   "drawing-studio",
@@ -110,6 +112,12 @@ const drawingElementSchema = z.discriminatedUnion("type", [
   drawingBaseElementSchema.extend({
     type: z.literal("shape"),
     shape: z.enum([
+      "diamond", "pentagon", "hexagon", "octagon", "right-triangle",
+      "arrow-right", "arrow-left", "double-arrow", "cross", "quarter-circle", "ring", "chevron",
+      "free-rectangle", "free-ellipse", "free-triangle",
+      "tian-grid", "round-tian-grid", "rice-grid", "round-rice-grid", "nine-grid",
+      "paw-print", "footprint", "scalloped-frame", "cloud-frame", "speech-bubble", "banner",
+      "crown", "clover", "bow",
       "circle",
       "ellipse",
       "semicircle",
@@ -290,6 +298,10 @@ type StateId = z.infer<typeof stateIdSchema>;
 type StoredState = z.infer<typeof storedStateBaseSchema>;
 
 const definitions: Record<StateId, { relativePath: string; payloadSchema: z.ZodType }> = {
+  "game-controller-preferences": {
+    relativePath: "preferences/game-controllers.json",
+    payloadSchema: z.custom<ControllerPreferences>(value => parseControllerPreferences(value) !== undefined),
+  },
   "audio-preferences": {
     relativePath: "preferences/audio.json",
     payloadSchema: z.custom<AudioPreferences>(value => parseAudioPreferences(value) !== undefined),
@@ -357,6 +369,15 @@ export function registerPersistentUserDataApi(
     const previousQueue = writeQueues.get(stableId) ?? Promise.resolve();
     const operation = previousQueue.then(async () => {
       const current = await readState(stableId);
+      // Each controller write contains only changed games. Merge inside the file's
+      // queue so two game tabs cannot overwrite one another's saved controls.
+      const nextPayload = stableId === "game-controller-preferences" ? {
+        schemaVersion: 1,
+        games: {
+          ...(current?.payload as ControllerPreferences | undefined)?.games,
+          ...(payload as ControllerPreferences).games,
+        },
+      } : payload;
       const now = new Date().toISOString();
       const state = parseStoredState(stableId, {
         schemaVersion: 1,
@@ -364,7 +385,7 @@ export function registerPersistentUserDataApi(
         stableId,
         createdAt: current?.createdAt ?? now,
         updatedAt: now,
-        payload,
+        payload: nextPayload,
       });
       await saveState(stableId, state);
       return state;

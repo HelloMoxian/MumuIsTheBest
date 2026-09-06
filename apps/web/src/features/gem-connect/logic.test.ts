@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createBoard, findMove, findPath, GEMS, LEVELS, rankRecords, shuffleBoard, type Board, type Point, type RecordEntry } from "./logic";
+import { createBoard, findMove, findPath, GEMS, LEVELS, rankRecords, shuffleBoard, type Board, type Point, type RecordEntry, levelGemKinds, adjacentPairs } from "./logic";
 import { parseHistory } from "./api";
 
 function validPath(board: Board, path: Point[], a: number, b: number) {
@@ -32,7 +32,7 @@ test("直线、一次拐弯、外缘两次拐弯、阻挡与不匹配", () => {
   assert.equal(findPath(blocked, -1, 0), null);
 });
 test("十关递进、每种宝石成对，随机棋盘全部能够完成", () => {
-  assert.equal(LEVELS.length, 10); assert.equal(GEMS.length, 8);
+  assert.equal(LEVELS.length, 10); assert.equal(GEMS.length, 17);
   assert.equal(LEVELS[0].rows * LEVELS[0].cols, 60);
   assert.equal(LEVELS[9].rows * LEVELS[9].cols, 180);
   let seed = 42;
@@ -45,6 +45,7 @@ test("十关递进、每种宝石成对，随机棋盘全部能够完成", () =>
     for (let round = 0; round < 12; round++) {
       let board = createBoard(level, random);
       assert.equal(new Set(board.tiles).size, config.kinds);
+      assert.deepEqual([...new Set(board.tiles)].sort((a, b) => a! - b!), levelGemKinds(level));
       for (const kind of new Set(board.tiles)) assert.equal(board.tiles.filter(tile => tile === kind).length % 2, 0);
       for (let pair = 0; pair < config.rows * config.cols / 2; pair++) {
         if (!findMove(board)) board = shuffleBoard(board, random);
@@ -69,17 +70,52 @@ test("最坏随机源也保证无解重排恢复一对，保留全部宝石与�
   assert.throws(() => createBoard(0)); assert.throws(() => createBoard(11));
 });
 test("仅比较同关，按毫秒排序，并列稳定；响应校验拒绝未来版本和非法数据", () => {
-  const base = { rulesVersion: 2 as const, rewardStatus: "granted" as const, hints: 0, shuffles: 0, pairCount: 30, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
+  const base = { rulesVersion: 3 as const, rewardStatus: "granted" as const, hints: 0, shuffles: 0, pairCount: 30, createdAt: "2026-01-01T00:00:00.000Z", updatedAt: "2026-01-01T00:00:00.000Z" };
   const records: RecordEntry[] = [
     { ...base, id: "00000000-0000-4000-8000-000000000001", level: 1, durationMs: 1800 },
     { ...base, id: "00000000-0000-4000-8000-000000000002", level: 2, pairCount: 36, durationMs: 1000 },
     { ...base, id: "00000000-0000-4000-8000-000000000003", level: 1, durationMs: 1700 },
   ];
   assert.deepEqual(rankRecords(records, 1).map(record => record.durationMs), [1700, 1800]);
-  assert.equal(parseHistory({ schemaVersion: 2, records }).length, 3);
+  assert.equal(parseHistory({ schemaVersion: 3, records }).length, 3);
   assert.equal(rankRecords([...records, { ...records[0], id: "old", rulesVersion: 1, rewardStatus: "legacy", pairCount: 6, durationMs: 1 }], 1).length, 2);
-  assert.deepEqual(parseHistory({ schemaVersion: 2, records: [] }), []);
-  assert.throws(() => parseHistory({ schemaVersion: 3, records }));
-  assert.throws(() => parseHistory({ schemaVersion: 2, records: [{ ...records[0], durationMs: -1 }] }));
-  assert.throws(() => parseHistory({ schemaVersion: 2, records: [records[0], records[0]] }));
+  assert.deepEqual(parseHistory({ schemaVersion: 3, records: [] }), []);
+  const previous = { ...records[0], id: "00000000-0000-4000-8000-000000000099", rulesVersion: 2 as const };
+  assert.equal(rankRecords([...records, previous], 1).length, 2);
+  assert.equal(parseHistory({ schemaVersion: 3, records: [previous] }).length, 1);
+  assert.throws(() => parseHistory({ schemaVersion: 4, records }));
+  assert.throws(() => parseHistory({ schemaVersion: 3, records: [{ ...records[0], durationMs: -1 }] }));
+  assert.throws(() => parseHistory({ schemaVersion: 3, records: [records[0], records[0]] }));
+});
+
+test("每关新增宝石按顺序进入并全部成对，分布减少同色扎堆", () => {
+  assert.equal(new Set(GEMS.map(gem => gem.id)).size, 17);
+  assert.deepEqual(LEVELS.map(level => level.kinds), [4, 5, 7, 8, 10, 11, 13, 14, 16, 17]);
+  for (let level = 2; level <= 10; level++) {
+    const kinds = levelGemKinds(level);
+    assert.ok(kinds.includes(8 + level - 2));
+    assert.equal(kinds.includes(8 + level - 1), false);
+  }
+  const board = createBoard(10, () => .999);
+  assert.ok(findMove(board), "最差随机源也应能连接");
+  const clustered = { rows: 2, cols: 4, tiles: [0, 0, 1, 1, 0, 0, 1, 1] };
+  assert.equal(adjacentPairs(clustered), 8);
+});
+
+test("后续关卡在有限次合法布局中优先减少相邻同种宝石", () => {
+  const rng = (initial: number) => {
+    let seed = initial;
+    return () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
+  };
+  let improved = 0;
+  for (let level = 2; level <= 10; level++) {
+    const config = LEVELS[level - 1], kinds = levelGemKinds(level);
+    const tiles = Array.from({ length: config.rows * config.cols }, (_, i) => kinds[Math.floor(i / 2) % kinds.length]);
+    const first = shuffleBoard({ rows: config.rows, cols: config.cols, tiles }, rng(level));
+    const spread = createBoard(level, rng(level));
+    assert.ok(adjacentPairs(spread) <= adjacentPairs(first));
+    assert.ok(findMove(spread));
+    if (adjacentPairs(spread) < adjacentPairs(first)) improved++;
+  }
+  assert.ok(improved >= 5);
 });

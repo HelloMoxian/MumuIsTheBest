@@ -1,3 +1,4 @@
+import { registerSudokuApi } from "./sudoku.js";
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { chmod, mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
@@ -548,6 +549,10 @@ async function main() {
   registerDrawingStudioWorksApi(app, appDataDir);
   const energyWallet = registerFruitSliceHistoryApi(app, appDataDir);
   const knowledgeWallet = registerWorldTowerApi(app, appDataDir, projectRoot);
+  registerSudokuApi(app, appDataDir, {
+    knowledge: knowledgeWallet.awardSudoku,
+    energy: energyWallet.awardSudoku,
+  });
   registerBejeweledApi(app, appDataDir, {
     knowledge: knowledgeWallet.creditBejeweled,
     energy: energyWallet.creditBejeweled,

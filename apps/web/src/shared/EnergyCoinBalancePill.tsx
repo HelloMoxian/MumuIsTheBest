@@ -31,7 +31,7 @@ export function EnergyCoinBalancePill() {
   return (
     <div
       className={`home-energy-coin-balance ${error ? "has-error" : ""}`}
-      title={error ?? "木木完成体感游戏后可以获得能量币"}
+      title={error ?? "完成游戏挑战后可以获得能量币"}
       aria-label={error ?? `能量币余额 ${balance ?? "正在读取"}`}
     >
       <img src={energyCoinUrl} alt="" />

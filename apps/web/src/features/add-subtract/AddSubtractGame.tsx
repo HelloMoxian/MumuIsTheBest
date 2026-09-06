@@ -657,7 +657,7 @@ export function AddSubtractGame() {
           {(recognitionState === "error" || recognitionState === "unconfigured") && (
             <div className="voice-help" role="alert">
               <strong>{recognitionDetail}</strong>
-              <a href="/#asr-lab">打开语音识别配置</a>
+              <a href="/tools/asr-lab">打开语音识别配置</a>
             </div>
           )}
         </section>
