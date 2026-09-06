@@ -7,6 +7,8 @@
   "speechRate": 205,
   "pauseMs": 160,
   "actions": [
+    { "id": "action-preset-created", "zh": "预制件已创建", "en": "Preset created" },
+    { "id": "group-free-shapes", "zh": "自由形状", "en": "Free shapes" },
     { "id": "tool-select", "zh": "选择", "en": "Select" },
     { "id": "tool-canvas", "zh": "画布", "en": "Canvas" },
     { "id": "tool-shape", "zh": "形状", "en": "Shape" },

@@ -11,10 +11,12 @@ import {
   clampZoom,
   createDrawingPreset,
   createEmptyDrawing,
+  createFreeShape,
   elementIdsInSelection,
   instantiateDrawingPreset,
   mergeDrawingPresets,
   parseDrawingDocument,
+  presetContentSignature,
   renameDrawingPreset,
   screenPointToWorld,
   sortDrawingElements,
@@ -27,6 +29,32 @@ import {
   type StrokeElement,
   type TextElement,
 } from "./logic";
+
+test("free shapes normalize drag directions and preserve fill, proportions and border through preset transforms", () => {
+  for (const kind of ["free-rectangle", "free-ellipse", "free-triangle"] as const) {
+    const shape = createFreeShape(kind, { x: 300, y: 160 }, { x: 20, y: 100 }, 3)!;
+    assert.deepEqual([shape.x, shape.y, shape.width, shape.height], [20, 100, 280, 60]);
+    const colored = { ...shape, fill: "#ff00ff", rotation: 30 };
+    const preset = createDrawingPreset("自由图形", [colored, { ...colored, id: "second", x: 400 }]);
+    const instances = instantiateDrawingPreset(preset, { x: 100, y: 200 }, 10);
+    const transformed = transformDrawingElements(instances, 2, 15);
+    const restored = parseDrawingDocument({ ...createEmptyDrawing(), elements: transformed, presets: [preset] });
+    for (const element of restored.elements) {
+      assert.equal(element.type, "shape");
+      if (element.type !== "shape") continue;
+      assert.equal(element.shape, kind);
+      assert.equal(element.fill, "#ff00ff");
+      assert.equal(element.width / element.height, 280 / 60);
+      assert.equal(element.rotation, 45);
+      assert.equal(element.strokeWidth, shape.strokeWidth);
+    }
+    const svg = renderToStaticMarkup(ShapeArt({ kind, fixedStroke: true, fill: "#ff00ff", strokeWidth: 3.5 }));
+    assert.match(svg, /vector-effect="non-scaling-stroke"/);
+    assert.match(svg, /data-region-id="fill"/);
+    assert.match(svg, /stroke-width="3.5"/);
+  }
+  assert.equal(createFreeShape("free-rectangle", { x: 0, y: 0 }, { x: 0, y: 100 }, 0), null);
+});
 
 function makeShape(id: string): ShapeElement {
   return {
@@ -88,9 +116,13 @@ test("accepts a valid empty or populated drawing document", () => {
 
 test("provides a varied set of child-friendly decorative structures", () => {
   const decorative = SHAPE_OPTIONS.filter((option) => option.group === "装饰形状");
-  assert.equal(SHAPE_OPTIONS.length, 25);
-  assert.equal(new Set(SHAPE_OPTIONS.map((option) => option.id)).size, 25);
+  assert.equal(SHAPE_OPTIONS.length, 40);
+  assert.equal(new Set(SHAPE_OPTIONS.map((option) => option.id)).size, 40);
   assert.deepEqual(decorative.map((option) => option.label), [
+    "右箭头",
+    "左箭头",
+    "双向箭头",
+    "折角形",
     "五角星",
     "爱心",
     "田字格",
@@ -114,7 +146,7 @@ test("provides a varied set of child-friendly decorative structures", () => {
     shape: option.id,
     createdOrder: index,
   }));
-  assert.equal(parseDrawingDocument(makeDocument(shapeElements)).elements.length, 25);
+  assert.equal(parseDrawingDocument(makeDocument(shapeElements)).elements.length, 40);
 
   for (const option of decorative) {
     const markup = renderToStaticMarkup(ShapeArt({ kind: option.id, fill: "#ffd166" }));
@@ -304,6 +336,21 @@ test("keeps the permanent preset library when a new canvas is created or librari
   assert.equal(newCanvas.presets.length, 1);
   assert.notEqual(newCanvas.presets[0], preset);
   assert.deepEqual(merged.map((candidate) => candidate.name), ["花园", "小屋"]);
+});
+
+test("detects duplicate presets after grouping, moving, copying and persistence, but permits actual edits", () => {
+  const source = [makeShape("first"), { ...makeShape("second"), x: 180 }];
+  const preset = createDrawingPreset("原作", source);
+  const signature = presetContentSignature(source);
+  assert.equal(presetContentSignature(preset.elements), signature);
+  const instances = instantiateDrawingPreset(preset, { x: 567, y: 345 }, 40);
+  assert.equal(presetContentSignature(instances), signature);
+  assert.equal(presetContentSignature(source.map((element) => ({ ...element, groupId: "group" }))), signature);
+  const restored = parseDrawingDocument({ ...createEmptyDrawing(), elements: instances, presets: [preset] });
+  assert.equal(presetContentSignature(restored.elements), presetContentSignature(restored.presets[0].elements));
+  assert.notEqual(presetContentSignature([{ ...source[0], fill: "#ff0000" }, source[1]]), signature);
+  assert.notEqual(presetContentSignature([{ ...source[0], x: 15 }, source[1]]), signature);
+  assert.notEqual(presetContentSignature(transformDrawingElements(source, 1.2, 0)), signature);
 });
 
 test("renames one preset without changing the saved source library", () => {

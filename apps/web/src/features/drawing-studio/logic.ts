@@ -36,7 +36,12 @@ export type ShapeKind =
   | "banner"
   | "crown"
   | "clover"
-  | "bow";
+  | "bow"
+  | "diamond" | "pentagon" | "hexagon" | "octagon"
+  | "right-triangle" | "arrow-right" | "arrow-left" | "double-arrow"
+  | "cross" | "quarter-circle" | "ring" | "chevron"
+  | "free-rectangle" | "free-ellipse" | "free-triangle";
+export type FreeShapeKind = "free-rectangle" | "free-ellipse" | "free-triangle";
 export type SolidKind = "cube" | "cuboid" | "sphere" | "cylinder" | "cone" | "triangular-pyramid";
 export const STICKER_BASE_KINDS = [
   "digit-0",
@@ -346,6 +351,16 @@ export function selectionBounds(start: Point, end: Point): Bounds {
   };
 }
 
+export function createFreeShape(kind: FreeShapeKind, start: Point, end: Point, order: number): ShapeElement | null {
+  const bounds = selectionBounds(start, end);
+  if (bounds.width < 4 || bounds.height < 4) return null;
+  return {
+    ...bounds, width: Math.min(10_000, bounds.width), height: Math.min(10_000, bounds.height),
+    id: crypto.randomUUID(), type: "shape", shape: kind, fill: "#ffffff",
+    rotation: 0, stroke: "#171536", strokeWidth: 3.5, layer: 0, createdOrder: order,
+  };
+}
+
 export function elementIdsInSelection(elements: DrawingElement[], start: Point, end: Point): string[] {
   const selection = selectionBounds(start, end);
   if (selection.width < 2 || selection.height < 2) return [];
@@ -358,6 +373,22 @@ export function elementIdsInSelection(elements: DrawingElement[], start: Point, 
       && bounds.y <= selectionBottom
       && bounds.y + bounds.height >= selection.y;
   }).map((element) => element.id);
+}
+
+export function presetContentSignature(elements: DrawingElement[]): string {
+  const bounds = getElementsBounds(elements);
+  if (!bounds) return "";
+  return JSON.stringify(sortDrawingElements(elements).map((element) => {
+    const { id: _id, groupId: _groupId, createdOrder: _order, ...content } = element;
+    return {
+      ...content,
+      x: Math.round((element.x - bounds.x) * 1e6) / 1e6,
+      y: Math.round((element.y - bounds.y) * 1e6) / 1e6,
+    };
+  }), (_key, value: unknown) => {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) return value;
+    return Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)));
+  });
 }
 
 export function createDrawingPreset(name: string, elements: DrawingElement[]): DrawingPreset {
@@ -484,6 +515,9 @@ function parseColorMap(value: unknown): Record<string, string> | undefined {
 }
 
 const SHAPES = new Set<ShapeKind>([
+  "diamond", "pentagon", "hexagon", "octagon", "right-triangle",
+  "arrow-right", "arrow-left", "double-arrow", "cross", "quarter-circle", "ring", "chevron",
+  "free-rectangle", "free-ellipse", "free-triangle",
   "circle",
   "ellipse",
   "semicircle",

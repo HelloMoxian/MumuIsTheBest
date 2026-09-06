@@ -13,6 +13,21 @@ export type CatalogOption<T extends string> = {
 };
 
 export const SHAPE_OPTIONS: CatalogOption<ShapeKind>[] = [
+  { id: "free-rectangle", label: "拖框矩形", group: "自由形状" },
+  { id: "free-ellipse", label: "拖框圆形", group: "自由形状" },
+  { id: "free-triangle", label: "拖框三角形", group: "自由形状" },
+  { id: "diamond", label: "菱形", group: "四边形" },
+  { id: "pentagon", label: "五边形", group: "基础形状" },
+  { id: "hexagon", label: "六边形", group: "基础形状" },
+  { id: "octagon", label: "八边形", group: "基础形状" },
+  { id: "right-triangle", label: "直角三角形", group: "基础形状" },
+  { id: "arrow-right", label: "右箭头", group: "装饰形状" },
+  { id: "arrow-left", label: "左箭头", group: "装饰形状" },
+  { id: "double-arrow", label: "双向箭头", group: "装饰形状" },
+  { id: "cross", label: "十字形", group: "基础形状" },
+  { id: "quarter-circle", label: "四分之一圆", group: "圆与弧" },
+  { id: "ring", label: "圆环", group: "圆与弧" },
+  { id: "chevron", label: "折角形", group: "装饰形状" },
   { id: "circle", label: "圆形", group: "圆与弧" },
   { id: "ellipse", label: "椭圆形", group: "圆与弧" },
   { id: "semicircle", label: "半圆", group: "圆与弧" },
@@ -128,8 +143,27 @@ export function ShapeArt({
   fill = "#ffffff",
   stroke = "#171536",
   strokeWidth = 4,
-}: BasicArtProps & { kind: ShapeKind }) {
-  const shared = { fill, stroke, strokeWidth, strokeLinejoin: "round" as const };
+  fixedStroke = false,
+}: BasicArtProps & { kind: ShapeKind; fixedStroke?: boolean }) {
+  const shared = { fill, stroke, strokeWidth, strokeLinejoin: "round" as const, vectorEffect: fixedStroke ? "non-scaling-stroke" as const : undefined };
+  if (kind === "free-rectangle") return <rect width="100" height="100" {...shared} data-region-id="fill" />;
+  if (kind === "free-ellipse") return <ellipse cx="50" cy="50" rx="50" ry="50" {...shared} data-region-id="fill" />;
+  if (kind === "free-triangle") return <polygon points="50,0 100,100 0,100" {...shared} data-region-id="fill" />;
+  const polygons: Partial<Record<ShapeKind, string>> = {
+    diamond: "50,5 95,50 50,95 5,50",
+    pentagon: "50,5 93,38 77,90 23,90 7,38",
+    hexagon: "25,7 75,7 98,50 75,93 25,93 2,50",
+    octagon: "30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30",
+    "right-triangle": "8,8 92,92 8,92",
+    "arrow-right": "5,32 60,32 60,8 95,50 60,92 60,68 5,68",
+    "arrow-left": "95,32 40,32 40,8 5,50 40,92 40,68 95,68",
+    "double-arrow": "5,50 30,15 30,35 70,35 70,15 95,50 70,85 70,65 30,65 30,85",
+    cross: "35,5 65,5 65,35 95,35 95,65 65,65 65,95 35,95 35,65 5,65 5,35 35,35",
+    chevron: "8,15 48,15 92,50 48,85 8,85 52,50",
+  };
+  if (polygons[kind]) return <polygon points={polygons[kind]} {...shared} data-region-id="fill" />;
+  if (kind === "quarter-circle") return <path d="M8 92 V8 A84 84 0 0 1 92 92 Z" {...shared} data-region-id="fill" />;
+  if (kind === "ring") return <path d="M50 5 A45 45 0 1 1 50 95 A45 45 0 1 1 50 5 Z M50 28 A22 22 0 1 0 50 72 A22 22 0 1 0 50 28 Z" fillRule="evenodd" {...shared} data-region-id="fill" />;
   if (kind === "circle") return <circle cx="50" cy="50" r="39" {...shared} data-region-id="fill" />;
   if (kind === "ellipse") return <ellipse cx="50" cy="50" rx="43" ry="30" {...shared} data-region-id="fill" />;
   if (kind === "semicircle") return <path d="M10 76 A40 40 0 0 1 90 76 Z" {...shared} data-region-id="fill" />;

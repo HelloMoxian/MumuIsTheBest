@@ -5,9 +5,11 @@ import {
   useRef,
   useState,
   type ChangeEvent,
+  type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   type WheelEvent as ReactWheelEvent,
 } from "react";
+import { flushSync } from "react-dom";
 import {
   CatalogPreview,
   SHAPE_OPTIONS,
@@ -27,6 +29,7 @@ import {
   cloneElements,
   createDrawingPreset,
   createEmptyDrawing,
+  createFreeShape,
   elementIdsInSelection,
   getElementsBounds,
   instantiateDrawingPreset,
@@ -35,6 +38,7 @@ import {
   mergeDrawingPresets,
   nextCreatedOrder,
   parseDrawingDocument,
+  presetContentSignature,
   renameDrawingPreset,
   screenPointToWorld,
   selectionBounds,
@@ -50,6 +54,7 @@ import {
   type LineStyle,
   type Point,
   type ShapeKind,
+  type FreeShapeKind,
   type SolidElement,
   type SolidKind,
   type StickerKind,
@@ -67,6 +72,8 @@ import {
   listDrawingWorks,
   loadDrawingWork,
   saveDrawingWork,
+  updateDrawingWork,
+  deleteDrawingWork,
   type DrawingWorkSummary,
 } from "./works-api";
 import {
@@ -77,6 +84,8 @@ import {
 import {
   DRAWING_TOOL_SHORTCUTS,
   drawingToolForShortcut,
+  arrowMovement,
+  spatialNavigationIndex,
   type DrawingShortcutTool,
 } from "./shortcuts";
 import drawingActionSpeechCatalog from "../../../../../content/drawing-studio/ui-action-speech.v1.json";
@@ -86,10 +95,11 @@ type ToolId = DrawingShortcutTool | "text";
 type DrawerId = "history" | "works" | "author" | null;
 type AutoSaveStatus = "loading" | "saving" | "saved" | "error";
 type Gesture =
-  | { type: "pan"; pointerId: number; start: Point; viewport: Viewport }
+  | { type: "pan"; pointerId: number; start: Point; viewport: Viewport; selectOnTap: boolean }
   | { type: "move"; pointerId: number; startWorld: Point; elements: DrawingElement[]; moved: boolean }
   | { type: "marquee"; pointerId: number; startWorld: Point; currentWorld: Point }
   | { type: "draw"; pointerId: number; points: Point[] }
+  | { type: "free-shape"; pointerId: number; startWorld: Point; currentWorld: Point; kind: FreeShapeKind }
   | null;
 
 const DRAWING_ACTION_AUDIO_BASE = "/audio/ui-actions/drawing-studio";
@@ -116,7 +126,7 @@ const TOOL_OPTIONS: Array<{
   { id: "solid", label: "立体", mark: "◇", shortcut: DRAWING_TOOL_SHORTCUTS.solid, speech: drawingActionSpeech("tool-solid") },
   { id: "sticker", label: "贴纸", mark: "✦", shortcut: DRAWING_TOOL_SHORTCUTS.sticker, speech: drawingActionSpeech("tool-sticker") },
   { id: "preset", label: "预制件", mark: "▦", shortcut: DRAWING_TOOL_SHORTCUTS.preset, speech: drawingActionSpeech("tool-preset") },
-  { id: "text", label: "文字", mark: "文", speech: drawingActionSpeech("tool-text") },
+  { id: "text", label: "文字", mark: "文", shortcut: DRAWING_TOOL_SHORTCUTS.text, speech: drawingActionSpeech("tool-text") },
   { id: "brush", label: "画笔", mark: "╱", shortcut: DRAWING_TOOL_SHORTCUTS.brush, speech: drawingActionSpeech("tool-brush") },
   { id: "eraser", label: "橡皮擦", mark: "⌫", shortcut: DRAWING_TOOL_SHORTCUTS.eraser, speech: drawingActionSpeech("tool-eraser") },
   { id: "fill", label: "填色", mark: "●", shortcut: DRAWING_TOOL_SHORTCUTS.fill, speech: drawingActionSpeech("tool-fill") },
@@ -129,6 +139,7 @@ const TOP_ACTION_SPEECH = {
 } as const;
 
 const GROUP_SPEECH: Record<string, LearningSpeechMoment> = Object.fromEntries([
+  ["自由形状", "group-free-shapes"],
   ["圆与弧", "group-circles-arcs"],
   ["基础形状", "group-basic-shapes"],
   ["四边形", "group-quadrilaterals"],
@@ -245,7 +256,7 @@ async function createCanvasThumbnail(canvas: SVGSVGElement | null): Promise<stri
   const rect = canvas.getBoundingClientRect();
   if (rect.width < 1 || rect.height < 1) return null;
   const clone = canvas.cloneNode(true) as SVGSVGElement;
-  clone.querySelectorAll(".drawing-selection-box, .drawing-marquee-box, .drawing-draft-stroke")
+  clone.querySelectorAll(".drawing-selection-box, .drawing-marquee-box, .drawing-draft-stroke, .drawing-free-draft")
     .forEach((node) => node.remove());
   clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   clone.setAttribute("width", String(rect.width));
@@ -313,6 +324,10 @@ export function DrawingStudioPage() {
   const [historyIndex, setHistoryIndex] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [tool, setTool] = useState<ToolId>("shape");
+  const [freeShape, setFreeShape] = useState<FreeShapeKind | null>(null);
+  const [freeDraft, setFreeDraft] = useState<{ kind: FreeShapeKind; bounds: Bounds } | null>(null);
+  const [workAction, setWorkAction] = useState<{ kind: "rename" | "locked" | "delete"; id: string; title: string; useCurrent?: boolean } | null>(null);
+  const [workActionError, setWorkActionError] = useState("");
   const [activeGroups, setActiveGroups] = useState(INITIAL_GROUPS);
   const [panelOpen, setPanelOpen] = useState(true);
   const [drawer, setDrawer] = useState<DrawerId>(null);
@@ -340,6 +355,9 @@ export function DrawingStudioPage() {
 
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<SVGSVGElement>(null);
+  const toolboxRef = useRef<HTMLElement>(null);
+  const keyboardEditRef = useRef(false);
+  const lastPackedRef = useRef<{ signature: string; presetId: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const gestureRef = useRef<Gesture>(null);
   const documentRef = useRef(document);
@@ -360,11 +378,18 @@ export function DrawingStudioPage() {
   }, [document.elements, selectedIds]);
   const selectedElement = selectedElements.length === 1 ? selectedElements[0] ?? null : null;
   const selectedBounds = useMemo(() => getElementsBounds(selectedElements), [selectedElements]);
+  const selectionSignature = useMemo(() => presetContentSignature(selectedElements), [selectedElements]);
+  const matchingPreset = useMemo(() => selectedElements.length >= 2
+    ? document.presets.find((preset) => presetContentSignature(preset.elements) === selectionSignature)
+    : undefined, [document.presets, selectedElements.length, selectionSignature]);
+  const focusCanvas = () => canvasRef.current?.focus({ preventScroll: true });
 
   const commitElements = useCallback((label: string, elements: DrawingElement[], presets = documentRef.current.presets) => {
     const nextElements = cloneElements(elements);
     const nextPresets = structuredClone(presets) as DrawingPreset[];
-    setDocument((current) => ({ ...current, elements: nextElements, presets: nextPresets, updatedAt: new Date().toISOString() }));
+    const nextDocument = { ...documentRef.current, elements: nextElements, presets: nextPresets, updatedAt: new Date().toISOString() };
+    documentRef.current = nextDocument;
+    setDocument(nextDocument);
     const node = makeHistoryNode(label, nextElements, nextPresets);
     setHistory((current) => {
       const next = [...current.slice(0, historyIndex + 1), node].slice(-80);
@@ -373,6 +398,44 @@ export function DrawingStudioPage() {
     });
     setMessage(label);
   }, [historyIndex]);
+
+  const finishKeyboardEdit = () => {
+    if (!keyboardEditRef.current) return;
+    keyboardEditRef.current = false;
+    commitElements("键盘调整选中内容", documentRef.current.elements);
+  };
+
+  const handleCanvasKeyDown = (event: ReactKeyboardEvent<SVGSVGElement>) => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.nativeEvent.isComposing || !persistenceReadyRef.current) return;
+    if (event.key === "Escape") {
+      event.preventDefault(); event.stopPropagation();
+      finishKeyboardEdit();
+      flushSync(() => setPanelOpen(true));
+      toolboxRef.current?.querySelector<HTMLButtonElement>("[data-drawing-nav='tools'] .is-active")?.focus();
+      return;
+    }
+    const movement = arrowMovement(event.key, event.repeat);
+    const scale = ["+", "=", "Add"].includes(event.key) ? 1.05 : ["-", "_", "Subtract"].includes(event.key) ? 1 / 1.05 : null;
+    if (!movement && !scale) return;
+    event.preventDefault(); event.stopPropagation();
+    if (gestureRef.current) return;
+    const ids = new Set(selectedIds);
+    const elements = documentRef.current.elements.filter((element) => ids.has(element.id));
+    if (!elements.length) return;
+    let next: DrawingElement[];
+    if (movement) {
+      const dx = Math.max(-1e6 - Math.min(...elements.map((element) => element.x)), Math.min(1e6 - Math.max(...elements.map((element) => element.x)), movement.x));
+      const dy = Math.max(-1e6 - Math.min(...elements.map((element) => element.y)), Math.min(1e6 - Math.max(...elements.map((element) => element.y)), movement.y));
+      next = elements.map((element) => ({ ...element, x: element.x + dx, y: element.y + dy }));
+    } else {
+      next = transformDrawingElements(elements, scale!, 0);
+    }
+    const replacements = new Map(next.map((element) => [element.id, element]));
+    const updated = { ...documentRef.current, elements: documentRef.current.elements.map((element) => replacements.get(element.id) ?? element), updatedAt: new Date().toISOString() };
+    documentRef.current = updated;
+    keyboardEditRef.current = true;
+    setDocument(updated);
+  };
 
   const goToHistory = useCallback((index: number) => {
     const node = history[index];
@@ -395,6 +458,12 @@ export function DrawingStudioPage() {
 
   const chooseTool = useCallback((nextTool: ToolId) => {
     setTool(nextTool);
+    setPanelOpen(true);
+    setFreeShape(null);
+    setFreeDraft(null);
+    setMarquee(null);
+    setDraftPoints([]);
+    gestureRef.current = null;
     setDrawer(null);
     if (nextTool !== "preset") setPresetRename(null);
     if (nextTool !== "select") setSelectedIds([]);
@@ -408,6 +477,14 @@ export function DrawingStudioPage() {
   };
 
   const addElement = (type: "shape" | "solid" | "sticker", id: ShapeKind | SolidKind | StickerKind) => {
+    if (type === "shape" && id.startsWith("free-")) {
+      setFreeShape(id as FreeShapeKind);
+      setSelectedIds([]);
+      setMessage("在白板上按住并拖出一个框，松开就画好了。");
+      focusCanvas();
+      return;
+    }
+    setFreeShape(null);
     if (documentRef.current.elements.length >= MAX_DRAWING_ELEMENTS) {
       setMessage("这张画已经有 1000 个图元啦，可以先擦掉一些再继续。");
       return;
@@ -443,6 +520,7 @@ export function DrawingStudioPage() {
     }
     commitElements(`放入${type === "shape" ? "形状" : type === "solid" ? "立体" : "贴纸"}`, [...documentRef.current.elements, element]);
     setSelectedIds([element.id]);
+    focusCanvas();
   };
 
   const addTextElement = () => {
@@ -476,6 +554,7 @@ export function DrawingStudioPage() {
     };
     commitElements("放入文字", [...documentRef.current.elements, element]);
     setSelectedIds([element.id]);
+    focusCanvas();
   };
 
   const replaceElementsLive = (nextElements: DrawingElement[]) => {
@@ -561,6 +640,11 @@ export function DrawingStudioPage() {
   }, [commitElements, selectedIds]);
 
   const saveSelectionAsPreset = () => {
+    const signature = presetContentSignature(selectedElements);
+    if (matchingPreset || (lastPackedRef.current?.signature === signature && documentRef.current.presets.some((preset) => preset.id === lastPackedRef.current?.presetId))) {
+      setMessage("这组内容已经存为预制件，修改内容后可以再打包。");
+      return;
+    }
     if (selectedElements.length < 2) {
       setMessage("请先拉框选择至少两个图元，再打包成预制件。");
       return;
@@ -579,11 +663,13 @@ export function DrawingStudioPage() {
       return;
     }
     const preset = createDrawingPreset(`预制件 ${documentRef.current.presets.length + 1}`, selectedElements);
+    lastPackedRef.current = { signature, presetId: preset.id };
     const groupId = crypto.randomUUID();
     const ids = new Set(selectedIds);
     const grouped = documentRef.current.elements.map((element) => ids.has(element.id) ? { ...element, groupId } : element);
     commitElements(`打包“${preset.name}”`, grouped, [...documentRef.current.presets, preset]);
     setMessage(`“${preset.name}”已经放进预制件，画布中的这组图元也会整体移动。`);
+    void announceSpokenAction(drawingActionSpeech("action-preset-created"));
   };
 
   const addPreset = (preset: DrawingPreset) => {
@@ -594,6 +680,7 @@ export function DrawingStudioPage() {
     const instances = instantiateDrawingPreset(preset, viewCenterWorld(), nextCreatedOrder(documentRef.current.elements));
     commitElements(`放入“${preset.name}”`, [...documentRef.current.elements, ...instances]);
     setSelectedIds(instances.map((element) => element.id));
+    focusCanvas();
   };
 
   const deletePreset = (presetId: string) => {
@@ -647,12 +734,16 @@ export function DrawingStudioPage() {
       pointerId: event.pointerId,
       start: { x: event.clientX, y: event.clientY },
       viewport: viewportRef.current,
+      selectOnTap: event.button === 0 && !spacePressedRef.current && !(event.target as Element).closest("[data-element-id]"),
     };
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const handlePointerDown = (event: ReactPointerEvent<SVGSVGElement>) => {
+    if (!persistenceReadyRef.current) return;
     if (event.button !== 0 && event.button !== 1) return;
+    finishKeyboardEdit();
+    focusCanvas();
     const target = event.target as Element;
     const elementNode = target.closest("[data-element-id]");
     const regionNode = target.closest("[data-region-id]");
@@ -683,6 +774,14 @@ export function DrawingStudioPage() {
     if (!rect) return;
     const worldPoint = screenPointToWorld({ x: event.clientX - rect.left, y: event.clientY - rect.top }, viewportRef.current);
 
+    if (tool === "shape" && freeShape) {
+      gestureRef.current = { type: "free-shape", pointerId: event.pointerId, startWorld: worldPoint, currentWorld: worldPoint, kind: freeShape };
+      setSelectedIds([]);
+      setFreeDraft({ kind: freeShape, bounds: selectionBounds(worldPoint, worldPoint) });
+      event.currentTarget.setPointerCapture(event.pointerId);
+      return;
+    }
+
     if (tool === "brush") {
       gestureRef.current = { type: "draw", pointerId: event.pointerId, points: [worldPoint] };
       setDraftPoints([worldPoint]);
@@ -709,7 +808,8 @@ export function DrawingStudioPage() {
       return;
     }
 
-    if (tool === "select") {
+    if (!elementId) {
+      setTool("select");
       setSelectedIds([]);
       gestureRef.current = { type: "marquee", pointerId: event.pointerId, startWorld: worldPoint, currentWorld: worldPoint };
       setMarquee(selectionBounds(worldPoint, worldPoint));
@@ -743,6 +843,12 @@ export function DrawingStudioPage() {
       setMarquee(selectionBounds(gesture.startWorld, worldPoint));
       return;
     }
+    if (gesture.type === "free-shape") {
+      gesture.currentWorld = worldPoint;
+      const bounds = selectionBounds(gesture.startWorld, worldPoint);
+      setFreeDraft({ kind: gesture.kind, bounds: { ...bounds, width: Math.min(10_000, bounds.width), height: Math.min(10_000, bounds.height) } });
+      return;
+    }
     const last = gesture.points.at(-1);
     if (!last || Math.hypot(worldPoint.x - last.x, worldPoint.y - last.y) >= 2 / viewportRef.current.zoom) {
       gesture.points = [...gesture.points, worldPoint];
@@ -755,6 +861,25 @@ export function DrawingStudioPage() {
     if (!gesture || gesture.pointerId !== event.pointerId) return;
     gestureRef.current = null;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    if (gesture.type === "pan" && gesture.selectOnTap && event.type !== "pointercancel"
+      && Math.hypot(event.clientX - gesture.start.x, event.clientY - gesture.start.y) < 3) {
+      setTool("select"); setSelectedIds([]);
+    }
+    if (gesture.type === "free-shape") {
+      setFreeDraft(null);
+      if (event.type === "pointercancel") return;
+      const rect = stageRef.current?.getBoundingClientRect();
+      const end = rect ? screenPointToWorld({ x: event.clientX - rect.left, y: event.clientY - rect.top }, viewportRef.current) : gesture.currentWorld;
+      const shape = createFreeShape(gesture.kind, gesture.startWorld, end, nextCreatedOrder(documentRef.current.elements));
+      if (!shape) { setFreeShape(null); setTool("select"); setSelectedIds([]); setMessage("已进入选择，可以在空白处拉框选择。"); return; }
+      if (documentRef.current.elements.length >= MAX_DRAWING_ELEMENTS) { setMessage("图元已满，请先擦掉一些再画。"); return; }
+      commitElements("拖框绘制形状", [...documentRef.current.elements, shape]);
+      setSelectedIds([shape.id]);
+      setFreeShape(null);
+      setTool("select");
+      focusCanvas();
+      return;
+    }
     if (gesture.type === "move" && gesture.moved) {
       commitElements(gesture.elements.length === 1 ? "移动一个图元" : `整体移动 ${gesture.elements.length} 个图元`, documentRef.current.elements);
     }
@@ -790,6 +915,9 @@ export function DrawingStudioPage() {
         };
         commitElements("画下一笔", [...documentRef.current.elements, stroke]);
       }
+    }
+    if (gesture.type === "draw" && gesture.points.length < 2) {
+      setTool("select"); setSelectedIds([]);
     }
     setDraftPoints([]);
   };
@@ -906,9 +1034,17 @@ export function DrawingStudioPage() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
       const target = event.target as HTMLElement | null;
-      const editingText = target?.matches("input, textarea, select, [contenteditable='true']");
-      if (event.code === "Space" && !editingText) {
+      if (workAction) return;
+      const editingText = target?.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])");
+      if (event.key === "Escape" && !editingText) {
+        gestureRef.current = null;
+        setFreeShape(null); setFreeDraft(null); setMarquee(null); setDraftPoints([]);
+        setDrawer(null);
+        return;
+      }
+      if (event.code === "Space" && !editingText && target === canvasRef.current) {
         spacePressedRef.current = true;
         event.preventDefault();
       }
@@ -919,10 +1055,14 @@ export function DrawingStudioPage() {
         ctrlKey: event.ctrlKey,
         altKey: event.altKey,
         repeat: event.repeat,
+        isComposing: event.isComposing,
+        code: event.code,
       });
       if (shortcutTool) {
         event.preventDefault();
-        chooseTool(shortcutTool);
+        // Commit the requested tab before speech publishes global store updates.
+        flushSync(() => chooseTool(shortcutTool));
+        toolboxRef.current?.querySelector<HTMLButtonElement>(`[data-tool="${shortcutTool}"]`)?.focus();
         const option = TOOL_OPTIONS.find((candidate) => candidate.id === shortcutTool);
         if (option) void announceSpokenAction(option.speech);
         return;
@@ -942,13 +1082,19 @@ export function DrawingStudioPage() {
     const handleKeyUp = (event: KeyboardEvent) => {
       if (event.code === "Space") spacePressedRef.current = false;
     };
+    const handleWindowBlur = () => {
+      spacePressedRef.current = false;
+      finishKeyboardEdit();
+    };
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", handleWindowBlur);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", handleWindowBlur);
     };
-  }, [chooseTool, copySelected, deleteSelected, redo, undo]);
+  }, [chooseTool, copySelected, deleteSelected, redo, undo, workAction]);
 
   const storeWork = async (source: DrawingDocument, successMessage: string, adoptWork: boolean) => {
     if (workSaving) return;
@@ -966,12 +1112,22 @@ export function DrawingStudioPage() {
       setMessage(successMessage);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "作品暂时没有保存成功。");
+      if (error instanceof Error && error.message.includes("保存锁定")) {
+        setWorkActionError("");
+        setWorkAction({ kind: "locked", id: source.id, title: source.title, useCurrent: true });
+        void refreshWorks();
+      }
     } finally {
       setWorkSaving(false);
     }
   };
 
   const saveCurrentWork = () => {
+    if (savedWorks.find((work) => work.id === documentRef.current.id)?.locked) {
+      setWorkActionError("");
+      setWorkAction({ kind: "locked", id: documentRef.current.id, title: documentRef.current.title, useCurrent: true });
+      return;
+    }
     const current = cloneDocument(documentRef.current);
     if (!/^[0-9a-f-]{36}$/i.test(current.id)) {
       const now = new Date().toISOString();
@@ -993,14 +1149,28 @@ export function DrawingStudioPage() {
     void storeWork(copy, `已经另存为“${copy.title}”，接下来的编辑会写入这个副本。`, true);
   };
 
-  const openSavedWork = async (workId: string) => {
+  const openSavedWork = async (workId: string, asCopy = false) => {
+    if (workSaving) return;
+    setWorkSaving(true);
     try {
       const work = await loadDrawingWork(workId);
+      if (work.locked && !asCopy) {
+        setWorkActionError("");
+        setWorkAction({ kind: "locked", id: work.id, title: work.document.title });
+        return;
+      }
       const opened = {
         ...cloneDocument(work.document),
         presets: mergeDrawingPresets(documentRef.current.presets, work.document.presets),
         updatedAt: new Date().toISOString(),
       };
+      if (asCopy) {
+        opened.id = crypto.randomUUID();
+        opened.title = `${opened.title} 副本`.slice(0, 80);
+        opened.createdAt = opened.updatedAt;
+        const summary = await saveDrawingWork(opened, work.thumbnailDataUrl);
+        setSavedWorks((current) => [summary, ...current]);
+      }
       setDocument(opened);
       setViewport(opened.viewport);
       setHistory([makeHistoryNode("打开已保存作品", opened.elements, opened.presets)]);
@@ -1009,10 +1179,47 @@ export function DrawingStudioPage() {
       setTitleDraft(opened.title);
       setAuthorDraft(opened.author);
       setDrawer(null);
+      setWorkAction(null);
       setMessage(`已经继续编辑“${opened.title}”。`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "这幅作品暂时打不开。");
+      setWorkActionError(error instanceof Error ? error.message : "这幅作品暂时打不开。");
+    } finally {
+      setWorkSaving(false);
     }
+  };
+
+  const changeWorkMetadata = async (workId: string, changes: { title?: string; locked?: boolean }) => {
+    if (workSaving) return;
+    setWorkSaving(true);
+    setWorkActionError("");
+    try {
+      const summary = await updateDrawingWork(workId, changes);
+      setSavedWorks((current) => current.map((work) => work.id === workId ? summary : work));
+      if (changes.title && documentRef.current.id === workId) {
+        setDocument((current) => ({ ...current, title: summary.title }));
+        setTitleDraft(summary.title);
+      }
+      setWorkAction(null);
+      setMessage(changes.title ? "作品已重命名。" : summary.locked ? "作品已锁定，原作受到保护。" : "作品已解锁。");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "作品暂时无法更新。";
+      setMessage(message); setWorkActionError(message);
+    } finally { setWorkSaving(false); }
+  };
+
+  const removeSavedWork = async (workId: string) => {
+    if (workSaving) return;
+    setWorkSaving(true); setWorkActionError("");
+    try {
+      await deleteDrawingWork(workId);
+      setSavedWorks((current) => current.filter((work) => work.id !== workId));
+      setWorkAction(null);
+      setMessage("作品已移入本机回收目录，当前画布仍然保留。");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "作品暂时无法删除。";
+      setMessage(message); setWorkActionError(message);
+    } finally { setWorkSaving(false); }
   };
 
   const copySavedWork = async (workId: string) => {
@@ -1151,7 +1358,7 @@ export function DrawingStudioPage() {
         data-element-id={interactive ? element.id : undefined}
         transform={`translate(${element.x} ${element.y}) rotate(${element.rotation} ${element.width / 2} ${element.height / 2}) scale(${element.width / 100} ${element.height / 100})`}
       >
-        {element.type === "shape" && <ShapeArt kind={element.shape} fill={element.fill} stroke={element.stroke} strokeWidth={element.strokeWidth} />}
+        {element.type === "shape" && <ShapeArt kind={element.shape} fill={element.fill} stroke={element.stroke} strokeWidth={element.strokeWidth} fixedStroke={SHAPE_OPTIONS.find((option) => option.id === element.shape)?.group !== "装饰形状"} />}
         {element.type === "solid" && (
           <SolidArt
             kind={element.solid}
@@ -1179,6 +1386,52 @@ export function DrawingStudioPage() {
   const chooseGroup = (group: string) => {
     if (tool === "shape" || tool === "solid" || tool === "sticker") {
       setActiveGroups((current) => ({ ...current, [tool]: group }));
+      setFreeShape(null);
+    }
+  };
+  const focusMenu = (selector: string) => {
+    const menu = toolboxRef.current?.querySelector<HTMLElement>(selector);
+    const active = menu?.querySelector<HTMLElement>("button.is-active:not(:disabled)");
+    const first = menu?.querySelector<HTMLElement>("button:not(:disabled), textarea, input:not(:disabled), select");
+    if (active || first) {
+      (active ?? first)?.focus({ preventScroll: true });
+      (active ?? first)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+    } else focusCanvas();
+  };
+  const handleToolboxKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.nativeEvent.isComposing) return;
+    const target = event.target as HTMLElement;
+    if (target.closest("input, textarea, select, [contenteditable='true']")) return;
+    const menu = target.closest<HTMLElement>("[data-drawing-nav]");
+    const button = target.closest<HTMLButtonElement>("button");
+    if (!menu || !button) return;
+    const level = menu.dataset.drawingNav;
+    const selector = level === "presets" ? ".drawing-preset-insert" : "button";
+    const buttons = Array.from(menu.querySelectorAll<HTMLButtonElement>(selector)).filter((item) => !item.disabled);
+    const index = buttons.indexOf(button);
+    if (index < 0) return;
+    if (arrowMovement(event.key, false)) {
+      event.preventDefault(); event.stopPropagation();
+      const next = buttons[spatialNavigationIndex(buttons.map((item) => item.getBoundingClientRect()), index, event.key)];
+      if (!next || next === button) return;
+      if (level === "tools" || level === "groups" || level === "controls") flushSync(() => next.click());
+      next.focus({ preventScroll: true });
+      next.scrollIntoView({ block: "nearest", inline: "nearest" });
+    } else if (event.key === "Enter" && (level === "tools" || level === "groups")) {
+      event.preventDefault(); event.stopPropagation();
+      if (event.repeat) return;
+      if (!button.classList.contains("is-active")) flushSync(() => button.click());
+      if (level === "groups") focusMenu("[data-drawing-nav='assets']");
+      else if (toolboxRef.current?.querySelector("[data-drawing-nav='groups']")) focusMenu("[data-drawing-nav='groups']");
+      else if (toolboxRef.current?.querySelector("[data-drawing-nav='presets']")) focusMenu("[data-drawing-nav='presets']");
+      else focusMenu(".drawing-tool-settings, .drawing-selection-tools");
+    } else if (event.key === "Enter" && event.repeat) {
+      event.preventDefault(); event.stopPropagation();
+    } else if (event.key === "Escape") {
+      event.preventDefault(); event.stopPropagation();
+      if (level === "assets") focusMenu("[data-drawing-nav='groups']");
+      else if (level !== "tools") focusMenu("[data-drawing-nav='tools']");
+      else focusCanvas();
     }
   };
   const gridSize = Math.max(10, 26 * viewport.zoom);
@@ -1189,7 +1442,7 @@ export function DrawingStudioPage() {
   const selectionHasOneLayer = selectedLayerMinimum === selectedLayerMaximum;
 
   return (
-    <div className="drawing-page">
+    <div className="drawing-page" data-skip-startup-greeting>
       <div className="drawing-stars" aria-hidden="true" />
       <header className="drawing-topbar">
         <a className="drawing-home" href="/" aria-label="返回学习岛首页"><span aria-hidden="true">←</span><strong>画图</strong></a>
@@ -1245,6 +1498,10 @@ export function DrawingStudioPage() {
           <svg
             ref={canvasRef}
             className="drawing-canvas"
+            tabIndex={0}
+            onKeyDown={handleCanvasKeyDown}
+            onKeyUp={(event) => { if (arrowMovement(event.key, false) || ["+", "=", "-", "_", "Add", "Subtract"].includes(event.key)) finishKeyboardEdit(); }}
+            onBlur={finishKeyboardEdit}
             aria-label={`画布中有 ${document.elements.length} 个图元`}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
@@ -1253,6 +1510,11 @@ export function DrawingStudioPage() {
           >
             <g transform={`translate(${viewport.x} ${viewport.y}) scale(${viewport.zoom})`}>
               {sortDrawingElements(document.elements).map((element) => renderElement(element))}
+              {freeDraft && (
+                <g className="drawing-free-draft" pointerEvents="none" transform={`translate(${freeDraft.bounds.x} ${freeDraft.bounds.y}) scale(${freeDraft.bounds.width / 100} ${freeDraft.bounds.height / 100})`}>
+                  <ShapeArt kind={freeDraft.kind} strokeWidth={3.5} fixedStroke />
+                </g>
+              )}
               {selectedBounds && (
                 <rect
                   className="drawing-selection-box"
@@ -1299,20 +1561,21 @@ export function DrawingStudioPage() {
           <p className="drawing-live-status" aria-live="polite">{message}</p>
         </section>
 
-        <aside className={`drawing-toolbox ${panelOpen ? "is-open" : "is-closed"}`} aria-label="绘图工具区">
+        <aside ref={toolboxRef} onKeyDown={handleToolboxKeyDown} className={`drawing-toolbox ${panelOpen ? "is-open" : "is-closed"}`} aria-label="绘图工具区">
           <button className="drawing-toolbox-toggle" type="button" onClick={() => setPanelOpen((current) => !current)} aria-expanded={panelOpen}>
             <span aria-hidden="true">{panelOpen ? "→" : "←"}</span>{panelOpen ? "收起工具" : "打开工具"}
           </button>
           {panelOpen && (
             <>
               <div className="drawing-toolbox-heading"><span>创作工具</span><strong>{TOOL_OPTIONS.find((option) => option.id === tool)?.label}</strong></div>
-              <div className="drawing-tool-level-one" aria-label="一级工具">
+              <div className="drawing-tool-level-one" data-drawing-nav="tools" aria-label="一级工具">
                 {TOOL_OPTIONS.map((option) => (
                   <SpokenActionButton
                     speech={option.speech}
                     className={tool === option.id ? "is-active" : ""}
                     key={option.id}
-                    onClick={() => chooseTool(option.id)}
+                    data-tool={option.id}
+                    onClick={(event) => { chooseTool(option.id); event.currentTarget.focus({ preventScroll: true }); }}
                     aria-pressed={tool === option.id}
                     aria-keyshortcuts={option.shortcut}
                     aria-label={option.shortcut ? `${option.label}，快捷键 ${option.shortcut}` : option.label}
@@ -1327,21 +1590,22 @@ export function DrawingStudioPage() {
               {catalog.length > 0 && (
                 <div className="drawing-catalog">
                   <div className="drawing-level-label"><span>二级</span><strong>选择类别</strong></div>
-                  <div className="drawing-group-tabs">
+                  <div className="drawing-group-tabs" data-drawing-nav="groups">
                     {groups.map((group) => (
                       <SpokenActionButton
-                        speech={GROUP_SPEECH[group] ?? { zh: group, en: group }}
+                        speech={GROUP_SPEECH[group] ?? { zh: group, en: group === "自由形状" ? "Free shapes" : group }}
                         className={activeGroup === group ? "is-active" : ""}
-                        onClick={() => chooseGroup(group)}
+                        onClick={(event) => { chooseGroup(group); event.currentTarget.focus({ preventScroll: true }); }}
                         key={group}
                         aria-pressed={activeGroup === group}
                       >{group}</SpokenActionButton>
                     ))}
                   </div>
                   <div className="drawing-level-label"><span>三级</span><strong>放到画布</strong></div>
-                  <div className="drawing-catalog-grid">
+                  {activeGroup === "自由形状" && <p className="drawing-tool-tip">先选形状，再在白板上拖一个框。圆形随框变成椭圆；按 Esc 取消。</p>}
+                  <div className="drawing-catalog-grid" data-drawing-nav="assets">
                     {filteredCatalog.map((option) => (
-                      <button type="button" key={option.id} onClick={() => addElement(tool as "shape" | "solid" | "sticker", option.id)}>
+                      <button type="button" key={option.id} aria-pressed={freeShape === option.id} className={freeShape === option.id ? "is-active" : ""} onClick={() => addElement(tool as "shape" | "solid" | "sticker", option.id)}>
                         <CatalogPreview type={tool as "shape" | "solid" | "sticker"} id={option.id} />
                         <span>{option.label}</span>
                       </button>
@@ -1354,7 +1618,7 @@ export function DrawingStudioPage() {
                 <div className="drawing-preset-library">
                   <div className="drawing-level-label"><span>二级</span><strong>我的预制件</strong></div>
                   {document.presets.length > 0 ? (
-                    <div className="drawing-preset-grid">
+                    <div className="drawing-preset-grid" data-drawing-nav="presets">
                       {document.presets.map((preset) => (
                         <article className={presetRename?.id === preset.id ? "is-renaming" : ""} key={preset.id}>
                           <button className="drawing-preset-insert" type="button" onClick={() => addPreset(preset)} aria-label={`放入${preset.name}`}>
@@ -1412,7 +1676,7 @@ export function DrawingStudioPage() {
                     <textarea maxLength={200} rows={3} value={textDraft} onChange={(event) => setTextDraft(event.target.value)} />
                   </label>
                   <div className="drawing-level-label"><span>三级</span><strong>排列方式</strong></div>
-                  <div className="drawing-segmented">
+                  <div className="drawing-segmented" data-drawing-nav="controls">
                     <button type="button" className={textLayout === "horizontal" ? "is-active" : ""} aria-pressed={textLayout === "horizontal"} onClick={() => setTextLayout("horizontal")}>横排</button>
                     <button type="button" className={textLayout === "vertical" ? "is-active" : ""} aria-pressed={textLayout === "vertical"} onClick={() => setTextLayout("vertical")}>竖排</button>
                   </div>
@@ -1425,7 +1689,7 @@ export function DrawingStudioPage() {
               {tool === "brush" && (
                 <div className="drawing-tool-settings">
                   <div className="drawing-level-label"><span>二级</span><strong>线条形式</strong></div>
-                  <div className="drawing-segmented">
+                  <div className="drawing-segmented" data-drawing-nav="controls">
                     {(["smooth", "sharp", "dashed"] as LineStyle[]).map((style) => (
                       <button type="button" className={lineStyle === style ? "is-active" : ""} onClick={() => setLineStyle(style)} key={style} aria-pressed={lineStyle === style}>
                         {style === "smooth" ? "渐变" : style === "sharp" ? "锐利" : "虚线"}
@@ -1470,7 +1734,24 @@ export function DrawingStudioPage() {
                         <button type="button" onClick={copySelected}>复制</button>
                         <button className="is-gentle-danger" type="button" onClick={deleteSelected}>擦掉</button>
                       </div>
-                      <button className="drawing-make-preset" type="button" disabled={selectedElements.length < 2} onClick={saveSelectionAsPreset}>打包为预制件</button>
+                      <button className="drawing-make-preset" type="button" disabled={selectedElements.length < 2 || Boolean(matchingPreset)} onClick={saveSelectionAsPreset}>{matchingPreset ? "已存为预制件" : "打包为预制件"}</button>
+                      {selectedElement?.type === "shape" && (
+                        <div className="drawing-tool-settings">
+                          {(["width", "height"] as const).map((axis) => (
+                            <label className="drawing-range" key={axis}>
+                              <span>{axis === "width" ? "宽度" : "高度"} <strong>{Math.round(selectedElement[axis])}</strong></span>
+                              <input type="number" min="4" max="10000" aria-label={axis === "width" ? "形状宽度" : "形状高度"} key={`${selectedElement.id}-${selectedElement[axis]}`} defaultValue={Math.round(selectedElement[axis])}
+                                onBlur={(event) => {
+                                  const size = Number(event.currentTarget.value);
+                                  if (!Number.isFinite(size) || size < 4 || size > 10000) { event.currentTarget.value = String(Math.round(selectedElement[axis])); return; }
+                                  if (size === selectedElement[axis]) return;
+                                  updateSelection("调整形状宽高", (element) => ({ ...element, [axis]: size, [axis === "width" ? "x" : "y"]: element[axis === "width" ? "x" : "y"] + (element[axis] - size) / 2 }));
+                                }}
+                                onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }} />
+                            </label>
+                          ))}
+                        </div>
+                      )}
                       <div className="drawing-layer-controls">
                         <div className="drawing-level-label"><span>三级</span><strong>渲染层级</strong></div>
                         <label className="drawing-layer-input">
@@ -1553,13 +1834,17 @@ export function DrawingStudioPage() {
                       </div>
                       <div className="drawing-work-summary">
                         <strong>{work.title}</strong>
+                        <small>{work.locked ? "🔒 已锁定" : "可编辑"}</small>
                         <small>作者：{work.author || "未填写"}</small>
                         <small>创作于 {formatCreationTime(work.createdAt)}</small>
                         <small>{work.elementCount} 个图元</small>
                       </div>
                       <div className="drawing-work-actions">
-                        <button type="button" onClick={() => void openSavedWork(work.id)}>继续编辑</button>
+                        <button type="button" disabled={workSaving} onClick={() => void openSavedWork(work.id)}>继续编辑</button>
                         <button type="button" disabled={workSaving} onClick={() => void copySavedWork(work.id)}>复制作品</button>
+                        <button type="button" disabled={workSaving} onClick={() => { setWorkActionError(""); setWorkAction({ kind: "rename", id: work.id, title: work.title }); }}>重命名</button>
+                        <button type="button" disabled={workSaving} onClick={() => void changeWorkMetadata(work.id, { locked: !work.locked })}>{work.locked ? "解锁" : "锁定"}</button>
+                        <button type="button" disabled={workSaving || work.locked} title={work.locked ? "锁定作品不可删除" : undefined} onClick={() => { setWorkActionError(""); setWorkAction({ kind: "delete", id: work.id, title: work.title }); }}>删除</button>
                       </div>
                     </article>
                   ))}
@@ -1577,8 +1862,40 @@ export function DrawingStudioPage() {
           </section>
         </div>
       )}
+      {workAction && <WorkActionDialog
+        action={workAction} busy={workSaving} error={workActionError}
+        onClose={() => setWorkAction(null)}
+        onConfirm={(title) => {
+          if (workAction.kind === "rename") void changeWorkMetadata(workAction.id, { title });
+          else if (workAction.kind === "delete") void removeSavedWork(workAction.id);
+          else if (workAction.useCurrent) { setWorkAction(null); saveWorkAsCopy(); }
+          else void openSavedWork(workAction.id, true);
+        }}
+      />}
     </div>
   );
+}
+
+function WorkActionDialog({ action, busy, error, onClose, onConfirm }: {
+  action: { kind: "rename" | "locked" | "delete"; title: string };
+  busy: boolean; error: string; onClose: () => void; onConfirm: (title: string) => void;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  const [title, setTitle] = useState(action.title);
+  useEffect(() => { ref.current?.showModal(); }, []);
+  const heading = action.kind === "rename" ? "重命名作品" : action.kind === "locked" ? "此画布已经保存锁定" : "删除这幅作品？";
+  return <dialog ref={ref} className="drawing-work-dialog" aria-labelledby="drawing-work-dialog-title" onCancel={(event) => { event.preventDefault(); if (!busy) onClose(); }}>
+    <form onSubmit={(event) => { event.preventDefault(); if (!busy) onConfirm(title.trim()); }}>
+      <h2 id="drawing-work-dialog-title">{heading}</h2>
+      {action.kind === "rename" ? <label>作品名称<input autoFocus maxLength={80} value={title} onChange={(event) => setTitle(event.target.value)} /></label>
+        : <p>{action.kind === "locked" ? "可以创建副本继续编辑，原作会完整保留。" : `“${action.title}”将移入本机回收目录。`}</p>}
+      {error && <p role="alert">{error}</p>}
+      <div className="drawing-work-actions">
+        <button type="button" disabled={busy} onClick={onClose}>取消</button>
+        <button type="submit" disabled={busy || (action.kind === "rename" && !title.trim())}>{busy ? "正在处理…" : action.kind === "rename" ? "保存名字" : action.kind === "locked" ? "创建副本编辑" : "移入回收目录"}</button>
+      </div>
+    </form>
+  </dialog>;
 }
 
 function ColorPalette({
@@ -1594,7 +1911,7 @@ function ColorPalette({
 }) {
   return (
     <div className="drawing-color-picker">
-      <div className={`drawing-colors ${colors.length > BASIC_PALETTE.length ? "is-extended" : ""}`} aria-label="颜色选择">
+      <div className={`drawing-colors ${colors.length > BASIC_PALETTE.length ? "is-extended" : ""}`} data-drawing-nav="controls" aria-label="颜色选择">
         {colors.map((color) => (
           <button
             type="button"

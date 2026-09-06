@@ -11,8 +11,8 @@ const audioDirectory = fileURLToPath(new URL(
 
 test("drawing action speech uses concise direct translations with one asset per phrase", async () => {
   assert.equal(speechCatalog.schemaVersion, 1);
-  assert.equal(speechCatalog.actions.length, 39);
-  assert.equal(new Set(speechCatalog.actions.map((action) => action.id)).size, 39);
+  assert.equal(speechCatalog.actions.length, 41);
+  assert.equal(new Set(speechCatalog.actions.map((action) => action.id)).size, 41);
   assert.deepEqual(speechCatalog.actions.find((action) => action.id === "tool-select"), {
     id: "tool-select",
     zh: "选择",

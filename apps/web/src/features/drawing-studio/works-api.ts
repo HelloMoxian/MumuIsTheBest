@@ -1,6 +1,7 @@
 import { parseDrawingDocument, type DrawingDocument } from "./logic";
 
 export type DrawingWorkSummary = {
+  locked: boolean;
   id: string;
   title: string;
   author: string;
@@ -11,7 +12,8 @@ export type DrawingWorkSummary = {
 };
 
 export type DrawingWorkRecord = {
-  schemaVersion: 1;
+  schemaVersion: 2;
+  locked: boolean;
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -39,6 +41,7 @@ function parseSummary(value: unknown): DrawingWorkSummary {
   if (
     !isRecord(value)
     || typeof value.id !== "string"
+    || (value.locked !== undefined && typeof value.locked !== "boolean")
     || typeof value.title !== "string"
     || typeof value.author !== "string"
     || !isDateTime(value.createdAt)
@@ -49,6 +52,7 @@ function parseSummary(value: unknown): DrawingWorkSummary {
     || value.elementCount > 1_000
   ) throw new Error("作品清单的数据不完整。");
   return {
+    locked: value.locked === true,
     id: value.id,
     title: value.title,
     author: value.author,
@@ -81,13 +85,16 @@ export async function loadDrawingWork(workId: string): Promise<DrawingWorkRecord
   if (!isRecord(payload) || !isRecord(payload.work)) throw new Error("这幅作品的数据不完整。");
   const work = payload.work;
   if (
-    work.schemaVersion !== 1
+    (work.schemaVersion !== 1 && work.schemaVersion !== 2)
+    || (work.schemaVersion === 2 && typeof work.locked !== "boolean")
+    || (work.locked !== undefined && typeof work.locked !== "boolean")
     || typeof work.id !== "string"
     || !isDateTime(work.createdAt)
     || !isDateTime(work.updatedAt)
   ) throw new Error("这幅作品的数据不完整。");
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
+    locked: work.locked === true,
     id: work.id,
     createdAt: work.createdAt,
     updatedAt: work.updatedAt,
@@ -107,4 +114,16 @@ export async function saveDrawingWork(
   }));
   if (!isRecord(payload)) throw new Error("作品保存结果无法识别。");
   return parseSummary(payload.summary);
+}
+
+export async function updateDrawingWork(workId: string, changes: { title?: string; locked?: boolean }) {
+  const payload = await readResponse(await fetch(`/api/drawing-studio/works/${encodeURIComponent(workId)}`, {
+    method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(changes),
+  }));
+  if (!isRecord(payload)) throw new Error("作品更新结果无法识别。");
+  return parseSummary(payload.summary);
+}
+
+export async function deleteDrawingWork(workId: string) {
+  await readResponse(await fetch(`/api/drawing-studio/works/${encodeURIComponent(workId)}`, { method: "DELETE" }));
 }
