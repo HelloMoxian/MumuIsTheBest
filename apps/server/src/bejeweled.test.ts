@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import Fastify from "fastify";
-import { COLORS, canSwap, createGame, findMove, findRuns, playMove, type Color, type Game, type Special } from "./bejeweled-engine.js";
+import { BOARD_COLUMNS, BOARD_ROWS, BOARD_SIZE, COLORS, canSwap, createGame, findMove, findRuns, playMove, type Color, type Game, type Special } from "./bejeweled-engine.js";
 import { bejeweledStateSchema, registerBejeweledApi, type BejeweledState } from "./bejeweled.js";
 
 const fakeWallets = { knowledge: async (total: number) => ({ balance: total, updatedAt: new Date().toISOString() }), energy: async (total: number) => ({ balance: total, updatedAt: new Date().toISOString() }) };
@@ -13,13 +13,15 @@ function savedOnly(value: BejeweledState & { balances?: unknown }): BejeweledSta
 
 function fixture() {
   const game = createGame(143);
-  game.board = Array.from({ length: 64 }, (_, id) => ({
-    id, color: COLORS[(Math.floor(id / 8) * 2 + id % 8) % 7], special: "normal" as Special,
+  game.board = Array.from({ length: BOARD_SIZE }, (_, id) => ({
+    id, color: COLORS[(Math.floor(id / BOARD_COLUMNS) * 2 + id % BOARD_COLUMNS) % 7], special: "normal" as Special,
   }));
-  game.nextId = 64;
+  game.nextId = BOARD_SIZE;
   return game;
 }
+function cell(index: number) { return Math.floor(index / 8) * BOARD_COLUMNS + index % 8; }
 function set(game: Game, index: number, color: Color, special: Special = "normal") {
+  index = cell(index);
   game.board[index] = { id: index, color, special };
 }
 test("fresh boards are stable, deterministic, playable; invalid swaps cannot mutate input", () => {
@@ -29,7 +31,7 @@ test("fresh boards are stable, deterministic, playable; invalid swaps cannot mut
     assert.ok(findMove(game.board));
     assert.deepEqual(game, createGame(seed));
     const previous = structuredClone(game);
-    assert.equal(playMove(game, 7, 8), null);
+    assert.equal(playMove(game, 11, 12), null);
     assert.equal(playMove(game, -1, 0), null);
     assert.equal(playMove(game, 0, 0), null);
     assert.deepEqual(game, previous);
@@ -42,7 +44,7 @@ test("four/five/six straight matches create flame/cube/nova at the swapped slot"
     set(game, 2, "white");
     set(game, 10, "red");
     const before = structuredClone(game);
-    const result = playMove(game, 10, 2)!;
+    const result = playMove(game, cell(10), cell(2))!;
     assert.ok(result);
     assert.equal(result.frames[2].board[2]?.special, expected);
     assert.equal(result.frames[1].cleared.includes(2), false);
@@ -56,8 +58,8 @@ test("T and L intersections create star gems without double-counting the junctio
     for (const i of cells) set(game, i, "red");
     set(game, 18, "white");
     set(game, 10, "red");
-    const result = playMove(game, 10, 18)!;
-    assert.equal(result.frames[2].board[18]?.special, "star");
+    const result = playMove(game, cell(10), cell(18))!;
+    assert.equal(result.frames[2].board[cell(18)]?.special, "star");
     assert.equal(new Set(result.frames[1].cleared).size, result.frames[1].cleared.length);
   }
 });
@@ -67,11 +69,11 @@ test("special blasts clear their correct geometry and trigger another special", 
     set(game, 27, "red", special);
     set(game, 25, "purple");
     set(game, 26, "red"); set(game, 28, "white"); set(game, 20, "red");
-    const result = playMove(game, 20, 28)!;
+    const result = playMove(game, cell(20), cell(28))!;
     assert.ok(result);
     const cleared = new Set(result.frames[1].cleared);
-    for (let index = 0; index < 64; index++) {
-      const r = Math.floor(index / 8), c = index % 8;
+    for (let index = 0; index < BOARD_SIZE; index++) {
+      const r = Math.floor(index / BOARD_COLUMNS), c = index % BOARD_COLUMNS;
       const expected = special === "flame" ? Math.abs(r - 3) <= 1 && Math.abs(c - 3) <= 1
         : special === "star" ? r === 3 || c === 3 : Math.abs(r - 3) <= 1 || Math.abs(c - 3) <= 1;
       if (expected) assert.ok(cleared.has(index), special + " should clear " + index);
@@ -81,11 +83,11 @@ test("special blasts clear their correct geometry and trigger another special", 
   set(game, 27, "red", "flame"); set(game, 26, "red"); set(game, 28, "white"); set(game, 20, "red");
   set(game, 25, "purple");
   set(game, 35, "blue", "star");
-  const result = playMove(game, 20, 28)!;
+  const result = playMove(game, cell(20), cell(28))!;
   assert.ok(result.frames[1].cleared.includes(3));
-  assert.ok(result.frames[1].cleared.includes(39));
+  assert.ok(result.frames[1].cleared.includes(cell(39)));
 });
-test("cube swaps clear a color, two cubes clear all 64, colors sum exactly to removed gems", () => {
+test("cube swaps clear a color, two cubes clear all 120, colors sum exactly to removed gems", () => {
   const game = fixture();
   set(game, 0, "red", "cube");
   const target = game.board[1]!.color;
@@ -95,31 +97,33 @@ test("cube swaps clear a color, two cubes clear all 64, colors sum exactly to re
   assert.equal(Object.values(result.counts).reduce((a, b) => a + b, 0), result.cleared);
   set(game, 1, "white", "cube");
   const double = playMove(game, 0, 1)!;
-  assert.equal(double.frames[1].cleared.length, 64);
+  assert.equal(double.frames[1].cleared.length, BOARD_SIZE);
 });
-test("long runs settle, preserve IDs, score, colors, levels; classic eventually ends and endless resumes", () => {
-  for (const mode of ["endless", "classic"] as const) {
-    let game = createGame(741, mode);
+test("long runs settle, preserve IDs, score, colors, levels; both board sizes handle dead boards safely", () => {
+  for (const [columns, rows] of [[8, 8], [BOARD_COLUMNS, BOARD_ROWS]]) for (const mode of ["endless", "classic"] as const) {
+    let game = createGame(741, mode, columns, rows);
     let total = 0, points = 0;
     let shuffles = 0;
     for (let i = 0; i < 400; i++) {
-      const move = findMove(game.board);
+      const move = findMove(game.board, columns, rows);
       if (!move) { assert.equal(mode, "classic"); assert.equal(game.status, "finished"); break; }
-      assert.ok(canSwap(game.board, ...move));
+      assert.ok(canSwap(game.board, ...move, columns, rows));
       const result = playMove(game, ...move)!;
       assert.ok(result);
       total += result.cleared; points += result.points; game = result.game;
       shuffles += Number(result.shuffled);
-      assert.equal(findRuns(game.board).length, 0);
-      assert.equal(game.board.length, 64);
-      assert.equal(new Set(game.board.map(gem => gem!.id)).size, 64);
+      assert.equal(findRuns(game.board, columns, rows).length, 0);
+      assert.equal(game.board.length, columns * rows);
+      assert.equal(new Set(game.board.map(gem => gem!.id)).size, columns * rows);
       assert.equal(game.cleared, total);
       assert.equal(game.score, points);
       assert.equal(game.level, 1 + Math.floor(total / 100));
       assert.equal(Object.values(result.counts).reduce((a, b) => a + b, 0), result.cleared);
     }
-    if (mode === "classic") assert.equal(game.status, "finished");
-    else { assert.equal(game.status, "playing"); assert.ok(shuffles > 0); }
+    if (columns === 8) {
+      if (mode === "classic") assert.equal(game.status, "finished");
+      else { assert.equal(game.status, "playing"); assert.ok(shuffles > 0); }
+    } else if (mode === "endless") assert.equal(game.status, "playing");
   }
 });
 async function setup() {
@@ -178,7 +182,7 @@ test("corrupt files, future schemas and mismatched totals are rejected without d
   const ctx = await setup();
   try {
     const initial = savedOnly((await ctx.app.inject({ method: "GET", url: "/api/games/bejeweled" })).json());
-    for (const invalid of ["{broken", JSON.stringify({ ...initial, schemaVersion: 3 }), JSON.stringify({ ...initial, totalCleared: 5 })]) {
+    for (const invalid of ["{broken", JSON.stringify({ ...initial, schemaVersion: 4 }), JSON.stringify({ ...initial, totalCleared: 5 })]) {
       await writeFile(ctx.path, invalid);
       const read = await ctx.app.inject({ method: "GET", url: "/api/games/bejeweled" });
       assert.equal(read.statusCode, 503);

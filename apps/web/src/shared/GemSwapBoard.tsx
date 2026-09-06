@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
-import type { Board, Gem, Frame } from "../../../server/src/bejeweled-engine";
+import { BOARD_COLUMNS, BOARD_ROWS, BOARD_SIZE, type Board, type Gem, type Frame } from "../../../server/src/bejeweled-engine";
 import { motionKeyframes, planGemMotion } from "../features/bejeweled/motion";
 import { BejeweledEffects } from "../features/bejeweled/BejeweledEffects";
 
@@ -32,7 +32,7 @@ export function GemSwapBoard({ board, selected, hint, cleared, created, disabled
     const motions = planGemMotion(previous.current, board, frame?.phase);
     previous.current = board;
     if (!root.current || stopped || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const size = root.current.clientWidth / 8;
+    const size = root.current.clientWidth / BOARD_COLUMNS;
     const animations: Animation[] = [];
     motions.forEach(motion => {
       const node = root.current?.querySelector<HTMLElement>('[data-index="' + motion.to + '"] .bj-gem');
@@ -54,23 +54,23 @@ export function GemSwapBoard({ board, selected, hint, cleared, created, disabled
     ], { duration: 280, easing: "ease-out" });
     return () => animation.cancel();
   }, [rejected, stopped]);
-  return <div className="bj-board-scroll" aria-label="宝石棋盘，窄屏可在此横向滚动">
-    <div ref={root} className="bj-board" role="group" aria-label="8 行 8 列宝石棋盘，方向键移动，回车选中">
+  return <><div className="bj-board-scroll" aria-label="宝石棋盘，窄屏可在此横向滚动">
+    <div ref={root} className="bj-board" style={{ "--bj-columns": BOARD_COLUMNS } as CSSProperties} role="group" aria-label={BOARD_ROWS + " 行 " + BOARD_COLUMNS + " 列宝石棋盘，方向键移动，回车选中"}>
       {board.map((gem, index) => <button
         type="button" key={index} data-index={index} data-selected={selected === index}
-        data-hint={hint.includes(index)} data-clear={cleared.includes(index)} data-created={created.includes(index)}
+        data-dark={(Math.floor(index / BOARD_COLUMNS) + index % BOARD_COLUMNS) % 2 === 1} data-hint={hint.includes(index)} data-clear={cleared.includes(index)} data-created={created.includes(index)}
         style={{ "--burst-angle": (index * 137) % 360 + "deg" } as CSSProperties}
-        className="bj-cell" aria-label={"第 " + (Math.floor(index / 8) + 1) + " 行第 " + (index % 8 + 1) + " 列，" + (gem ? GEM_NAMES[gem.color] + SPECIAL_NAMES[gem.special] + "宝石" : "下落补位中")}
+        className="bj-cell" aria-label={"第 " + (Math.floor(index / BOARD_COLUMNS) + 1) + " 行第 " + (index % BOARD_COLUMNS + 1) + " 列，" + (gem ? GEM_NAMES[gem.color] + SPECIAL_NAMES[gem.special] + "宝石" : "下落补位中")}
         aria-pressed={selected === index} aria-disabled={disabled} tabIndex={focus === index ? 0 : -1}
         onFocus={() => setFocus(index)}
         onKeyDown={event => {
           if (!disabled && ["Enter", " ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) onInteract?.();
-          const offsets: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -8, ArrowDown: 8 };
+          const offsets: Record<string, number> = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -BOARD_COLUMNS, ArrowDown: BOARD_COLUMNS };
           const offset = offsets[event.key];
           if (offset !== undefined) {
             event.preventDefault();
             const next = index + offset;
-            if (next < 0 || next > 63 || (Math.abs(offset) === 1 && Math.floor(next / 8) !== Math.floor(index / 8))) return;
+            if (next < 0 || next >= BOARD_SIZE || (Math.abs(offset) === 1 && Math.floor(next / BOARD_COLUMNS) !== Math.floor(index / BOARD_COLUMNS))) return;
             setFocus(next);
             root.current?.querySelector<HTMLButtonElement>('[data-index="' + next + '"]')?.focus();
           }
@@ -92,8 +92,8 @@ export function GemSwapBoard({ board, selected, hint, cleared, created, disabled
           if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) return;
           suppressClick.current = true;
           const horizontal = Math.abs(dx) > Math.abs(dy);
-          const target = start.index + (horizontal ? Math.sign(dx) : Math.sign(dy) * 8);
-          if (target >= 0 && target < 64 && (!horizontal || Math.floor(target / 8) === Math.floor(start.index / 8))) onSwap(start.index, target);
+          const target = start.index + (horizontal ? Math.sign(dx) : Math.sign(dy) * BOARD_COLUMNS);
+          if (target >= 0 && target < BOARD_SIZE && (!horizontal || Math.floor(target / BOARD_COLUMNS) === Math.floor(start.index / BOARD_COLUMNS))) onSwap(start.index, target);
         }}
         onClick={() => {
           if (suppressClick.current) { suppressClick.current = false; return; }
@@ -104,5 +104,9 @@ export function GemSwapBoard({ board, selected, hint, cleared, created, disabled
       </button>)}
       <BejeweledEffects frame={frame} stopped={stopped} />
     </div>
-  </div>;
+  </div><nav className="bj-scroll-controls" aria-label="查看宽棋盘">
+    <button className="bj-button" type="button" onClick={() => root.current?.parentElement?.scrollBy({ left: -240, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })}>‹ 向左看</button>
+    <span>12 列宝石，左右查看</span>
+    <button className="bj-button" type="button" onClick={() => root.current?.parentElement?.scrollBy({ left: 240, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" })}>向右看 ›</button>
+  </nav></>;
 }

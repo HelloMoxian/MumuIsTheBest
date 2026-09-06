@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "generator": "macOS say + ffmpeg; English, 320ms pause, Chinese",
+  "voices": {
+    "en": "Samantha",
+    "zh": "Tingting"
+  },
+  "assets": [
+    {
+      "id": "nice-match",
+      "kind": "match",
+      "en": "Nice match!",
+      "zh": "宝石连起来啦，真棒！",
+      "file": "nice-match.mp3",
+      "duration": 3.27356,
+      "sha256": "7fae70b21ede41c950dbcfc285c2bd562e838d0b93f944328410352549c40d6f"
+    },
+    {
+      "id": "three-shine",
+      "kind": "match",
+      "en": "Three gems shine!",
+      "zh": "三颗宝石一起闪亮！",
+      "file": "three-shine.mp3",
+      "duration": 3.388345,
+      "sha256": "d6deaa883adbc37ced387ace760f99da72b6bb5a3896778653abd13927cda523"
+    },
+    {
+      "id": "good-eye",
+      "kind": "match",
+      "en": "Good eye!",
+      "zh": "观察得真仔细！",
+      "file": "good-eye.mp3",
+      "duration": 2.126032,
+      "sha256": "05715e87e4123fdca3a0d4e1514cbfd1f32b5fe2a793ff0e54de31baab58050d"
+    },
+    {
+      "id": "smart-swap",
+      "kind": "match",
+      "en": "Smart swap!",
+      "zh": "这一步交换真巧妙！",
+      "file": "smart-swap.mp3",
+      "duration": 3.08458,
+      "sha256": "c19965e3aec5c032df33955884df5d28c53a23a0bc0990c620724a5e43bae7de"
+    },
+    {
+      "id": "keep-exploring",
+      "kind": "match",
+      "en": "Keep exploring!",
+      "zh": "继续寻找闪亮的宝石吧！",
+      "file": "keep-exploring.mp3",
+      "duration": 3.539184,
+      "sha256": "59d9ee4bfb8aa4cc7c9f4106dca18308c884ca30eee118907fb2dbce07cf59cc"
+    },
+    {
+      "id": "well-done",
+      "kind": "match",
+      "en": "Well done!",
+      "zh": "又找到一组宝石，做得好！",
+      "file": "well-done.mp3",
+      "duration": 3.62254,
+      "sha256": "e8f0a71f5550637a01fce839898004e758360e2639184a1cfb042fcbee606cb6"
+    },
+    {
+      "id": "lovely-colors",
+      "kind": "match",
+      "en": "Lovely colors!",
+      "zh": "漂亮的颜色连在一起啦！",
+      "file": "lovely-colors.mp3",
+      "duration": 3.555374,
+      "sha256": "d8a473c0ef94569b6fc9879d1646d2a3181bac8e714db0c2c30b303e0a7d8589"
+    },
+    {
+      "id": "take-your-time",
+      "kind": "match",
+      "en": "Take your time!",
+      "zh": "慢慢观察，每一步都有发现！",
+      "file": "take-your-time.mp3",
+      "duration": 3.98059,
+      "sha256": "8950d65b6faf6a26aca7b1b65887620a4b428bcb70e4fb57e45e4d3d75d01a72"
+    },
+    {
+      "id": "chain-reaction",
+      "kind": "cascade",
+      "en": "A chain reaction!",
+      "zh": "连锁消除，接连闪亮！",
+      "file": "chain-reaction.mp3",
+      "duration": 3.816009,
+      "sha256": "98187417f522f40c9f3a59e9e648f32aaeac325c6c523db34e12ce3b55f6a386"
+    },
+    {
+      "id": "keep-sparkling",
+      "kind": "cascade",
+      "en": "Keep sparkling!",
+      "zh": "宝石接着亮起来啦！",
+      "file": "keep-sparkling.mp3",
+      "duration": 2.999909,
+      "sha256": "fd0e50287abf11b85253e95912e23112a786a2ff89efafcb9fa447931fe99daf"
+    },
+    {
+      "id": "great-combo",
+      "kind": "cascade",
+      "en": "Great combo!",
+      "zh": "连得真漂亮！",
+      "file": "great-combo.mp3",
+      "duration": 2.266349,
+      "sha256": "4948524fd44c10aef73f4ca458e3f19f72e748cfe39520dc1635f23c168356f1"
+    },
+    {
+      "id": "more-together",
+      "kind": "cascade",
+      "en": "More gems together!",
+      "zh": "更多宝石连在一起啦！",
+      "file": "more-together.mp3",
+      "duration": 3.424172,
+      "sha256": "3cc74d132391b62de3ccdfe83ed639e546088c00250326685ad20716465cba0f"
+    },
+    {
+      "id": "flame-gem",
+      "kind": "flame",
+      "en": "A flame gem!",
+      "zh": "火焰宝石，亮闪闪！",
+      "file": "flame-gem.mp3",
+      "duration": 3.3,
+      "sha256": "470dabf633a86b02a1881272123e3afbe266bbb22dd35307df3450322186bc30"
+    },
+    {
+      "id": "star-gem",
+      "kind": "star",
+      "en": "A shining star!",
+      "zh": "星星宝石，一起闪亮！",
+      "file": "star-gem.mp3",
+      "duration": 3.711519,
+      "sha256": "3639103dddfe69623127cfce7eca8b5d86d5ea71749118b6a9bcc32c16f46f89"
+    },
+    {
+      "id": "rainbow-power",
+      "kind": "cube",
+      "en": "Rainbow power!",
+      "zh": "彩虹能量，宝石大集合！",
+      "file": "rainbow-power.mp3",
+      "duration": 3.701315,
+      "sha256": "1f14109d3ec3db646514dea388d940ccbabb288c90a73b0e41996197a49d4a36"
+    },
+    {
+      "id": "supernova",
+      "kind": "nova",
+      "en": "A bright new star!",
+      "zh": "新星宝石，闪亮登场！",
+      "file": "supernova.mp3",
+      "duration": 3.860363,
+      "sha256": "14bc7371407a3afc6514d5777a8392a11b667098820bd3fe4407ee2b5c435231"
+    }
+  ]
+}

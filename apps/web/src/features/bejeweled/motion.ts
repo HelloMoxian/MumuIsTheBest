@@ -1,29 +1,29 @@
-import type { Board, Frame } from "../../../../server/src/bejeweled-engine";
+import { BOARD_COLUMNS, type Board, type Frame } from "../../../../server/src/bejeweled-engine";
 
 export const SWAP_MS = 320;
 export const REJECT_SHAKE_MS = 340;
 export type GemMotion = { id: number; from: number; to: number; fresh: boolean; delay: number; duration: number };
 export function planGemMotion(before: Board, after: Board, phase?: Frame["phase"]): GemMotion[] {
   const positions = new Map(before.flatMap((gem, index) => gem ? [[gem.id, index] as const] : []));
-  const newCounts = Array.from({ length: 8 }, (_, col) => after.filter((gem, index) => index % 8 === col && gem && !positions.has(gem.id)).length);
+  const newCounts = Array.from({ length: BOARD_COLUMNS }, (_, col) => after.filter((gem, index) => index % BOARD_COLUMNS === col && gem && !positions.has(gem.id)).length);
   return after.flatMap((gem, to) => {
     if (!gem) return [];
     const old = positions.get(gem.id);
     if (old === to) return [];
     const fresh = old === undefined;
     // New gems start stacked above their own column, preserving their order.
-    const from = old ?? (to - newCounts[to % 8] * 8);
-    const rows = Math.abs(Math.floor(to / 8) - Math.floor(from / 8));
+    const from = old ?? (to - newCounts[to % BOARD_COLUMNS] * BOARD_COLUMNS);
+    const rows = Math.abs(Math.floor(to / BOARD_COLUMNS) - Math.floor(from / BOARD_COLUMNS));
     return [{ id: gem.id, from, to, fresh,
-      delay: phase === "swap" ? 0 : (to % 8) * 9,
+      delay: phase === "swap" ? 0 : Math.min(63, (to % BOARD_COLUMNS) * 6),
       duration: phase === "swap" ? SWAP_MS : Math.min(620, 300 + Math.sqrt(rows) * 105),
     }];
   });
 }
 export function motionKeyframes(motion: GemMotion, size: number, swapping: boolean): Keyframe[] {
-  const col = (index: number) => ((index % 8) + 8) % 8;
+  const col = (index: number) => ((index % BOARD_COLUMNS) + BOARD_COLUMNS) % BOARD_COLUMNS;
   const dx = (col(motion.from) - col(motion.to)) * size;
-  const dy = (Math.floor(motion.from / 8) - Math.floor(motion.to / 8)) * size;
+  const dy = (Math.floor(motion.from / BOARD_COLUMNS) - Math.floor(motion.to / BOARD_COLUMNS)) * size;
   if (swapping) {
     return Array.from({ length: 13 }, (_, i) => {
       const t = i / 12, ease = t * t * (3 - 2 * t);

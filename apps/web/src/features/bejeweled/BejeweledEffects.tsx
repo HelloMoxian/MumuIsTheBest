@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { Frame } from "../../../../server/src/bejeweled-engine";
+import { BOARD_COLUMNS, BOARD_ROWS, type Frame } from "../../../../server/src/bejeweled-engine";
 import { createShards, GEM_LIGHT, shardAt } from "./particles";
 
 /** A bounded, local additive-light layer. It never owns gameplay or hit testing. */
@@ -16,7 +16,7 @@ export function BejeweledEffects({ frame, stopped }: { frame: Frame | null; stop
     if (!rect.width) return;
     const density = Math.min(window.devicePixelRatio || 1, 2);
     node.width = Math.round(rect.width * density); node.height = Math.round(rect.height * density);
-    const scale = node.width / 8;
+    const scale = node.width / BOARD_COLUMNS;
     const particles = createShards(frame);
     const blasts = (frame.blasts ?? []).slice(0, 12);
     let animation = 0;
@@ -39,13 +39,13 @@ export function BejeweledEffects({ frame, stopped }: { frame: Frame | null; stop
       context.setTransform(scale, 0, 0, scale, 0, 0);
       context.globalCompositeOperation = "lighter";
       for (const index of frame.cleared) {
-        const x = index % 8 + .5, y = Math.floor(index / 8) + .5;
+        const x = index % BOARD_COLUMNS + .5, y = Math.floor(index / BOARD_COLUMNS) + .5;
         const color = GEM_LIGHT[frame.board[index]?.color ?? "white"];
         if (t < .32) glow(x, y, .3 + t * 1.2, color, (1 - t / .32) * .42);
         if (t < .5) ring(x, y, .12 + t * 1.3, color, (1 - t / .5) * .6, .025);
       }
       for (const blast of blasts) {
-        const x = blast.source % 8 + .5, y = Math.floor(blast.source / 8) + .5;
+        const x = blast.source % BOARD_COLUMNS + .5, y = Math.floor(blast.source / BOARD_COLUMNS) + .5;
         const alpha = Math.max(0, 1 - t / .8);
         if (blast.kind === "flame" || blast.kind === "nova") {
           const color = blast.kind === "flame" ? "#ffc16a" : "#e0a2ff";
@@ -54,12 +54,12 @@ export function BejeweledEffects({ frame, stopped }: { frame: Frame | null; stop
           ring(x, y, .18 + t * 2.6, "#fff1cf", alpha * .7, .022);
         }
         if (blast.kind === "star" || blast.kind === "nova") {
-          const length = Math.min(8, t * 38), width = .015 + Math.sin(Math.min(1, t / .8) * Math.PI) * .15;
+          const length = Math.min(Math.max(BOARD_COLUMNS, BOARD_ROWS), t * 38), width = .015 + Math.sin(Math.min(1, t / .8) * Math.PI) * .15;
           context.globalAlpha = alpha;
           for (const offset of blast.kind === "nova" ? [-1, 0, 1] : [0]) {
             context.strokeStyle = "#65dfff"; context.lineWidth = width * 2.4;
-            context.beginPath(); context.moveTo(Math.max(0, x - length), y + offset); context.lineTo(Math.min(8, x + length), y + offset);
-            context.moveTo(x + offset, Math.max(0, y - length)); context.lineTo(x + offset, Math.min(8, y + length)); context.stroke();
+            context.beginPath(); context.moveTo(Math.max(0, x - length), y + offset); context.lineTo(Math.min(BOARD_COLUMNS, x + length), y + offset);
+            context.moveTo(x + offset, Math.max(0, y - length)); context.lineTo(x + offset, Math.min(BOARD_ROWS, y + length)); context.stroke();
             context.strokeStyle = "#f3fcff"; context.lineWidth = width * .4; context.stroke();
           }
         }
@@ -67,7 +67,7 @@ export function BejeweledEffects({ frame, stopped }: { frame: Frame | null; stop
           ring(x, y, .3 + t * .9, "#c8a0ff", alpha, .045);
           // Fixed zigzags travel outward; no random per-frame flicker.
           for (const target of blast.targets.slice(0, 24)) {
-            const ex = target % 8 + .5, ey = Math.floor(target / 8) + .5;
+            const ex = target % BOARD_COLUMNS + .5, ey = Math.floor(target / BOARD_COLUMNS) + .5;
             const grow = Math.min(1, t * 6), dx = (ex - x) * grow, dy = (ey - y) * grow;
             context.globalAlpha = alpha * .8; context.strokeStyle = GEM_LIGHT[frame.board[target]?.color ?? "purple"]; context.lineWidth = .065;
             context.beginPath(); context.moveTo(x, y);

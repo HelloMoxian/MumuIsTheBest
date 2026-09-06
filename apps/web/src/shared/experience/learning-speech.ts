@@ -348,3 +348,18 @@ export function stopLearningSpeech() {
   browserTts.stop();
   setGlobalSpeechStatus("idle");
 }
+
+// Pausing a recorded pair preserves its exact position, including the language gap.
+export function pauseLearningSpeech() {
+  if (activeRecordedAudio) { activeRecordedAudio.audio.pause(); setGlobalSpeechStatus("idle"); }
+  else browserTts.pause();
+}
+export function resumeLearningSpeech() {
+  const active = activeRecordedAudio;
+  if (active) {
+    setGlobalSpeechStatus("speaking-zh");
+    void active.audio.play().catch(() => {
+      if (activeRecordedAudio === active) active.resolve({ status: "error" });
+    });
+  } else browserTts.resume();
+}

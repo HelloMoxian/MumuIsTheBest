@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "voices": {
+    "en": "Samantha",
+    "zh": "Tingting"
+  },
+  "speechRate": 165,
+  "pauseMs": 320,
+  "phrases": [
+    {
+      "id": "nice-match",
+      "kind": "match",
+      "en": "Nice match!",
+      "zh": "宝石连起来啦，真棒！"
+    },
+    {
+      "id": "three-shine",
+      "kind": "match",
+      "en": "Three gems shine!",
+      "zh": "三颗宝石一起闪亮！"
+    },
+    {
+      "id": "good-eye",
+      "kind": "match",
+      "en": "Good eye!",
+      "zh": "观察得真仔细！"
+    },
+    {
+      "id": "smart-swap",
+      "kind": "match",
+      "en": "Smart swap!",
+      "zh": "这一步交换真巧妙！"
+    },
+    {
+      "id": "keep-exploring",
+      "kind": "match",
+      "en": "Keep exploring!",
+      "zh": "继续寻找闪亮的宝石吧！"
+    },
+    {
+      "id": "well-done",
+      "kind": "match",
+      "en": "Well done!",
+      "zh": "又找到一组宝石，做得好！"
+    },
+    {
+      "id": "lovely-colors",
+      "kind": "match",
+      "en": "Lovely colors!",
+      "zh": "漂亮的颜色连在一起啦！"
+    },
+    {
+      "id": "take-your-time",
+      "kind": "match",
+      "en": "Take your time!",
+      "zh": "慢慢观察，每一步都有发现！"
+    },
+    {
+      "id": "chain-reaction",
+      "kind": "cascade",
+      "en": "A chain reaction!",
+      "zh": "连锁消除，接连闪亮！"
+    },
+    {
+      "id": "keep-sparkling",
+      "kind": "cascade",
+      "en": "Keep sparkling!",
+      "zh": "宝石接着亮起来啦！"
+    },
+    {
+      "id": "great-combo",
+      "kind": "cascade",
+      "en": "Great combo!",
+      "zh": "连得真漂亮！"
+    },
+    {
+      "id": "more-together",
+      "kind": "cascade",
+      "en": "More gems together!",
+      "zh": "更多宝石连在一起啦！"
+    },
+    {
+      "id": "flame-gem",
+      "kind": "flame",
+      "en": "A flame gem!",
+      "zh": "火焰宝石，亮闪闪！"
+    },
+    {
+      "id": "star-gem",
+      "kind": "star",
+      "en": "A shining star!",
+      "zh": "星星宝石，一起闪亮！"
+    },
+    {
+      "id": "rainbow-power",
+      "kind": "cube",
+      "en": "Rainbow power!",
+      "zh": "彩虹能量，宝石大集合！"
+    },
+    {
+      "id": "supernova",
+      "kind": "nova",
+      "en": "A bright new star!",
+      "zh": "新星宝石，闪亮登场！"
+    }
+  ]
+}

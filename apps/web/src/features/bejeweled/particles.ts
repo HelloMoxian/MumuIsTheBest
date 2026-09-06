@@ -1,4 +1,4 @@
-import type { Color, Frame } from "../../../../server/src/bejeweled-engine";
+import { BOARD_COLUMNS, type Color, type Frame } from "../../../../server/src/bejeweled-engine";
 
 export const GEM_LIGHT: Record<Color, string> = {
   red: "#ff5777", orange: "#ffad46", yellow: "#ffe985", green: "#68ffc0",
@@ -8,15 +8,16 @@ export type Shard = { x: number; y: number; vx: number; vy: number; radius: numb
 export function createShards(frame: Frame): Shard[] {
   const explosive = !!frame.blasts?.length;
   const particles: Shard[] = [];
-  for (const index of frame.cleared) {
+  for (const [order, index] of frame.cleared.entries()) {
     const color = GEM_LIGHT[frame.board[index]?.color ?? "white"];
-    const count = explosive ? 12 : 8;
+    const desired = explosive ? 12 : 8;
+    const count = Math.min(desired, Math.floor(768 / frame.cleared.length) + (order < 768 % frame.cleared.length ? 1 : 0));
     for (let i = 0; i < count; i++) {
       const seed = ((index + 1) * 0.6180339887 + i * 0.3819660113 + frame.cascade * 0.17) % 1;
       const angle = i / count * Math.PI * 2 + seed;
       const speed = (explosive ? 2.5 : 1.3) + seed * 3.2;
       particles.push({
-        x: index % 8 + .5, y: Math.floor(index / 8) + .5,
+        x: index % BOARD_COLUMNS + .5, y: Math.floor(index / BOARD_COLUMNS) + .5,
         vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 1.5,
         radius: .035 + seed * .06, spin: (seed - .5) * 12, phase: angle,
         life: explosive ? .42 + seed * .35 : .24 + seed * .20, color,

@@ -1,3 +1,6 @@
+export const BOARD_COLUMNS = 12;
+export const BOARD_ROWS = 10;
+export const BOARD_SIZE = BOARD_COLUMNS * BOARD_ROWS;
 export const COLORS = ["red", "orange", "yellow", "green", "blue", "purple", "white"] as const;
 export type Color = typeof COLORS[number];
 export type Special = "normal" | "flame" | "star" | "cube" | "nova";
@@ -6,6 +9,7 @@ export type Board = (Gem | null)[];
 export type Mode = "endless" | "classic";
 export type Counts = Record<Color, number>;
 export type Game = {
+  columns: number; rows: number;
   board: Board;
   seed: number;
   nextId: number;
@@ -37,19 +41,19 @@ function random(game: Game) {
 function gem(game: Game): Gem {
   return { id: game.nextId++, color: COLORS[Math.floor(random(game) * 7)], special: "normal" };
 }
-export function adjacent(a: number, b: number) {
-  return Number.isInteger(a) && Number.isInteger(b) && a >= 0 && a < 64 && b >= 0 && b < 64
-    && Math.abs(a % 8 - b % 8) + Math.abs(Math.floor(a / 8) - Math.floor(b / 8)) === 1;
+export function adjacent(a: number, b: number, columns = BOARD_COLUMNS, rows = BOARD_ROWS) {
+  return Number.isInteger(a) && Number.isInteger(b) && a >= 0 && a < columns * rows && b >= 0 && b < columns * rows
+    && Math.abs(a % columns - b % columns) + Math.abs(Math.floor(a / columns) - Math.floor(b / columns)) === 1;
 }
 type Run = { cells: number[]; horizontal: boolean };
-export function findRuns(board: Board): Run[] {
+export function findRuns(board: Board, columns = BOARD_COLUMNS, rows = BOARD_ROWS): Run[] {
   const runs: Run[] = [];
   for (const horizontal of [true, false]) {
-    for (let line = 0; line < 8; line++) {
+    for (let line = 0; line < (horizontal ? rows : columns); line++) {
       let cells: number[] = [];
-      for (let pos = 0; pos <= 8; pos++) {
-        const index = horizontal ? line * 8 + pos : pos * 8 + line;
-        const current = pos < 8 ? board[index] : null;
+      for (let pos = 0; pos <= (horizontal ? columns : rows); pos++) {
+        const index = horizontal ? line * columns + pos : pos * columns + line;
+        const current = pos < (horizontal ? columns : rows) ? board[index] : null;
         const first = board[cells[0]];
         if (current && current.special !== "cube" && first?.color === current.color) {
           cells.push(index);
@@ -62,44 +66,45 @@ export function findRuns(board: Board): Run[] {
   }
   return runs;
 }
-export function canSwap(board: Board, a: number, b: number): boolean {
-  if (!adjacent(a, b) || !board[a] || !board[b]) return false;
+export function canSwap(board: Board, a: number, b: number, columns = BOARD_COLUMNS, rows = BOARD_ROWS): boolean {
+  if (!adjacent(a, b, columns, rows) || !board[a] || !board[b]) return false;
   if (board[a]?.special === "cube" || board[b]?.special === "cube") return true;
   const next = [...board];
   [next[a], next[b]] = [next[b], next[a]];
-  return findRuns(next).some(run => run.cells.includes(a) || run.cells.includes(b));
+  return findRuns(next, columns, rows).some(run => run.cells.includes(a) || run.cells.includes(b));
 }
-export function findMove(board: Board): [number, number] | null {
-  for (let a = 0; a < 64; a++) {
-    for (const b of [a + 1, a + 8]) if (canSwap(board, a, b)) return [a, b];
+export function findMove(board: Board, columns = BOARD_COLUMNS, rows = BOARD_ROWS): [number, number] | null {
+  for (let a = 0; a < columns * rows; a++) {
+    for (const b of [a + 1, a + columns]) if (canSwap(board, a, b, columns, rows)) return [a, b];
   }
   return null;
 }
 function freshBoard(game: Game) {
+  const { columns, rows } = game;
   game.board = [];
-  for (let index = 0; index < 64; index++) {
+  for (let index = 0; index < columns * rows; index++) {
     let next = gem(game);
-    while ((index % 8 >= 2 && game.board[index - 1]?.color === next.color && game.board[index - 2]?.color === next.color)
-      || (index >= 16 && game.board[index - 8]?.color === next.color && game.board[index - 16]?.color === next.color)) {
+    while ((index % columns >= 2 && game.board[index - 1]?.color === next.color && game.board[index - 2]?.color === next.color)
+      || (index >= 2 * columns && game.board[index - columns]?.color === next.color && game.board[index - 2 * columns]?.color === next.color)) {
       next = gem(game);
     }
     game.board.push(next);
   }
 }
-export function createGame(seed: number, mode: Mode = "endless"): Game {
-  const game: Game = { board: [], seed: seed >>> 0, nextId: 1, mode, status: "playing", score: 0, cleared: 0, moves: 0, level: 1 };
-  do { freshBoard(game); } while (!findMove(game.board));
+export function createGame(seed: number, mode: Mode = "endless", columns = BOARD_COLUMNS, rows = BOARD_ROWS): Game {
+  const game: Game = { columns, rows, board: [], seed: seed >>> 0, nextId: 1, mode, status: "playing", score: 0, cleared: 0, moves: 0, level: 1 };
+  do { freshBoard(game); } while (!findMove(game.board, game.columns, game.rows));
   return game;
 }
 function shuffle(game: Game) {
   const original = [...game.board];
   for (let attempt = 0; attempt < 2048; attempt++) {
     game.board = [...original];
-    for (let i = 63; i > 0; i--) {
+    for (let i = game.board.length - 1; i > 0; i--) {
       const j = Math.floor(random(game) * (i + 1));
       [game.board[i], game.board[j]] = [game.board[j], game.board[i]];
     }
-    if (!findRuns(game.board).length && findMove(game.board)) return;
+    if (!findRuns(game.board, game.columns, game.rows).length && findMove(game.board, game.columns, game.rows)) return;
   }
   // Preserve every gem if an exceptionally constrained board cannot be rearranged.
   game.board = original;
@@ -135,8 +140,9 @@ function specialsFor(runs: Run[], board: Board, preferred: number[]) {
   return creations;
 }
 export function playMove(input: Game, a: number, b: number): MoveResult | null {
-  if (input.status !== "playing" || !canSwap(input.board, a, b)) return null;
+  if (input.status !== "playing" || !canSwap(input.board, a, b, input.columns, input.rows)) return null;
   const game = structuredClone(input);
+  const { columns, rows } = game;
   [game.board[a], game.board[b]] = [game.board[b], game.board[a]];
   const frames: Frame[] = [{ board: structuredClone(game.board), cleared: [], created: [], points: 0, cascade: 0, phase: "swap" }];
   const counts = emptyCounts();
@@ -148,7 +154,7 @@ export function playMove(input: Game, a: number, b: number): MoveResult | null {
   const right = game.board[b]!;
   if (left.special === "cube" || right.special === "cube") {
     if (left.special === "cube" && right.special === "cube") {
-      initial = new Set(Array.from({ length: 64 }, (_, i) => i));
+      initial = new Set(Array.from({ length: columns * rows }, (_, i) => i));
     } else {
       const color = left.special === "cube" ? right.color : left.color;
       initial.add(left.special === "cube" ? a : b);
@@ -156,7 +162,7 @@ export function playMove(input: Game, a: number, b: number): MoveResult | null {
     }
   }
   while (true) {
-    const runs = findRuns(game.board);
+    const runs = findRuns(game.board, game.columns, game.rows);
     if (!runs.length && !initial.size) break;
     if (++cascade > 128) throw new Error("Cascade limit reached");
     const creations = initial.size ? new Map<number, Special>() : specialsFor(runs, game.board, cascade === 1 ? [b, a] : []);
@@ -166,7 +172,7 @@ export function playMove(input: Game, a: number, b: number): MoveResult | null {
     const blasts: Blast[] = [];
     const cubeTriggers = new Map<number, Color>();
     const add = (i: number) => {
-      if (i < 0 || i >= 64 || !game.board[i]) return;
+      if (i < 0 || i >= columns * rows || !game.board[i]) return;
       if (!remove.has(i)) { remove.add(i); queued.push(i); }
     };
     for (let q = 0; q < queued.length; q++) {
@@ -175,8 +181,8 @@ export function playMove(input: Game, a: number, b: number): MoveResult | null {
       visited.add(index);
       const value = game.board[index];
       if (!value || value.special === "normal") continue;
-      const row = Math.floor(index / 8);
-      const col = index % 8;
+      const row = Math.floor(index / columns);
+      const col = index % columns;
       if (value.special === "cube") {
         // A cube struck by a blast clears the color of the triggering gem.
         const color = initial.has(index) ? null : cubeTriggers.get(index) ?? value.color;
@@ -185,9 +191,9 @@ export function playMove(input: Game, a: number, b: number): MoveResult | null {
         if (color) game.board.forEach((other, i) => { if (other?.color === color) add(i); });
       } else {
         const targets: number[] = [];
-        for (let i = 0; i < 64; i++) {
-          const r = Math.floor(i / 8);
-          const c = i % 8;
+        for (let i = 0; i < columns * rows; i++) {
+          const r = Math.floor(i / columns);
+          const c = i % columns;
           const hit = value.special === "flame" ? Math.abs(r - row) <= 1 && Math.abs(c - col) <= 1
             : value.special === "nova" ? Math.abs(r - row) <= 1 || Math.abs(c - col) <= 1
             : r === row || c === col;
@@ -226,9 +232,9 @@ export function playMove(input: Game, a: number, b: number): MoveResult | null {
       game.board[index] = special ? { ...value, special } : null;
     }
     frames.push({ board: structuredClone(game.board), cleared: [], created: [...creations.keys()], points: 0, cascade, phase: "vacate" });
-    for (let col = 0; col < 8; col++) {
-      const survivors = game.board.filter((value, i) => i % 8 === col && value !== null) as Gem[];
-      for (let row = 7; row >= 0; row--) game.board[row * 8 + col] = survivors.pop() ?? gem(game);
+    for (let col = 0; col < columns; col++) {
+      const survivors = game.board.filter((value, i) => i % columns === col && value !== null) as Gem[];
+      for (let row = rows - 1; row >= 0; row--) game.board[row * columns + col] = survivors.pop() ?? gem(game);
     }
     frames.push({ board: structuredClone(game.board), cleared: [], created: [], points: 0, cascade, phase: "fall" });
     initial = new Set();
@@ -238,9 +244,25 @@ export function playMove(input: Game, a: number, b: number): MoveResult | null {
   game.moves++;
   game.level = 1 + Math.floor(game.cleared / 100);
   let shuffled = false;
-  if (!findMove(game.board)) {
+  if (!findMove(game.board, game.columns, game.rows)) {
     if (game.mode === "classic") game.status = "finished";
     else { shuffle(game); shuffled = true; }
   }
   return { game, frames, counts, points, cleared: totalCleared, shuffled, longestCascade: cascade };
+}
+
+/** Keep the old 8 × 8 gems in place and extend right/down without awarding a move. */
+export function expandLegacyGame(old: Omit<Game, "columns" | "rows">): Game {
+  const game: Game = { ...structuredClone(old), columns: BOARD_COLUMNS, rows: BOARD_ROWS, board: [], status: "playing" };
+  for (let row = 0; row < BOARD_ROWS; row++) for (let col = 0; col < BOARD_COLUMNS; col++) {
+    const index = row * BOARD_COLUMNS + col;
+    if (row < 8 && col < 8) { game.board.push(structuredClone(old.board[row * 8 + col])); continue; }
+    let next = gem(game);
+    const same = (i: number) => game.board[i]?.special !== "cube" && game.board[i]?.color === next.color;
+    while ((col >= 2 && same(index - 1) && same(index - 2))
+      || (row >= 2 && same(index - BOARD_COLUMNS) && same(index - BOARD_COLUMNS * 2))) next = gem(game);
+    game.board.push(next);
+  }
+  if (!findMove(game.board)) game.board[BOARD_SIZE - 1]!.special = "cube";
+  return game;
 }

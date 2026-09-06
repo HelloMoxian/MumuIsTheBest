@@ -209,17 +209,18 @@ export function useLearningCoinStatus() {
   return context;
 }
 
-export function LearningCoinBalancePill({ className = "" }: { className?: string }) {
+export function LearningCoinBalancePill({ className = "", displayBalance }: { className?: string; displayBalance?: number | null }) {
   const { status, error } = useLearningCoinStatus();
+  const balance = displayBalance === undefined ? status?.coinBalance : displayBalance;
   return (
     <div
       className={`learning-coin-hud ${className}`}
       data-learning-coin-target
       title={error ?? "知识币会在完成学习任务后增加"}
-      aria-label={error ?? (status ? `知识币余额 ${status.coinBalance}` : "正在读取知识币余额")}
+      aria-label={balance != null ? `知识币余额 ${balance}` : error ?? "正在读取知识币余额"}
     >
       <span className="learning-coin-symbol" aria-hidden="true">✦</span>
-      <span><small>知识币</small><strong>{status?.coinBalance ?? "…"}</strong></span>
+      <span><small>知识币</small><strong>{balance?.toLocaleString("zh-CN") ?? "…"}</strong></span>
     </div>
   );
 }

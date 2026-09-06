@@ -4,7 +4,7 @@ import { constants } from "node:fs";
 import { dirname, resolve } from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { COLORS, createGame, emptyCounts, findMove, findRuns, playMove, type Game, type MoveResult } from "./bejeweled-engine.js";
+import { BOARD_COLUMNS, BOARD_ROWS, BOARD_SIZE, expandLegacyGame, COLORS, createGame, emptyCounts, findMove, findRuns, playMove, type Game, type MoveResult } from "./bejeweled-engine.js";
 import { calculateGemRewards, type BejeweledWallets, type GemReward } from "./bejeweled-rewards.js";
 
 const integer = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
@@ -13,64 +13,58 @@ const gemSchema = z.object({
   color: z.enum(COLORS),
   special: z.enum(["normal", "flame", "star", "cube", "nova"]),
 }).strict();
-const gameSchema = z.object({
-  board: z.array(gemSchema).length(64),
-  seed: z.number().int().min(0).max(4294967295),
-  nextId: integer,
-  mode: z.enum(["endless", "classic"]),
-  status: z.enum(["playing", "finished"]),
+const gameFields = {
+  seed: z.number().int().min(0).max(4294967295), nextId: integer,
+  mode: z.enum(["endless", "classic"]), status: z.enum(["playing", "finished"]),
   score: integer, cleared: integer, moves: integer, level: integer.min(1),
-}).strict().superRefine((game, context) => {
-  if (new Set(game.board.map(gem => gem.id)).size !== 64
-    || game.board.some(gem => gem.id >= game.nextId)
-    || findRuns(game.board).length
-    || game.level !== 1 + Math.floor(game.cleared / 100)
-    || (game.status === "playing" && !findMove(game.board))
-    || (game.status === "finished" && (game.mode !== "classic" || findMove(game.board)))) {
-    context.addIssue({ code: "custom", message: "棋盘记录不完整。" });
-  }
-});
-const legacyStateSchema = z.object({
-  schemaVersion: z.literal(1),
+};
+function validGame(game: Omit<Game, "columns" | "rows">, columns: number, rows: number) {
+  return new Set(game.board.map(gem => gem?.id)).size === columns * rows
+    && !game.board.some(gem => !gem || gem.id >= game.nextId)
+    && !findRuns(game.board, columns, rows).length
+    && game.level === 1 + Math.floor(game.cleared / 100)
+    && (game.status === "playing" ? !!findMove(game.board, columns, rows)
+      : game.mode === "classic" && !findMove(game.board, columns, rows));
+}
+const legacyGameSchema = z.object({ ...gameFields, board: z.array(gemSchema).length(64) }).strict()
+  .refine(game => validGame(game, 8, 8), "棋盘记录不完整。");
+const gameSchema = z.object({ ...gameFields, columns: z.literal(BOARD_COLUMNS), rows: z.literal(BOARD_ROWS), board: z.array(gemSchema).length(BOARD_SIZE) }).strict()
+  .refine(game => validGame(game, BOARD_COLUMNS, BOARD_ROWS), "棋盘记录不完整。");
+const stateFields = {
   id: z.literal("game-bejeweled"),
   createdAt: z.string().datetime(), updatedAt: z.string().datetime(),
-  revision: integer,
-  lastOperationId: z.string().uuid().nullable(),
-  game: gameSchema,
+  revision: integer, lastOperationId: z.string().uuid().nullable(),
   totalScore: integer, totalCleared: integer, totalMoves: integer,
   counts: z.object({ red: integer, orange: integer, yellow: integer, green: integer, blue: integer, purple: integer, white: integer }).strict(),
-  bestScore: integer,
-  longestCascade: integer,
-}).strict().superRefine((state, context) => {
-  if (Object.values(state.counts).reduce((a, b) => a + b, 0) !== state.totalCleared
-    || state.game.score > state.totalScore || state.game.cleared > state.totalCleared
-    || state.game.moves > state.totalMoves || state.bestScore < state.game.score) {
-    context.addIssue({ code: "custom", message: "累计统计不一致。" });
-  }
-});
-export type BejeweledState = z.infer<typeof bejeweledStateSchema>;
+  bestScore: integer, longestCascade: integer,
+};
 const rewardSchema = z.object({ knowledge: integer, energy: integer }).strict();
-export const bejeweledStateSchema = z.object({
-  ...legacyStateSchema.shape, schemaVersion: z.literal(2),
-  rewardTotals: rewardSchema, lastReward: rewardSchema,
-  rewardStatus: z.enum(["pending", "settled"]),
-}).strict().superRefine((state, context) => {
-  const { rewardTotals, lastReward, rewardStatus: _status, ...old } = state;
-  if (!legacyStateSchema.safeParse({ ...old, schemaVersion: 1 }).success
-    || lastReward.knowledge > rewardTotals.knowledge || lastReward.energy > rewardTotals.energy) {
-    context.addIssue({ code: "custom", message: "宝石奖励或统计不一致。" });
-  }
-});
+const rewardFields = { rewardTotals: rewardSchema, lastReward: rewardSchema, rewardStatus: z.enum(["pending", "settled"]) };
+function validTotals(state: { counts: Record<string, number>; totalCleared: number; totalScore: number; totalMoves: number; bestScore: number; game: { score: number; cleared: number; moves: number } }) {
+  return Object.values(state.counts).reduce((a, b) => a + b, 0) === state.totalCleared
+    && state.game.score <= state.totalScore && state.game.cleared <= state.totalCleared
+    && state.game.moves <= state.totalMoves && state.bestScore >= state.game.score;
+}
+function validRewards(state: { lastReward: GemReward; rewardTotals: GemReward }) {
+  return state.lastReward.knowledge <= state.rewardTotals.knowledge && state.lastReward.energy <= state.rewardTotals.energy;
+}
+const legacyStateSchema = z.object({ ...stateFields, schemaVersion: z.literal(1), game: legacyGameSchema }).strict().refine(validTotals);
+const legacyRewardStateSchema = z.object({ ...stateFields, ...rewardFields, schemaVersion: z.literal(2), game: legacyGameSchema }).strict().refine(validTotals).refine(validRewards);
+export const bejeweledStateSchema = z.object({ ...stateFields, ...rewardFields, schemaVersion: z.literal(3), game: gameSchema }).strict().refine(validTotals).refine(validRewards);
+export type BejeweledState = z.infer<typeof bejeweledStateSchema>;
 export function migrateBejeweled(raw: unknown): BejeweledState {
-  if ((raw as { schemaVersion?: number } | null)?.schemaVersion === 1) {
-    return bejeweledStateSchema.parse({ ...legacyStateSchema.parse(raw), schemaVersion: 2,
-      rewardTotals: { knowledge: 0, energy: 0 }, lastReward: { knowledge: 0, energy: 0 }, rewardStatus: "settled" });
+  const version = (raw as { schemaVersion?: number } | null)?.schemaVersion;
+  if (version === 1 || version === 2) {
+    const old = version === 1 ? { ...legacyStateSchema.parse(raw), rewardTotals: { knowledge: 0, energy: 0 },
+      lastReward: { knowledge: 0, energy: 0 }, rewardStatus: "settled" as const } : legacyRewardStateSchema.parse(raw);
+    return bejeweledStateSchema.parse({ ...old, schemaVersion: 3, revision: old.revision + 1,
+      updatedAt: new Date().toISOString(), game: expandLegacyGame(old.game) });
   }
   return bejeweledStateSchema.parse(raw);
 }
 const base = { operationId: z.string().uuid(), revision: integer };
 const commandSchema = z.discriminatedUnion("type", [
-  z.object({ ...base, type: z.literal("swap"), a: z.number().int().min(0).max(63), b: z.number().int().min(0).max(63) }).strict(),
+  z.object({ ...base, type: z.literal("swap"), a: z.number().int().min(0).max(BOARD_SIZE - 1), b: z.number().int().min(0).max(BOARD_SIZE - 1) }).strict(),
   z.object({ ...base, type: z.literal("new"), mode: z.enum(["endless", "classic"]) }).strict(),
 ]);
 export type BejeweledCommand = z.infer<typeof commandSchema>;
@@ -79,7 +73,7 @@ export type BejeweledResponse = { state: BejeweledState; move: MoveResult | null
 function newState(): BejeweledState {
   const now = new Date().toISOString();
   return {
-    schemaVersion: 2, id: "game-bejeweled", createdAt: now, updatedAt: now,
+    schemaVersion: 3, id: "game-bejeweled", createdAt: now, updatedAt: now,
     rewardTotals: { knowledge: 0, energy: 0 }, lastReward: { knowledge: 0, energy: 0 }, rewardStatus: "settled",
     revision: 0, lastOperationId: null, game: createGame(randomBytes(4).readUInt32LE()) as BejeweledState["game"],
     totalScore: 0, totalCleared: 0, totalMoves: 0, counts: emptyCounts(), bestScore: 0, longestCascade: 0,
@@ -98,11 +92,12 @@ export function registerBejeweledApi(app: FastifyInstance, dataDir: string, wall
     await mkdir(dirname(path), { recursive: true, mode: 0o700 });
     try {
       const raw = JSON.parse(await readFile(path, "utf8"));
-      if (raw.schemaVersion === 1) {
-        await copyFile(path, path + ".v1.bak", constants.COPYFILE_EXCL).catch(error => {
+      if (raw.schemaVersion === 1 || raw.schemaVersion === 2) {
+        const backup = path + ".v" + raw.schemaVersion + ".bak";
+        await copyFile(path, backup, constants.COPYFILE_EXCL).catch(error => {
           if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
         });
-        await chmod(path + ".v1.bak", 0o600);
+        await chmod(backup, 0o600);
       }
     } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
     const temporary = path + "." + randomUUID() + ".tmp";
@@ -115,7 +110,10 @@ export function registerBejeweledApi(app: FastifyInstance, dataDir: string, wall
   }
   async function read(): Promise<BejeweledState> {
     try {
-      return migrateBejeweled(JSON.parse(await readFile(path, "utf8")));
+      const raw = JSON.parse(await readFile(path, "utf8"));
+      const state = migrateBejeweled(raw);
+      if (raw.schemaVersion !== 3) await write(state);
+      return state;
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
       const state = newState();
@@ -136,7 +134,9 @@ export function registerBejeweledApi(app: FastifyInstance, dataDir: string, wall
   }
   app.addHook("onReady", async () => {
     await serial(async () => {
-      const state = migrateBejeweled(JSON.parse(await readFile(path, "utf8")));
+      const raw = JSON.parse(await readFile(path, "utf8"));
+      const state = migrateBejeweled(raw);
+      if (raw.schemaVersion !== 3) await write(state);
       if (state.rewardStatus === "pending") await settle(state);
     }).catch(() => undefined);
   });

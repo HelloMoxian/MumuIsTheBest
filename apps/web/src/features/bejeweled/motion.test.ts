@@ -7,14 +7,14 @@ import { createShards, shardAt } from "./particles";
 test("new gems remain vertically ordered; survivors start at their real old positions", () => {
   const game = createGame(18);
   const previous = [...game.board];
-  previous[8] = null; previous[16] = null;
+  previous[12] = null; previous[24] = null;
   const next = [...previous];
-  next[16] = previous[0]; next[0] = { id: 100000, color: "red", special: "normal" };
-  next[8] = { id: 100001, color: "blue", special: "normal" };
+  next[24] = previous[0]; next[0] = { id: 100000, color: "red", special: "normal" };
+  next[12] = { id: 100001, color: "blue", special: "normal" };
   const motions = planGemMotion(previous, next, "fall");
   const fresh = motions.filter(value => value.fresh);
-  assert.deepEqual(fresh.map(value => value.from), [-16, -8]);
-  assert.equal(motions.find(value => value.to === 16)?.from, 0);
+  assert.deepEqual(fresh.map(value => value.from), [-24, -12]);
+  assert.equal(motions.find(value => value.to === 24)?.from, 0);
   assert.ok(motions.every(value => value.duration <= 620 && value.delay <= 63));
   const frame: Frame = { board: next, cleared: [], created: [], points: 0, cascade: 1, phase: "fall" };
   assert.ok(frameDuration(frame, previous) >= Math.max(...motions.map(value => value.duration + value.delay)));
@@ -33,10 +33,11 @@ test("both swap arcs begin at the old positions and end exactly in the new cells
   }
 });
 test("all-board explosion has bounded particles that follow gravity and expire", () => {
-  const frame: Frame = { board: createGame(1).board, cleared: Array.from({ length: 64 }, (_, i) => i),
+  const frame: Frame = { board: createGame(1).board, cleared: Array.from({ length: 120 }, (_, i) => i),
     created: [], points: 3200, cascade: 1, phase: "clear", blasts: [{ source: 27, kind: "nova", targets: [27] }] };
   const particles = createShards(frame);
   assert.equal(particles.length, 768);
+  assert.equal(new Set(particles.map(p => p.x + ":" + p.y)).size, 120);
   assert.deepEqual(particles, createShards(frame));
   for (const particle of particles) {
     assert.equal(shardAt(particle, 0).x, particle.x);

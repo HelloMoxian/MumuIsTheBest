@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { COLORS, adjacent, canSwap, findMove, type Board, type Frame, type Mode } from "../../../../server/src/bejeweled-engine";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { BOARD_COLUMNS, BOARD_ROWS, BOARD_SIZE, COLORS, adjacent, canSwap, findMove, type Board, type Frame, type Mode } from "../../../../server/src/bejeweled-engine";
 import type { BejeweledCommand, BejeweledResponse, BejeweledState } from "../../../../server/src/bejeweled";
 import { GemIcon, GemSwapBoard, GEM_NAMES } from "../../shared/GemSwapBoard";
 import { LearningCoinBalancePill } from "../../shared/LearningCoinLayer";
@@ -10,6 +10,12 @@ import { BejeweledRewardTrail } from "./BejeweledRewardTrail";
 import { GemAudio, frameSound } from "./audio";
 import { useAudioPreferences, setAudioPreferences } from "../../shared/audio/audio-store";
 import { audioFocus } from "../../shared/audio/audio-focus";
+import { RewardCounter } from "./reward-counter";
+import { createGemPraisePicker, type GemPraise } from "./praise";
+import { LatestMomentQueue } from "../../shared/speech/latest-moment-queue";
+import { browserTts } from "../../shared/speech";
+import { getExperienceSnapshot, subscribeExperience } from "../../shared/experience/experience-store";
+import { speakLearningMoment, stopLearningSpeech, pauseLearningSpeech, resumeLearningSpeech } from "../../shared/experience/learning-speech";
 import "./bejeweled.css";
 
 const number = (value: number) => value.toLocaleString("zh-CN");
@@ -17,9 +23,9 @@ const modeName = (mode: Mode) => mode === "endless" ? "无尽探索" : "经典�
 function isState(value: unknown): value is BejeweledState {
   if (!value || typeof value !== "object") return false;
   const state = value as BejeweledState;
-  return state.schemaVersion === 2 && state.id === "game-bejeweled"
+  return state.schemaVersion === 3 && state.id === "game-bejeweled"
     && Number.isSafeInteger(state.revision) && Array.isArray(state.game?.board)
-    && state.game.board.length === 64 && state.game.board.every(gem => gem && COLORS.includes(gem.color)
+    && state.game.columns === BOARD_COLUMNS && state.game.rows === BOARD_ROWS && state.game.board.length === BOARD_SIZE && state.game.board.every(gem => gem && COLORS.includes(gem.color)
       && ["normal", "flame", "star", "cube", "nova"].includes(gem.special))
     && COLORS.every(color => Number.isSafeInteger(state.counts?.[color]))
     && Number.isSafeInteger(state.totalScore) && Number.isSafeInteger(state.totalCleared)
@@ -40,6 +46,11 @@ export function BejeweledGame() {
   const [frame, setFrame] = useState<Frame | null>(null);
   const [rejected, setRejected] = useState(0);
   const [balances, setBalances] = useState<GemReward | null>(null);
+  const [arrivalPulse, setArrivalPulse] = useState<Partial<Record<keyof GemReward, { serial: number; amount: number }>>>({});
+  const [praiseEnabled, setPraiseEnabled] = useState(true);
+  const [praiseCaption, setPraiseCaption] = useState<GemPraise | null>(null);
+  const praiseQueue = useRef<LatestMomentQueue<GemPraise> | null>(null);
+  const praisePicker = useRef(createGemPraisePicker());
   const [reward, setReward] = useState<(GemReward & { id: string }) | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [hint, setHint] = useState<number[]>([]);
@@ -62,9 +73,24 @@ export function BejeweledGame() {
   const helpDialog = useRef<HTMLDialogElement>(null);
   const newGameDialog = useRef<HTMLDialogElement>(null);
 
-  function updateBalances(value: GemReward | undefined) {
-    if (!value || !Number.isSafeInteger(value.knowledge) || !Number.isSafeInteger(value.energy)) return;
+  const flightDone = useRef<{ id: string; finish: () => void } | null>(null);
+  const counter = useRef<RewardCounter | null>(null);
+  counter.current ??= new RewardCounter((value, arrival) => {
+    if (!mounted.current) return;
     setBalances(value);
+    if (arrival) setArrivalPulse(current => ({ ...current, [arrival.currency]: {
+      serial: (current[arrival.currency]?.serial ?? 0) + 1, amount: arrival.amount,
+    } }));
+  });
+  const onCoinArrive = useCallback((id: string, currency: keyof GemReward, cumulative: number) => counter.current?.arrive(id, currency, cumulative), []);
+  const onCoinsComplete = useCallback((id: string) => {
+    counter.current?.finish(id);
+    if (flightDone.current?.id === id) flightDone.current.finish();
+  }, []);
+  function updateBalances(value: GemReward | undefined, flight?: { id: string; reward: GemReward }) {
+    if (!value || !Number.isSafeInteger(value.knowledge) || !Number.isSafeInteger(value.energy)) return;
+    if (flight) counter.current!.prepare(flight.id, value, flight.reward);
+    else counter.current!.sync(value);
     window.dispatchEvent(new CustomEvent(LEARNING_COINS_CHANGED_EVENT, {
       detail: { coinBalance: value.knowledge, updatedAt: new Date().toISOString() },
     }));
@@ -91,6 +117,27 @@ export function BejeweledGame() {
     update();
     return audioFocus.subscribe(update);
   }, [paused, help, newMode]);
+  useEffect(() => {
+    const queue = new LatestMomentQueue<GemPraise>({
+      play: value => speakLearningMoment(value, "bilingual"),
+      stop: stopLearningSpeech, pause: pauseLearningSpeech, resume: resumeLearningSpeech,
+      busy: () => audioFocus.isMicrophoneActive() || getExperienceSnapshot().speechStatus.startsWith("speaking")
+        || ["speaking", "loading"].includes(browserTts.getSnapshot().status),
+      show: value => { if (mounted.current) setPraiseCaption(value); },
+      failed: () => { if (mounted.current) setMessage("鼓励语音暂时没有响起，可以看字幕继续探索。"); },
+    });
+    praiseQueue.current = queue;
+    const wake = () => queue.wake();
+    const unsubscribeExperience = subscribeExperience(wake);
+    const unsubscribeTts = browserTts.subscribe(wake);
+    return () => { queue.dispose(); praiseQueue.current = null; unsubscribeExperience(); unsubscribeTts(); };
+  }, []);
+  useEffect(() => { praiseQueue.current?.setEnabled(praiseEnabled); }, [praiseEnabled]);
+  useEffect(() => {
+    const update = () => praiseQueue.current?.setPaused(paused || help || newMode !== null || document.hidden || audioFocus.isMicrophoneActive());
+    update();
+    return audioFocus.subscribe(update);
+  }, [paused, help, newMode]);
   async function restore() {
     lock.current = true; setBusy(true); setError(""); setSaveStatus("正在恢复");
     try {
@@ -113,7 +160,7 @@ export function BejeweledGame() {
     const visibility = () => {
       if (document.hidden) {
         pauseRef.current = true; setPaused(true); playback.current.abort();
-        audio.current?.setStopped(true);
+        audio.current?.setStopped(true); counter.current?.finish(); praiseQueue.current?.setPaused(true);
       }
     };
     document.addEventListener("visibilitychange", visibility);
@@ -126,6 +173,7 @@ export function BejeweledGame() {
   async function submit(command: BejeweledCommand) {
     if (lock.current) return;
     lock.current = true; setBusy(true); setError(""); setHint([]); setSelected(null);
+    counter.current?.finish();
     setSaveStatus("正在保存并发放奖励"); setReward(null); pending.current = command;
     try {
       const response = await fetch("/api/games/bejeweled", {
@@ -144,30 +192,51 @@ export function BejeweledGame() {
       }
       if (!response.ok || !isState(data.state)) throw new Error(data.message ?? "这一步暂时没有收到保存确认，请点击重试。");
       pending.current = null; latest.current = data.state; setState(data.state); setSaveStatus("已自动保存");
-      updateBalances(data.balances);
+      const animateReward = command.type === "swap" && !data.replayed && !pauseRef.current && !document.hidden
+        && !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      updateBalances(data.balances, animateReward ? { id: command.operationId, reward: data.state.lastReward } : undefined);
       playback.current.abort(); playback.current = new AbortController();
       const signal = playback.current.signal;
       if (data.move && !matchMedia("(prefers-reduced-motion: reduce)").matches && !pauseRef.current && !document.hidden) {
         let previousBoard = board;
-        for (const next of data.move.frames) {
+        for (const [index, next] of data.move.frames.entries()) {
           if (signal.aborted || !mounted.current) break;
           setBoard(next.board); setFrame(next);
           const soundName = frameSound(next);
           if (soundName) audio.current?.play(soundName, next.cascade);
+          if (next.phase === "clear" && !data.replayed) praiseQueue.current?.enqueue(praisePicker.current({ ...next, board: data.move.frames[index + 1]?.board ?? next.board }));
           if (next.points) setMessage("第 " + next.cascade + " 次连锁 · +" + number(next.points) + " 分");
           await delay(frameDuration(next, previousBoard), signal);
           if (next.phase === "fall" && !signal.aborted) audio.current?.play("land");
           previousBoard = next.board;
         }
-      } else if (data.move && !data.replayed) audio.current?.play("clear");
+      } else if (data.move && !data.replayed) {
+        audio.current?.play("clear");
+        // Reduced motion still receives one complete, relevant encouragement.
+        const clearIndex = data.move.frames.map(next => next.phase).lastIndexOf("clear");
+        const clear = data.move.frames[clearIndex];
+        if (clear) praiseQueue.current?.enqueue(praisePicker.current({ ...clear, board: data.move.frames[clearIndex + 1]?.board ?? clear.board }));
+      }
       if (!mounted.current) return;
       accept(data.state);
-      if (command.type === "swap" && !data.replayed) setReward({ ...data.state.lastReward, id: command.operationId });
       setMessage(data.move ? "消除了 " + data.move.cleared + " 颗宝石 · +" + number(data.move.points) + " 分"
         + (data.move.longestCascade > 1 ? " · " + data.move.longestCascade + " 次连锁！" : "")
         + (data.move.shuffled ? " · 棋盘已重新排列，继续探索吧。" : "")
         + " · 知识币 +" + data.state.lastReward.knowledge + "，能量币 +" + data.state.lastReward.energy
         : data.replayed ? "这一步已保存，累计成绩没有重复增加。" : "新棋盘准备好了，累计收藏依然保留。");
+      if (animateReward) await new Promise<void>(resolve => {
+        const finish = () => {
+          clearTimeout(timer); signal.removeEventListener("abort", finish);
+          flightDone.current = null; counter.current?.finish(command.operationId); resolve();
+        };
+        // Complete the visual receipt before accepting another move. Always
+        // release input if the browser cancels or cannot finish its animation.
+        const timer = window.setTimeout(finish, 3000);
+        flightDone.current = { id: command.operationId, finish };
+        signal.addEventListener("abort", finish, { once: true });
+        setReward({ ...data.state.lastReward, id: command.operationId });
+        if (signal.aborted) finish();
+      });
     } catch (cause) {
       if (mounted.current) { setError((cause as Error).name === "TimeoutError" ? "暂时没收到保存确认，请重试这一步。" : (cause as Error).message); setSaveStatus("等待重试"); }
     } finally {
@@ -213,7 +282,7 @@ export function BejeweledGame() {
   function togglePause() {
     const next = !paused;
     pauseRef.current = next; setPaused(next);
-    if (next) { playback.current.abort(); audio.current?.setStopped(true); }
+    if (next) { playback.current.abort(); audio.current?.setStopped(true); counter.current?.finish(); praiseQueue.current?.setPaused(true); }
     else { audio.current?.setStopped(false); audio.current?.unlock(); }
   }
   function toggleSound() {
@@ -224,15 +293,16 @@ export function BejeweledGame() {
   const disabled = busy || !!error || paused || help || newMode !== null || state?.game.status === "finished";
   const progress = state ? state.game.cleared % 100 : 0;
   return <main className="bj-page" data-motion-paused={paused}>
-    <BejeweledRewardTrail reward={reward} stopped={paused} />
+    <BejeweledRewardTrail reward={reward} stopped={paused} onArrive={onCoinArrive} onComplete={onCoinsComplete} />
     <header className="bj-header">
       <a className="bj-button" href="/#games">‹ 返回游戏</a>
       <div className="bj-brand"><span className="bj-eyebrow">CRYSTAL CONSTELLATION</span><h1>宝石迷阵</h1></div>
       <div className="bj-header-actions">
-        <div data-bj-currency="knowledge"><LearningCoinBalancePill /></div>
-        <div className="bj-energy-wallet" data-bj-currency="energy" aria-label={"能量币余额 " + (balances?.energy ?? "正在读取")}><span aria-hidden="true">ϟ</span><span><small>能量币</small><strong>{balances ? number(balances.energy) : "…"}</strong></span></div>
+        <div data-bj-currency="knowledge" className="bj-wallet-wrap"><div key={arrivalPulse.knowledge?.serial ?? 0} className={arrivalPulse.knowledge ? "bj-wallet-pulse" : ""}><LearningCoinBalancePill displayBalance={balances?.knowledge ?? null} /></div>{arrivalPulse.knowledge && <b key={"k" + arrivalPulse.knowledge.serial} className="bj-wallet-plus" aria-hidden="true">+{arrivalPulse.knowledge.amount}</b>}</div>
+        <div data-bj-currency="energy" className="bj-wallet-wrap"><div key={arrivalPulse.energy?.serial ?? 0} className={"bj-energy-wallet " + (arrivalPulse.energy ? "bj-wallet-pulse" : "")} aria-label={"能量币余额 " + (balances?.energy ?? "正在读取")}><span aria-hidden="true">ϟ</span><span><small>能量币</small><strong>{balances ? number(balances.energy) : "…"}</strong></span></div>{arrivalPulse.energy && <b key={"e" + arrivalPulse.energy.serial} className="bj-wallet-plus" aria-hidden="true">+{arrivalPulse.energy.amount}</b>}</div>
         <span className="bj-save" role="status">{saveStatus === "已自动保存" ? "✓ " : ""}{saveStatus}</span>
         <button className="bj-button" onClick={toggleSound} disabled={!audioSettings.ready} aria-pressed={sound}>音效{sound ? "：开" : "：关"}</button>
+        <button className="bj-button" onClick={() => setPraiseEnabled(value => !value)} aria-pressed={praiseEnabled}>鼓励语音{praiseEnabled ? "：开" : "：关"}</button>
         <button className="bj-button" onClick={() => setHelp(!help)} aria-expanded={help}>玩法说明</button>
       </div>
     </header>
@@ -247,16 +317,17 @@ export function BejeweledGame() {
         <div className="bj-session-details"><span>本局消除 <b>{number(state?.game.cleared ?? 0)}</b></span><span>有效交换 <b>{number(state?.game.moves ?? 0)}</b></span></div>
         <button className="bj-button bj-primary" disabled={!state || disabled} onClick={() => {
           const move = findMove(board);
-          if (move) { setHint(move); setSelected(null); setMessage("试试交换第 " + (Math.floor(move[0] / 8) + 1) + " 行第 " + (move[0] % 8 + 1) + " 列与第 " + (Math.floor(move[1] / 8) + 1) + " 行第 " + (move[1] % 8 + 1) + " 列的宝石。"); }
+          if (move) { setHint(move); setSelected(null); setMessage("试试交换第 " + (Math.floor(move[0] / BOARD_COLUMNS) + 1) + " 行第 " + (move[0] % BOARD_COLUMNS + 1) + " 列与第 " + (Math.floor(move[1] / BOARD_COLUMNS) + 1) + " 行第 " + (move[1] % BOARD_COLUMNS + 1) + " 列的宝石。"); }
         }}>✧ 给我一个提示</button>
         <button className="bj-button" onClick={togglePause} disabled={!state}> {paused ? "继续探索" : "暂停一下"}</button>
         <button className="bj-button" disabled={!state || busy || !!error} onClick={() => setNewMode(state!.game.mode)}>换一局 / 切换模式</button>
         <p className="bj-muted">每一步都自动保存<br />下次打开，接着这里玩</p>
       </aside>
       <section className="bj-play" aria-label="宝石消除游戏">
-        <div className="bj-board-caption"><span>交换相邻宝石 · 三颗同色连成线</span><span>8 × 8</span></div>
+        <p className="bj-praise-caption" aria-live="off">{praiseCaption ? <><span lang="en">{praiseCaption.en}</span><span>{praiseCaption.zh}</span></> : <><span lang="en">Let’s find sparkling gems!</span><span>一起寻找闪亮的宝石吧！</span></>}</p>
+        <div className="bj-board-caption"><span>交换相邻宝石 · 三颗同色连成线</span><span>12 列 × 10 行</span></div>
         <div className="bj-board-frame">
-          {board.length === 64 && <GemSwapBoard board={board} selected={selected} hint={hint} cleared={frame?.cleared ?? []} created={frame?.created ?? []} disabled={disabled} onSelect={choose} onSwap={swap} onInteract={() => audio.current?.unlock()} frame={frame} stopped={paused} rejected={rejected} />}
+          {board.length === BOARD_SIZE && <GemSwapBoard board={board} selected={selected} hint={hint} cleared={frame?.cleared ?? []} created={frame?.created ?? []} disabled={disabled} onSelect={choose} onSwap={swap} onInteract={() => audio.current?.unlock()} frame={frame} stopped={paused} rejected={rejected} />}
           {!state && <div className="bj-overlay bj-loading"><h2>{busy ? "正在恢复宝石…" : "暂时无法打开棋盘"}</h2><p>你的长期收藏会保存在本机。</p></div>}
           {paused && state && <div className="bj-overlay"><span className="bj-overlay-symbol">Ⅱ</span><h2>星光休息一下</h2><p>棋盘和收藏都在这里等你。</p><button className="bj-button bj-primary" onClick={togglePause}>继续探索</button></div>}
           {state?.game.status === "finished" && !paused && <div className="bj-overlay"><h2>这一局收集完成！</h2><p>棋盘已经没有可用交换。</p><strong className="bj-score">{number(state.game.score)} 分</strong><button className="bj-button bj-primary" disabled={busy || !!error} onClick={() => setNewMode("classic")}>再开一局</button></div>}
