@@ -601,7 +601,7 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
       return operation;
     },
     creditWorkout(total: number) {
-      z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).multipleOf(200).parse(total);
+      z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).parse(total);
       const operation = writeQueue.then(async () => {
         const history = await readHistory();
         if (total < history.workoutRewardTotal) throw new Error("WORKOUT_REWARD_CURSOR_AHEAD");

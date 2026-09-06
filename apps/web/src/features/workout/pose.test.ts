@@ -11,7 +11,7 @@ test("every exercise has finite, visible joint poses throughout both alternating
         for (const point of points as number[][]) {
           assert.equal(point.length, 3);
           assert.ok(point.every(Number.isFinite), move.id + ":" + key);
-          assert.ok(point[0] > -1.1 && point[0] < 1.1 && point[1] >= 0 && point[1] < 2.5);
+          assert.ok(point[0] > -1.1 && point[0] < 1.1 && point[1] >= 0 && point[1] < 2.9);
         }
       }
     }
@@ -32,3 +32,14 @@ test("alternating knees use both sides, rest stays still, jumping lifts both fee
   assert.ok(poseFor("jack", .5).feet.every(p => p[1] > .1));
 });
 
+
+test("jumping jack claps above the bear head; floor actions retain stable contact points",()=>{
+  const jack=poseFor("jack",.5);
+  assert.ok(Math.abs(jack.hands[0][0]-jack.hands[1][0])<.06);
+  assert.ok(jack.hands.every(p=>p[1]>jack.head[1]+.4));
+  const up=poseFor("pushup",0),down=poseFor("pushup",.5);
+  assert.deepEqual(up.hands,down.hands);assert.deepEqual(up.feet,down.feet);
+  assert.ok(down.chest[1]<up.chest[1]);
+  assert.ok(poseFor("situp",.5).head[1]>poseFor("situp",0).head[1]);
+  assert.ok(poseFor("burpee",.4).head[1]<poseFor("burpee",0).head[1]);
+});

@@ -237,7 +237,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     caption: "动一动、想一想，一起探索游戏星河",
     icon: "games",
     games: [
-      { title: "跳操", mark: "✦", description: "跟着双视角小教练动起来，五分钟收获 200 能量币", shape: "wide", href: "/games/workout" },
+      { title: "跳操", mark: "✦", description: "跟着立体小熊动起来，每组得能量，五分钟共 200 币", shape: "wide", href: "/games/workout" },
       { title: "星页数独", mark: "▦", description: "用精美图案拼故事，六档推理挑战赢取知识币和能量币", shape: "wide", href: "/games/sudoku" },
       {
         title: "俄罗斯方块",

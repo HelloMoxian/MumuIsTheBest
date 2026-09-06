@@ -1,9 +1,10 @@
 import { useId } from "react";
 import type { MoveId } from "../../../../server/src/workout-contract";
-type Point = [number, number, number];
+export type Point = [number, number, number];
 export type Pose = { head: Point; chest: Point; hips: Point; shoulders: Point[]; elbows: Point[]; hands: Point[]; hip: Point[]; knees: Point[]; feet: Point[] };
 const mix = (a: Point, b: Point, t: number): Point => a.map((v, i) => v + (b[i] - v) * t) as Point;
 export function poseFor(move: MoveId | "rest", phase: number): Pose {
+  if (move === "pushup" || move === "situp" || move === "burpee") return floorPose(move, phase);
   const wave = (1 - Math.cos(phase * Math.PI * 2)) / 2;
   const side = Math.floor(phase) % 2 === 0 ? 1 : 0;
   const p: Pose = {
@@ -19,7 +20,7 @@ export function poseFor(move: MoveId | "rest", phase: number): Pose {
     for (let i = 0; i < 2; i++) {
       const sign = i ? 1 : -1;
       p.elbows[i] = mix(p.elbows[i], [sign * .4, 1.91, 0], amount);
-      p.hands[i] = mix(p.hands[i], [sign * .24, 2.23, .03], amount);
+      p.hands[i] = mix(p.hands[i], [sign * .24, 2.58, .03], amount);
     }
   };
   if (move === "reach") raiseArms(wave);
@@ -30,8 +31,8 @@ export function poseFor(move: MoveId | "rest", phase: number): Pose {
       p.hands[i] = mix([sign * .87, 1.49, 0], [-sign * .15, 1.48, .36], wave);
     }
   }
-  if (move === "march" || move === "knees" || move === "cross") {
-    const height = move === "march" ? .13 : .38;
+  if (move === "march" || move === "knees" || move === "cross" || move === "high-run" || move === "room-run") {
+    const height = move === "march" || move === "room-run" ? .2 : .38;
     p.feet[side][1] += height * wave;
     p.feet[side][2] += .08 * wave;
     p.knees[side][1] += height * wave;
@@ -40,10 +41,11 @@ export function poseFor(move: MoveId | "rest", phase: number): Pose {
     p.hands[1 - side] = mix(p.hands[1 - side],
       move === "cross" ? [p.knees[side][0], .98, .46] : [p.hands[1 - side][0], 1.43, .35], wave);
   }
-  if (move === "step") {
+  if (move === "step" || move === "skate") {
     p.feet[side][0] += (side ? 1 : -1) * .34 * wave;
     p.knees[side][0] += (side ? 1 : -1) * .15 * wave;
     raiseArms(wave * .42);
+    if (move === "skate") { p.chest[0] += (side ? 1 : -1) * .18 * wave; p.head[0] += (side ? 1 : -1) * .25 * wave; }
   }
   if (move === "tap") {
     p.feet[side][2] += .42 * wave;
@@ -70,6 +72,8 @@ export function poseFor(move: MoveId | "rest", phase: number): Pose {
   }
   if (move === "jack") {
     raiseArms(wave);
+    // Both hands meet above the head at the open-leg peak.
+    for (let i = 0; i < 2; i++) p.hands[i][0] *= 1 - .94 * wave;
     for (let i = 0; i < 2; i++) {
       const sign = i ? 1 : -1;
       p.feet[i][0] += sign * .28 * wave; p.knees[i][0] += sign * .14 * wave;
@@ -82,7 +86,39 @@ export function poseFor(move: MoveId | "rest", phase: number): Pose {
       p[key].forEach(point => { point[1] += lift; });
     if (move !== "heels") p.feet.forEach(point => { point[1] += lift; });
   }
+  if (move === "punch") {
+    p.hands[side] = mix(p.hands[side], [side ? .2 : -.2, 1.55, .72], wave);
+    p.elbows[side] = mix(p.elbows[side], [side ? .25 : -.25, 1.52, .36], wave);
+    p.hands[1-side] = [side ? -.24 : .24, 1.4, .23];
+  }
   return p;
+}
+function floorPose(move: "pushup" | "situp" | "burpee", phase: number): Pose {
+  const w = (1 - Math.cos(phase * Math.PI * 2)) / 2;
+  if (move === "burpee") {
+    const stand = poseFor("rest", 0), squat = poseFor("squat", .5), plank = floorPose("pushup", 0), jump = poseFor("jack", .5);
+    const frames = [stand, squat, plank, plank, squat, jump, stand], t = (phase % 1) * 6, i = Math.min(5, Math.floor(t));
+    const blend = (1-Math.cos((t-i)*Math.PI))/2, result = structuredClone(frames[i]);
+    for (const key of ["head","chest","hips"] as const) result[key] = mix(frames[i][key], frames[i+1][key], blend);
+    for (const key of ["shoulders","elbows","hands","hip","knees","feet"] as const)
+      result[key] = frames[i][key].map((v,j)=>mix(v, frames[i+1][key][j], blend));
+    return result;
+  }
+  if (move === "pushup") {
+    const h = .58 - .24*w;
+    return {head:[0,h+.18,.94],chest:[0,h,.55],hips:[0,h-.06,-.05],
+      shoulders:[[-.26,h,.61],[.26,h,.61]], elbows:[[-.37,.32-.12*w,.64],[.37,.32-.12*w,.64]],
+      hands:[[-.32,.11,.73],[.32,.11,.73]], hip:[[-.16,h-.06,-.05],[.16,h-.06,-.05]],
+      knees:[[-.17,.27-.10*w,-.48],[.17,.27-.10*w,-.48]], feet:[[-.18,.10,-.94],[.18,.10,-.94]]};
+  }
+  const angle = 1.0*w;
+  const upper = (length:number):Point=>[0,.40+Math.sin(angle)*length,-.3-Math.cos(angle)*length];
+  const chest=upper(.42), head=upper(.87);
+  return {head,chest,hips:[0,.18,-.3],
+    shoulders:[[-.26,chest[1],chest[2]],[.26,chest[1],chest[2]]],
+    elbows:[[-.31,chest[1]+.11,chest[2]],[.31,chest[1]+.11,chest[2]]],
+    hands:[[-.12,chest[1]+.20,chest[2]+.05],[.12,chest[1]+.20,chest[2]+.05]],
+    hip:[[-.16,.18,-.3],[.16,.18,-.3]], knees:[[-.18,.48,.1],[.18,.48,.1]],feet:[[-.18,.1,.48],[.18,.1,.48]]};
 }
 export function Coach({ move, phase, profile = false }: { move: MoveId | "rest"; phase: number; profile?: boolean }) {
   const id = useId().replaceAll(":", ""), p = poseFor(move, phase);
