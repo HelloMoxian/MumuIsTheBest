@@ -1,0 +1,404 @@
+{
+  "schemaVersion": 1,
+  "source": "assets/game/fat-burn/mom-v3-atlas.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 4,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 3,
+  "trimmed": false,
+  "backgroundRemoved": true,
+  "keyColor": "#0CF30B",
+  "keyColorMode": "border",
+  "items": [
+    {
+      "id": "front-head",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "front-head.png",
+      "sourceBox": [
+        3,
+        3,
+        311,
+        311
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.280707,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "front-torso",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "front-torso.png",
+      "sourceBox": [
+        317,
+        3,
+        624,
+        311
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.356572,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "front-upper-arm",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "front-upper-arm.png",
+      "sourceBox": [
+        630,
+        3,
+        937,
+        311
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.121558,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "front-forearm",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "front-forearm.png",
+      "sourceBox": [
+        943,
+        3,
+        1251,
+        311
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.086334,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "front-hand",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "front-hand.png",
+      "sourceBox": [
+        3,
+        317,
+        311,
+        624
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.09442,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "front-thigh",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "front-thigh.png",
+      "sourceBox": [
+        317,
+        317,
+        624,
+        624
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.182994,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "front-shin",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "front-shin.png",
+      "sourceBox": [
+        630,
+        317,
+        937,
+        624
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.11876,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "front-shoe",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "front-shoe.png",
+      "sourceBox": [
+        943,
+        317,
+        1251,
+        624
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.131182,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "side-head",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "side-head.png",
+      "sourceBox": [
+        3,
+        630,
+        311,
+        937
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.30933,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "side-torso",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "side-torso.png",
+      "sourceBox": [
+        317,
+        630,
+        624,
+        937
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.209106,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": [],
+      "source": "assets/game/fat-burn/mom-v3-torso-fix-atlas.png",
+      "keyColor": "#1ED21C"
+    },
+    {
+      "id": "side-upper-arm",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "side-upper-arm.png",
+      "sourceBox": [
+        630,
+        630,
+        937,
+        937
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.116404,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "side-forearm",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "side-forearm.png",
+      "sourceBox": [
+        943,
+        630,
+        1251,
+        937
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.084246,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "side-hand",
+      "index": 12,
+      "row": 3,
+      "column": 0,
+      "filename": "side-hand.png",
+      "sourceBox": [
+        3,
+        943,
+        311,
+        1251
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.087599,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "side-thigh",
+      "index": 13,
+      "row": 3,
+      "column": 1,
+      "filename": "side-thigh.png",
+      "sourceBox": [
+        317,
+        943,
+        624,
+        1251
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.170153,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "side-shin",
+      "index": 14,
+      "row": 3,
+      "column": 2,
+      "filename": "side-shin.png",
+      "sourceBox": [
+        630,
+        943,
+        937,
+        1251
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.11334,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "side-shoe",
+      "index": 15,
+      "row": 3,
+      "column": 3,
+      "filename": "side-shoe.png",
+      "sourceBox": [
+        943,
+        943,
+        1251,
+        1251
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.158891,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": [],
+  "matte": "skill default: automatic green key, soft alpha and despill"
+}
