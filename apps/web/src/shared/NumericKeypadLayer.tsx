@@ -32,6 +32,7 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
     "/games/fruit-slice",
     "/games/galaxy-racer",
     "/games/bejeweled",
+    "/nature/stargazing",
   ].includes(window.location.pathname);
   const value = digits ? Number(digits) : null;
   const spokenValue = useMemo(

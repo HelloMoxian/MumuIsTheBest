@@ -137,6 +137,11 @@ const RockMineralGame = lazy(async () => {
   return { default: module.RockMineralGame };
 });
 
+const StargazingPage = lazy(async () => {
+  const module = await import("./features/stargazing/StargazingPage");
+  return { default: module.StargazingPage };
+});
+
 const UniversityTop100Page = lazy(async () => {
   const module = await import("./features/university-top100/UniversityTop100Page");
   return { default: module.UniversityTop100Page };
@@ -423,7 +428,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "nature",
     title: "自然",
-    caption: "向地下出发，读懂岩石记录的地球故事",
+    caption: "从脚下的岩石，到头顶的星空",
     icon: "nature",
     games: [
       {
@@ -432,6 +437,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "敲开未知地层，发现并研究 128 种自然样本",
         shape: "wide",
         href: "/nature/rock-minerals",
+      },
+      {
+        title: "仰望星空",
+        mark: "✧",
+        description: "认识著名星座，飞近恒星看看它的颜色与模样",
+        shape: "wide",
+        href: "/nature/stargazing",
       },
     ],
   },
@@ -730,7 +742,7 @@ function App() {
                     );
                     const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""} ${isTripleReward ? "is-triple-reward" : ""}`;
                     return gameHref ? (
-                      <a className={className} href={gameHref} key={game.title} data-skip-startup-greeting={game.href === "/games/workout" ? true : undefined}>{content}</a>
+                      <a className={className} href={gameHref} key={game.title} data-skip-startup-greeting={game.href === "/games/workout" || game.href === "/nature/stargazing" ? true : undefined}>{content}</a>
                     ) : (
                       <article className={className} key={game.title}>{content}</article>
                     );
@@ -1110,6 +1122,9 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/nature/rock-minerals") {
     return <Suspense fallback={<ChemistryLoading label="岩石与矿物探索舱" />}><RockMineralGame /></Suspense>;
+  }
+  if (window.location.pathname === "/nature/stargazing") {
+    return <Suspense fallback={<ChemistryLoading label="仰望星空" />}><StargazingPage /></Suspense>;
   }
   if (window.location.pathname === "/math/add-subtract") return <AddSubtractGame />;
   if (window.location.pathname === "/math/arithmetic-battle") return <ArithmeticBattleGame />;

@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { browserTts } from "../speech";
 import { getExperienceSnapshot, subscribeExperience } from "../experience/experience-store";
 import { audioFocus } from "./audio-focus";
 import { getAudioSnapshot, hydrateAudioPreferences, setAudioPreferences, subscribeAudio, useAudioPreferences } from "./audio-store";
 import { MUSIC_TRACKS, MusicPlayer, type MusicStatus } from "./music-player";
+import { GlobalMusicPanelContext } from "./music-panel";
 import "./global-music.css";
 
 const STATUS: Record<MusicStatus, string> = {
@@ -16,6 +17,12 @@ export function GlobalMusicLayer({ children }: { children: ReactNode }) {
   const player = useRef<MusicPlayer | null>(null);
   const panel = useRef<HTMLDialogElement>(null);
   const launcher = useRef<HTMLButtonElement>(null);
+  const musicOpener = useRef<HTMLElement | null>(null);
+  const isStargazing = window.location.pathname === "/nature/stargazing";
+  const openPanel = useCallback(() => {
+    musicOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    panel.current?.showModal();
+  }, []);
   useEffect(() => {
     const music = new MusicPlayer(src => new Audio(src), next => {
       setStatus(next);
@@ -51,13 +58,19 @@ export function GlobalMusicLayer({ children }: { children: ReactNode }) {
   const change = (patch: Parameters<typeof setAudioPreferences>[0]) => {
     setAudioPreferences(patch); player.current?.retry();
   };
-  return <>{children}
-    <button ref={launcher} className="global-music-launcher" type="button" data-skip-startup-greeting
-      onClick={() => panel.current?.showModal()} aria-haspopup="dialog" aria-label={"背景音乐：" + STATUS[status]}>
+  return <GlobalMusicPanelContext.Provider value={openPanel}>{children}
+    {!isStargazing && <button ref={launcher} className="global-music-launcher" type="button" data-skip-startup-greeting
+      onClick={openPanel} aria-haspopup="dialog" aria-label={"背景音乐：" + STATUS[status]}>
       <span aria-hidden="true">♫</span> 背景音乐
-    </button>
+    </button>}
     <dialog className="global-music-panel" ref={panel} aria-labelledby="global-music-title" data-skip-startup-greeting
-      onClose={() => launcher.current?.focus()} onClick={event => { if (event.target === panel.current) panel.current.close(); }}>
+      onClose={() => {
+        const target = musicOpener.current;
+        if (isStargazing && target?.isConnected && target.getClientRects().length) target.focus();
+        else launcher.current?.focus();
+      }}
+      onKeyDown={event => { if (isStargazing && (event.key === "Tab" || event.key === "Escape")) event.stopPropagation(); }}
+      onClick={event => { if (event.target === panel.current) panel.current.close(); }}>
       <div className="global-music-content">
         <header><h2 id="global-music-title">星际音乐盒</h2><button type="button" onClick={() => panel.current?.close()}>关闭</button></header>
         <p role="status">{!settings.ready ? settings.error || "正在恢复音乐设置…" : STATUS[status]}</p>
@@ -91,5 +104,5 @@ export function GlobalMusicLayer({ children }: { children: ReactNode }) {
         {settings.error && <button type="button" onClick={() => settings.ready ? setAudioPreferences({}) : void hydrateAudioPreferences()}>重试保存或恢复</button>}
       </div>
     </dialog>
-  </>;
+  </GlobalMusicPanelContext.Provider>;
 }
