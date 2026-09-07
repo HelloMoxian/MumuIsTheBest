@@ -1,12 +1,12 @@
 # 燃脂：妈妈的运动课
 
-独立入口：`/fat-burn/index.html`。开发环境执行原有 `pnpm dev`，打开 `http://localhost:5173/fat-burn/index.html`。生产环境原有 `pnpm build` 同时生成首页与 `dist/fat-burn/index.html`，由本机服务作为静态文件提供。Vite 开发环境也可访问 `/fat-burn/`；生产链接使用完整的 `index.html`，不依赖 SPA 路由兜底。
+首页「锻炼」Tab 提供「陪妈妈跳操」入口，复用现有功能卡片，直接导航到独立页面 `/fat-burn/index.html`，跳过全局首次问候。这是面向妈妈的成人运动课程。开发环境执行原有 `pnpm dev`，也可直接打开 `http://localhost:5173/fat-burn/index.html`。生产环境原有 `pnpm build` 同时生成首页与 `dist/fat-burn/index.html`，由本机服务作为静态文件提供。Vite 开发环境也可访问 `/fat-burn/`；生产链接使用完整的 `index.html`，不依赖 SPA 路由兜底。
 
 运动依据、适用对象、课表与剂量先独立设计，见 [成人入门课程规划](FAT_BURN_PROGRAM.md)。本文件描述根据该规划完成的工程能力，不能反过来用现有动画限制合理课程。
 
 ## 1. 独立边界
 
-- 单独 HTML、React 入口及 `features/fat-burn/` 模块，未加入儿童首页或游戏大厅。
+- 保留单独 HTML、React 入口及 `features/fat-burn/` 模块；首页「锻炼」Tab 只提供直接导航入口，不将成人课程挂载到儿童玩法页面。
 - 不调用跳操会话、奖励、钱包、个人数据 API；不挂载全局音乐、数字键盘或启动问候。
 - 复用项目设计 token、通用文字朗读、声音占用协调和全屏能力，不修改它们的行为。
 - 课程选择、声音设置和进度只在本页内存保留；刷新后恢复默认课程准备状态，不写浏览器存储或文件。练习中刷新或离页使用浏览器原生未完成提示。

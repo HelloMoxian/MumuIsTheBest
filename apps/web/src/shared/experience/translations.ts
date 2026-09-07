@@ -17,6 +17,8 @@ const MANUAL_TRANSLATIONS: Readonly<Record<string, string>> = {
   厘米: "centimeters",
   木木学习岛: "Mumu Learning Island",
   学习大厅: "Learning Hall",
+  陪妈妈跳操: "Work Out with Mom",
+  "妈妈的专属运动课：有氧、力量和舒缓恢复": "Mom's workout courses: cardio, strength, and gentle recovery",
   朗读: "Read aloud",
   界面: "Interface",
   不朗读: "Off",

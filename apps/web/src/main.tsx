@@ -288,6 +288,13 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     icon: "exercise",
     games: [
       {
+        title: "陪妈妈跳操",
+        mark: "✦",
+        description: "妈妈的专属运动课：有氧、力量和舒缓恢复",
+        shape: "wide",
+        href: "/fat-burn/index.html",
+      },
+      {
         title: "切水果",
         mark: "⚡",
         description: "摄像头识别挥手，支持单人和双人对战",
@@ -742,7 +749,7 @@ function App() {
                     );
                     const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""} ${isTripleReward ? "is-triple-reward" : ""}`;
                     return gameHref ? (
-                      <a className={className} href={gameHref} key={game.title} data-skip-startup-greeting={game.href === "/games/workout" || game.href === "/nature/stargazing" ? true : undefined}>{content}</a>
+                      <a className={className} href={gameHref} key={game.title} data-skip-startup-greeting={game.href === "/games/workout" || game.href === "/fat-burn/index.html" || game.href === "/nature/stargazing" ? true : undefined}>{content}</a>
                     ) : (
                       <article className={className} key={game.title}>{content}</article>
                     );
