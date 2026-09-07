@@ -59,7 +59,7 @@ describe("drawing studio works API", () => {
     try {
       const id = randomUUID();
       const url = `/api/drawing-studio/works/${id}`;
-      const document = drawingDocument(id);
+      const document = { ...drawingDocument(id), portfolioReferenceId: "pc-316" };
       const saved = await app.inject({ method: "PUT", url, payload: { document } });
       assert.equal(saved.statusCode, 200);
       assert.equal(saved.json().work.schemaVersion, 2);
@@ -78,6 +78,7 @@ describe("drawing studio works API", () => {
       assert.equal((await app.inject({ method: "DELETE", url })).statusCode, 409);
       const reloaded = (await app.inject({ method: "GET", url })).json().work;
       assert.deepEqual(reloaded.document.elements, document.elements);
+      assert.equal(reloaded.document.portfolioReferenceId, "pc-316");
       const copyId = randomUUID();
       const copy = await app.inject({ method: "PUT", url: `/api/drawing-studio/works/${copyId}`, payload: { document: { ...reloaded.document, id: copyId } } });
       assert.equal(copy.statusCode, 200);

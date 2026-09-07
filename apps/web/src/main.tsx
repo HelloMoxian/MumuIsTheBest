@@ -212,7 +212,7 @@ type AsrConfiguration = {
   isConfigured: boolean;
   storage: "local-file" | "environment" | "none";
 };
-type SubjectIconKind = "games" | "math" | "english" | "chemistry" | "nature" | "chinese" | "classics" | "planning";
+type SubjectIconKind = "games" | "art" | "exercise" | "math" | "english" | "chemistry" | "nature" | "chinese" | "classics" | "planning";
 type GamePlaceholder = {
   title: string;
   mark: string;
@@ -254,20 +254,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         href: "/games/galaxy-racer",
       },
       {
-        title: "切水果",
-        mark: "⚡",
-        description: "摄像头识别挥手，支持单人和双人对战",
-        shape: "wide",
-        href: "/games/fruit-slice",
-      },
-      {
-        title: "画图",
-        mark: "✎",
-        description: "在无限白板上画线、摆图元和自由涂色",
-        shape: "wide",
-        href: "/games/drawing-studio",
-      },
-      {
         title: "宝石连连看",
         mark: "◆",
         description: "连接彩色宝石，轻松探索十关，记录每一次通关时间",
@@ -287,6 +273,36 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "交换闪亮宝石，触发连锁消除，永久收藏每一份星光",
         shape: "wide",
         href: "/games/bejeweled",
+      },
+    ],
+  },
+  {
+    id: "exercise",
+    title: "锻炼",
+    caption: "挥挥手、动动身体，一起快乐锻炼",
+    icon: "exercise",
+    games: [
+      {
+        title: "切水果",
+        mark: "⚡",
+        description: "摄像头识别挥手，支持单人和双人对战",
+        shape: "wide",
+        href: "/games/fruit-slice",
+      },
+    ],
+  },
+  {
+    id: "art",
+    title: "艺术",
+    caption: "画一画、拼一拼，把想象变成作品",
+    icon: "art",
+    games: [
+      {
+        title: "画图",
+        mark: "✎",
+        description: "在无限白板上画线、摆图元和自由涂色",
+        shape: "wide",
+        href: "/games/drawing-studio",
       },
     ],
   },
@@ -466,6 +482,12 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
 ];
 
 function SubjectGlyph({ kind }: { kind: SubjectIconKind }) {
+  if (kind === "exercise") {
+    return <span className="subject-glyph glyph-letter" aria-hidden="true">↗</span>;
+  }
+  if (kind === "art") {
+    return <span className="subject-glyph glyph-letter" aria-hidden="true">✎</span>;
+  }
   if (kind === "games") {
     return <span className="subject-glyph glyph-games" aria-hidden="true"><i /><b>⚡</b></span>;
   }

@@ -200,6 +200,7 @@ export type DrawingPreset = {
 };
 
 export type DrawingDocument = {
+  portfolioReferenceId?: string;
   schemaVersion: typeof DRAWING_SCHEMA_VERSION;
   id: string;
   title: string;
@@ -700,7 +701,8 @@ export function parseDrawingDocument(value: unknown): DrawingDocument {
     throw new Error("这份作品的版本暂时不能打开。");
   }
   if (
-    !isShortString(value.id, 80)
+    (value.portfolioReferenceId !== undefined && (typeof value.portfolioReferenceId !== "string" || !/^pc-\d{3}$/.test(value.portfolioReferenceId)))
+    || !isShortString(value.id, 80)
     || !isShortString(value.title, 80)
     || !isShortString(value.author, 80, true)
     || !isDateTime(value.createdAt)
@@ -750,6 +752,7 @@ export function parseDrawingDocument(value: unknown): DrawingDocument {
     schemaVersion: DRAWING_SCHEMA_VERSION,
     id: value.id,
     title: value.title,
+    ...(value.portfolioReferenceId === undefined ? {} : { portfolioReferenceId: value.portfolioReferenceId as string }),
     author: value.author,
     createdAt: value.createdAt,
     updatedAt: value.updatedAt,

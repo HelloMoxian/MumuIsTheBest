@@ -1,0 +1,320 @@
+{
+  "schemaVersion": 1,
+  "style": "editable-geometric-diy",
+  "demos": [
+    {
+      "id": "garden",
+      "title": "门前的花园小院",
+      "themeId": "pc-091",
+      "elementCount": 83,
+      "shapeCounts": {
+        "free-rectangle": 47,
+        "free-ellipse": 19,
+        "free-triangle": 17
+      },
+      "parts": {
+        "草地": [
+          "garden-000"
+        ],
+        "太阳": [
+          "garden-001",
+          "garden-002",
+          "garden-003",
+          "garden-004",
+          "garden-005",
+          "garden-006",
+          "garden-007",
+          "garden-008",
+          "garden-009"
+        ],
+        "左侧松树": [
+          "garden-010",
+          "garden-011",
+          "garden-012",
+          "garden-013"
+        ],
+        "右侧松树": [
+          "garden-014",
+          "garden-015",
+          "garden-016",
+          "garden-017"
+        ],
+        "小屋": [
+          "garden-018",
+          "garden-019",
+          "garden-020",
+          "garden-021",
+          "garden-022",
+          "garden-023",
+          "garden-024"
+        ],
+        "窗户": [
+          "garden-025",
+          "garden-026",
+          "garden-027",
+          "garden-028",
+          "garden-029",
+          "garden-030",
+          "garden-031",
+          "garden-032",
+          "garden-033",
+          "garden-034",
+          "garden-035",
+          "garden-036"
+        ],
+        "台阶": [
+          "garden-037",
+          "garden-038"
+        ],
+        "小路踏石": [
+          "garden-039",
+          "garden-040"
+        ],
+        "围栏": [
+          "garden-041",
+          "garden-042",
+          "garden-043",
+          "garden-044",
+          "garden-045",
+          "garden-046",
+          "garden-047",
+          "garden-048",
+          "garden-049",
+          "garden-050",
+          "garden-051",
+          "garden-052",
+          "garden-053",
+          "garden-054",
+          "garden-055",
+          "garden-056",
+          "garden-057",
+          "garden-058",
+          "garden-059",
+          "garden-060",
+          "garden-061",
+          "garden-062",
+          "garden-063",
+          "garden-064"
+        ],
+        "左花": [
+          "garden-065",
+          "garden-066",
+          "garden-067",
+          "garden-068",
+          "garden-069",
+          "garden-070",
+          "garden-071",
+          "garden-072"
+        ],
+        "右花": [
+          "garden-073",
+          "garden-074",
+          "garden-075",
+          "garden-076",
+          "garden-077",
+          "garden-078",
+          "garden-079",
+          "garden-080"
+        ],
+        "左花坛": [
+          "garden-081"
+        ],
+        "右花坛": [
+          "garden-082"
+        ]
+      },
+      "document": "garden.drawing.json",
+      "preview": "garden.svg"
+    },
+    {
+      "id": "train",
+      "title": "小火车驶过山谷桥",
+      "themeId": "pc-226",
+      "elementCount": 54,
+      "shapeCounts": {
+        "free-rectangle": 28,
+        "free-ellipse": 21,
+        "free-triangle": 5
+      },
+      "parts": {
+        "远山": [
+          "train-000",
+          "train-001"
+        ],
+        "雪帽": [
+          "train-002",
+          "train-003"
+        ],
+        "太阳": [
+          "train-004"
+        ],
+        "河谷": [
+          "train-005"
+        ],
+        "河流波带": [
+          "train-006",
+          "train-007",
+          "train-008"
+        ],
+        "桥墩": [
+          "train-009",
+          "train-010",
+          "train-011",
+          "train-012",
+          "train-013",
+          "train-014"
+        ],
+        "桥梁": [
+          "train-015"
+        ],
+        "铁轨": [
+          "train-016"
+        ],
+        "车钩": [
+          "train-017",
+          "train-018"
+        ],
+        "后车厢": [
+          "train-019",
+          "train-020",
+          "train-021",
+          "train-022",
+          "train-023",
+          "train-024",
+          "train-025",
+          "train-026",
+          "train-027"
+        ],
+        "前车厢": [
+          "train-028",
+          "train-029",
+          "train-030",
+          "train-031",
+          "train-032",
+          "train-033",
+          "train-034",
+          "train-035",
+          "train-036"
+        ],
+        "火车头": [
+          "train-037",
+          "train-038",
+          "train-039",
+          "train-040",
+          "train-041",
+          "train-042",
+          "train-043",
+          "train-044",
+          "train-045",
+          "train-046",
+          "train-047",
+          "train-048",
+          "train-049",
+          "train-050"
+        ],
+        "蒸汽": [
+          "train-051",
+          "train-052",
+          "train-053"
+        ]
+      },
+      "document": "train.drawing.json",
+      "preview": "train.svg"
+    },
+    {
+      "id": "moon",
+      "title": "月球基地搭建日",
+      "themeId": "pc-250",
+      "elementCount": 48,
+      "shapeCounts": {
+        "free-rectangle": 21,
+        "free-ellipse": 24,
+        "free-triangle": 3
+      },
+      "parts": {
+        "月面": [
+          "moon-000"
+        ],
+        "环形山": [
+          "moon-001",
+          "moon-002",
+          "moon-003"
+        ],
+        "远方星球": [
+          "moon-004"
+        ],
+        "星球斑块": [
+          "moon-005",
+          "moon-006"
+        ],
+        "远方星点": [
+          "moon-007",
+          "moon-008",
+          "moon-009",
+          "moon-010"
+        ],
+        "发射台": [
+          "moon-011"
+        ],
+        "火箭": [
+          "moon-012",
+          "moon-013",
+          "moon-014",
+          "moon-015",
+          "moon-016",
+          "moon-017"
+        ],
+        "火箭舷窗": [
+          "moon-018",
+          "moon-019",
+          "moon-020",
+          "moon-021"
+        ],
+        "连接舱": [
+          "moon-022"
+        ],
+        "居住舱": [
+          "moon-023",
+          "moon-024",
+          "moon-025"
+        ],
+        "舱门": [
+          "moon-026",
+          "moon-027"
+        ],
+        "居住舱窗": [
+          "moon-028",
+          "moon-029"
+        ],
+        "天线": [
+          "moon-030",
+          "moon-031"
+        ],
+        "太阳能架": [
+          "moon-032"
+        ],
+        "太阳能板": [
+          "moon-033",
+          "moon-034",
+          "moon-035",
+          "moon-036",
+          "moon-037",
+          "moon-038",
+          "moon-039"
+        ],
+        "月球车": [
+          "moon-040",
+          "moon-041",
+          "moon-042",
+          "moon-043",
+          "moon-044",
+          "moon-045",
+          "moon-046",
+          "moon-047"
+        ]
+      },
+      "document": "moon.drawing.json",
+      "preview": "moon.svg"
+    }
+  ]
+}

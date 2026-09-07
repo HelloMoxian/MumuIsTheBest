@@ -178,6 +178,7 @@ const drawingPresetSchema = z.object({
 }).refine((preset) => drawingElementsHaveUniqueIds(preset.elements), "预制件图元 ID 不能重复。");
 
 export const drawingStudioPayloadSchema = z.object({
+  portfolioReferenceId: z.string().regex(/^pc-\d{3}$/).optional(),
   schemaVersion: z.union([z.literal(2), z.literal(3)]),
   id: drawingElementIdSchema,
   title: z.string().trim().min(1).max(80),

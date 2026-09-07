@@ -89,6 +89,10 @@ import {
   type DrawingShortcutTool,
 } from "./shortcuts";
 import drawingActionSpeechCatalog from "../../../../../content/drawing-studio/ui-action-speech.v1.json";
+import { PortfolioDialog } from "./PortfolioDialog";
+import { PaintingReferenceWindow } from "./PaintingReferenceWindow";
+import { getPaintingReference } from "./painting-references";
+import { portfolioContentSignature, preparePortfolioOpening, type PortfolioWork } from "./portfolio";
 import "./drawing-studio.css";
 
 type ToolId = DrawingShortcutTool | "text";
@@ -352,6 +356,13 @@ export function DrawingStudioPage() {
   const [persistenceEnabled, setPersistenceEnabled] = useState(true);
   const [autoSaveStatus, setAutoSaveStatus] = useState<AutoSaveStatus>("loading");
   const [presetRename, setPresetRename] = useState<{ id: string; draft: string } | null>(null);
+  const [portfolioOpen, setPortfolioOpen] = useState(false);
+  const [referenceHiddenFor, setReferenceHiddenFor] = useState<string | null>(null);
+  const referenceButton = useRef<HTMLButtonElement>(null);
+  const paintingReference = getPaintingReference(document.portfolioReferenceId);
+  const portfolioPristineRef = useRef<string | null>(null);
+  const portfolioCheckpointRef = useRef<{ signature: string; id: string } | null>(null);
+  const portfolioOpeningRef = useRef(false);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<SVGSVGElement>(null);
@@ -1036,7 +1047,7 @@ export function DrawingStudioPage() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.defaultPrevented) return;
       const target = event.target as HTMLElement | null;
-      if (workAction) return;
+      if (workAction || portfolioOpen) return;
       const editingText = target?.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])");
       if (event.key === "Escape" && !editingText) {
         gestureRef.current = null;
@@ -1094,7 +1105,49 @@ export function DrawingStudioPage() {
       window.removeEventListener("keyup", handleKeyUp);
       window.removeEventListener("blur", handleWindowBlur);
     };
-  }, [chooseTool, copySelected, deleteSelected, redo, undo, workAction]);
+  }, [chooseTool, copySelected, deleteSelected, redo, undo, workAction, portfolioOpen]);
+
+  const portfolioNeedsSave = document.elements.length > 0
+    && portfolioPristineRef.current !== portfolioContentSignature(document);
+  const openPortfolioWork = async (template: PortfolioWork) => {
+    if (portfolioOpeningRef.current || workSaving || !persistenceReadyRef.current) throw new Error("画布还在准备，请稍后再试。");
+    portfolioOpeningRef.current = true;
+    setWorkSaving(true);
+    try {
+      const source = drawingSnapshot(documentRef.current, viewportRef.current);
+      const signature = portfolioContentSignature(source);
+      const needsCheckpoint = source.elements.length > 0 && portfolioPristineRef.current !== signature;
+      if (needsCheckpoint && portfolioCheckpointRef.current?.signature !== signature) {
+        portfolioCheckpointRef.current = { signature, id: crypto.randomUUID() };
+      }
+      const stage = stageRef.current?.getBoundingClientRect();
+      const opened = await preparePortfolioOpening({
+        current: source, template,
+        size: { width: stage?.width ?? 1000, height: stage?.height ?? 800 },
+        checkpointId: needsCheckpoint ? portfolioCheckpointRef.current!.id : null,
+        saveCheckpoint: async (snapshot) => {
+          const thumbnail = await createCanvasThumbnail(canvasRef.current);
+          const summary = await saveDrawingWork(snapshot, thumbnail);
+          setSavedWorks((current) => [summary, ...current.filter((work) => work.id !== summary.id)]);
+        },
+      });
+      documentRef.current = opened;
+      viewportRef.current = opened.viewport;
+      portfolioPristineRef.current = portfolioContentSignature(opened);
+      portfolioCheckpointRef.current = null;
+      setDocument(opened); setViewport(opened.viewport);
+      setHistory([makeHistoryNode("打开预制作品", opened.elements, opened.presets)]);
+      setHistoryIndex(0); setSelectedIds([]);
+      setTitleDraft(opened.title); setAuthorDraft(opened.author);
+      setFreeShape(null); setFreeDraft(null); setDraftPoints([]); setMarquee(null);
+      gestureRef.current = null;
+      setTool("fill"); setPanelOpen(true); setDrawer(null); setPortfolioOpen(false);
+      setMessage(`“${opened.title}”准备好了，选个颜色开始涂吧。${needsCheckpoint ? "上幅画已保存在作品清单。" : ""}`);
+      requestAnimationFrame(focusCanvas);
+    } finally {
+      portfolioOpeningRef.current = false; setWorkSaving(false);
+    }
+  };
 
   const storeWork = async (source: DrawingDocument, successMessage: string, adoptWork: boolean) => {
     if (workSaving) return;
@@ -1455,6 +1508,10 @@ export function DrawingStudioPage() {
         </div>
         <nav className="drawing-top-actions" aria-label="作品功能">
           <button className="drawing-top-action" type="button" onClick={newDrawing}><span aria-hidden="true">＋</span>新画布</button>
+          <button className="drawing-top-action" type="button" disabled={!persistenceReady || workSaving}
+            onClick={() => { finishKeyboardEdit(); setDrawer(null); setPortfolioOpen(true); }}><span aria-hidden="true">▦</span>预制作品集</button>
+          {paintingReference && <button ref={referenceButton} className="drawing-top-action" type="button"
+            aria-expanded={referenceHiddenFor !== document.id} onClick={() => setReferenceHiddenFor(null)}>参考原画</button>}
           <button className="drawing-top-action" type="button" onClick={() => fileInputRef.current?.click()}><span aria-hidden="true">⇧</span>加载</button>
           <SpokenActionButton speech={TOP_ACTION_SPEECH.edit} className={topActionClass(tool === "select")} onClick={() => chooseTool("select")}><span aria-hidden="true">↖</span>编辑</SpokenActionButton>
           <button className="drawing-top-action" type="button" disabled={selectedElements.length === 0} onClick={copySelected}><span aria-hidden="true">⧉</span>复制</button>
@@ -1862,6 +1919,10 @@ export function DrawingStudioPage() {
           </section>
         </div>
       )}
+      {paintingReference && referenceHiddenFor !== document.id && <PaintingReferenceWindow
+        key={document.id + paintingReference.id} reference={paintingReference} stage={stageRef}
+        onClose={() => { setReferenceHiddenFor(document.id); requestAnimationFrame(() => referenceButton.current?.focus()); }} />}
+      {portfolioOpen && <PortfolioDialog onClose={() => setPortfolioOpen(false)} onOpen={openPortfolioWork} needsSave={portfolioNeedsSave} />}
       {workAction && <WorkActionDialog
         action={workAction} busy={workSaving} error={workActionError}
         onClose={() => setWorkAction(null)}

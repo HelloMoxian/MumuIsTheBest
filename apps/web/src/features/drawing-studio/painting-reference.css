@@ -1,0 +1,33 @@
+.painting-reference {
+  position: fixed; z-index: 70; box-sizing: border-box;
+  width: clamp(240px, 25vw, 340px); max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px);
+  display: flex; flex-direction: column; gap: 8px; padding: 12px; overflow: auto;
+  color: var(--ink-primary); background: var(--glass-700);
+  border: 1px solid var(--line-glow); border-radius: 24px; backdrop-filter: blur(18px);
+  box-shadow: var(--small-shadow); font: 18px/1.35 var(--font-body);
+}
+.painting-reference-heading, .painting-reference-controls { display: flex; align-items: center; gap: 6px; }
+.painting-reference-heading { justify-content: space-between; }
+.painting-reference button {
+  min-height: 48px; min-width: 48px; padding: 8px; border: 1px solid var(--line-glow); border-radius: 12px;
+  color: var(--ink-primary); background: var(--space-850); font: inherit; cursor: pointer;
+}
+.painting-reference button:hover:not(:disabled) { border-color: var(--cyan-300); background: var(--glass-500); }
+.painting-reference button:active:not(:disabled) { background: var(--violet-600); }
+.painting-reference :is(button,a):focus-visible { outline: 3px solid var(--cyan-300); outline-offset: 2px; }
+.painting-reference button:disabled { opacity: .5; cursor: not-allowed; }
+.painting-reference .painting-reference-drag { cursor: grab; touch-action: none; }
+.painting-reference .painting-reference-drag:active { cursor: grabbing; }
+.painting-reference-artist { color: var(--ink-secondary); }
+.painting-reference-image { height: min(32dvh, 280px); min-height: 90px; flex: 0 0 auto; overflow: auto; overscroll-behavior: contain; background: var(--space-950); border-radius: 10px; }
+.painting-reference-image img { display: block; max-width: none; height: auto; margin-inline: auto; user-select: none; }
+.painting-reference-image p { padding: 12px; margin: 0; }
+.painting-reference-controls output { min-width: 51px; text-align: center; }
+.painting-reference a { display: flex; align-items: center; min-height: 48px; color: var(--cyan-300); }
+.portfolio-reference-note { display: flex; align-items: center; gap: 14px; }
+.portfolio-reference-note img { max-width: 110px; max-height: 120px; object-fit: contain; border-radius: 10px; }
+.portfolio-reference-note a { color: var(--cyan-300); }
+@media (max-width: 480px) {
+  .painting-reference { width: 260px; padding: 10px; border-radius: 18px; }
+  .painting-reference-image { height: 24dvh; }
+}

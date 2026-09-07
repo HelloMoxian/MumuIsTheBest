@@ -237,7 +237,7 @@ describe("persistent user data API", () => {
       assert.equal(empty.statusCode, 200);
       assert.deepEqual(empty.json(), { state: null });
 
-      const payload = drawingPayload();
+      const payload = { ...drawingPayload(), portfolioReferenceId: "pc-301" };
       const saved = await app.inject({
         method: "PUT",
         url: "/api/persistent-data/drawing-studio",
@@ -253,6 +253,11 @@ describe("persistent user data API", () => {
       };
       assert.equal(stored.stableId, "drawing-studio");
       assert.deepEqual(stored.payload, payload);
+      const invalidReference = await app.inject({ method: "PUT", url: "/api/persistent-data/drawing-studio",
+        payload: { payload: { ...payload, portfolioReferenceId: "https://example.com/image.jpg" } } });
+      assert.equal(invalidReference.statusCode, 400);
+      const restoredReference = await app.inject({ method: "GET", url: "/api/persistent-data/drawing-studio" });
+      assert.equal(restoredReference.json().state.payload.portfolioReferenceId, "pc-301");
 
       const duplicate = await app.inject({
         method: "PUT",
