@@ -5,7 +5,7 @@
 .fat-burn * { box-sizing: border-box; }
 .fat-burn button, .fat-burn a, .fat-burn summary, .fat-burn input { -webkit-tap-highlight-color: transparent; }
 .fat-burn button, .fat-burn a { transition: background .16s, border-color .16s, transform .16s; }
-.fat-burn button:focus-visible, .fat-burn a:focus-visible, .fat-burn summary:focus-visible, .fat-burn input:focus-visible { outline: 3px solid var(--cyan-300); outline-offset: 4px; }
+.fat-burn button:focus-visible, .fat-burn a:focus-visible, .fat-burn summary:focus-visible, .fat-burn input:focus-visible, .fat-burn select:focus-visible { outline: 3px solid var(--cyan-300); outline-offset: 4px; }
 .fat-burn button:disabled { opacity: .5; cursor: default; }
 .fat-burn button:not(:disabled):active { transform: translateY(2px); }
 .fat-burn p { margin: 0; }
@@ -15,6 +15,11 @@
 .fat-burn-brand small { display: block; color: var(--ink-secondary); font: 500 15px/1.6 var(--font-body); letter-spacing: .12em; margin-top: 4px; }
 .fat-burn-header-actions { display: flex; gap: 10px; }
 .fat-burn-main { width: 100%; max-width: 1500px; margin: auto; }
+.fat-burn-selected-course { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 18px; padding: 20px 26px; border: 1px solid var(--line-glow); border-radius: 24px; background: var(--glass-700); }
+.fat-burn-selected-course h2 { margin: 6px 0; font: 800 26px/1.5 var(--font-display); }
+.fat-burn-selected-course h2 small { margin-left: 8px; font-size: 18px; font-weight: 500; color: var(--ink-secondary); white-space: nowrap; }
+.fat-burn-selected-course p { color: var(--ink-secondary); font-size: 18px; line-height: 1.6; }
+.fat-burn-course-actions { display: flex; gap: 10px; flex-shrink: 0; }
 .fb-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 10px 20px; border: 1px solid var(--line-glow); border-radius: 16px; background: var(--glass-500); color: var(--ink-primary); font: 650 18px/1.4 var(--font-body); cursor: pointer; text-decoration: none; }
 .fb-button:hover:not(:disabled) { border-color: var(--violet-400); background: color-mix(in srgb, var(--violet-400) 18%, var(--space-850)); }
 .fb-button.fb-primary { border: 0; color: var(--ink-primary); background: linear-gradient(110deg, var(--violet-600), color-mix(in srgb, var(--pink-400) 64%, var(--violet-600))); box-shadow: 0 8px 26px color-mix(in srgb, var(--violet-600) 27%, transparent); font-weight: 800; }
@@ -55,6 +60,7 @@
 .fat-burn-coach small { position: absolute; bottom: 2px; left: 0; width: 100%; text-align: center; color: var(--ink-secondary); font-size: 14px; }
 .fat-burn-stage-bottom { position: absolute; z-index: 2; left: 25px; right: 25px; bottom: 22px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
 .fat-burn-stage-bottom > span { color: var(--ink-secondary); font-size: 14px; }
+.fat-burn-stage-bottom > .fat-burn-auto-view { display: block; color: var(--cyan-300); font-size: 16px; line-height: 1.5; }
 .fat-burn-view { display: inline-flex; padding: 4px; border-radius: 16px; background: var(--glass-700); border: 1px solid var(--line-glow); }
 .fat-burn-view button { min-height: 48px; min-width: 68px; border: 1px solid transparent; border-radius: 12px; color: var(--ink-secondary); background: transparent; font-size: 18px; }
 .fat-burn-view button:hover { color: var(--ink-primary); background: var(--glass-500); }
@@ -69,6 +75,7 @@
 .fat-burn-clock strong { font: 800 clamp(54px, 5vw, 74px)/1.15 var(--font-display); letter-spacing: -.06em; font-variant-numeric: tabular-nums; }
 .fat-burn-clock > span { color: var(--ink-secondary); font-size: 22px; }
 .fat-burn-clock-caption { color: var(--ink-secondary); font-size: 16px; line-height: 1.65; min-height: 52px; }
+.fat-burn-prescription { margin-top: 12px !important; padding: 12px; border-left: 3px solid var(--cyan-300); border-radius: 6px; background: var(--glass-500); color: var(--ink-primary); font-size: 18px; line-height: 1.65; }
 .fat-burn-step-progress { height: 5px; background: var(--glass-500); border-radius: 20px; margin: 20px 0 22px; overflow: hidden; }
 .fat-burn-step-progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--cyan-300), var(--violet-400), var(--pink-400)); }
 .fat-burn-main-control { display: grid; gap: 10px; }
@@ -106,18 +113,46 @@
 .fat-burn-settings-content p { margin-top: 12px; }
 .fat-burn-cooldown-button { margin-top: 16px; }
 .fat-burn-footer-note { font-size: 14px; color: var(--ink-secondary); margin-top: 18px !important; }
-.fat-burn-dialog { width: min(700px, calc(100vw - 30px)); max-height: 85dvh; border: 1px solid var(--line-glow); padding: 28px; border-radius: 28px; background: var(--space-850); color: var(--ink-primary); box-shadow: var(--shadow); }
+.fat-burn-dialog { width: min(900px, calc(100vw - 30px)); max-height: 85dvh; border: 1px solid var(--line-glow); padding: 28px; border-radius: 28px; background: var(--space-850); color: var(--ink-primary); box-shadow: var(--shadow); }
 .fat-burn-dialog::backdrop { background: color-mix(in srgb, var(--space-950) 78%, transparent); backdrop-filter: blur(8px); }
 .fat-burn-dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .fat-burn-dialog h2 { font-size: 28px; line-height: 1.4; }
 .fat-burn-dialog p { color: var(--ink-secondary); font-size: 18px; line-height: 1.8; }
 .fat-burn-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+.fat-burn-course-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 24px 0; }
+.fat-burn-course-card { display: grid; gap: 8px; text-align: left; padding: 18px; border: 1px solid var(--line-glow); border-radius: 20px; background: var(--glass-500); color: var(--ink-primary); cursor: pointer; font: 500 18px/1.6 var(--font-body); min-width: 0; }
+.fat-burn-course-card span { color: var(--ink-secondary); }
+.fat-burn-course-card strong { font-size: 22px; }
+.fat-burn-course-card:hover { border-color: var(--violet-400); background: color-mix(in srgb, var(--violet-400) 15%, transparent); }
+.fat-burn-course-card[aria-pressed="true"] { border-color: var(--cyan-300); background: color-mix(in srgb, var(--cyan-300) 9%, transparent); }
+.fat-burn-course-card[aria-pressed="true"] > span:first-child { color: var(--cyan-300); }
+.fat-burn-course-info { padding: 20px; border: 1px solid var(--line-glow); border-radius: 20px; background: var(--glass-500); margin-top: 20px; }
+.fat-burn-course-info h3 { font-size: 21px; line-height: 1.5; margin: 0 0 10px; }
+.fat-burn-course-info h3:not(:first-child) { margin-top: 24px; }
+.fat-burn-course-info p + p { margin-top: 12px; }
+.fat-burn-switch-note { margin-top: 20px !important; color: var(--warning-300) !important; }
+.fat-burn-week-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+.fat-burn-week-list { margin-top: 18px; }
+.fat-burn-week-list article { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line-glow); }
+.fat-burn-week-list article > strong { padding-top: 10px; color: var(--cyan-300); font-size: 20px; }
+.fat-burn-course-link { min-height: 48px; text-align: left; color: var(--ink-primary); font: 700 19px/1.5 var(--font-body); background: transparent; border: 1px solid transparent; border-radius: 10px; cursor: pointer; padding: 8px 0; }
+.fat-burn-course-link:hover { color: var(--cyan-300); text-decoration: underline; }
+.fat-burn-source-note { margin-top: 22px !important; }
+.fat-burn-source-links { display: grid; gap: 8px; margin-top: 12px; }
+.fat-burn-source-links a { color: var(--cyan-300); font-size: 18px; padding-block: 10px; min-height: 48px; }
+.fat-burn-preview { margin-top: 20px; padding: 16px; border: 1px solid var(--line-glow); border-radius: 20px; }
+.fat-burn-preview summary { min-height: 48px; padding: 10px 0; font-size: 20px; cursor: pointer; }
+.fat-burn-preview label { display: block; font-size: 18px; margin-block: 12px 8px; }
+.fat-burn-preview select { width: 100%; min-height: 50px; color: var(--ink-primary); background: var(--space-950); padding: 10px 12px; border: 1px solid var(--line-glow); border-radius: 12px; font: 500 18px/1.5 var(--font-body); }
+.fat-burn-preview-figure { height: 340px; background: var(--space-950); border-radius: 18px; margin-top: 16px; overflow: hidden; }
 .fat-burn-plan-phase { margin-block: 24px; }
 .fat-burn-plan-phase h3 { font-size: 22px; margin: 0 0 12px; color: var(--cyan-300); }
 .fat-burn-plan-phase h3 span { color: var(--ink-secondary); font-size: 18px; margin-left: 12px; }
 .fat-burn-plan-phase ol { padding: 0; margin: 12px 0 0; list-style: none; }
 .fat-burn-plan-phase li { display: flex; gap: 16px; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line-glow); font-size: 18px; }
 .fat-burn-plan-phase small { font-size: 16px; white-space: nowrap; color: var(--ink-secondary); }
+.fat-burn-plan-phase li > div { min-width: 0; }
+.fat-burn-plan-phase li p { font-size: 16px; line-height: 1.6; margin-top: 6px; }
 .fat-burn.is-fullscreen { position: fixed; inset: 0; z-index: 1000; overflow: auto; width: 100%; height: 100%; }
 .fat-burn.is-fullscreen .fat-burn-lower { display: none; }
 .fat-burn-mobile-control { display: none; }
@@ -153,6 +188,14 @@
   .fat-burn-phase > div:nth-child(2) { gap: 2px; flex-direction: column; }
 }
 @media (max-width: 720px) {
+.fat-burn-selected-course { padding: 18px; flex-direction: column; align-items: stretch; gap: 14px; }
+.fat-burn-selected-course h2 { font-size: 23px; }
+.fat-burn-course-actions { flex-wrap: wrap; }
+.fat-burn-course-actions > button { flex: 1; }
+.fat-burn-course-grid { grid-template-columns: 1fr; }
+.fat-burn-course-info { padding: 16px; }
+.fat-burn-week-list article { grid-template-columns: 42px minmax(0, 1fr); gap: 8px; }
+.fat-burn-course-link { font-size: 18px; }
   .fat-burn { padding: 0 14px 110px; }
   .fat-burn-mobile-control { position: fixed; z-index: 10; bottom: 0; left: 0; right: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 10px 18px max(12px, env(safe-area-inset-bottom)); border-top: 1px solid var(--line-glow); background: var(--space-850); box-shadow: var(--small-shadow); }
   .fat-burn-mobile-control > span { font-size: 16px; color: var(--ink-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

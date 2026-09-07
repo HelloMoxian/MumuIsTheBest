@@ -1,4 +1,5 @@
-import type { Point } from "./pose";
+import { FLOOR_MOVES, type Point } from "./pose";
+import type { MoveId } from "./plan";
 
 export type ScreenPoint = readonly [number, number];
 export type SpriteMatrix = [number, number, number, number, number, number];
@@ -19,13 +20,26 @@ export const MOM_SPRITE_WIDTHS = {
   shin: 1,
 } as const;
 
-export function momProjection(width: number, height: number, profile: boolean) {
-  const scale = Math.min(height / 3.58, width / (profile ? 2.45 : 3.15));
-  const floor = height * .935;
+const CONTACT_VIEW_MOVES: readonly MoveId[] = [...FLOOR_MOVES, "chair-stand", "wall-push", "wall-plank", "bottle-row", "hip-hinge", "calf-raise", "hamstring-stretch"];
+
+/** Side/oblique views expose hip hinges and support surfaces that disappear from the front. */
+export function momDemonstrationView(move: MoveId, requestedProfile = false): boolean {
+  return requestedProfile || CONTACT_VIEW_MOVES.includes(move);
+}
+
+export function momDemonstrationViewNote(move: MoveId): string | null {
+  return CONTACT_VIEW_MOVES.includes(move) ? "侧面示范 · 看清身体姿势与支撑位置" : null;
+}
+
+export function momProjection(width: number, height: number, profile: boolean, move?: MoveId) {
+  const floorMove = move !== undefined && FLOOR_MOVES.includes(move);
+  const contactView = move !== undefined && CONTACT_VIEW_MOVES.includes(move);
+  const scale = Math.min(height / (floorMove ? 2.1 : 3.58), width / (floorMove ? 3.95 : contactView ? 3.05 : profile ? 2.45 : 3.15));
+  const floor = height * (floorMove ? .69 : .935);
   return {
     scale,
     floor,
-    point: (p: Point): ScreenPoint => [width / 2 + (profile ? p[2] : p[0]) * scale, floor - p[1] * scale],
+    point: (p: Point): ScreenPoint => [width / 2 + (contactView ? p[2] * .96 + p[0] * .28 : profile ? p[2] : p[0]) * scale, floor - (p[1] - (contactView ? (p[0] * .96 - p[2] * .28) * .08 : 0)) * scale],
     depth: (p: Point): number => profile ? -p[0] : p[2],
   };
 }

@@ -1,8 +1,9 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { MoveId } from "./plan";
-import { MOM_LIMBS, momPoseFor, type MomPose, type Point } from "./pose";
+import { FLOOR_MOVES, MOM_LIMBS, momPoseFor, type MomPose, type Point } from "./pose";
 import { MOM_ART, MOM_HAND_MIRROR, type MomPartName } from "./mom-art";
-import { angleDown, attachedSpriteMatrix, limbSpriteMatrix, MOM_SPRITE_DIMENSIONS, MOM_SPRITE_WIDTHS, momProjection, type ScreenPoint, type SpriteMatrix } from "./sprite-rig";
+import { angleDown, attachedSpriteMatrix, limbSpriteMatrix, MOM_SPRITE_DIMENSIONS, MOM_SPRITE_WIDTHS, momDemonstrationView, momDemonstrationViewNote, momProjection, type ScreenPoint, type SpriteMatrix } from "./sprite-rig";
+import { momPropShapes } from "./motion-render";
 
 export interface MomCoachProps {
   move: MoveId;
@@ -79,7 +80,8 @@ function prepareJointEdges(loaded: CoachImages, art: typeof MOM_ART.front): Coac
 }
 
 /** Original illustrated coach; both camera views follow the same 3D joints. */
-export function MomCoach({ move, phase, profile = false, lowImpact = false, side = "left" }: MomCoachProps) {
+export function MomCoach({ move, phase, profile: requestedProfile = false, lowImpact = false, side = "left" }: MomCoachProps) {
+  const profile = momDemonstrationView(move, requestedProfile);
   const host = useRef<HTMLDivElement>(null);
   const draw = useRef<((pose: MomPose) => void) | null>(null);
   const latest = useRef({ move, phase, lowImpact, side });
@@ -114,7 +116,8 @@ export function MomCoach({ move, phase, profile = false, lowImpact = false, side
       ctx.clearRect(0, 0, width, height);
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
-      const projection = momProjection(width, height, profile), { scale, point, depth } = projection;
+      const activeMove = latest.current.move;
+      const projection = momProjection(width, height, profile, activeMove), { scale, point, depth } = projection;
       const center = width / 2;
       ctx.save();
       ctx.translate(center, projection.floor + scale * .012);
@@ -130,6 +133,18 @@ export function MomCoach({ move, phase, profile = false, lowImpact = false, side
       ctx.beginPath(); ctx.ellipse(center, projection.floor, scale * 1.15, scale * .12, 0, 0, Math.PI * 2);
       ctx.globalAlpha = .16; ctx.stroke();
       ctx.restore();
+
+      function paintProps(foreground = false) {
+        ctx.save(); ctx.lineCap = "round"; ctx.lineJoin = "round";
+        for (const shape of momPropShapes(activeMove, pose, foreground)) {
+          ctx.beginPath(); shape.points.forEach((p, i) => { const [x, y] = point(p); if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y); });
+          if (shape.closed) ctx.closePath();
+          if (shape.fill) { ctx.fillStyle = color(shape.fill, floorColor); ctx.fill(); }
+          ctx.lineWidth = shape.width * scale; ctx.strokeStyle = color(shape.stroke, cyan); ctx.stroke();
+        }
+        ctx.restore();
+      }
+      paintProps();
 
       const parts: PaintedPart[] = [];
       const meanDepth = (a: Point, b: Point) => (depth(a) + depth(b)) / 2;
@@ -154,7 +169,7 @@ export function MomCoach({ move, phase, profile = false, lowImpact = false, side
         attachment("shoe", pose.feet[i], profile ? MOM_SPRITE_DIMENSIONS.sideShoe : MOM_SPRITE_DIMENSIONS.frontShoe, profile ? pose.footPitch[i] : 0, -1.8 + depth(pose.feet[i]) * .2, mirror, opacity);
       }
       bone("torso", pose.shouldersCenter, pose.hips, .78, profile ? .02 : depth(pose.hips) + .04);
-      const spineAngle = angleDown(point(pose.shouldersCenter), point(pose.hips));
+      const spineAngle = angleDown(point(pose.head), point(pose.neck));
       const head = art.head;
       const headHeight = MOM_SPRITE_DIMENSIONS.headHeight;
       attachment("head", pose.neck, [headHeight * head.bounds[2] / head.bounds[3], headHeight], spineAngle, profile ? .01 : depth(pose.hips) + .03);
@@ -168,7 +183,8 @@ export function MomCoach({ move, phase, profile = false, lowImpact = false, side
         bone("upper-arm", pose.shoulders[i], pose.elbows[i], MOM_LIMBS.upperArm, armDepth, mirror, opacity);
         bone("forearm", pose.elbows[i], pose.hands[i], MOM_LIMBS.forearm, forearmDepth, mirror, opacity);
         const hand = art.hand, handHeight = MOM_SPRITE_DIMENSIONS.handHeight;
-        attachment("hand", pose.hands[i], [handHeight * hand.bounds[2] / hand.bounds[3], handHeight], angleDown(point(pose.elbows[i]), point(pose.hands[i])), profile ? sideDepth + .002 : depth(pose.hands[i]) + .01, MOM_HAND_MIRROR[profile ? "side" : "front"][i], opacity);
+        const fingers = pose.hands[i].map((value, axis) => value + pose.handDirection[i][axis]) as Point;
+        attachment("hand", pose.hands[i], [handHeight * hand.bounds[2] / hand.bounds[3], handHeight], angleDown(point(pose.hands[i]), point(fingers)), profile ? sideDepth + .002 : depth(pose.hands[i]) + .01, MOM_HAND_MIRROR[profile ? "side" : "front"][i], opacity);
       }
       parts.sort((a, b) => a.depth - b.depth || a.order - b.order);
       for (const part of parts) {
@@ -184,6 +200,7 @@ export function MomCoach({ move, phase, profile = false, lowImpact = false, side
         ctx.drawImage(image, x, y, w, h, x, y, w, h);
         ctx.restore();
       }
+      paintProps(true);
     }
     draw.current = render;
     const resize = () => {
@@ -205,7 +222,7 @@ export function MomCoach({ move, phase, profile = false, lowImpact = false, side
   }, [profile]);
 
   useEffect(() => { draw.current?.(momPoseFor(move, phase, lowImpact, side)); }, [move, phase, lowImpact, side]);
-  return <div className="fat-burn-coach" role="img" aria-label={`年轻妈妈${profile ? "侧面" : "正面"}动作示范`} style={{ position: "relative", width: "100%", height: "100%" }}>
+  return <div className="fat-burn-coach" role="img" aria-label={`年轻妈妈${profile ? "侧面" : "正面"}动作示范${FLOOR_MOVES.includes(move) ? "，在垫子上完成地面姿势" : ""}${momDemonstrationViewNote(move) ? "，显示真实支撑位置" : ""}`} style={{ position: "relative", width: "100%", height: "100%" }}>
     <div ref={host} className="fat-burn-coach-canvas" style={{ position: "absolute", inset: 0, display: status === "failed" ? "none" : "block" }} />
     {status === "loading" && <span role="status" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "var(--ink-secondary)", fontSize: 18 }}>妈妈正在准备示范…</span>}
     {status === "failed" && <><FlatMomCoach move={move} phase={phase} profile={profile} lowImpact={lowImpact} side={side} /><small>示范图片暂未载入 · 简明动作示范</small></>}
@@ -214,33 +231,44 @@ export function MomCoach({ move, phase, profile = false, lowImpact = false, side
 
 function FlatMomCoach({ move, phase, profile, lowImpact, side }: MomCoachProps) {
   const id = useId().replaceAll(":", ""), pose = momPoseFor(move, phase, lowImpact, side);
-  const xy = (p: Point): [number, number] => [160 + (profile ? p[2] : p[0]) * 91, 330 - p[1] * 91];
+  const projection = momProjection(320, 360, Boolean(profile), move), xy = projection.point;
   const limb = (a: Point, b: Point, color: string, width: number, key: string) => {
     const [x1, y1] = xy(a), [x2, y2] = xy(b);
     return <line key={key} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth={width} strokeLinecap="round" />;
   };
   const [hx, hy] = xy(pose.head), [cx, cy] = xy(pose.shouldersCenter), [px, py] = xy(pose.hips);
+  const torsoAngle = angleDown(xy(pose.shouldersCenter), xy(pose.hips)) * 180 / Math.PI;
+  const headAngle = angleDown(xy(pose.head), xy(pose.neck)) * 180 / Math.PI;
+  const torsoHeight = Math.hypot(px - cx, py - cy), shoulderWidth = (profile ? .21 : .30) * projection.scale, hipWidth = .24 * projection.scale;
   const purple = "#bcb0dd", pants = "#343d53", skin = "#f2bc9d";
   const sleeveEnd = (i: number): Point => pose.shoulders[i].map((value, axis) => value + (pose.elbows[i][axis] - value) * .36) as Point;
+  const props = (foreground = false) => momPropShapes(move, pose, foreground).map((shape, i) => {
+    const points = shape.points.map(point => xy(point).join(",")).join(" ");
+    return shape.closed ? <polygon key={i} points={points} fill={shape.fill ? `var(${shape.fill})` : "none"} stroke={`var(${shape.stroke})`} strokeWidth={shape.width * projection.scale} strokeLinejoin="round" /> : <polyline key={i} points={points} fill="none" stroke={`var(${shape.stroke})`} strokeWidth={shape.width * projection.scale} strokeLinecap="round" />;
+  });
   return <svg viewBox="0 0 320 360" aria-hidden="true" style={{ display: "block", width: "100%", height: "100%" }}>
     <defs><linearGradient id={`${id}-top`} x2="1" y2="1"><stop stopColor={purple} /><stop offset="1" stopColor="#9788bc" /></linearGradient></defs>
-    <ellipse cx="160" cy="331" rx="105" ry="18" fill="var(--space-850)" stroke="var(--cyan-300)" strokeOpacity=".4" />
+    {!FLOOR_MOVES.includes(move) && <ellipse cx="160" cy={projection.floor} rx="105" ry="18" fill="var(--space-850)" stroke="var(--cyan-300)" strokeOpacity=".4" />}
+    {props()}
     {[0, 1].map(i => <g key={i} opacity={profile && i === 0 ? .6 : 1}>
       {limb(pose.hipsPair[i], pose.knees[i], pants, 24, "thigh")}{limb(pose.knees[i], pose.feet[i], pants, 17, "shin")}
-      <ellipse cx={xy(pose.feet[i])[0] + (profile ? 5 : 0)} cy={xy(pose.feet[i])[1] + 4} rx={profile ? 16 : 10} ry="7" fill="var(--ink-primary)" stroke="var(--cyan-300)" strokeWidth="3" />
+      <ellipse cx={xy(pose.feet[i])[0] + (profile ? 5 : 0)} cy={xy(pose.feet[i])[1] + 4} rx={profile ? 16 : 10} ry="7" transform={`rotate(${pose.footPitch[i] * 180 / Math.PI}, ${xy(pose.feet[i]).join(",")})`} fill="var(--ink-primary)" stroke="var(--cyan-300)" strokeWidth="3" />
     </g>)}
     {limb(pose.neck, pose.head, skin, 17, "neck")}
-    <path d={`M ${cx - (profile ? 16 : 29)} ${cy - 2} Q ${cx} ${cy - 12} ${cx + (profile ? 16 : 29)} ${cy - 2} Q ${px + 22} ${py - 22} ${px + 24} ${py + 5} Q ${px} ${py + 12} ${px - 24} ${py + 5} Q ${px - 22} ${py - 22} ${cx - (profile ? 16 : 29)} ${cy - 2}`} fill={`url(#${id}-top)`} />
+    <path transform={`translate(${cx}, ${cy}) rotate(${torsoAngle})`} d={`M ${-shoulderWidth} 0 Q 0 -10 ${shoulderWidth} 0 L ${hipWidth} ${torsoHeight + 5} Q 0 ${torsoHeight + 12} ${-hipWidth} ${torsoHeight + 5} Z`} fill={`url(#${id}-top)`} />
     {[0, 1].map(i => <g key={i} opacity={profile && i === 0 ? .6 : 1}>
       {limb(pose.shoulders[i], pose.elbows[i], skin, 13, "upper")}{limb(pose.elbows[i], pose.hands[i], skin, 10, "forearm")}
       {limb(pose.shoulders[i], sleeveEnd(i), purple, 18, "sleeve")}
-      <ellipse cx={xy(pose.hands[i])[0]} cy={xy(pose.hands[i])[1]} rx="6" ry="8" fill={skin} />
+      <ellipse cx={xy(pose.hands[i].map((value, axis) => value + pose.handDirection[i][axis] * .085) as Point)[0]} cy={xy(pose.hands[i].map((value, axis) => value + pose.handDirection[i][axis] * .085) as Point)[1]} rx="6" ry="8" fill={skin} />
     </g>)}
+    <g transform={`rotate(${headAngle}, ${hx}, ${hy})`}>
     <path d={`M ${hx - 12} ${hy - 14} Q ${hx - 45} ${hy - 25} ${hx - 35} ${hy + 25} Q ${hx - 31} ${hy + 40} ${hx - 42} ${hy + 45} Q ${hx - 20} ${hy + 48} ${hx - 23} ${hy + 5} Z`} fill="#382426" />
     <ellipse cx={hx} cy={hy} rx={profile ? 20 : 22} ry="26" fill={skin} />
     <path d={`M ${hx - 22} ${hy + 2} Q ${hx - 27} ${hy - 30} ${hx} ${hy - 28} Q ${hx + 28} ${hy - 27} ${hx + 21} ${hy - 4} Q ${hx + 4} ${hy - 14} ${hx + 3} ${hy - 22} Q ${hx - 16} ${hy - 15} ${hx - 22} ${hy + 2}`} fill="#382426" />
     {(profile ? [8] : [-8, 8]).map(x => <g key={x}><ellipse cx={hx + x} cy={hy - 3} rx="4" ry="2.5" fill="#fff9f0" /><circle cx={hx + x + 1} cy={hy - 3} r="2" fill="#382426" /><path d={`M ${hx + x - 4} ${hy - 9} q 4 -2 8 0`} fill="none" stroke="#382426" strokeWidth="1.6" /></g>)}
     <path d={`M ${hx - 5 + (profile ? 8 : 0)} ${hy + 10} q 6 5 12 -1`} fill="none" stroke="#bb656c" strokeWidth="2" strokeLinecap="round" />
     {!profile && <><ellipse cx={hx - 14} cy={hy + 6} rx="4" ry="2" fill="#e29b91" /><ellipse cx={hx + 14} cy={hy + 6} rx="4" ry="2" fill="#e29b91" /></>}
+    </g>
+    {props(true)}
   </svg>;
 }

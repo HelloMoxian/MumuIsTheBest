@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { momPoseFor } from "./pose";
+import { FLOOR_MOVES, KNEELING_SHOE, momPoseFor } from "./pose";
 import { MOM_ART, MOM_HAND_MIRROR } from "./mom-art";
-import { angleDown, attachedSpriteMatrix, limbSpriteMatrix, momProjection, type ScreenPoint, type SpriteMatrix } from "./sprite-rig";
+import { angleDown, attachedSpriteMatrix, limbSpriteMatrix, MOM_SPRITE_DIMENSIONS, momDemonstrationView, momDemonstrationViewNote, momProjection, type ScreenPoint, type SpriteMatrix } from "./sprite-rig";
+import { momPropShapes } from "./motion-render";
 
 function apply(matrix: SpriteMatrix, point: ScreenPoint): ScreenPoint {
   return [matrix[0] * point[0] + matrix[2] * point[1] + matrix[4], matrix[1] * point[0] + matrix[3] * point[1] + matrix[5]];
@@ -28,6 +29,63 @@ test("painted joint anchors remain attached through mirrored, bent and foreshort
           }
         }
       }
+    }
+  }
+});
+
+test("floor and supported demonstrations select a readable view and fit bodies plus real props at narrow and wide sizes", () => {
+  for (const move of [...FLOOR_MOVES, "chair-stand", "wall-push", "wall-plank", "bottle-row", "hip-hinge", "calf-raise", "hamstring-stretch"] as const) {
+    assert.equal(momDemonstrationView(move, false), true);
+    assert.ok(momDemonstrationViewNote(move));
+    for (const [width, height] of [[280, 360], [620, 460]]) for (let frame = 0; frame < 80; frame++) {
+      const pose = momPoseFor(move, frame / 40, true);
+      const projection = momProjection(width, height, true, move);
+      const props = [...momPropShapes(move, pose), ...momPropShapes(move, pose, true)];
+      const points = [...pose.hipsPair, ...pose.shoulders, ...pose.elbows, ...pose.hands, ...pose.knees, ...pose.feet, pose.head, ...props.flatMap(prop => prop.points)];
+      for (const point of points.map(projection.point)) assert.ok(point.every(Number.isFinite) && point[0] >= 0 && point[0] <= width && point[1] >= 0 && point[1] <= height, `${move}: body and props stay in view`);
+      const head = MOM_ART.side.head, headHeight = MOM_SPRITE_DIMENSIONS.headHeight;
+      const factor = headHeight / head.bounds[3] * projection.scale;
+      const matrix = attachedSpriteMatrix(head.start, projection.point(pose.neck), factor, factor, angleDown(projection.point(pose.head), projection.point(pose.neck)));
+      const [x, y, w, h] = head.bounds;
+      for (const corner of [[x, y], [x + w, y], [x, y + h], [x + w, y + h]] as const) {
+        const point = apply(matrix, corner);
+        assert.ok(point[0] >= 0 && point[0] <= width && point[1] >= 0 && point[1] <= height, `${move}: full head artwork stays in view`);
+      }
+    }
+  }
+  assert.equal(momDemonstrationView("march", false), false);
+  assert.equal(momDemonstrationViewNote("march"), null);
+});
+
+test("the illustrated equipment follows fixed support geometry while held bottles follow both hands", () => {
+  for (const move of ["chair-stand", "calf-raise", "wall-push", "wall-plank", ...FLOOR_MOVES] as const) {
+    const before = momPropShapes(move, momPoseFor(move, 0)), after = momPropShapes(move, momPoseFor(move, .5));
+    assert.ok(before.length > 0, `${move}: support equipment is drawn`);
+    assert.deepEqual(before, after, `${move}: the supporting wall/chair/mat must stay fixed`);
+  }
+  const start = momPoseFor("bottle-row", 0), end = momPoseFor("bottle-row", .5);
+  const before = momPropShapes("bottle-row", start, true), after = momPropShapes("bottle-row", end, true);
+  assert.equal(before.length, 6, "two complete bottles, each with body, water and cap");
+  for (let i = 0; i < before.length; i++) for (let axis = 0; axis < 3; axis++) {
+    const hand = Math.floor(i / 3);
+    assert.ok(Math.abs(after[i].points[0][axis] - before[i].points[0][axis] - end.hands[hand][axis] + start.hands[hand][axis]) < .000001, "bottles travel exactly with the wrists");
+  }
+});
+
+test("kneeling shoe artwork meets the mat at the painted toe cap while the ankle stays raised", () => {
+  const art = MOM_ART.side.shoe;
+  for (const move of ["bird-dog", "quadruped-rest"] as const) for (let frame = 0; frame <= 100; frame++) {
+    const pose = momPoseFor(move, frame / 50, true), projection = momProjection(440, 500, true, move);
+    for (let i = 0; i < 2; i++) {
+      const [x, , z] = pose.feet[i], pitch = pose.footPitch[i];
+      const toeZ = z + KNEELING_SHOE.toeForward * Math.cos(pitch) - KNEELING_SHOE.toeBelow * Math.sin(pitch);
+      const toeOnMat = projection.point([x, 0, toeZ]);
+      const matrix = attachedSpriteMatrix(art.start, projection.point(pose.feet[i]), MOM_SPRITE_DIMENSIONS.sideShoe[0] / art.bounds[2] * projection.scale, MOM_SPRITE_DIMENSIONS.sideShoe[1] / art.bounds[3] * projection.scale, pitch);
+      const paintedToe = apply(matrix, [228, 176]);
+      // A rigid raster attachment differs from the shallow oblique floor by under one pixel.
+      assert.ok(Math.hypot(paintedToe[0] - toeOnMat[0], paintedToe[1] - toeOnMat[1]) < projection.scale * .009, "painted toe touches the same mat point as the pose contact");
+      assert.ok(toeZ >= -1.82 && toeZ <= 1.62, "sliding toe stays on the actual mat");
+      assert.ok(projection.point(pose.feet[i])[1] < paintedToe[1] - projection.scale * .19, "ankle is visibly above the supported toe");
     }
   }
 });
