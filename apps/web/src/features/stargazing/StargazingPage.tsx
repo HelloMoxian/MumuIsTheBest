@@ -92,6 +92,7 @@ export function StargazingPage({ homeHref = "/#nature-title" }: { homeHref?: str
   const [formError, setFormError] = useState(""), [notice, setNotice] = useState("");
   const constellation = CONSTELLATIONS.find(c => c.id === selectedId);
   const collection = SKY_COLLECTIONS.find(c => c.id === collectionId);
+  const dedicatedView = !!(star || atlas || constellation || collection);
   const members = useMemo(() => constellation ? constellationStars(constellation, STARS) : [], [constellation]);
   const figureStars = useMemo(() => constellation ? constellationFigureStars(constellation, STARS) : [], [constellation]);
   const collectionConstellations = useMemo(() => collection ? CONSTELLATIONS.filter(c => collection.ids.includes(c.id)) : CONSTELLATIONS, [collection]);
@@ -132,7 +133,7 @@ export function StargazingPage({ homeHref = "/#nature-title" }: { homeHref?: str
   const resetSky = () => {
     setSelectedId(null); setSelectedIds([]); setCollectionId(null); setStar(null); setFlightStar(null); setAtlas(false); setView(HOME_VIEW); setTouring(false);
   };
-  const returnToSky = () => { setStar(null); setFlightStar(null); setAtlas(false); };
+  const returnToSky = () => resetSky();
   const toggleAtlas = () => {
     if (atlas) { setAtlas(false); return; }
     resetSky(); setAtlas(true);
@@ -167,13 +168,13 @@ export function StargazingPage({ homeHref = "/#nature-title" }: { homeHref?: str
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape" && !dialog.current?.open) {
-        if (hidden) setHidden(false); else if (star) { setStar(null); setFlightStar(null); } else if (atlas) setAtlas(false);
+        if (hidden) setHidden(false); else if (dedicatedView) resetSky();
       }
       if (e.target instanceof HTMLElement && (e.target.closest("input,select,textarea,dialog") || e.ctrlKey || e.metaKey || e.altKey)) return;
       if (e.key.toLowerCase() === "h") { e.preventDefault(); setHidden(v => !v); }
     };
     window.addEventListener("keydown", key); return () => window.removeEventListener("keydown", key);
-  }, [hidden, star, atlas]);
+  }, [hidden, dedicatedView]);
   useEffect(() => { if (hidden) restoreButton.current?.focus(); }, [hidden]);
   useEffect(() => {
     if (!notice) return;
@@ -182,15 +183,17 @@ export function StargazingPage({ homeHref = "/#nature-title" }: { homeHref?: str
 
   const horizontal = star ? equatorialToHorizontal(star.ra, star.dec, observer) : null;
   const panelTitle = panel === "catalog" ? "在星空里找一找" : panel === "collections" ? "一起看一片星空" : panel === "settings" ? "观察设置" : panel === "constellation" ? `${constellation?.name || "星座"}的故事` : "星空的知识来源";
-  return <div ref={root} className={`sg-page${hidden ? " sg-ui-hidden" : ""}${star ? " sg-star-mode" : ""}${atlas ? " sg-atlas-mode" : ""}${flightStar ? " sg-star-entering" : ""}${isolated ? " sg-solo-mode" : ""}${constellation ? " sg-constellation-mode" : ""}${collection ? " sg-collection-mode" : ""}`} data-star-transition={flightStar ? "entering" : "idle"} data-skip-startup-greeting>
-    {!settledStar && !atlas && <SkyCanvas stars={visibleSkyStars} constellations={CONSTELLATIONS} view={view} onViewChange={setView} layers={hidden ? { ...visibleLayers, labels: false, grid: false } : visibleLayers} selectedConstellationIds={selectedIds} onSelectStar={selectStar} onSelectConstellation={id => selectConstellation(id, !!collection)} observer={observer} reducedMotion={reducedMotion} touring={touring && !panel && !star} flightTarget={flightStar} />}
+  return <div ref={root} className={`sg-page${hidden ? " sg-ui-hidden" : ""}${star ? " sg-star-mode" : ""}${atlas ? " sg-atlas-mode" : ""}${flightStar ? " sg-star-entering" : ""}${isolated ? " sg-solo-mode" : ""}${constellation ? " sg-constellation-mode" : ""}${collection ? " sg-collection-mode" : ""}`} data-star-transition={flightStar ? "entering" : "idle"} data-skip-startup-greeting onClick={event => {
+    if (event.target === event.currentTarget && (star || constellation)) resetSky();
+  }}>
+    {!settledStar && !atlas && <SkyCanvas stars={visibleSkyStars} constellations={CONSTELLATIONS} view={view} onViewChange={setView} layers={hidden ? { ...visibleLayers, labels: false, grid: false } : visibleLayers} selectedConstellationIds={selectedIds} onSelectStar={selectStar} onSelectConstellation={id => selectConstellation(id, !!collection)} onSelectEmptySpace={constellation ? resetSky : undefined} observer={observer} reducedMotion={reducedMotion} touring={touring && !panel && !star} flightTarget={flightStar} />}
     {atlas && !star && <AllSkyMap stars={collection ? collectionStars : STARS} constellations={collection ? collectionConstellations : CONSTELLATIONS} layers={hidden ? { ...layers, labels: false, grid: false } : layers} selectedIds={selectedIds} title={collection?.name} onSelect={id => selectConstellation(id, !!collection)} />}
-    {star && <div className={`sg-globe-stage${!details || hidden ? " sg-globe-wide" : ""}`}><StellarGlobe star={star} reducedMotion={reducedMotion} paused={paused || !!panel} /></div>}
+    {star && <div className={`sg-globe-stage${!details || hidden ? " sg-globe-wide" : ""}`}><StellarGlobe star={star} reducedMotion={reducedMotion} paused={paused || !!panel} onSelectEmptySpace={resetSky} /></div>}
     <div className="sg-vignette" aria-hidden="true" />
     {!hidden && <>
       <header className="sg-header">
         <div className="sg-brand-group">
-          {star || atlas ? <button className="sg-button sg-back" onClick={returnToSky}><Icon kind="back" /><span>返回星图</span></button>
+          {dedicatedView ? <button className="sg-button sg-back" onClick={returnToSky}><Icon kind="back" /><span>返回星图</span></button>
             : <a className="sg-button sg-back" href={homeHref}><Icon kind="back" /><span>自然</span></a>}
           <div className="sg-brand"><span className="sg-brand-symbol" aria-hidden="true">✧</span><div><strong>仰望星空</strong><small>LOOK UP, WONDER MORE</small></div></div>
         </div>

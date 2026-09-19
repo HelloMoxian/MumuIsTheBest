@@ -16,6 +16,7 @@ interface SkyCanvasProps {
   selectedConstellationIds: string[];
   onSelectStar: (star: Star) => void;
   onSelectConstellation: (id: string) => void;
+  onSelectEmptySpace?: () => void;
   observer: SkyObserver;
   reducedMotion: boolean;
   touring: boolean;
@@ -505,6 +506,7 @@ export function SkyCanvas(props: SkyCanvasProps) {
       else {
         const hit = closestStar(hitStarsRef.current, point.x, point.y);
         if (hit) propsRef.current.onSelectStar(hit.star);
+        else propsRef.current.onSelectEmptySpace?.();
       }
     }
     if (interactionRef.current.moved) propsRef.current.onViewChange({ ...cameraRef.current });

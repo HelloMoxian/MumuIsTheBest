@@ -7,7 +7,10 @@ interface StellarGlobeProps {
   star: Star;
   reducedMotion: boolean;
   paused: boolean;
+  onSelectEmptySpace?: () => void;
 }
+
+const STELLAR_ROTATION_SPEED_MULTIPLIER = 5;
 
 // A bounded blackbody colour approximation, with enhanced warm saturation so
 // a cool star remains recognisably orange against its own bright photosphere.
@@ -182,11 +185,13 @@ function paintFallback(canvas: HTMLCanvasElement, star: Star, width: number, hei
   return true;
 }
 
-export function StellarGlobe({ star, reducedMotion, paused }: StellarGlobeProps) {
+export function StellarGlobe({ star, reducedMotion, paused, onSelectEmptySpace }: StellarGlobeProps) {
   const hostRef = useRef<HTMLDivElement>(null);
   const webglRef = useRef<HTMLCanvasElement>(null);
   const fallbackRef = useRef<HTMLCanvasElement>(null);
   const controls = useRef({ reducedMotion, paused });
+  const selectEmptySpace = useRef(onSelectEmptySpace);
+  selectEmptySpace.current = onSelectEmptySpace;
   const redraw = useRef<(() => void) | null>(null);
   const [mode, setMode] = useState<"loading" | "webgl" | "fallback" | "unavailable">("loading");
 
@@ -211,7 +216,7 @@ export function StellarGlobe({ star, reducedMotion, paused }: StellarGlobeProps)
     let elapsed = 0;
     let width = 1;
     let height = 1;
-    let drag: { x: number; y: number; pointer: number } | null = null;
+    let drag: { x: number; y: number; startX: number; startY: number; pointer: number; element: HTMLCanvasElement; moved: boolean } | null = null;
     let rotationX = 0.16;
     let rotationY = 0.3;
     const temperature = visualTemperature(star);
@@ -219,9 +224,10 @@ export function StellarGlobe({ star, reducedMotion, paused }: StellarGlobeProps)
     const scale = Math.min(0.94, Math.max(0.70, 0.78 + Math.log10(radiusSolar) * 0.053));
     const giant = Math.min(1, Math.max(0, Math.log10(radiusSolar) / 3));
     const cellScale = temperature > 10000 ? 210 : 145 - giant * 55;
-    const rotationSpeed = star.rotationKmS && star.rotationKmS > 0
+    const baseRotationSpeed = star.rotationKmS && star.rotationKmS > 0
       ? Math.min(0.052, Math.max(0.006, 0.016 * Math.sqrt(star.rotationKmS / 5) / radiusSolar ** 0.18))
       : 0.015 / (1 + Math.log10(1 + radiusSolar) * 0.4);
+    const rotationSpeed = baseRotationSpeed * STELLAR_ROTATION_SPEED_MULTIPLIER;
     const scene = new THREE.Scene();
     const camera = new THREE.Camera();
 
@@ -313,23 +319,35 @@ export function StellarGlobe({ star, reducedMotion, paused }: StellarGlobeProps)
     }
 
     const pointerDown = (event: PointerEvent) => {
-      if (event.button !== 0 || useFallback) return;
-      drag = { x: event.clientX, y: event.clientY, pointer: event.pointerId };
-      canvas.setPointerCapture(event.pointerId);
+      if (event.button !== 0) return;
+      const element = event.currentTarget as HTMLCanvasElement;
+      drag = { x: event.clientX, y: event.clientY, startX: event.clientX, startY: event.clientY, pointer: event.pointerId, element, moved: false };
+      element.setPointerCapture(event.pointerId);
     };
     const pointerMove = (event: PointerEvent) => {
       if (!drag || event.pointerId !== drag.pointer) return;
+      if (Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) > 5) drag.moved = true;
+      if (useFallback) return;
       rotationY += (event.clientX - drag.x) / Math.max(200, width) * 3;
       rotationX += (event.clientY - drag.y) / Math.max(200, height) * 2;
       drag.x = event.clientX;
       drag.y = event.clientY;
       draw();
     };
-    const pointerUp = (event: PointerEvent) => {
+    const finishPointer = (event: PointerEvent, allowEmptySelection: boolean) => {
       if (drag?.pointer !== event.pointerId) return;
+      const finished = drag;
       drag = null;
-      if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+      if (finished.element.hasPointerCapture(event.pointerId)) finished.element.releasePointerCapture(event.pointerId);
+      if (allowEmptySelection && !finished.moved) {
+        const rect = finished.element.getBoundingClientRect();
+        const radius = Math.min(rect.width, rect.height) * scale / 2;
+        const distance = Math.hypot(event.clientX - rect.left - rect.width / 2, event.clientY - rect.top - rect.height / 2);
+        if (distance > radius) selectEmptySpace.current?.();
+      }
     };
+    const pointerUp = (event: PointerEvent) => finishPointer(event, true);
+    const pointerCancel = (event: PointerEvent) => finishPointer(event, false);
     const keyDown = (event: KeyboardEvent) => {
       if (useFallback || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home"].includes(event.key)) return;
       event.preventDefault();
@@ -353,9 +371,14 @@ export function StellarGlobe({ star, reducedMotion, paused }: StellarGlobeProps)
     canvas.addEventListener("pointerdown", pointerDown);
     canvas.addEventListener("pointermove", pointerMove);
     canvas.addEventListener("pointerup", pointerUp);
-    canvas.addEventListener("pointercancel", pointerUp);
-    canvas.addEventListener("lostpointercapture", pointerUp);
+    canvas.addEventListener("pointercancel", pointerCancel);
+    canvas.addEventListener("lostpointercapture", pointerCancel);
     canvas.addEventListener("keydown", keyDown);
+    fallback.addEventListener("pointerdown", pointerDown);
+    fallback.addEventListener("pointermove", pointerMove);
+    fallback.addEventListener("pointerup", pointerUp);
+    fallback.addEventListener("pointercancel", pointerCancel);
+    fallback.addEventListener("lostpointercapture", pointerCancel);
 
     return () => {
       disposed = true;
@@ -368,9 +391,14 @@ export function StellarGlobe({ star, reducedMotion, paused }: StellarGlobeProps)
       canvas.removeEventListener("pointerdown", pointerDown);
       canvas.removeEventListener("pointermove", pointerMove);
       canvas.removeEventListener("pointerup", pointerUp);
-      canvas.removeEventListener("pointercancel", pointerUp);
-      canvas.removeEventListener("lostpointercapture", pointerUp);
+      canvas.removeEventListener("pointercancel", pointerCancel);
+      canvas.removeEventListener("lostpointercapture", pointerCancel);
       canvas.removeEventListener("keydown", keyDown);
+      fallback.removeEventListener("pointerdown", pointerDown);
+      fallback.removeEventListener("pointermove", pointerMove);
+      fallback.removeEventListener("pointerup", pointerUp);
+      fallback.removeEventListener("pointercancel", pointerCancel);
+      fallback.removeEventListener("lostpointercapture", pointerCancel);
       geometry?.dispose();
       material?.dispose();
       renderer?.dispose();
