@@ -177,3 +177,100 @@
   .tetris-crystal.is-moving { animation: none; filter: brightness(1.3); }
   .tetris-cell.is-broken { clip-path: none; filter: none; }
 }
+
+/* Fullscreen owns a fixed viewport; only the settings dialog may scroll. */
+.tetris-shell.tetris-immersive { position: fixed; inset: 0; z-index: 1000; width: 100%; height: 100dvh; min-height: 0; overflow: hidden; }
+.tetris-immersive .tetris-page { width: 100%; height: 100%; margin: 0; padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.tetris-immersive .tetris-topbar, .tetris-immersive .tetris-rules { display: none; }
+.tetris-focusbar { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+.tetris-focusbar h1 { margin: 0 auto 0 4px; font-size: 22px; line-height: 1.15; }
+.tetris-focusbar .tetris-button { padding: 8px 12px; white-space: nowrap; }
+.tetris-immersive .tetris-arena { flex: 1; min-height: 0; grid-template-columns: minmax(0, 1000px); gap: 10px; }
+.tetris-immersive .tetris-arena.is-duo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tetris-immersive .tetris-player { display: grid; grid-template-rows: 48px minmax(0, 1fr) auto 52px; gap: 6px; min-height: 0; padding: 10px; border-radius: 20px; }
+.tetris-immersive .tetris-player-heading { padding: 0; gap: 8px; }
+.tetris-immersive .tetris-player-number { width: 36px; height: 36px; border-radius: 12px; }
+.tetris-immersive .tetris-player-heading h2 { font-size: 18px; line-height: 1.2; }
+.tetris-immersive .tetris-player-heading div > span { font-size: 18px; line-height: 1.2; }
+.tetris-immersive .tetris-score strong { font-size: 24px; }
+.tetris-immersive .tetris-playfield-layout { container-type: size; min-height: 0; grid-template-columns: minmax(0, 1fr) 160px; gap: 12px; align-items: center; }
+.tetris-immersive .tetris-board-frame { width: min(100%, calc(50cqh + 5px)); padding: 4px; border-radius: 8px; }
+.tetris-immersive .tetris-board-cover { inset: 4px; padding: 4px; }
+.tetris-immersive .tetris-board-cover > span { font-size: 24px; }
+.tetris-immersive .tetris-board-cover h3 { font-size: 20px; margin: 3px 0; }
+.tetris-immersive .tetris-board-cover p { margin: 2px 0; }
+.tetris-immersive .tetris-player-info { min-width: 0; }
+.tetris-immersive .tetris-next { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 7px; border-radius: 12px; }
+.tetris-immersive .tetris-next h3 { grid-column: 1 / -1; line-height: 1.1; }
+.tetris-immersive .tetris-next .tetris-mini { width: min(100%, 38px); gap: 1px; opacity: 1; }
+.tetris-immersive .tetris-player-info dl { margin: 8px 0; }
+.tetris-immersive .tetris-player-info dl > div { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; margin: 0; }
+.tetris-immersive .tetris-player-info dd { font-size: 22px; }
+.tetris-immersive .tetris-player-info dd small { font-size: 18px; }
+.tetris-immersive .tetris-level-progress span { line-height: 1.2; }
+.tetris-immersive .tetris-manual { margin: 4px 0 0; line-height: 1.2; }
+.tetris-immersive .tetris-praise { min-height: 0; padding: 0; line-height: 1.2; }
+.tetris-immersive .tetris-praise strong, .tetris-immersive .tetris-praise span { font-size: 18px; }
+.tetris-immersive .tetris-controls { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+.tetris-immersive .tetris-controls button { min-height: 48px; height: 52px; padding: 2px; gap: 0; font-size: 18px; line-height: 1.2; }
+.tetris-immersive .tetris-controls kbd { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.tetris-immersive .tetris-validation, .tetris-immersive .tetris-speech-status { flex: 0 0 auto; margin: 0; padding: 0; line-height: 1.2; }
+.tetris-immersive .tetris-confirm, .tetris-immersive .tetris-finish { position: absolute; z-index: 5; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(600px, calc(100% - 24px)); max-height: calc(100% - 100px); margin: 0; background: var(--space-850); box-shadow: var(--shadow); }
+.tetris-settings-dialog { width: min(860px, calc(100% - 24px)); max-height: calc(100dvh - 32px); padding: 24px; border: 1px solid var(--line-glow); border-radius: 24px; color: var(--ink-primary); background: var(--space-850); overflow: auto; }
+.tetris-settings-dialog::backdrop { background: color-mix(in srgb, var(--space-950) 80%, transparent); }
+.tetris-settings-dialog h2 { margin: 0 0 16px; }
+@media (max-width: 600px) {
+  .tetris-focusbar { gap: 4px; }
+  .tetris-focusbar h1 { font-size: 18px; max-width: 4em; margin-left: 0; }
+  .tetris-focusbar .tetris-button { padding: 6px 8px; }
+  .tetris-immersive .tetris-player { padding: 6px; gap: 4px; }
+  .tetris-immersive .tetris-arena.is-duo { grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(2, minmax(0, 1fr)); }
+  .tetris-immersive .tetris-playfield-layout { grid-template-columns: minmax(0, 1fr) 130px; gap: 8px; }
+  .tetris-settings-dialog { padding: 16px; }
+}
+@media (max-height: 520px) and (min-width: 601px) {
+  .tetris-immersive .tetris-player { padding: 6px; gap: 4px; grid-template-rows: 36px minmax(0, 1fr) auto 48px; }
+  .tetris-immersive .tetris-player-heading div > span { display: none; }
+  .tetris-immersive .tetris-score { display: flex; align-items: baseline; gap: 8px; }
+  .tetris-immersive .tetris-controls button { height: 48px; }
+  .tetris-immersive .tetris-playfield-layout { grid-template-columns: minmax(0, 1fr) 230px; gap: 8px; }
+  .tetris-immersive .tetris-player-info { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 4px 8px; align-items: center; }
+  .tetris-immersive .tetris-player-info dl { margin: 0; }
+  .tetris-immersive .tetris-next { padding: 4px; gap: 2px; }
+  .tetris-immersive .tetris-level-progress { grid-column: 1 / -1; }
+  .tetris-immersive .tetris-level-progress span { display: inline; margin-right: 8px; }
+  .tetris-immersive .tetris-level-progress progress { width: 65px; }
+  .tetris-immersive .tetris-manual { display: none; }
+}
+.tetris-immersive .tetris-playfield-layout { grid-template-rows: minmax(0, 1fr); }
+.tetris-immersive .tetris-level-progress progress { display: block; margin: 4px 0; }
+@container (max-height: 280px) {
+  .tetris-immersive .tetris-player-info { line-height: 1.15; }
+  .tetris-immersive .tetris-next { padding: 4px; gap: 3px; }
+  .tetris-immersive .tetris-next .tetris-mini { width: min(100%, 26px); }
+  .tetris-immersive .tetris-player-info dl { margin: 4px 0; }
+  .tetris-immersive .tetris-player-info dd { font-size: 20px; line-height: 1.15; }
+  .tetris-immersive .tetris-manual { margin-top: 2px; }
+}
+@media (max-width: 600px) and (max-height: 700px) {
+  .tetris-immersive .is-duo .tetris-player { padding: 4px; gap: 2px; grid-template-rows: 36px minmax(0, 1fr) auto 48px; }
+  .tetris-immersive .is-duo .tetris-player-heading div > span { display: none; }
+  .tetris-immersive .is-duo .tetris-score { display: flex; align-items: baseline; gap: 4px; }
+  .tetris-immersive .is-duo .tetris-controls button { height: 48px; }
+  .tetris-immersive .is-duo .tetris-praise { line-height: 1.05; }
+}
+@media (max-width: 360px) {
+  .tetris-focusbar .tetris-button { min-width: 48px; padding-inline: 4px; }
+  .tetris-immersive .tetris-controls { gap: 0; }
+}
+@container (max-height: 180px) {
+  .tetris-immersive .tetris-player-info { display: block; }
+  .tetris-immersive .tetris-next { grid-template-columns: auto repeat(3, minmax(0, 1fr)); padding: 2px; gap: 2px; }
+  .tetris-immersive .tetris-next h3 { grid-column: auto; margin: 0; align-self: center; }
+  .tetris-immersive .tetris-next .tetris-mini { width: min(100%, 20px); }
+  .tetris-immersive .tetris-player-info dl { display: flex; justify-content: space-between; margin: 3px 0; }
+  .tetris-immersive .tetris-player-info dl > div { flex-direction: column; align-items: center; gap: 0; }
+  .tetris-immersive .tetris-player-info dd small, .tetris-immersive .tetris-manual { display: none; }
+  .tetris-immersive .tetris-level-progress span { display: block; margin: 0; line-height: 1.05; }
+  .tetris-immersive .tetris-level-progress progress { width: 100%; margin: 2px 0; }
+}

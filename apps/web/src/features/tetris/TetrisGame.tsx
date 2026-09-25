@@ -11,6 +11,7 @@ import { useGameControllers } from "../../shared/controllers/useGameControllers"
 import { bindingLabel, type PlayerControls } from "../../shared/controllers/registry";
 import { sameDevice } from "../../shared/controllers/input";
 import { TETRIS_CONTROLS, tetrisControllerIntent } from "./controls";
+import { useGameFullscreen } from "../../shared/useGameFullscreen";
 import "./tetris.css";
 
 const KINDS = Object.keys(SHAPES) as Kind[];
@@ -23,9 +24,9 @@ export function CrystalPiece({ kind }: { kind: Kind }) {
   </span>;
 }
 
-function PlayerBoard({ game, index, phase, praise, move, controls, connected, bindings, press, release }: {
+function PlayerBoard({ game, index, phase, praise, move, controls, connected, bindings, press, release, immersive }: {
   game: Game; index: number; phase: Phase; praise?: PraiseEvent;
-  controls: PlayerControls; connected: boolean; bindings: KeyBindings;
+  controls: PlayerControls; connected: boolean; bindings: KeyBindings; immersive: boolean;
   press: (id: string, index: number, action: Action) => void; release: (id: string) => void;
   move: (index: number, action: Action) => void;
 }) {
@@ -57,9 +58,9 @@ function PlayerBoard({ game, index, phase, praise, move, controls, connected, bi
       </div>
       <aside className="tetris-player-info">
         <div className="tetris-next"><h3>接下来</h3>{game.next.map((kind, i) => <CrystalPiece key={`${i}-${kind}`} kind={kind} />)}</div>
-        <dl><div><dt>等级</dt><dd>{levelFor(game.lines).toString().padStart(2, "0")}</dd></div><div><dt>速度</dt><dd>{speed}<small> / 100</small></dd></div><div><dt>消除行数</dt><dd>{game.lines}</dd></div></dl>
-        <div className="tetris-level-progress"><span>再消 {20 - game.lines % 20} 行升级</span><progress max={20} value={game.lines % 20} aria-label={`玩家 ${index + 1} 升级进度`} /></div>
-        {speed === 0 && <p className="tetris-manual">手动慢慢拼<br />不会自动下落</p>}
+        <dl><div><dt>等级</dt><dd>{levelFor(game.lines).toString().padStart(2, "0")}</dd></div><div><dt>速度</dt><dd>{speed}<small> / 100</small></dd></div><div><dt>{immersive ? "消行" : "消除行数"}</dt><dd>{game.lines}</dd></div></dl>
+        <div className="tetris-level-progress"><span>{immersive ? `距升级 ${20 - game.lines % 20} 行` : `再消 ${20 - game.lines % 20} 行升级`}</span><progress max={20} value={game.lines % 20} aria-label={`玩家 ${index + 1} 升级进度`} /></div>
+        {speed === 0 && <p className="tetris-manual">{immersive ? "手动下落" : <>手动慢慢拼<br />不会自动下落</>}</p>}
       </aside>
     </div>
     <div className="tetris-praise" aria-live="polite" aria-atomic="true">
@@ -70,13 +71,16 @@ function PlayerBoard({ game, index, phase, praise, move, controls, connected, bi
         if (event.button !== 0) return;
         event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId);
         press(`pointer-${event.pointerId}`, index, control.action);
-      }} onPointerUp={event => release(`pointer-${event.pointerId}`)} onPointerCancel={event => release(`pointer-${event.pointerId}`)} onLostPointerCapture={event => release(`pointer-${event.pointerId}`)} onClick={event => { if (event.detail === 0) move(index, control.action); }} aria-label={`玩家 ${index + 1} ${control.label}`}><kbd>{keyLabel(keyFor(bindings, index, control.action))}</kbd><span>{control.label}</span></button>)}
+      }} onPointerUp={event => release(`pointer-${event.pointerId}`)} onPointerCancel={event => release(`pointer-${event.pointerId}`)} onLostPointerCapture={event => release(`pointer-${event.pointerId}`)} onClick={event => { if (event.detail === 0) move(index, control.action); }} aria-label={`玩家 ${index + 1} ${control.label}`}><kbd>{keyLabel(keyFor(bindings, index, control.action))}</kbd><span>{immersive ? ({ down: "下落", rotate: "变形", drop: "落底" } as Partial<Record<Action, string>>)[control.action] ?? control.label : control.label}</span></button>)}
     </div>
-    {controls.mode === "gamepad" && <details className="controller-help"><summary>玩家 {index + 1} · 我的手柄键位</summary><dl>{TETRIS_CONTROLS.actions.map(action => <div key={action.id}><dt>{action.label}</dt><dd>{controls.bindings[action.id]?.map(b => bindingLabel(b, controls.device?.mapping !== "")).join(" / ") || "尚未设置"}</dd></div>)}</dl></details>}
+    {!immersive && controls.mode === "gamepad" && <details className="controller-help"><summary>玩家 {index + 1} · 我的手柄键位</summary><dl>{TETRIS_CONTROLS.actions.map(action => <div key={action.id}><dt>{action.label}</dt><dd>{controls.bindings[action.id]?.map(b => bindingLabel(b, controls.device?.mapping !== "")).join(" / ") || "尚未设置"}</dd></div>)}</dl></details>}
   </section>;
 }
 
 export function TetrisGame() {
+  const pageRef = useRef<HTMLDivElement>(null);
+  const fullscreen = useGameFullscreen(pageRef);
+  const settingsDialog = useRef<HTMLDialogElement>(null);
   const [bindings, setBindings] = useState<KeyBindings>(KEY_BINDINGS);
   const [keyboardNotice, setKeyboardNotice] = useState("使用默认键位");
   const controllerDown = useRef(new Map<number, number>());
@@ -151,6 +155,21 @@ export function TetrisGame() {
   const keyboardSettings = <KeyboardSettings bindings={bindings} players={players} notice={keyboardNotice} update={updateKeyboard} />;
   useEffect(() => { if (phase === "playing") arena.current?.focus({ preventScroll: true }); }, [phase]);
 
+  useEffect(() => {
+    if (!fullscreen.switching && phase === "playing" && !showControllerSettings) arena.current?.focus({ preventScroll: true });
+  }, [fullscreen.focused, fullscreen.switching, phase, showControllerSettings]);
+  useEffect(() => {
+    const dialog = settingsDialog.current;
+    if (fullscreen.focused && showControllerSettings) { if (dialog && !dialog.open) dialog.showModal(); }
+    else if (dialog?.open) dialog.close();
+  }, [fullscreen.focused, showControllerSettings]);
+  function openSettings() {
+    if (model.current.phase === "playing") changePhase("paused");
+    controllers.cancelCapture(); setShowControllerSettings(true);
+  }
+  function closeSettings() {
+    controllers.cancelCapture(); setShowControllerSettings(false); arena.current?.focus({ preventScroll: true });
+  }
   function changePhase(next: Phase) {
     model.current.phase = next;
     model.current.held.clear();
@@ -199,7 +218,8 @@ export function TetrisGame() {
     arena.current?.focus({ preventScroll: true });
     window.scrollTo({ top: 0 });
   }
-  function reset() {
+  async function reset() {
+    if (fullscreen.focused) await fullscreen.leave();
     setShowControllerSettings(false);
     setControllerNotice("");
     controllers.cancelCapture();
@@ -210,8 +230,8 @@ export function TetrisGame() {
     setPraises([]);
   }
   // Event callbacks use the current model through refs, so held keys never depend on render timing.
-  const callbacks = useRef({ refresh, changePhase, confirmReset, showControllerSettings });
-  callbacks.current = { refresh, changePhase, confirmReset, showControllerSettings };
+  const callbacks = useRef({ refresh, changePhase, confirmReset, showControllerSettings, focused: fullscreen.focused, leaveFullscreen: fullscreen.leave });
+  callbacks.current = { refresh, changePhase, confirmReset, showControllerSettings, focused: fullscreen.focused, leaveFullscreen: fullscreen.leave };
   useEffect(() => {
     try { gameAudio.current = new TetrisAudio(undefined, () => setAudioUnavailable(true)); }
     catch { setAudioUnavailable(true); }
@@ -234,6 +254,8 @@ export function TetrisGame() {
     const visibility = () => { if (document.hidden) pause(); };
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const keydown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
+      if (event.code === "Escape" && callbacks.current.focused) { event.preventDefault(); void callbacks.current.leaveFullscreen(); return; }
       if (event.isComposing || event.altKey || event.metaKey || event.ctrlKey || callbacks.current.confirmReset || callbacks.current.showControllerSettings) return;
       if (event.target instanceof Element && event.target.closest("input, select, textarea, button, a, summary, [contenteditable=true]")) return;
       if ((event.code === "Escape" || event.code === "KeyP") && model.current.phase !== "ready" && model.current.phase !== "finished") {
@@ -278,14 +300,7 @@ export function TetrisGame() {
     };
   }, []);
 
-  return <div className="app-shell tetris-shell">
-    <div className="star-field" aria-hidden="true" />
-    <main className="tetris-page">
-      <header className="tetris-topbar">
-        <a href="/#games" className="tetris-button">← 返回游戏</a>
-        <div className="tetris-title"><span>CRYSTAL BLOCKS</span><h1>俄罗斯方块</h1></div>
-        <div className="tetris-toolbar">
-          {(["music", "effects"] as const).map(kind => <button key={kind} type="button" className="tetris-button" aria-pressed={audioOptions[kind]} onClick={() => {
+  const audioControls = <>{(["music", "effects"] as const).map(kind => <button key={kind} type="button" className="tetris-button" aria-pressed={audioOptions[kind]} onClick={() => {
             const next = { ...audioOptions, [kind]: !audioOptions[kind] };
             setAudioOptions(next); setAudioUnavailable(false); gameAudio.current?.configure(next);
             if (phase === "playing") arena.current?.focus();
@@ -295,7 +310,28 @@ export function TetrisGame() {
             playback.current?.setEnabled(!sound);
             if (phase === "finished") { playback.current?.setPaused(false); setSpeechPaused(false); }
             if (phase === "playing") arena.current?.focus();
-          }}>{sound ? "✓ 中英表扬" : "表扬声音：关"}</button>
+          }}>{sound ? "✓ 中英表扬" : "表扬声音：关"}</button></>;
+  const settingsContents = <>
+    {fullscreen.focused && <><h2 id="tetris-dialog-title">游戏设置</h2><div className="tetris-toolbar">{audioControls}<button type="button" className="tetris-button" disabled={fullscreen.switching} onClick={() => { closeSettings(); setConfirmReset(true); }}>重新设置本局</button></div></>}
+    {keyboardSettings}<ControllerSetup definition={TETRIS_CONTROLS} session={controllers} lockPlayerCount />
+    <button type="button" className="tetris-button" onClick={closeSettings}>完成设置</button>
+  </>;
+  return <div ref={pageRef} className={`app-shell tetris-shell ${fullscreen.focused ? "tetris-immersive" : ""}`}>
+
+    <div className="star-field" aria-hidden="true" />
+    <main className="tetris-page">
+      {fullscreen.focused && <header className="tetris-focusbar">
+        <h1>俄罗斯方块</h1>
+        <button type="button" className="tetris-button" disabled={phase === "finished" || confirmReset || showControllerSettings} onClick={() => changePhase(phase === "paused" ? "playing" : "paused")}>{phase === "paused" ? "继续" : "暂停"}</button>
+        <button type="button" className="tetris-button" disabled={confirmReset} onClick={openSettings}>游戏设置</button>
+        <button type="button" className="tetris-button" data-fullscreen-exit disabled={fullscreen.switching} onClick={() => void fullscreen.leave()}>退出全屏</button>
+      </header>}
+      <header className="tetris-topbar">
+        <a href="/#games" className="tetris-button">← 返回游戏</a>
+        <div className="tetris-title"><span>CRYSTAL BLOCKS</span><h1>俄罗斯方块</h1></div>
+        <div className="tetris-toolbar">
+          {audioControls}
+          {phase !== "ready" && <button type="button" className="tetris-button" disabled={fullscreen.switching || confirmReset || showControllerSettings} onClick={() => void fullscreen.enter()}>全屏游戏</button>}
           {phase !== "ready" && <button type="button" className="tetris-button" disabled={phase === "finished" || confirmReset || showControllerSettings} onClick={() => { changePhase(phase === "paused" ? "playing" : "paused"); arena.current?.focus(); }}>{phase === "paused" ? "继续游戏" : "暂停"}</button>}
           {phase !== "ready" && <button type="button" className="tetris-button" disabled={confirmReset} aria-expanded={showControllerSettings} onClick={() => {
             if (phase === "playing") changePhase("paused");
@@ -306,7 +342,8 @@ export function TetrisGame() {
       </header>
       {audioUnavailable && <p className="tetris-validation" role="status">音乐或音效暂时不可用，游戏可以继续。可关闭后重新打开声音试试。</p>}
       {controllerNotice && <p className="tetris-validation" role="status">{controllerNotice}</p>}
-      {showControllerSettings && <section className="tetris-controller-settings">{keyboardSettings}<ControllerSetup definition={TETRIS_CONTROLS} session={controllers} lockPlayerCount /><button type="button" className="tetris-button" onClick={() => { controllers.cancelCapture(); setShowControllerSettings(false); arena.current?.focus(); }}>完成设置</button></section>}
+      {showControllerSettings && !fullscreen.focused && <section className="tetris-controller-settings">{settingsContents}</section>}
+      <dialog ref={settingsDialog} className="tetris-settings-dialog" aria-labelledby="tetris-dialog-title" onKeyDown={event => { if (event.key === "Escape") event.stopPropagation(); }} onCancel={event => { event.preventDefault(); closeSettings(); }}>{fullscreen.focused && showControllerSettings && settingsContents}</dialog>
       {phase === "ready" ? <div className="tetris-welcome">
         <section className="tetris-intro">
           <span className="tetris-eyebrow">晶莹相遇 · 一起拼出惊喜</span>
@@ -332,7 +369,7 @@ export function TetrisGame() {
         </section>
       </div> : null}
       <div ref={arena} tabIndex={-1} className={`tetris-arena ${model.current.games.length === 2 ? "is-duo" : ""}`} aria-label="俄罗斯方块游戏区" hidden={phase === "ready"} onPointerDown={event => { if (!(event.target instanceof Element) || !event.target.closest("button, a")) arena.current?.focus(); }}>
-        {model.current.games.map((game, index) => <PlayerBoard key={index} game={game} index={index} phase={phase} praise={praises[index]} move={move} press={press} release={id => model.current.held.release(id)} bindings={bindings} controls={controllers.profile.players[index]} connected={controllers.devices.some(d => sameDevice(d.device, controllers.profile.players[index]?.device ?? null))} />)}
+        {model.current.games.map((game, index) => <PlayerBoard key={index} game={game} index={index} phase={phase} praise={praises[index]} move={move} press={press} release={id => model.current.held.release(id)} bindings={bindings} immersive={fullscreen.focused} controls={controllers.profile.players[index]} connected={controllers.devices.some(d => sameDevice(d.device, controllers.profile.players[index]?.device ?? null))} />)}
       </div>
       {confirmReset && <div className="tetris-confirm" role="alert"><p>重新设置会结束当前这一局。</p><button type="button" className="tetris-button" onClick={() => { setConfirmReset(false); changePhase("playing"); arena.current?.focus(); }}>继续这一局</button><button type="button" className="tetris-button" onClick={reset}>确认重新设置</button></div>}
       {phase === "finished" && <section className="tetris-finish" aria-live="polite"><div><h2>这次的拼图旅程完成啦</h2><p>{model.current.games.map((game, index) => `玩家 ${index + 1}：${game.score} 分 / ${game.lines} 行`).join("　·　")}</p></div><button type="button" className="tetris-start" onClick={start}>再玩一次 ↗</button></section>}
