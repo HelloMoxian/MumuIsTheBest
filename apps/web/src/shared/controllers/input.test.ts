@@ -140,7 +140,7 @@ test("Tetris uses the shared action stream with zero gravity and simultaneous ke
   intent.moves.forEach(({ player, action }) => act(games[player], action));
   assert.deepEqual(games.map(g => g.piece.x), [positions[0] - 1, positions[1] + 1]);
   const keyboard = new TetrisHeldInput();
-  keyboard.press("ArrowDown", 0);
+  keyboard.press("KeyS", 0);
   keyboard.repeat(180).forEach(([player, action]) => act(games[player], action));
   assert.ok(games[0].piece.y > games[1].piece.y);
   const pause = tetrisControllerIntent(step([pad(0, [9]), pad(1, [9, 3])], 20));

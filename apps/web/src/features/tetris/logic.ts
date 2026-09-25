@@ -20,6 +20,7 @@ export type TetrisSound = "move" | "rotate" | "lock" | "clear" | "level";
 export type Game = {
   board: Cell[][]; piece: Piece; next: Kind[]; bag: Kind[]; seed: number;
   lines: number; score: number; ended: boolean; elapsed: number;
+  pieceId: number; clearing: { board: Cell[][]; rows: number[]; elapsed: number } | null;
   settings: Settings; events: ClearEvent[]; sounds: TetrisSound[]; serial: number;
 };
 export function validateSettings(settings: Settings): Settings {
@@ -54,7 +55,7 @@ export function createGame(settings: Settings, seed = Date.now()): Game {
   const game: Game = {
     board: Array.from({ length: HEIGHT }, () => Array<Cell>(WIDTH).fill(null)),
     piece: spawn("T"), next: [], bag: [], seed: seed >>> 0, lines: 0, score: 0,
-    ended: false, elapsed: 0, settings: validateSettings(settings), events: [], sounds: [], serial: 0,
+    ended: false, elapsed: 0, pieceId: 0, clearing: null, settings: validateSettings(settings), events: [], sounds: [], serial: 0,
   };
   game.piece = spawn(draw(game));
   game.next = Array.from({ length: 3 }, () => draw(game));
@@ -77,20 +78,24 @@ function lock(game: Game) {
   const remaining = game.board.filter(row => row.some(cell => cell === null));
   const count = HEIGHT - remaining.length;
   if (count) {
+    game.clearing = { board: game.board.map(row => [...row]), rows: game.board.flatMap((row, y) => row.every(Boolean) ? [y] : []), elapsed: 0 };
     const points = [0,100,300,500,800][count] * levelFor(game.lines);
     game.score += points;
     game.lines += count;
     game.events.push({ id: ++game.serial, lines: count, points });
     game.board = [...Array.from({ length: count }, () => Array<Cell>(WIDTH).fill(null)), ...remaining];
   }
-  game.sounds.push(levelFor(game.lines) > previousLevel ? "level" : count ? "clear" : "lock");
+  game.sounds.push("lock");
+  if (count) game.sounds.push("clear");
+  if (levelFor(game.lines) > previousLevel) game.sounds.push("level");
+  game.pieceId++;
   game.piece = spawn(game.next.shift()!);
   game.next.push(draw(game));
   game.elapsed = 0;
   game.ended = !fits(game, game.piece);
 }
 export function act(game: Game, action: Action): boolean {
-  if (game.ended) return false;
+  if (game.ended || game.clearing) return false;
   if (action === "drop") {
     const target = landing(game);
     game.score += (target.y - game.piece.y) * 2;
@@ -119,7 +124,13 @@ export function act(game: Game, action: Action): boolean {
   if (action === "down") { lock(game); return true; }
   return false;
 }
-export function tick(game: Game, milliseconds: number): boolean {
+export const CLEAR_DURATION = 1040;
+export function tick(game: Game, milliseconds: number, reducedMotion = false): boolean {
+  if (game.clearing) {
+    game.clearing.elapsed += Math.max(0, Math.min(milliseconds, 250));
+    if (reducedMotion || game.clearing.elapsed >= CLEAR_DURATION) game.clearing = null;
+    return true;
+  }
   if (game.ended || speedFor(game.settings,game.lines) === 0) return false;
   game.elapsed += Math.max(0, Math.min(milliseconds, 250));
   let changed = false;
@@ -133,8 +144,8 @@ export function tick(game: Game, milliseconds: number): boolean {
   return changed;
 }
 export const KEY_BINDINGS: Readonly<Record<string, readonly [number, Action]>> = {
-  ArrowLeft: [0,"left"], ArrowRight: [0,"right"], ArrowDown: [0,"down"],
-  KeyN: [0,"rotate"], KeyM: [0,"reverse"], Enter: [0,"drop"], NumpadEnter: [0,"drop"],
-  KeyA: [1,"left"], KeyD: [1,"right"], KeyS: [1,"down"],
-  KeyK: [1,"rotate"], KeyJ: [1,"reverse"], KeyE: [1,"drop"],
+  KeyA: [0,"left"], KeyD: [0,"right"], KeyS: [0,"down"],
+  KeyJ: [0,"rotate"], KeyK: [0,"reverse"], KeyW: [0,"drop"],
+  ArrowLeft: [1,"left"], ArrowRight: [1,"right"], ArrowDown: [1,"down"],
+  KeyN: [1,"rotate"], KeyM: [1,"reverse"], Enter: [1,"drop"],
 };

@@ -123,17 +123,15 @@ test("生成区域被挡时结束，不再响应输入和时钟", () => {
   assert.deepEqual(game, state);
 });
 
-test("双人键位独立，旋转与直落不共用", () => {
-  assert.deepEqual(KEY_BINDINGS.KeyN, [0, "rotate"]);
-  assert.deepEqual(KEY_BINDINGS.KeyK, [1, "rotate"]);
-  assert.deepEqual(KEY_BINDINGS.Enter, [0, "drop"]);
-  assert.deepEqual(KEY_BINDINGS.KeyE, [1, "drop"]);
-  assert.deepEqual(KEY_BINDINGS.KeyM, [0, "reverse"]);
-  assert.deepEqual(KEY_BINDINGS.KeyJ, [1, "reverse"]);
-  assert.equal(KEY_BINDINGS.ArrowUp, undefined);
-  assert.equal(KEY_BINDINGS.KeyW, undefined);
-  assert.equal(KEY_BINDINGS.KeyQ, undefined);
-  assert.equal(KEY_BINDINGS.Slash, undefined);
+test("默认 A/S/D 移动、J 变形、W 落底；双方键位独立", () => {
+  assert.deepEqual(KEY_BINDINGS.KeyA, [0, "left"]);
+  assert.deepEqual(KEY_BINDINGS.KeyS, [0, "down"]);
+  assert.deepEqual(KEY_BINDINGS.KeyD, [0, "right"]);
+  assert.deepEqual(KEY_BINDINGS.KeyJ, [0, "rotate"]);
+  assert.deepEqual(KEY_BINDINGS.KeyW, [0, "drop"]);
+  assert.deepEqual(KEY_BINDINGS.ArrowDown, [1, "down"]);
+  assert.deepEqual(KEY_BINDINGS.Enter, [1, "drop"]);
+  assert.equal(new Set(Object.values(KEY_BINDINGS).map(b => b.join(":"))).size, 12);
 });
 
 test("100个种子连续移动、旋转、下落始终保持棋盘边界", () => {
@@ -163,5 +161,40 @@ test("音效只对应成功操作；升级用庆祝声，自动下落不逐格�
   game.board = Array.from({ length: HEIGHT }, () => Array(WIDTH).fill(null));
   game.board[19] = [...Array<Kind>(9).fill("T"), null];
   verticalLine(game); act(game, "drop");
-  assert.deepEqual(game.sounds, ["level"]);
+  assert.deepEqual(game.sounds, ["lock", "clear", "level"]);
+});
+
+test("消行保存完整破损画面，动画期间冻结操作与重力，结束只计分一次", () => {
+  const game = createGame({ initialSpeed: 100, speedIncrement: 0 }, 2);
+  game.board[19] = [...Array<Kind>(9).fill("T"), null];
+  game.board[10][0] = "L";
+  verticalLine(game);
+  const id = game.pieceId;
+  act(game, "drop");
+  assert.equal(game.pieceId, id + 1);
+  assert.deepEqual(game.clearing?.rows, [19]);
+  assert.equal(game.clearing?.board[10][0], "L");
+  assert.equal(game.clearing?.board[19][9], "I");
+  const score = game.score;
+  const piece = structuredClone(game.piece);
+  for (let i = 0; i < 4; i++) {
+    assert.equal(act(game, "drop"), false);
+    tick(game, 250);
+    assert.deepEqual(game.piece, piece);
+  }
+  assert.ok(game.clearing);
+  tick(game, 40);
+  assert.equal(game.clearing, null);
+  assert.equal(game.board[11][0], "L");
+  assert.equal(game.score, score);
+  assert.equal(game.events.length, 1);
+});
+
+test("减弱动效直接结束清行且不推进下一块", () => {
+  const game = createGame(manual, 2);
+  game.board[19] = [...Array<Kind>(9).fill("T"), null];
+  verticalLine(game); act(game, "drop");
+  tick(game, 0, true);
+  assert.equal(game.clearing, null);
+  assert.equal(game.piece.y, 0);
 });
