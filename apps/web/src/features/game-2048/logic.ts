@@ -4,6 +4,8 @@ export type { BoardSize, Game2048, State2048 } from "../../../../server/src/game
 export type Direction = "left" | "right" | "up" | "down";
 export type TileMovement = { from: number; to: number; power: number };
 export const tileValue = (power: number) => (2n ** BigInt(power)).toString();
+export const boardTotal = (cells: readonly number[]) =>
+  cells.reduce((total, power) => total + (power > 0 ? 2n ** BigInt(power) : 0n), 0n).toString();
 
 // Fixed anchors: 2=#FFF0B3, 32=#FFA500, 1024=#FF0000,
 // 32768=#0000FF, 1048576=#000000. No additional colour anchors.

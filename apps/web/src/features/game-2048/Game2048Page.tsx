@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 import { GameTopBar } from "../../shared/GameTopBar";
 import { useGameFullscreen } from "../../shared/useGameFullscreen";
 import { loadPersistentData, queuePersistentDataWrite } from "../../shared/persistent-data";
-import { BOARD_SIZES, TILE_STYLES, canMove, move, newGame, newState, parse2048, tileValue, type BoardSize, type Direction, type State2048 } from "./logic";
+import { BOARD_SIZES, TILE_STYLES, boardTotal, canMove, move, newGame, newState, parse2048, tileValue, type BoardSize, type Direction, type State2048 } from "./logic";
 import "./game-2048.css";
 
 const ID = "math-2048";
@@ -32,6 +32,8 @@ export function Game2048Page() {
   const [loadAttempt, setLoadAttempt] = useState(0);
   const [notice, setNotice] = useState("滑动棋盘，或按方向键合并相同数字");
   const [effect, setEffect] = useState<MoveEffect>({ turn: 0, merged: [], travellers: [] });
+  const [totalGains, setTotalGains] = useState<{ id: number; value: string }[]>([]);
+  const gainId = useRef(0);
   const revision = useRef(0);
   const mounted = useRef(true);
   const retryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -88,6 +90,12 @@ export function Game2048Page() {
     const size = previous.activeSize;
     const result = move(previous.games[size], size, direction);
     if (result.game === previous.games[size]) return;
+    // Merging conserves the board sum; only the newly spawned tile increases it.
+    const added = BigInt(boardTotal(result.game.cells)) - BigInt(boardTotal(previous.games[size].cells));
+    if (added > 0n) {
+      const gain = { id: ++gainId.current, value: added.toString() };
+      setTotalGains(gains => [...gains, gain]);
+    }
     // Read the old visual positions once, before React updates the board. This
     // also samples in-flight transforms, so rapid input can smoothly retarget.
     const slots = new Map<number, DOMRect>();
@@ -126,6 +134,7 @@ export function Game2048Page() {
   const switchSize = (size: BoardSize) => {
     if (!current.current || current.current.activeSize === size) return;
     commit({ ...current.current, activeSize: size });
+    setTotalGains([]);
     setEffect(value => ({ turn: value.turn + 1, merged: [], travellers: [] }));
     setNotice(`已恢复 ${size} × ${size} 棋盘`);
   };
@@ -134,6 +143,7 @@ export function Game2048Page() {
     if (!previous) return;
     const size = previous.activeSize;
     commit({ ...previous, games: { ...previous.games, [size]: newGame(size, previous.games[size].best) } });
+    setTotalGains([]);
     setEffect(value => ({ turn: value.turn + 1, merged: [], travellers: [] }));
     setNotice("新棋盘准备好了"); dialog.current?.close(); board.current?.focus();
   };
@@ -141,6 +151,7 @@ export function Game2048Page() {
   const game = state?.games[size];
   const stopped = game ? !canMove(game, size) : false;
   const peak = game ? tileValue(Math.max(...game.cells)) : "2";
+  const total = game ? boardTotal(game.cells) : "0";
 
   return <div ref={root} className={`game2048 ${fullscreen.focused ? "game2048--fullscreen" : ""}`} data-skip-startup-greeting>
     {!fullscreen.focused && <GameTopBar title="2048" backHref="/?tab=math" backLabel="数学" />}
@@ -157,7 +168,16 @@ export function Game2048Page() {
       {!state ? <div className="game2048__loading" role="status">{loadError || "正在恢复你的棋盘…"}{loadError && <button onClick={() => setLoadAttempt(n => n + 1)}>重新读取</button>}</div> : game && <>
         <div className="game2048__scores">
           <div><span>本局分数</span><strong title={game.score}>{game.score}</strong></div>
-          <div><span>{size}×{size} 最高分</span><strong title={game.best}>{game.best}</strong></div>
+          <div>
+            <span>牌面总值</span>
+            <div className="game2048__total-number">
+              <strong title={total} aria-label={`牌面总值 ${total}`}>{total}</strong>
+              {totalGains.map(gain => <span key={gain.id} className="game2048__total-gain" aria-hidden="true"
+                style={{ "--gain-offset": `${((gain.id - 1) % 3 - 1) * 10}px` } as CSSProperties}
+                onAnimationEnd={() => setTotalGains(gains => gains.filter(item => item.id !== gain.id))}>+{gain.value}</span>)}
+            </div>
+          </div>
+          <div><span title={`${size}×${size} 最高分`}>最高分</span><strong title={game.best}>{game.best}</strong></div>
           <div><span>最大方块</span><strong title={peak}>{peak}</strong></div>
         </div>
         <div className="game2048__stage">

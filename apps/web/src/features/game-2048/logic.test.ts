@@ -1,7 +1,23 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { addTile, canMove, move, newGame, newState, parse2048, tileValue, type Game2048 } from "./logic";
+import { addTile, boardTotal, canMove, move, newGame, newState, parse2048, tileValue, type Game2048 } from "./logic";
 const game = (cells: number[], score = "0"): Game2048 => ({ cells: [...cells, ...Array(16 - cells.length).fill(0)], score, best: score, spawnPower: 1 });
+test("board total ignores empty cells, stays exact and grows only by the spawned tile", () => {
+  assert.equal(boardTotal([]), "0");
+  assert.equal(boardTotal([0, 1, 2, 3]), "14");
+  assert.equal(boardTotal([60, 60, 1]), "2305843009213693954");
+  const before = game([1, 1, 2, 2]);
+  const merged = move(before, 4, "left", () => 0);
+  assert.equal(merged.gained, "12");
+  assert.equal(BigInt(boardTotal(merged.game.cells)) - BigInt(boardTotal(before.cells)), 2n);
+  const spawnedFour = move(before, 4, "right", () => .95);
+  assert.equal(BigInt(boardTotal(spawnedFour.game.cells)) - BigInt(boardTotal(before.cells)), 4n);
+  const promoted = game([14, 2, 2]);
+  const higher = move(promoted, 4, "right", () => .95);
+  assert.equal(BigInt(boardTotal(higher.game.cells)) - BigInt(boardTotal(promoted.cells)), 8n);
+  const unchanged = game([1, 2]);
+  assert.equal(boardTotal(move(unchanged, 4, "left").game.cells), boardTotal(unchanged.cells));
+});
 test("merges each tile once, scores exactly and does not spawn on unchanged moves", () => {
   const result = move(game([1, 1, 1, 1]), 4, "left", () => 0);
   assert.deepEqual(result.game.cells.slice(0, 4), [2, 2, 1, 0]);
