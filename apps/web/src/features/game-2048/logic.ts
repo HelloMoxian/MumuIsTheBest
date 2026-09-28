@@ -6,17 +6,19 @@ export type TileMovement = { from: number; to: number; power: number };
 export const tileValue = (power: number) => (2n ** BigInt(power)).toString();
 
 // Fixed, readable domain colours: pale yellow → orange → red → deep blue → black.
+// Precomputed linear RGB interpolation between powers 1, 4, 7, 10, 15, 20.
+// In particular, powers 10→15 change by (-19.8, +2, +3) per step before rounding.
 export const TILE_STYLES = [
-  ["#fff0b3", "#493416"], ["#ffe18a", "#493416"],
-  ["#ffc362", "#493016"], ["#ffa346", "#432718"],
-  ["#f47b3d", "#351b12"], ["#e85536", "#271210"],
-  ["#cd3539", "#ffffff"], ["#b72338", "#ffffff"],
-  ["#951c32", "#ffffff"], ["#74182b", "#ffffff"],
-  ["#23477d", "#ffffff"], ["#1d3d6b", "#ffffff"],
-  ["#183359", "#ffffff"], ["#142a49", "#ffffff"],
-  ["#11223a", "#ffffff"], ["#0f1b2e", "#ffffff"],
-  ["#14181f", "#ffffff"], ["#11151c", "#ffffff"],
-  ["#0c0f14", "#ffffff"], ["#080a0e", "#ffffff"],
+  ["#fff0b3", "#493416"], ["#ffd68f", "#493416"],
+  ["#ffbd6a", "#493016"], ["#ffa346", "#432718"],
+  ["#ee7e42", "#351b12"], ["#de5a3d", "#271210"],
+  ["#cd3539", "#ffffff"], ["#af2b34", "#ffffff"],
+  ["#922230", "#ffffff"], ["#74182b", "#ffffff"],
+  ["#601a2e", "#ffffff"], ["#4c1c31", "#ffffff"],
+  ["#391e34", "#ffffff"], ["#252037", "#ffffff"],
+  ["#11223a", "#ffffff"], ["#0f1d31", "#ffffff"],
+  ["#0d1828", "#ffffff"], ["#0c1420", "#ffffff"],
+  ["#0a0f17", "#ffffff"], ["#080a0e", "#ffffff"],
 ] as const;
 
 export function addTile(game: Game2048, random = Math.random): Game2048 {
