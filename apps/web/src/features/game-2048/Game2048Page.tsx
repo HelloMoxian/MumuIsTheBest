@@ -30,26 +30,40 @@ export function Game2048Page() {
   const current = useRef<State2048 | undefined>(undefined);
   const [loadError, setLoadError] = useState("");
   const [loadAttempt, setLoadAttempt] = useState(0);
-  const [saveStatus, setSaveStatus] = useState("正在读取进度…");
-  const [saveFailed, setSaveFailed] = useState(false);
   const [notice, setNotice] = useState("滑动棋盘，或按方向键合并相同数字");
   const [effect, setEffect] = useState<MoveEffect>({ turn: 0, merged: [], travellers: [] });
-  const revision = useRef(0), savedRevision = useRef(0);
+  const revision = useRef(0);
+  const mounted = useRef(true);
+  const retryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const retryDelay = useRef(2000);
   const gesture = useRef<{ x: number; y: number; id: number } | null>(null);
 
-  const persist = useCallback((next: State2048) => {
+  const persist = useCallback(function save(next: State2048) {
+    if (retryTimer.current !== null) clearTimeout(retryTimer.current);
+    retryTimer.current = null;
     const version = ++revision.current;
-    setSaveStatus("正在保存…"); setSaveFailed(false);
-    void queuePersistentDataWrite(ID, next, parse2048).then(result => {
-      if (revision.current !== version) return;
-      savedRevision.current = version;
+    void queuePersistentDataWrite(ID, next, parse2048, (input, init) => fetch(input, { ...init, keepalive: true })).then(result => {
+      if (!mounted.current || revision.current !== version) return;
+      retryDelay.current = 2000;
       // The server preserves historical records even across multiple open tabs.
       current.current = result.payload; setState(result.payload);
-      setSaveStatus("进度已保存"); setSaveFailed(false);
     }).catch(() => {
-      if (revision.current !== version) return;
-      setSaveStatus("保存未完成，请重试后再离开"); setSaveFailed(true);
+      if (!mounted.current || revision.current !== version) return;
+      // Retry the newest snapshot silently, without blocking input or navigation.
+      retryTimer.current = setTimeout(() => {
+        retryTimer.current = null;
+        if (current.current) save(current.current);
+      }, retryDelay.current);
+      retryDelay.current = Math.min(retryDelay.current * 2, 30000);
     });
+  }, []);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      if (retryTimer.current !== null) clearTimeout(retryTimer.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -59,18 +73,10 @@ export function Game2048Page() {
       if (cancelled) return;
       const next = result?.payload ?? newState();
       current.current = next; setState(next);
-      if (!result) persist(next); else setSaveStatus("进度已恢复");
+      if (!result) persist(next);
     }).catch(() => { if (!cancelled) setLoadError("暂时无法读取进度，原来的记录会保留。请重试。"); });
     return () => { cancelled = true; };
   }, [loadAttempt, persist]);
-
-  useEffect(() => {
-    const protect = (event: BeforeUnloadEvent) => {
-      if (revision.current !== savedRevision.current) { event.preventDefault(); event.returnValue = ""; }
-    };
-    window.addEventListener("beforeunload", protect);
-    return () => window.removeEventListener("beforeunload", protect);
-  }, []);
 
   const commit = useCallback((next: State2048) => {
     current.current = next; setState(next); persist(next);
@@ -137,9 +143,7 @@ export function Game2048Page() {
   const peak = game ? tileValue(Math.max(...game.cells)) : "2";
 
   return <div ref={root} className={`game2048 ${fullscreen.focused ? "game2048--fullscreen" : ""}`} data-skip-startup-greeting>
-    {!fullscreen.focused && <GameTopBar title="2048" backHref="/?tab=math" backLabel="数学" onBack={event => {
-      if (revision.current !== savedRevision.current) { event.preventDefault(); setNotice("进度还在保存，请稍后再返回"); }
-    }} />}
+    {!fullscreen.focused && <GameTopBar title="2048" backHref="/?tab=math" backLabel="数学" />}
     <main className="game2048__main">
       <div className="game2048__toolbar">
         <div className="game2048__sizes" role="group" aria-label="棋盘大小，各自保留进度">
@@ -189,7 +193,6 @@ export function Game2048Page() {
           <div className="game2048__messages">
             <p role="status">{stopped ? "这一盘已经填满啦，试试新一局或另一种大小" : notice}</p>
             <p>新方块：{tileValue(game.spawnPower)} / {tileValue(game.spawnPower + 1)} · 一直合并，无终点</p>
-            <p className={saveFailed ? "is-error" : "game2048__save"}>{saveStatus}{saveFailed && <button onClick={() => current.current && persist(current.current)}>重试保存</button>}</p>
           </div>
         </div>
       </>}

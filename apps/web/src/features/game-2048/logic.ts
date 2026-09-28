@@ -7,18 +7,18 @@ export const tileValue = (power: number) => (2n ** BigInt(power)).toString();
 
 // Fixed, readable domain colours: pale yellow → orange → red → deep blue → black.
 // Precomputed linear RGB interpolation between powers 1, 4, 7, 10, 15, 20.
-// In particular, powers 10→15 change by (-19.8, +2, +3) per step before rounding.
+// In particular, powers 10→15 change by (-21.8, +13.4, +25) per step before rounding.
 export const TILE_STYLES = [
   ["#fff0b3", "#493416"], ["#ffd68f", "#493416"],
   ["#ffbd6a", "#493016"], ["#ffa346", "#432718"],
   ["#ee7e42", "#351b12"], ["#de5a3d", "#271210"],
   ["#cd3539", "#ffffff"], ["#af2b34", "#ffffff"],
   ["#922230", "#ffffff"], ["#74182b", "#ffffff"],
-  ["#601a2e", "#ffffff"], ["#4c1c31", "#ffffff"],
-  ["#391e34", "#ffffff"], ["#252037", "#ffffff"],
-  ["#11223a", "#ffffff"], ["#0f1d31", "#ffffff"],
-  ["#0d1828", "#ffffff"], ["#0c1420", "#ffffff"],
-  ["#0a0f17", "#ffffff"], ["#080a0e", "#ffffff"],
+  ["#5e2544", "#ffffff"], ["#48335d", "#ffffff"],
+  ["#334076", "#ffffff"], ["#1d4e8f", "#ffffff"],
+  ["#075ba8", "#ffffff"], ["#074b89", "#ffffff"],
+  ["#073b6a", "#ffffff"], ["#082a4c", "#ffffff"],
+  ["#081a2d", "#ffffff"], ["#080a0e", "#ffffff"],
 ] as const;
 
 export function addTile(game: Game2048, random = Math.random): Game2048 {
