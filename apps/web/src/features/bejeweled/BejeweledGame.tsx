@@ -16,6 +16,7 @@ import { LatestMomentQueue } from "../../shared/speech/latest-moment-queue";
 import { browserTts } from "../../shared/speech";
 import { getExperienceSnapshot, subscribeExperience } from "../../shared/experience/experience-store";
 import { speakLearningMoment, stopLearningSpeech, pauseLearningSpeech, resumeLearningSpeech } from "../../shared/experience/learning-speech";
+import { useGameFullscreen } from "../../shared/useGameFullscreen";
 import "./bejeweled.css";
 
 const number = (value: number) => value.toLocaleString("zh-CN");
@@ -41,6 +42,8 @@ function delay(ms: number, signal: AbortSignal) {
   });
 }
 export function BejeweledGame() {
+  const fullscreenRoot = useRef<HTMLElement>(null);
+  const fullscreen = useGameFullscreen(fullscreenRoot);
   const [state, setState] = useState<BejeweledState | null>(null);
   const [board, setBoard] = useState<Board>([]);
   const [frame, setFrame] = useState<Frame | null>(null);
@@ -292,7 +295,7 @@ export function BejeweledGame() {
   }
   const disabled = busy || !!error || paused || help || newMode !== null || state?.game.status === "finished";
   const progress = state ? state.game.cleared % 100 : 0;
-  return <main className="bj-page" data-motion-paused={paused}>
+  return <main ref={fullscreenRoot} className="bj-page" data-fullscreen={fullscreen.focused} data-motion-paused={paused}>
     <BejeweledRewardTrail reward={reward} stopped={paused} onArrive={onCoinArrive} onComplete={onCoinsComplete} />
     <header className="bj-header">
       <a className="bj-button" href="/#games">‹ 返回游戏</a>
@@ -303,6 +306,8 @@ export function BejeweledGame() {
         <span className="bj-save" role="status">{saveStatus === "已自动保存" ? "✓ " : ""}{saveStatus}</span>
         <button className="bj-button" onClick={toggleSound} disabled={!audioSettings.ready} aria-pressed={sound}>音效{sound ? "：开" : "：关"}</button>
         <button className="bj-button" onClick={() => setPraiseEnabled(value => !value)} aria-pressed={praiseEnabled}>鼓励语音{praiseEnabled ? "：开" : "：关"}</button>
+        <button className="bj-button" data-fullscreen-exit={fullscreen.focused || undefined} disabled={fullscreen.switching} aria-pressed={fullscreen.focused} onClick={() => void (fullscreen.focused ? fullscreen.leave() : fullscreen.enter())}>{fullscreen.focused ? "退出全屏" : "全屏沉浸"}</button>
+        {fullscreen.focused && <button className="bj-button" disabled={!state} onClick={togglePause}>{paused ? "继续探索" : "暂停一下"}</button>}
         <button className="bj-button" onClick={() => setHelp(!help)} aria-expanded={help}>玩法说明</button>
       </div>
     </header>
@@ -321,19 +326,18 @@ export function BejeweledGame() {
         }}>✧ 给我一个提示</button>
         <button className="bj-button" onClick={togglePause} disabled={!state}> {paused ? "继续探索" : "暂停一下"}</button>
         <button className="bj-button" disabled={!state || busy || !!error} onClick={() => setNewMode(state!.game.mode)}>换一局 / 切换模式</button>
-        <p className="bj-muted">每一步都自动保存<br />下次打开，接着这里玩</p>
+        <p className="bj-praise-caption" aria-live="off">{praiseCaption ? <><span lang="en">{praiseCaption.en}</span><span>{praiseCaption.zh}</span></> : <><span lang="en">Let’s find sparkling gems!</span><span>一起寻找闪亮的宝石吧！</span></>}</p>
+        <div className="bj-feedback" role="status" aria-live="polite"><span aria-hidden="true">✦</span><p>{message}</p></div>
+        {reward && <div className="bj-reward-summary">已到账：知识币 +{reward.knowledge} · 能量币 +{reward.energy}</div>}
       </aside>
       <section className="bj-play" aria-label="宝石消除游戏">
-        <p className="bj-praise-caption" aria-live="off">{praiseCaption ? <><span lang="en">{praiseCaption.en}</span><span>{praiseCaption.zh}</span></> : <><span lang="en">Let’s find sparkling gems!</span><span>一起寻找闪亮的宝石吧！</span></>}</p>
         <div className="bj-board-caption"><span>交换相邻宝石 · 三颗同色连成线</span><span>12 列 × 10 行</span></div>
-        <div className="bj-board-frame">
+        <div className="bj-board-stage"><div className="bj-board-frame">
           {board.length === BOARD_SIZE && <GemSwapBoard board={board} selected={selected} hint={hint} cleared={frame?.cleared ?? []} created={frame?.created ?? []} disabled={disabled} onSelect={choose} onSwap={swap} onInteract={() => audio.current?.unlock()} frame={frame} stopped={paused} rejected={rejected} />}
           {!state && <div className="bj-overlay bj-loading"><h2>{busy ? "正在恢复宝石…" : "暂时无法打开棋盘"}</h2><p>你的长期收藏会保存在本机。</p></div>}
           {paused && state && <div className="bj-overlay"><span className="bj-overlay-symbol">Ⅱ</span><h2>星光休息一下</h2><p>棋盘和收藏都在这里等你。</p><button className="bj-button bj-primary" onClick={togglePause}>继续探索</button></div>}
           {state?.game.status === "finished" && !paused && <div className="bj-overlay"><h2>这一局收集完成！</h2><p>棋盘已经没有可用交换。</p><strong className="bj-score">{number(state.game.score)} 分</strong><button className="bj-button bj-primary" disabled={busy || !!error} onClick={() => setNewMode("classic")}>再开一局</button></div>}
-        </div>
-        <div className="bj-feedback" role="status" aria-live="polite"><span aria-hidden="true">✦</span><p>{message}</p></div>
-        {reward && <div className="bj-reward-summary">已到账：知识币 +{reward.knowledge} · 能量币 +{reward.energy}</div>}
+        </div></div>
         {error && <div className="bj-error" role="alert"><p>{error}</p><button className="bj-button" disabled={busy} onClick={() => pending.current ? void submit(pending.current) : void restore()}>重试{pending.current ? "保存这一步" : "恢复进度"}</button></div>}
         <p className="bj-mobile-note">小屏可横向滚动棋盘，或横屏畅玩。也可以按住宝石向旁边拖动。</p>
         {help && <dialog ref={helpDialog} className="bj-panel bj-help" aria-label="玩法说明" onCancel={() => setHelp(false)}>
@@ -356,8 +360,7 @@ export function BejeweledGame() {
           }}>确认开启新棋盘</button></div>
         </dialog>}
       </section>
-      <aside className="bj-panel bj-collection">
-        <span className="bj-eyebrow">永久收藏</span><h2>我的宝石星藏</h2>
+      <aside className="bj-panel bj-collection" aria-label="累计宝石统计">
         <div className="bj-total"><span>总得分</span><strong>{number(state?.totalScore ?? 0)}</strong></div>
         <div className="bj-total"><span>总消除宝石</span><strong>{number(state?.totalCleared ?? 0)} <small>颗</small></strong></div>
         <div className="bj-color-list">{COLORS.map(color => <div className="bj-color-row" key={color}><GemIcon gem={{ color, special: "normal" }} small /><span>{GEM_NAMES[color]}<small>宝石</small></span><strong>{number(state?.counts[color] ?? 0)}</strong></div>)}</div>

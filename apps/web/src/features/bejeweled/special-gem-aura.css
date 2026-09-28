@@ -4,8 +4,8 @@
 .bj-aura-front { z-index: 2; }
 .bj-gem > img, .bj-gem > .bj-fallback { position: relative; z-index: 1; }
 .bj-gem:is(.bj-gem--flame, .bj-gem--star, .bj-gem--cube, .bj-gem--nova) > img { width: 88%; height: 88%; }
-/* Front-edge flames stay visible over opaque gem artwork; the centre remains readable. */
-.bj-aura--flame { inset: -3%; overflow: clip; border-radius: 22%; }
+/* Keep the entire flame stack beneath the gem so its colour and facets stay readable. */
+.bj-aura--flame { z-index: 0; inset: -3%; overflow: clip; border-radius: 22%; }
 .bj-aura-heat { position: absolute; inset: 2%; z-index: 0; border-radius: 50%; background: radial-gradient(ellipse at 50% 68%, var(--warning-300) 5%, var(--rose-400) 38%, transparent 70%); transform-origin: 50% 70%; animation: bj-fire-breathe 1.9s ease-in-out infinite; animation-delay: var(--aura-delay); }
 .bj-aura-flame-shell { filter: drop-shadow(0 0 2px var(--warning-300)); }
 .bj-aura-fire, .bj-aura-fire-bright { fill: var(--warning-300); stroke: var(--rose-400); stroke-width: 2; transform-origin: 50px 90px; animation: bj-fire-flow 1.55s ease-in-out infinite; animation-delay: var(--aura-delay); }
