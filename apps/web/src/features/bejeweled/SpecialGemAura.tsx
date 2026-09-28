@@ -5,16 +5,23 @@ import "./special-gem-aura.css";
 export function SpecialGemAura({ special }: { special: Exclude<Special, "normal"> }) {
   return <span className={"bj-aura bj-aura--" + special} aria-hidden="true">
     {special === "flame" && <>
-      <svg className="bj-aura-back" viewBox="0 0 100 100" focusable="false">
+      <span className="bj-aura-heat" />
+      <svg className="bj-aura-front bj-aura-flame-shell" viewBox="0 0 100 100" focusable="false">
         <path className="bj-aura-fire bj-aura-fire--left" d="M27 89C5 79 8 56 20 43C18 57 29 57 27 38C42 56 43 76 27 89Z" />
-        <path className="bj-aura-fire bj-aura-fire--crown" d="M46 70C22 52 35 27 48 8C44 29 63 29 57 13C81 39 77 65 57 79C66 59 54 51 53 41C42 55 39 61 46 70Z" />
+        <path className="bj-aura-fire bj-aura-fire--crown" d="M40 44C25 35 37 15 48 3C44 20 63 22 57 7C78 27 75 40 62 47C67 33 54 30 53 21C45 32 38 37 40 44Z" />
         <path className="bj-aura-fire bj-aura-fire--right" d="M69 90C59 72 66 61 76 47C74 62 87 57 83 35C103 60 97 84 69 90Z" />
+        <path className="bj-aura-fire-bright bj-aura-fire--left" d="M24 84C12 73 17 64 20 56C21 69 30 65 29 75Z" />
+        <path className="bj-aura-fire-bright bj-aura-fire--crown" d="M48 44C39 33 46 20 49 15C48 28 59 26 56 36Z" />
+        <path className="bj-aura-fire-bright bj-aura-fire--right" d="M76 83C68 76 77 66 80 58C82 70 88 72 76 83Z" />
         <path className="bj-aura-fire-core" d="M28 83Q47 100 73 82Q62 98 49 98Q36 98 28 83Z" />
       </svg>
       <svg className="bj-aura-front" viewBox="0 0 100 100" focusable="false">
-        <circle className="bj-aura-ember" cx="16" cy="61" r="2" />
-        <circle className="bj-aura-ember bj-aura-ember--two" cx="80" cy="54" r="1.7" />
-        <circle className="bj-aura-ember bj-aura-ember--three" cx="54" cy="25" r="1.5" />
+        <circle className="bj-aura-ember" cx="16" cy="75" r="3" />
+        <circle className="bj-aura-ember bj-aura-ember--two" cx="80" cy="66" r="2.8" />
+        <circle className="bj-aura-ember bj-aura-ember--three" cx="54" cy="37" r="2.4" />
+        <circle className="bj-aura-ember bj-aura-ember--four" cx="29" cy="53" r="2.2" />
+        <circle className="bj-aura-ember bj-aura-ember--five" cx="88" cy="80" r="2.5" />
+        <circle className="bj-aura-ember bj-aura-ember--six" cx="67" cy="48" r="1.9" />
       </svg>
     </>}
     {special === "star" && <svg className="bj-aura-front" viewBox="0 0 100 100" focusable="false">

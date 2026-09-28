@@ -4,13 +4,22 @@
 .bj-aura-front { z-index: 2; }
 .bj-gem > img, .bj-gem > .bj-fallback { position: relative; z-index: 1; }
 .bj-gem:is(.bj-gem--flame, .bj-gem--star, .bj-gem--cube, .bj-gem--nova) > img { width: 88%; height: 88%; }
-.bj-aura-fire { fill: var(--warning-300); stroke: var(--rose-400); stroke-width: 1.4; transform-origin: 50px 90px; animation: bj-fire-flow 2.7s ease-in-out infinite alternate; animation-delay: var(--aura-delay); }
-.bj-aura-fire--left { fill: var(--rose-400); animation-duration: 2.1s; transform-origin: 25px 88px; }
-.bj-aura-fire--right { animation-duration: 2.4s; transform-origin: 76px 89px; }
-.bj-aura-fire-core { fill: var(--warning-300); }
-.bj-aura-ember { fill: var(--warning-300); animation: bj-ember-rise 2.6s ease-out infinite; animation-delay: var(--aura-delay); }
-.bj-aura-ember--two { animation-delay: calc(var(--aura-delay) - .9s); animation-duration: 3.1s; }
-.bj-aura-ember--three { animation-delay: calc(var(--aura-delay) - 1.8s); animation-duration: 2.8s; }
+/* Front-edge flames stay visible over opaque gem artwork; the centre remains readable. */
+.bj-aura--flame { inset: -3%; overflow: clip; border-radius: 22%; }
+.bj-aura-heat { position: absolute; inset: 2%; z-index: 0; border-radius: 50%; background: radial-gradient(ellipse at 50% 68%, var(--warning-300) 5%, var(--rose-400) 38%, transparent 70%); transform-origin: 50% 70%; animation: bj-fire-breathe 1.9s ease-in-out infinite; animation-delay: var(--aura-delay); }
+.bj-aura-flame-shell { filter: drop-shadow(0 0 2px var(--warning-300)); }
+.bj-aura-fire, .bj-aura-fire-bright { fill: var(--warning-300); stroke: var(--rose-400); stroke-width: 2; transform-origin: 50px 90px; animation: bj-fire-flow 1.55s ease-in-out infinite; animation-delay: var(--aura-delay); }
+.bj-aura-fire--crown { transform-origin: 50px 46px; }
+.bj-aura-fire--left { animation-duration: 1.25s; transform-origin: 25px 88px; animation-delay: calc(var(--aura-delay) - .4s); }
+.bj-aura-fire--right { animation-duration: 1.4s; transform-origin: 76px 89px; animation-delay: calc(var(--aura-delay) - .8s); }
+.bj-aura-fire-bright { fill: var(--ink-primary); stroke: var(--warning-300); stroke-width: 1; }
+.bj-aura-fire-core { fill: var(--warning-300); stroke: var(--ink-primary); stroke-width: 1.4; transform-origin: 50px 90px; animation: bj-fire-breathe 1.9s ease-in-out infinite; animation-delay: var(--aura-delay); }
+.bj-aura-ember { fill: var(--warning-300); stroke: var(--ink-primary); stroke-width: .8; transform-box: fill-box; transform-origin: center; animation: bj-ember-rise 1.8s ease-out infinite; animation-delay: var(--aura-delay); }
+.bj-aura-ember--two { animation-delay: calc(var(--aura-delay) - .3s); animation-duration: 2.1s; }
+.bj-aura-ember--three { animation-delay: calc(var(--aura-delay) - .6s); animation-duration: 1.7s; }
+.bj-aura-ember--four { animation-delay: calc(var(--aura-delay) - .9s); animation-duration: 2.2s; }
+.bj-aura-ember--five { animation-delay: calc(var(--aura-delay) - 1.2s); animation-duration: 1.9s; }
+.bj-aura-ember--six { animation-delay: calc(var(--aura-delay) - 1.5s); animation-duration: 2s; }
 .bj-aura-star-rays { transform-origin: 50px 50px; animation: bj-star-breathe 3.6s ease-in-out infinite alternate; animation-delay: var(--aura-delay); }
 .bj-aura-ray-halo { fill: var(--cyan-300); opacity: .35; }
 .bj-aura-ray-core { fill: var(--ink-primary); opacity: .75; }
@@ -24,8 +33,9 @@
 .bj-aura-nova-ring { fill: none; stroke: var(--pink-400); stroke-width: 2.2; }
 .bj-aura-nova-ring--second { stroke: var(--cyan-300); stroke-width: 1.4; stroke-dasharray: 55 8 4 8; }
 .bj-aura-nova-core { fill: none; stroke: var(--ink-primary); stroke-width: 1.2; opacity: .65; transform-origin: 50px 50px; animation: bj-nova-breathe 3.8s ease-in-out infinite alternate; animation-delay: var(--aura-delay); }
-@keyframes bj-fire-flow { from { transform: scale(.94, .86) rotate(-4deg); opacity: .7; } to { transform: scale(1.03, 1.04) rotate(3deg); opacity: .95; } }
-@keyframes bj-ember-rise { 0% { transform: translate(0, 7px) scale(.65); opacity: 0; } 20% { opacity: .85; } 70% { opacity: .65; } 100% { transform: translate(5px, -17px) scale(.3); opacity: 0; } }
+@keyframes bj-fire-breathe { 0%,100% { transform: scale(.8, .85); opacity: .38; } 50% { transform: scale(1.1, 1.08); opacity: .9; } }
+@keyframes bj-fire-flow { 0%,100% { transform: scale(.92, .72) skewX(-7deg); opacity: .72; } 35% { transform: scale(1.08, 1.12) skewX(5deg); opacity: 1; } 65% { transform: scale(.95, .93) skewX(-3deg); opacity: .9; } }
+@keyframes bj-ember-rise { 0% { transform: translate(-3px, 8px) scale(.65); opacity: 0; } 18% { opacity: 1; } 60% { transform: translate(5px, -14px) scale(1); opacity: .9; } 100% { transform: translate(-2px, -36px) scale(.25); opacity: 0; } }
 @keyframes bj-star-breathe { from { transform: scale(.84) rotate(-5deg); opacity: .65; } to { transform: scale(1) rotate(5deg); opacity: .9; } }
 @keyframes bj-aura-orbit { to { transform: rotate(360deg); } }
 @keyframes bj-nova-breathe { from { transform: scale(.8) rotate(-8deg); opacity: .4; } to { transform: scale(.97) rotate(8deg); opacity: .75; } }
@@ -34,5 +44,6 @@
 @media (prefers-reduced-motion: reduce) {
   .bj-aura * { animation: none !important; }
   .bj-aura-ember { opacity: .7; }
+  .bj-aura-heat { opacity: .5; }
   .bj-cell[data-clear="true"] .bj-aura { transition: none; }
 }
