@@ -60,7 +60,6 @@
 .bj-gem--flame { filter: drop-shadow(0 0 5px var(--warning-300)); }
 .bj-gem--star { filter: drop-shadow(0 0 6px var(--cyan-300)); }
 .bj-gem--nova { filter: drop-shadow(0 0 7px var(--pink-400)); }
-.bj-special { position: absolute; bottom: 0; right: 0; min-width: 23px; min-height: 23px; padding: 1px 4px; border: 1px solid var(--ink-primary); border-radius: 8px; color: var(--ink-primary); background: var(--space-950); font: 900 18px var(--font-display); }
 .bj-fallback { font-size: 36px; color: var(--cyan-300); }
 .bj-cell[data-clear="true"] .bj-gem { animation: bj-clear 440ms ease-in both; }
 .bj-cell[data-selected="true"] .bj-gem img { animation: bj-select-wobble 600ms ease-out; }

@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { BOARD_COLUMNS, BOARD_ROWS, BOARD_SIZE, type Board, type Gem, type Frame } from "../../../server/src/bejeweled-engine";
 import { motionKeyframes, planGemMotion } from "../features/bejeweled/motion";
+import { SpecialGemAura } from "../features/bejeweled/SpecialGemAura";
 import { BejeweledEffects } from "../features/bejeweled/BejeweledEffects";
 
 export const GEM_NAMES = {
@@ -8,13 +9,13 @@ export const GEM_NAMES = {
   blue: "蓝色三角", purple: "紫色圆形", white: "白色水滴",
 };
 export const SPECIAL_NAMES = { normal: "", flame: "火焰", star: "星形", cube: "超能", nova: "新星" };
-export function GemIcon({ gem, small = false }: { gem: Pick<Gem, "color" | "special">; small?: boolean }) {
+export function GemIcon({ gem, small = false }: { gem: Pick<Gem, "color" | "special"> & { id?: number }; small?: boolean }) {
   const [failed, setFailed] = useState(false);
   const asset = gem.special === "cube" ? "cube" : gem.color;
-  return <span className={"bj-gem bj-gem--" + gem.special + (small ? " bj-gem--small" : "")} data-color={gem.color}>
+  return <span className={"bj-gem bj-gem--" + gem.special + (small ? " bj-gem--small" : "")} data-color={gem.color} style={{ "--bj-aura-delay": -((gem.id ?? 0) % 17) * .23 + "s" } as CSSProperties}>
     {failed ? <span className="bj-fallback">{({ red: "■", orange: "⬡", yellow: "◆", green: "▣", blue: "▲", purple: "●", white: "♦" })[gem.color]}</span>
       : <img src={"/images/bejeweled/" + asset + ".png"} alt="" draggable={false} onError={() => setFailed(true)} />}
-    {gem.special !== "normal" && <span className="bj-special">{({ flame: "火", star: "✦", cube: "虹", nova: "新星" })[gem.special]}</span>}
+    {gem.special !== "normal" && <SpecialGemAura special={gem.special} />}
   </span>;
 }
 export function GemSwapBoard({ board, selected, hint, cleared, created, disabled, onSelect, onSwap, onInteract, frame = null, stopped = false, rejected = 0 }: {
