@@ -3,10 +3,12 @@ import { chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
+import { parse2048, merge2048Best, type State2048 } from "./game-2048-contract.js";
 import { parseAudioPreferences, type AudioPreferences } from "./audio-preferences.js";
 import { parseControllerPreferences, type ControllerPreferences } from "./game-controller-preferences.js";
 
 const stateIdSchema = z.enum([
+  "math-2048",
   "audio-preferences",
   "game-controller-preferences",
   "chemistry-reaction-furnace",
@@ -299,6 +301,10 @@ type StateId = z.infer<typeof stateIdSchema>;
 type StoredState = z.infer<typeof storedStateBaseSchema>;
 
 const definitions: Record<StateId, { relativePath: string; payloadSchema: z.ZodType }> = {
+  "math-2048": {
+    relativePath: "learning/math/2048-state.json",
+    payloadSchema: z.custom<State2048>(value => parse2048(value) !== undefined),
+  },
   "game-controller-preferences": {
     relativePath: "preferences/game-controllers.json",
     payloadSchema: z.custom<ControllerPreferences>(value => parseControllerPreferences(value) !== undefined),
@@ -378,7 +384,9 @@ export function registerPersistentUserDataApi(
           ...(current?.payload as ControllerPreferences | undefined)?.games,
           ...(payload as ControllerPreferences).games,
         },
-      } : payload;
+      } : stableId === "math-2048"
+        ? merge2048Best(current?.payload as State2048 | undefined, payload as State2048)
+        : payload;
       const now = new Date().toISOString();
       const state = parseStoredState(stableId, {
         schemaVersion: 1,

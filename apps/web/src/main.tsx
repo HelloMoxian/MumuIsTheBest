@@ -23,6 +23,11 @@ import {
 } from "./shared/experience";
 import "./styles.css";
 
+const Game2048Page = lazy(async () => {
+  const module = await import("./features/game-2048/Game2048Page");
+  return { default: module.Game2048Page };
+});
+
 const TetrisGame = lazy(async () => {
   const module = await import("./features/tetris/TetrisGame");
   return { default: module.TetrisGame };
@@ -325,6 +330,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     icon: "math",
     games: [
       { title: "加减练习", mark: "＋−", description: "0—20 快速计算", shape: "wide", href: "/math/add-subtract", rewardSource: "math:add-subtract" },
+      { title: "2048", mark: "2048", description: "合并数字一直玩，三种棋盘随时续玩", shape: "wide", href: "/math/2048" },
       {
         title: "算数大战",
         mark: "⚔",
@@ -1134,6 +1140,7 @@ function CurrentPage() {
     return <Suspense fallback={<ChemistryLoading label="仰望星空" />}><StargazingPage /></Suspense>;
   }
   if (window.location.pathname === "/math/add-subtract") return <AddSubtractGame />;
+  if (window.location.pathname === "/math/2048") return <Suspense fallback={<ChemistryLoading label="2048" />}><Game2048Page /></Suspense>;
   if (window.location.pathname === "/math/arithmetic-battle") return <ArithmeticBattleGame />;
   if (window.location.pathname === "/math/multiplication") return <MultiplicationGame />;
   if (window.location.pathname === "/math/mystery-function") return <MysteryFunctionGame />;

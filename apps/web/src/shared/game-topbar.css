@@ -1,0 +1,126 @@
+.game-topbar {
+  position: relative;
+  z-index: 40;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 60px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px clamp(10px, 1.4vw, 24px);
+  border-bottom: 1px solid var(--line-glow);
+  color: var(--ink-primary);
+  background: color-mix(in srgb, var(--space-950) 88%, transparent);
+  backdrop-filter: blur(18px);
+  font-family: var(--font-display);
+}
+
+.game-topbar__back,
+.game-topbar__controls > :is(a, button, label) {
+  flex: 0 0 auto;
+  min-height: 48px;
+}
+
+.game-topbar__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid var(--line-glow);
+  border-radius: 14px;
+  color: var(--ink-primary);
+  background: var(--glass-500);
+  font-size: 16px;
+  font-weight: 850;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.game-topbar__title {
+  flex: 0 0 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: clamp(19px, 2vw, 25px);
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.game-topbar__controls {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.game-topbar__controls::-webkit-scrollbar { display: none; }
+
+.game-topbar.game-topbar { flex-wrap: nowrap; }
+.game-topbar { flex-shrink: 0; }
+.game-topbar__controls { min-height: 48px; }
+.game-topbar__controls > :is(div, nav, fieldset) { width: auto; }
+.game-topbar__controls :is(.tetris-toolbar, .workout-actions, .bj-header-actions, .red-fortress-top-actions, .characters-top-actions) { flex-wrap: nowrap; width: auto; }
+.game-topbar__controls .drawing-document-name { flex-direction: row; min-width: 0; gap: 8px; }
+.game-topbar__controls .drawing-document-name > span { display: none; }
+.game-topbar__controls .mkt-dashboard__metrics { display: flex; gap: 16px; }
+.game-topbar__controls .mkt-metric { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0; background: none; border: 0; }
+.game-topbar__controls .mkt-metric :is(strong, span) { font-size: 18px; white-space: nowrap; }
+.game-topbar__controls .mkt-metric :is(em, .mkt-progress-track) { display: none; }
+.game-topbar__controls .mt-coin { display: none; }
+.game-topbar__controls > :is(div, nav, fieldset) { display: flex; align-items: center; flex-wrap: nowrap; flex: 0 0 auto; gap: 8px; margin: 0; }
+.game-topbar__controls :is(button, a, label) { flex-shrink: 0; white-space: nowrap; }
+.game-topbar__controls button { min-height: 48px; padding: 6px 12px; border: 1px solid var(--line-glow); border-radius: 14px; color: var(--ink-primary); background: var(--glass-500); font: 800 18px var(--font-display); }
+.game-topbar__controls button:hover:not(:disabled) { border-color: var(--cyan-300); background: var(--glass-700); }
+.game-topbar__controls button:active:not(:disabled) { transform: translateY(1px); }
+.game-topbar__controls button:focus-visible { outline: 3px solid var(--cyan-300); outline-offset: -3px; }
+.game-topbar__controls button:disabled, .game-topbar__back[aria-disabled=true] { opacity: .5; cursor: default; }
+.game-topbar__title + .game-topbar__wallets { margin-left: auto; }
+.game-topbar__controls .drawing-file-input { display: none; }
+.game-topbar.racer-topbar { top: 0; left: 0; right: 0; width: 100%; }
+
+
+.game-topbar__wallets {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-topbar .learning-coin-hud,
+.game-topbar .home-energy-coin-balance {
+  min-height: 48px;
+  margin: 0;
+  box-shadow: none;
+}
+
+body:has(.game-topbar) .learning-coin-hud.is-floating { display: none; }
+
+.game-topbar__back:hover { border-color: var(--cyan-300); background: var(--glass-700); }
+.game-topbar__back:active { transform: translateY(1px); }
+.game-topbar__back:focus-visible { outline: 3px solid var(--cyan-300); outline-offset: 2px; }
+
+@media (max-width: 760px) {
+  .game-topbar { gap: 7px; padding-inline: 8px; }
+  .game-topbar__back { padding-inline: 10px; }
+  .game-topbar__back span:last-child { display: inline; }
+  .game-topbar__title { font-size: 19px; }
+  .game-topbar__controls { order: 4; flex: 1 1 48px; min-width: 48px; }
+  .game-topbar__wallets { margin-left: auto; }
+  .game-topbar .learning-coin-hud,
+  .game-topbar .home-energy-coin-balance { padding-right: 7px; }
+  .game-topbar .learning-coin-hud small,
+  .game-topbar .home-energy-coin-balance small { display: block; }
+}
+
+@media (max-width: 600px) {
+  .game-topbar { overflow-x: auto; }
+  .game-topbar__title { flex: 0 0 auto; max-width: 7em; }
+  .game-topbar .learning-coin-symbol, .game-topbar .home-energy-coin-balance img { width: 24px; height: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-topbar * { transition: none !important; }
+}
