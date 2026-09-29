@@ -1,0 +1,109 @@
+.symmetry-page {
+  --sym-panel: rgba(19, 18, 52, .96);
+  display: flex; width: 100vw; min-width: 320px; height: 100svh; min-height: 0; flex-direction: column; overflow: hidden; color: var(--ink-primary);
+  background: radial-gradient(circle at 16% 12%, rgba(141,115,255,.23), transparent 28%), radial-gradient(circle at 80% 88%, rgba(89,231,255,.13), transparent 28%), var(--space-950);
+  font-family: var(--font-body);
+}
+
+.symmetry-page .game-topbar { min-height: 64px; }
+.symmetry-page > .game-topbar { width: 100%; flex: 0 0 auto; }
+.symmetry-page .game-topbar__controls button,
+.symmetry-panel-heading button,
+.symmetry-title-row > button,
+.symmetry-exit {
+  min-height: 46px; padding: 0 16px; border: 1px solid rgba(141,115,255,.56); border-radius: 14px; color: #fff;
+  background: linear-gradient(145deg, rgba(141,115,255,.28), rgba(255,103,199,.16)); font: 850 15px/1 var(--font-body);
+}
+
+.symmetry-workspace { display: grid; width: 100%; min-height: 0; flex: 1 1 auto; grid-template-columns: minmax(0, 1fr) clamp(310px, 28vw, 356px); }
+.symmetry-canvas-shell { position: relative; min-width: 0; min-height: 0; overflow: hidden; border-right: 1px solid rgba(202,204,255,.24); box-shadow: 0 28px 80px rgba(0,0,0,.38); }
+.symmetry-canvas-shell canvas { display: block; width: 100%; height: 100%; cursor: crosshair; touch-action: none; }
+.symmetry-canvas-shell canvas.is-panning { cursor: grab; }.symmetry-canvas-shell canvas.is-panning:active { cursor: grabbing; }
+.symmetry-canvas-shell canvas:focus-visible { outline: 4px solid rgba(89,231,255,.68); outline-offset: -5px; }
+.symmetry-hint { position: absolute; left: 16px; bottom: 16px; max-width: min(620px, calc(100% - 32px)); padding: 10px 15px; border: 1px solid rgba(105,80,220,.22); border-radius: 999px; color: #35305e; background: rgba(255,255,255,.88); box-shadow: 0 8px 30px rgba(28,25,72,.14); font-size: 14px; font-weight: 800; pointer-events: none; backdrop-filter: blur(10px); }
+.symmetry-exit { position: absolute; z-index: 4; top: 15px; left: 15px; color: #211b4e; background: rgba(255,255,255,.9); }
+.symmetry-zoom { position: absolute; z-index: 4; top: 14px; right: 14px; display: flex; min-height: 46px; align-items: center; gap: 4px; padding: 4px; border: 1px solid rgba(105,80,220,.2); border-radius: 15px; color: #322a62; background: rgba(255,255,255,.9); box-shadow: 0 8px 28px rgba(28,25,72,.15); backdrop-filter: blur(12px); }
+.symmetry-zoom button { min-width: 38px; min-height: 38px; padding: 0 8px; border: 0; border-radius: 10px; color: #322a62; background: rgba(105,80,220,.09); font-size: 16px; font-weight: 900; }
+.symmetry-zoom button.is-active { color: #fff; background: var(--violet-600); }
+.symmetry-zoom button:last-child { font-size: 12px; }.symmetry-zoom output { min-width: 52px; text-align: center; font-size: 12px; font-weight: 900; }
+
+.symmetry-controls { min-width: 0; overflow: auto; padding: 12px; border-left: 1px solid var(--line-glow); background: var(--sym-panel); box-shadow: -20px 0 60px rgba(0,0,0,.28); scrollbar-width: thin; }
+.symmetry-controls section { margin-top: 10px; padding: 13px; border: 1px solid var(--line-glow); border-radius: 18px; background: rgba(255,255,255,.045); }
+.symmetry-controls h2 { margin: 0 0 10px; font: 900 16px/1.15 var(--font-display); }
+.symmetry-panel-heading { position: sticky; z-index: 2; top: -12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 5px 12px; background: linear-gradient(var(--sym-panel) 80%, transparent); }
+.symmetry-panel-heading div { display: grid; min-width: 0; gap: 4px; }
+.symmetry-panel-heading small { color: var(--cyan-300); font-size: 11px; font-weight: 900; letter-spacing: .1em; }
+.symmetry-panel-heading strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 900 20px/1.2 var(--font-display); }
+
+.symmetry-segments, .symmetry-order { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.symmetry-segments.is-color-grid { grid-template-columns: 1fr 1fr; }
+.symmetry-segments button, .symmetry-order button, .symmetry-bottom-actions button, .symmetry-layer-actions button {
+  min-height: 43px; padding: 6px 8px; border: 1px solid var(--line-glow); border-radius: 12px; color: var(--ink-secondary); background: rgba(255,255,255,.055); font-weight: 850;
+}
+.symmetry-segments button:hover:not(:disabled), .symmetry-order button:hover:not(:disabled), .symmetry-bottom-actions button:hover:not(:disabled), .symmetry-layer-actions button:hover:not(:disabled) { border-color: rgba(89,231,255,.55); color: #fff; }
+.symmetry-segments button.is-active, .symmetry-order button.is-active { border-color: var(--violet-400); color: #fff; background: rgba(141,115,255,.26); box-shadow: inset 0 0 0 1px rgba(255,255,255,.09), 0 0 18px rgba(141,115,255,.12); }
+.symmetry-controls button:active:not(:disabled) { transform: translateY(1px); }
+.symmetry-controls button:focus-visible, .symmetry-controls select:focus-visible, .symmetry-controls input:focus-visible, .symmetry-exit:focus-visible { outline: 3px solid var(--cyan-300); outline-offset: 2px; }
+.symmetry-controls button:disabled { cursor: not-allowed; opacity: .4; }
+
+.symmetry-range { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 12px; color: var(--ink-secondary); font-size: 13px; font-weight: 850; }
+.symmetry-range output { color: var(--cyan-300); }
+.symmetry-range input { grid-column: 1 / -1; width: 100%; min-height: 26px; accent-color: var(--violet-400); }
+.symmetry-colors { display: flex; gap: 12px; margin-top: 11px; }
+.symmetry-colors label { display: flex; min-height: 44px; flex: 1; align-items: center; justify-content: space-between; gap: 8px; color: var(--ink-secondary); font-size: 13px; font-weight: 850; }
+.symmetry-colors input { width: 48px; height: 38px; padding: 2px; border: 1px solid var(--line-glow); border-radius: 10px; background: transparent; }
+.symmetry-palette-wrap { margin-top: 9px; }
+.symmetry-palette { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.symmetry-palette button { min-width: 0; min-height: 38px; padding: 4px; border: 2px solid transparent; border-radius: 11px; background: rgba(255,255,255,.06); }
+.symmetry-palette button span { display: block; width: 100%; height: 27px; border: 1px solid rgba(255,255,255,.38); border-radius: 7px; background: var(--swatch); box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.symmetry-palette button.is-active { border-color: var(--cyan-300); box-shadow: 0 0 14px rgba(89,231,255,.18); }
+.symmetry-color-slots { display: flex; gap: 6px; margin-bottom: 7px; }
+.symmetry-color-slots button { display: inline-flex; min-height: 34px; flex: 1; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--line-glow); border-radius: 10px; color: var(--ink-secondary); background: rgba(255,255,255,.045); font-weight: 900; }
+.symmetry-color-slots button.is-active { border-color: var(--violet-400); color: #fff; background: rgba(141,115,255,.2); }
+.symmetry-color-slots i { width: 18px; height: 18px; border: 1px solid rgba(255,255,255,.5); border-radius: 50%; }
+
+.symmetry-title-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.symmetry-title-row h2 { margin: 0; }
+.symmetry-title-row span { color: var(--warning-300); font-size: 12px; font-weight: 850; }
+.symmetry-title-row > button { min-height: 38px; padding-inline: 12px; }
+.symmetry-controls select { width: 100%; min-height: 48px; margin-top: 10px; padding: 0 12px; border: 1px solid var(--line-glow); border-radius: 13px; color: #fff; background: #25234f; font: 800 14px/1 var(--font-body); }
+.symmetry-order { grid-template-columns: repeat(6, 1fr); margin-top: 8px; }
+.symmetry-order button { min-width: 0; min-height: 39px; padding-inline: 2px; }
+.symmetry-controls section > p { margin: 9px 0 0; color: var(--ink-secondary); font-size: 12px; line-height: 1.45; }
+.symmetry-rule-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin-top: 10px; }
+.symmetry-rule-grid button { display: grid; min-width: 0; min-height: 70px; place-items: center; gap: 4px; padding: 7px 2px; border: 1px solid var(--line-glow); border-radius: 13px; color: var(--ink-secondary); background: rgba(255,255,255,.045); }
+.symmetry-rule-grid button.is-active { border-color: var(--cyan-300); color: #fff; background: rgba(89,231,255,.12); box-shadow: 0 0 18px rgba(89,231,255,.1); }
+.symmetry-rule-grid button > span { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 50%; color: #fff; background: radial-gradient(circle, rgba(255,103,199,.9) 0 3px, transparent 4px), conic-gradient(from 45deg, rgba(89,231,255,.9), rgba(141,115,255,.9), rgba(255,103,199,.9), rgba(89,231,255,.9)); font-size: 19px; line-height: 1; }
+.symmetry-rule-grid button > span[data-rule="none"] { background: radial-gradient(circle, var(--pink-400) 0 5px, rgba(141,115,255,.22) 6px 100%); }
+.symmetry-rule-grid button > span[data-rule="mirror-horizontal"] { border-radius: 6px; background: linear-gradient(0deg, rgba(89,231,255,.8) 0 47%, transparent 48% 52%, rgba(255,103,199,.8) 53%); }
+.symmetry-rule-grid button > span[data-rule="mirror-vertical"] { border-radius: 6px; background: linear-gradient(90deg, rgba(89,231,255,.8) 0 47%, transparent 48% 52%, rgba(255,103,199,.8) 53%); }
+.symmetry-rule-grid button small { min-width: 0; font-size: 9px; font-weight: 850; white-space: nowrap; }
+
+.symmetry-layer-list { display: grid; gap: 7px; margin-top: 10px; }
+.symmetry-layer-list article { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 5px; padding: 6px; border: 1px solid var(--line-glow); border-radius: 14px; background: rgba(255,255,255,.035); }
+.symmetry-layer-list article.is-active { border-color: rgba(89,231,255,.62); background: rgba(89,231,255,.09); box-shadow: 0 0 20px rgba(89,231,255,.08); }
+.symmetry-layer-name { display: grid; min-height: 45px; min-width: 0; align-content: center; justify-items: start; padding: 3px 7px; border: 0; color: #fff; background: none; text-align: left; }
+.symmetry-layer-name strong, .symmetry-layer-name small { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.symmetry-layer-name strong { font-size: 14px; }.symmetry-layer-name small { margin-top: 4px; color: var(--ink-secondary); font-size: 10px; }
+.symmetry-layer-actions { display: flex; gap: 3px; }.symmetry-layer-actions button { width: 34px; min-height: 36px; padding: 0; }
+.symmetry-bottom-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-top: 9px; }
+
+.symmetry-page.is-focused { position: fixed; z-index: 1000; inset: 0; width: 100%; height: 100%; }
+.symmetry-page.is-focused .symmetry-workspace { height: 100svh; }
+
+@media (max-width: 850px) {
+  .symmetry-workspace, .symmetry-page.is-focused .symmetry-workspace { min-height: 0; grid-template-columns: minmax(0,1fr) min(44vw, 310px); grid-template-rows: 1fr; }
+  .symmetry-controls { overflow: auto; border-top: 0; border-left: 1px solid var(--line-glow); }
+}
+
+@media (max-width: 560px) {
+  .symmetry-page .game-topbar__title { display: none; }
+  .symmetry-page .game-topbar__controls button { padding-inline: 10px; font-size: 12px; }
+  .symmetry-hint { left: 9px; right: 9px; bottom: 9px; max-width: none; border-radius: 15px; font-size: 12px; }
+  .symmetry-workspace, .symmetry-page.is-focused .symmetry-workspace { grid-template-columns: minmax(0, 1fr) min(54vw, 240px); }
+  .symmetry-controls { padding: 7px; }.symmetry-controls section { padding: 9px; }
+  .symmetry-rule-grid { grid-template-columns: repeat(2, 1fr); }
+  .symmetry-zoom { right: 7px; top: 7px; }.symmetry-zoom output { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) { .symmetry-page *, .symmetry-page *::before, .symmetry-page *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

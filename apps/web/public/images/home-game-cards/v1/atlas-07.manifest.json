@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/.codex/generated_images/01a0ebd6-ee3d-7033-a97f-eaac1f7d615a/exec-2f4ea646-bbad-460e-8cea-aaed9ae321fd.webp",
+  "sourceWidth": 1983,
+  "sourceHeight": 793,
+  "columns": 2,
+  "rows": 2,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "red-fortress",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "red-fortress.webp",
+      "sourceBox": [
+        2,
+        2,
+        990,
+        394
+      ],
+      "trimBox": null,
+      "outputWidth": 988,
+      "outputHeight": 392,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        215,
+        244,
+        226,
+        244
+      ],
+      "warnings": []
+    },
+    {
+      "id": "cat-mouse-game",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "cat-mouse-game.webp",
+      "sourceBox": [
+        994,
+        2,
+        1981,
+        394
+      ],
+      "trimBox": null,
+      "outputWidth": 987,
+      "outputHeight": 392,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        242,
+        246,
+        244,
+        243
+      ],
+      "warnings": []
+    },
+    {
+      "id": "experiment-master",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "experiment-master.webp",
+      "sourceBox": [
+        2,
+        398,
+        990,
+        791
+      ],
+      "trimBox": null,
+      "outputWidth": 988,
+      "outputHeight": 393,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        223,
+        245,
+        162,
+        218
+      ],
+      "warnings": []
+    },
+    {
+      "id": "unused-neutral",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "unused-neutral.webp",
+      "sourceBox": [
+        994,
+        398,
+        1981,
+        791
+      ],
+      "trimBox": null,
+      "outputWidth": 987,
+      "outputHeight": 393,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        244,
+        244,
+        226,
+        191
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

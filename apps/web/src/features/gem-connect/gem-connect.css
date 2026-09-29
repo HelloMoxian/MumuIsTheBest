@@ -3,7 +3,7 @@
   background: linear-gradient(180deg, color-mix(in srgb, var(--space-950) 24%, transparent), color-mix(in srgb, var(--space-950) 65%, transparent)), url("/images/gem-connect/crystal-garden.png") center / cover fixed, var(--space-950);
   font-family: var(--font-display, ui-rounded, "PingFang SC", sans-serif); font-size: 18px;
 }
-.gc-page * { box-sizing: border-box; }
+.gc-page, .gc-page * { box-sizing: border-box; }
 .gc-page button, .gc-page a { -webkit-tap-highlight-color: transparent; }
 .gc-topbar { max-width: 1320px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .gc-brand { display: flex; align-items: center; gap: 12px; font-size: clamp(23px, 3vw, 34px); }
@@ -19,7 +19,7 @@
 .gc-page button:focus-visible, .gc-page a:focus-visible { outline: 3px solid var(--cyan-300); outline-offset: 4px; }
 .gc-page button:disabled { cursor: default; opacity: .5; }
 .gc-primary { border-color: var(--violet-400); background: linear-gradient(110deg, var(--violet-600), var(--pink-400)); box-shadow: 0 8px 30px color-mix(in srgb, var(--violet-400) 24%, transparent); }
-.gc-levels { max-width: 1320px; margin: 24px auto; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; }
+.gc-levels { max-width: 1560px; margin: 24px auto; display: grid; grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 8px; }
 .gc-levels button { min-height: 86px; border: 1px solid var(--line-glow); border-radius: 18px; background: var(--glass-700); color: var(--ink-secondary); font: inherit; cursor: pointer; padding: 8px 2px; }
 .gc-levels button > span { display: block; font-size: 26px; font-weight: 900; margin-bottom: 4px; }
 .gc-levels button small { font-size: 18px; }
@@ -297,6 +297,8 @@
 .gc-focused .gc-progress, .gc-focused .gc-bottom-line, .gc-focused .gc-save-status,
 .gc-focused .gc-reward-toast { display: none; }
 .gc-focused .gc-play { padding: 0; background: transparent; box-shadow: none; border: 0; backdrop-filter: none; }
+.gc-focused .game-topbar { display: none; }
+body:has(.gc-focused) .global-music-launcher { display: none; }
 @media (max-width: 1200px) {
   .gc-title-line { display: none; }
   .gc-controls { flex: 1; justify-content: space-between; }
@@ -334,4 +336,47 @@
   .gc-controls { display: flex; flex-wrap: nowrap; }
   .gc-focusbar { min-height: 48px; }
   .gc-play { padding: 2px; }
+}
+
+/* Compact wide-screen layout: preserve space for the gemstones. */
+.gc-page { padding: 4px 10px; gap: 4px; }
+.gc-page .game-topbar { min-height: 48px; padding: 0 8px; }
+.gc-page .game-topbar__title { font-size: 20px; }
+.gc-page .game-topbar__back { font-size: 14px; padding: 0 10px; }
+.gc-page .gc-levels { grid-template-columns: repeat(15, minmax(0, 1fr)); gap: 4px; }
+.gc-page .gc-levels button { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3px 2px; min-height: 48px; border-radius: 12px; gap: 2px; overflow: hidden; }
+.gc-page .gc-levels button > span { display: block; margin: 0; font-size: 18px; line-height: 1.1; white-space: nowrap; }
+.gc-levels button > span i { font-size: 10px; font-style: normal; }
+.gc-page .gc-levels button small { display: block; width: 100%; font-size: clamp(8px, calc((100vw - 130px) / 60), 14px); line-height: 1.1; white-space: nowrap; letter-spacing: -.04em; text-align: center; }
+.gc-page .gc-play { padding: 4px 8px 2px; border-radius: 18px; }
+.gc-page .gc-heading { gap: 6px; }
+.gc-page .gc-title-line h1 { font-size: 21px; }
+.gc-page .gc-title-line > span { font-size: 13px; }
+.gc-page .gc-controls .gc-button { min-height: 48px; font-size: 15px; padding: 4px 9px; border-radius: 12px; }
+.gc-page .gc-time { min-width: 48px; }
+.gc-page .gc-time small { font-size: 12px; }
+.gc-page .gc-time strong { font-size: 22px; }
+.gc-page .gc-progress { margin: 0; gap: 8px; font-size: 13px; }
+.gc-page .gc-progress > span:last-child { font-size: 13px; }
+.gc-page .gc-bottom-line .gc-feedback { font-size: 13px; margin: 0; }
+.gc-page .gc-bottom-line .gc-button { min-height: 36px; padding: 3px 8px; font-size: 13px; }
+.gc-page .gc-focusbar { min-height: 40px; gap: 24px; padding-right: 100px; }
+.gc-page .gc-metric { flex-direction: row; align-items: baseline; gap: 6px; }
+.gc-page .gc-metric span { font-size: 13px; }
+.gc-page .gc-metric strong { font-size: 22px; }
+.gc-page .gc-focusbar .gc-button { min-height: 36px; padding: 4px 10px; font-size: 13px; }
+.gc-page.gc-focused .gc-play { padding: 0; }
+@media (max-width: 780px) and (min-height: 561px) {
+  .gc-page .gc-levels { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .gc-page .gc-levels button small { font-size: 13px; }
+  .gc-page .gc-level-select { display: none; }
+}
+.gc-page.gc-focused .gc-levels { display: none; }
+
+/* Reachability guides are deliberately quieter than successful match lines. */
+.gc-guide-paths { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; z-index: 3; pointer-events: none; opacity: .16; animation: gc-guide-appear 280ms ease-out both; }
+.gc-guide-paths polyline { fill: none; stroke: var(--cyan-300); stroke-width: .025; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes gc-guide-appear { from { opacity: 0; } to { opacity: .16; } }
+@media (prefers-reduced-motion: reduce) {
+  .gc-guide-paths { animation: none; }
 }

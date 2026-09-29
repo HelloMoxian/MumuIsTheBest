@@ -22,7 +22,9 @@ export function useGameFullscreen(target: RefObject<HTMLElement | null>) {
     previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     busy.current = true; setSwitching(true); setFocused(true);
     try {
-      if (target.current.requestFullscreen) await target.current.requestFullscreen();
+      // When the whole site already owns native fullscreen, focused mode stays
+      // inside it so leaving the game returns to the site-wide fullscreen shell.
+      if (!document.fullscreenElement && target.current.requestFullscreen) await target.current.requestFullscreen();
     } catch { /* A rejected fullscreen request still gives a complete window-filling board. */ }
     finally { busy.current = false; if (mounted.current) setSwitching(false); }
   }, [target]);

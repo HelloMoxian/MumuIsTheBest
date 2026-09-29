@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useEffect,
   useLayoutEffect,
@@ -609,20 +610,14 @@ export function RockMineralGame() {
   return (
     <main className="geo-page">
       <div className="geo-stars" aria-hidden="true" />
-      <header className="geo-header">
-        <a className="geo-back" href="/">← 返回学习岛</a>
-        <div className="geo-title">
-          <span aria-hidden="true">◇</span>
-          <div><small>自然 · 地质探索舱</small><h1>岩石与矿物</h1></div>
-        </div>
-        <div className="geo-head-stats" aria-label="钻探状态">
+      <GameTopBar title="岩石与矿物" backHref="/" backLabel="学习大厅" controls={<>
+<div className="geo-head-stats" aria-label="钻探状态">
           <span><small>当前深度</small><strong>{progress.currentDepth} m</strong></span>
           <span><small>地质锤</small><strong>{hammerCount} 把</strong></span>
           <span><small>当前耐久</small><strong>{progress.currentHammerDurability}</strong></span>
           <span><small>已发现</small><strong>{progress.discoveredIds.length} / {catalog.itemCount}</strong></span>
         </div>
-        <LearningCoinBalancePill className="geo-learning-coins" />
-      </header>
+</>} />
 
       <nav className="geo-tabs" aria-label="岩石与矿物区域">
         <button className={activeView === "dig" ? "is-active" : ""} type="button" onClick={() => setActiveView("dig")}>

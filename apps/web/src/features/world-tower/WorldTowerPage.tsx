@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -338,18 +339,13 @@ export function WorldTowerPage() {
 
   return (
     <main className="mt-page">
-      <header className="mt-topbar">
-        <a className="mt-back" href="/" aria-label="返回学习大厅">‹ <span>学习大厅</span></a>
-        <div className="mt-title">
-          <span className="mt-title__mark" aria-hidden="true">◇</span>
-          <div><p>十六层知识构成图</p><h1>物质塔</h1></div>
-        </div>
-        <div className="mt-topbar__stats" aria-label="物质塔进度">
+      <GameTopBar title="物质塔" backHref="/" backLabel="学习大厅" controls={<>
+<div className="mt-topbar__stats" aria-label="物质塔进度">
           <span><b>16</b> 层</span>
           <span><b>{unlockedCount}</b> / {manifest.counts.nodes} 已点亮</span>
           <span className="mt-coin"><i aria-hidden="true">✦</i><b>{manifest.progress.coinBalance}</b> 知识币</span>
         </div>
-        <div className="mt-admin">
+<div className="mt-admin">
           <button type="button" disabled={manageBusy !== null} onClick={() => handleManage("unlock-all")}>
             {manageBusy === "unlock-all" ? "点亮中…" : "点亮全部"}
           </button>
@@ -362,7 +358,7 @@ export function WorldTowerPage() {
             {manageBusy === "clear-all" ? "清空中…" : clearArmed ? "确认清空" : "清空进度"}
           </button>
         </div>
-      </header>
+</>} />
 
       <div className="mt-workspace">
         <aside className="mt-level-rail" aria-label="物质塔层级导航">

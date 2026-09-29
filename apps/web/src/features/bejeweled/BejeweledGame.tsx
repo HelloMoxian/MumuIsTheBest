@@ -14,6 +14,7 @@ import { RewardCounter } from "./reward-counter";
 import { createGemPraisePicker, type GemPraise } from "./praise";
 import { LatestMomentQueue } from "../../shared/speech/latest-moment-queue";
 import { browserTts } from "../../shared/speech";
+import { GameTopBar } from "../../shared/GameTopBar";
 import { getExperienceSnapshot, subscribeExperience } from "../../shared/experience/experience-store";
 import { speakLearningMoment, stopLearningSpeech, pauseLearningSpeech, resumeLearningSpeech } from "../../shared/experience/learning-speech";
 import { useGameFullscreen } from "../../shared/useGameFullscreen";
@@ -297,20 +298,17 @@ export function BejeweledGame() {
   const progress = state ? state.game.cleared % 100 : 0;
   return <main ref={fullscreenRoot} className="bj-page" data-fullscreen={fullscreen.focused} data-motion-paused={paused}>
     <BejeweledRewardTrail reward={reward} stopped={paused} onArrive={onCoinArrive} onComplete={onCoinsComplete} />
-    <header className="bj-header">
-      <a className="bj-button" href="/#games">‹ 返回游戏</a>
-      <div className="bj-brand"><span className="bj-eyebrow">CRYSTAL CONSTELLATION</span><h1>宝石迷阵</h1></div>
-      <div className="bj-header-actions">
+    <GameTopBar title="宝石迷阵" backHref="/#games" backLabel="游戏大厅" wallets={<>
         <div data-bj-currency="knowledge" className="bj-wallet-wrap"><div key={arrivalPulse.knowledge?.serial ?? 0} className={arrivalPulse.knowledge ? "bj-wallet-pulse" : ""}><LearningCoinBalancePill displayBalance={balances?.knowledge ?? null} /></div>{arrivalPulse.knowledge && <b key={"k" + arrivalPulse.knowledge.serial} className="bj-wallet-plus" aria-hidden="true">+{arrivalPulse.knowledge.amount}</b>}</div>
         <div data-bj-currency="energy" className="bj-wallet-wrap"><div key={arrivalPulse.energy?.serial ?? 0} className={"bj-energy-wallet " + (arrivalPulse.energy ? "bj-wallet-pulse" : "")} aria-label={"能量币余额 " + (balances?.energy ?? "正在读取")}><span aria-hidden="true">ϟ</span><span><small>能量币</small><strong>{balances ? number(balances.energy) : "…"}</strong></span></div>{arrivalPulse.energy && <b key={"e" + arrivalPulse.energy.serial} className="bj-wallet-plus" aria-hidden="true">+{arrivalPulse.energy.amount}</b>}</div>
+      </>} controls={<div className="bj-header-actions">
         <span className="bj-save" role="status">{saveStatus === "已自动保存" ? "✓ " : ""}{saveStatus}</span>
         <button className="bj-button" onClick={toggleSound} disabled={!audioSettings.ready} aria-pressed={sound}>音效{sound ? "：开" : "：关"}</button>
         <button className="bj-button" onClick={() => setPraiseEnabled(value => !value)} aria-pressed={praiseEnabled}>鼓励语音{praiseEnabled ? "：开" : "：关"}</button>
         <button className="bj-button" data-fullscreen-exit={fullscreen.focused || undefined} disabled={fullscreen.switching} aria-pressed={fullscreen.focused} onClick={() => void (fullscreen.focused ? fullscreen.leave() : fullscreen.enter())}>{fullscreen.focused ? "退出全屏" : "全屏沉浸"}</button>
         {fullscreen.focused && <button className="bj-button" disabled={!state} onClick={togglePause}>{paused ? "继续探索" : "暂停一下"}</button>}
         <button className="bj-button" onClick={() => setHelp(!help)} aria-expanded={help}>玩法说明</button>
-      </div>
-    </header>
+      </div>} />
     <div className="bj-layout">
       <aside className="bj-panel bj-session">
         <span className="bj-eyebrow">本次旅程</span>

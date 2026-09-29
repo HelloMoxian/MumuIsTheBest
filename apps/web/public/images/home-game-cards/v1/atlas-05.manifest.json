@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/.codex/generated_images/01a0ebd6-ee3d-7033-a97f-eaac1f7d615a/exec-b7daf61f-a24d-4977-90e3-834625451839.webp",
+  "sourceWidth": 1956,
+  "sourceHeight": 804,
+  "columns": 2,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "rock-minerals",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "rock-minerals.webp",
+      "sourceBox": [
+        2,
+        2,
+        976,
+        266
+      ],
+      "trimBox": null,
+      "outputWidth": 974,
+      "outputHeight": 264,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        245,
+        247,
+        249,
+        249
+      ],
+      "warnings": []
+    },
+    {
+      "id": "stargazing",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "stargazing.webp",
+      "sourceBox": [
+        980,
+        2,
+        1954,
+        266
+      ],
+      "trimBox": null,
+      "outputWidth": 974,
+      "outputHeight": 264,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        240,
+        244,
+        246,
+        247
+      ],
+      "warnings": []
+    },
+    {
+      "id": "house-building",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "house-building.webp",
+      "sourceBox": [
+        2,
+        270,
+        976,
+        534
+      ],
+      "trimBox": null,
+      "outputWidth": 974,
+      "outputHeight": 264,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        249,
+        249,
+        248,
+        248
+      ],
+      "warnings": []
+    },
+    {
+      "id": "pinyin",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "pinyin.webp",
+      "sourceBox": [
+        980,
+        270,
+        1954,
+        534
+      ],
+      "trimBox": null,
+      "outputWidth": 974,
+      "outputHeight": 264,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        248,
+        248,
+        246,
+        248
+      ],
+      "warnings": []
+    },
+    {
+      "id": "common-characters-500",
+      "index": 4,
+      "row": 2,
+      "column": 0,
+      "filename": "common-characters-500.webp",
+      "sourceBox": [
+        2,
+        538,
+        976,
+        802
+      ],
+      "trimBox": null,
+      "outputWidth": 974,
+      "outputHeight": 264,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        249,
+        248,
+        216,
+        246
+      ],
+      "warnings": []
+    },
+    {
+      "id": "common-characters-1000",
+      "index": 5,
+      "row": 2,
+      "column": 1,
+      "filename": "common-characters-1000.webp",
+      "sourceBox": [
+        980,
+        538,
+        1954,
+        802
+      ],
+      "trimBox": null,
+      "outputWidth": 974,
+      "outputHeight": 264,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        247,
+        248,
+        233,
+        246
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

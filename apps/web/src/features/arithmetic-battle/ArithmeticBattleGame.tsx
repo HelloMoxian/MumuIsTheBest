@@ -5,6 +5,7 @@ import {
   MULTIPLICATION_COIN_REWARDS,
 } from "../../shared/learning-coins";
 import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   arithmeticResultSpeech,
   LocalizedLines,
@@ -559,13 +560,11 @@ export function ArithmeticBattleGame({
   return (
     <div className="battle-page">
       <div className="battle-stars" aria-hidden="true" />
-      <header className="battle-topbar">
-        <a className="battle-brand" href="/"><span aria-hidden="true">←</span>木木学习岛</a>
-        <span className="battle-mission">数学任务 · {gameTitle}</span>
+      <GameTopBar title={gameTitle} backHref="/" backLabel="学习大厅" controls={
         <button className="battle-history-button" type="button" onClick={() => void loadHistory()}>
           <span aria-hidden="true">◷</span> 历史记录
         </button>
-      </header>
+      } />
 
       <main className="battle-main">
         <section className="battle-cockpit" aria-label="本局配置">

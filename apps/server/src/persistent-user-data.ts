@@ -4,11 +4,22 @@ import { dirname, resolve } from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { parse2048, merge2048Best, type State2048 } from "./game-2048-contract.js";
+import { parseHouseDesign, type HouseDesign } from "./house-building-contract.js";
+import {
+  parseWorkspace,
+  parseHouseHistory,
+  mergeHouseHistory,
+  type HouseWorkspace,
+  type HouseHistory,
+} from "./house-building-workspace.js";
 import { parseAudioPreferences, type AudioPreferences } from "./audio-preferences.js";
 import { parseControllerPreferences, type ControllerPreferences } from "./game-controller-preferences.js";
 
 const stateIdSchema = z.enum([
   "math-2048",
+  "physics-house",
+  "physics-house-workspace",
+  "physics-house-history",
   "audio-preferences",
   "game-controller-preferences",
   "chemistry-reaction-furnace",
@@ -156,6 +167,12 @@ const drawingElementSchema = z.discriminatedUnion("type", [
     })).min(2).max(2_000),
     lineStyle: z.enum(["smooth", "sharp", "dashed"]),
     smoothing: z.boolean(),
+    symmetry: z.object({
+      brushId: drawingElementIdSchema,
+      kind: z.enum(["none", "mirror-horizontal", "mirror-vertical", "cyclic", "dihedral"]),
+      order: z.union([z.literal(3), z.literal(4), z.literal(5), z.literal(6), z.literal(8), z.literal(10), z.literal(12), z.literal(24)]),
+      center: z.object({ x: drawingCoordinateSchema, y: drawingCoordinateSchema }),
+    }).optional(),
   }),
   drawingBaseElementSchema.extend({
     type: z.literal("text"),
@@ -305,6 +322,24 @@ const definitions: Record<StateId, { relativePath: string; payloadSchema: z.ZodT
     relativePath: "learning/math/2048-state.json",
     payloadSchema: z.custom<State2048>(value => parse2048(value) !== undefined),
   },
+  "physics-house-workspace": {
+    relativePath: "learning/physics/house-workspace.v2.json",
+    payloadSchema: z
+      .custom<HouseWorkspace>((value) => parseWorkspace(value) !== undefined)
+      .transform((value) => parseWorkspace(value)!),
+  },
+  "physics-house-history": {
+    relativePath: "learning/physics/house-history.json",
+    payloadSchema: z
+      .custom<HouseHistory>((value) => parseHouseHistory(value) !== undefined)
+      .transform((value) => parseHouseHistory(value)!),
+  },
+  "physics-house": {
+    relativePath: "learning/physics/house-design.json",
+    payloadSchema: z
+      .custom<HouseDesign>((value) => parseHouseDesign(value) !== undefined)
+      .transform((value) => parseHouseDesign(value)!),
+  },
   "game-controller-preferences": {
     relativePath: "preferences/game-controllers.json",
     payloadSchema: z.custom<ControllerPreferences>(value => parseControllerPreferences(value) !== undefined),
@@ -384,9 +419,11 @@ export function registerPersistentUserDataApi(
           ...(current?.payload as ControllerPreferences | undefined)?.games,
           ...(payload as ControllerPreferences).games,
         },
-      } : stableId === "math-2048"
-        ? merge2048Best(current?.payload as State2048 | undefined, payload as State2048)
-        : payload;
+      } : stableId === "physics-house-history"
+        ? mergeHouseHistory(current?.payload as HouseHistory | undefined, payload as HouseHistory)
+        : stableId === "math-2048"
+          ? merge2048Best(current?.payload as State2048 | undefined, payload as State2048)
+          : payload;
       const now = new Date().toISOString();
       const state = parseStoredState(stableId, {
         schemaVersion: 1,

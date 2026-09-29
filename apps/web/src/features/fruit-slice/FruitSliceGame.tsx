@@ -29,13 +29,14 @@ import {
   type SwipeSensitivity,
   type TrackingFrame,
 } from "./types";
+import { GameTopBar } from "../../shared/GameTopBar";
 import "./fruit-slice.css";
 
 type Phase = "setup" | "loading" | "countdown" | "playing" | "result";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 const DEFAULT_SETTINGS: FruitSliceSettings = {
-  durationSeconds: 30,
+  durationSeconds: 60,
   density: "standard",
   speedMultiplier: 1,
   fruitSize: 160,
@@ -252,7 +253,7 @@ export function FruitSliceGame() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [tracking, setTracking] = useState<TrackingFrame>(EMPTY_TRACKING);
   const [countdown, setCountdown] = useState(3);
-  const [usingCamera, setUsingCamera] = useState(true);
+  const [usingCamera, setUsingCamera] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [loadingLabel, setLoadingLabel] = useState("正在请求摄像头权限…");
   const [hud, setHud] = useState<GameHud | null>(null);
@@ -646,11 +647,11 @@ export function FruitSliceGame() {
         </div>
 
         <div className="fruit-start-actions">
-          <button className="fruit-primary-button" type="button" onClick={() => void startCamera()}>
-            <span aria-hidden="true">◉</span> 打开摄像头，进入游戏
-          </button>
-          <button className="fruit-secondary-button" type="button" onClick={() => void startPointerMode()}>
+          <button className="fruit-primary-button" type="button" onClick={() => void startPointerMode()}>
             不开摄像头 · 单人鼠标练习
+          </button>
+          <button className="fruit-secondary-button" type="button" onClick={() => void startCamera()}>
+            <span aria-hidden="true">◉</span> 打开摄像头，进入游戏
           </button>
         </div>
         <aside className="fruit-privacy-note">
@@ -754,14 +755,7 @@ export function FruitSliceGame() {
   return (
     <div className="fruit-slice-shell">
       <div className="fruit-space-glow" aria-hidden="true" />
-      <header className="fruit-page-header">
-        <a href="/" className="fruit-back-link">← 返回学习岛</a>
-        <strong><span aria-hidden="true">✦</span> 切水果体感舱</strong>
-        <div>
-          <EnergyCoinPill balance={history?.energyCoinBalance ?? null} />
-          <button type="button" onClick={() => setHistoryOpen(true)}>历史战报</button>
-        </div>
-      </header>
+      <GameTopBar title="切水果体感舱" backHref="/" backLabel="学习大厅" controls={<button type="button" onClick={() => setHistoryOpen(true)}>历史战报</button>} />
       {phase === "setup" ? renderSetup() : renderStage()}
       {historyOpen && <HistoryPanel history={history} loading={historyLoading} error={historyError} onClose={() => setHistoryOpen(false)} onRetry={() => void refreshHistory()} />}
     </div>

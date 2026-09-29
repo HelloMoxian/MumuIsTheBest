@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/.codex/generated_images/01a0ebd6-ee3d-7033-a97f-eaac1f7d615a/exec-a236d952-3bcb-4b36-bf2f-68b3752f722b.webp",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 2,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "game-2048",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "game-2048.webp",
+      "sourceBox": [
+        2,
+        2,
+        885,
+        294
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 0.757035,
+      "cornerAlphas": [
+        1,
+        252,
+        2,
+        249
+      ],
+      "warnings": []
+    },
+    {
+      "id": "sliding-puzzle",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "sliding-puzzle.webp",
+      "sourceBox": [
+        889,
+        2,
+        1772,
+        294
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 0.785996,
+      "cornerAlphas": [
+        1,
+        252,
+        3,
+        252
+      ],
+      "warnings": []
+    },
+    {
+      "id": "arithmetic-battle",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "arithmetic-battle.webp",
+      "sourceBox": [
+        2,
+        298,
+        885,
+        589
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 291,
+      "opaqueCoverage": 0.801127,
+      "cornerAlphas": [
+        4,
+        248,
+        5,
+        247
+      ],
+      "warnings": []
+    },
+    {
+      "id": "multiplication",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "multiplication.webp",
+      "sourceBox": [
+        889,
+        298,
+        1772,
+        589
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 291,
+      "opaqueCoverage": 0.864473,
+      "cornerAlphas": [
+        5,
+        252,
+        1,
+        248
+      ],
+      "warnings": []
+    },
+    {
+      "id": "mystery-function",
+      "index": 4,
+      "row": 2,
+      "column": 0,
+      "filename": "mystery-function.webp",
+      "sourceBox": [
+        2,
+        593,
+        885,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 0.762136,
+      "cornerAlphas": [
+        4,
+        249,
+        1,
+        246
+      ],
+      "warnings": []
+    },
+    {
+      "id": "find-number",
+      "index": 5,
+      "row": 2,
+      "column": 1,
+      "filename": "find-number.webp",
+      "sourceBox": [
+        889,
+        593,
+        1772,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 0.820235,
+      "cornerAlphas": [
+        4,
+        248,
+        2,
+        249
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

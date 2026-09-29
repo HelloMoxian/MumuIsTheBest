@@ -9,6 +9,7 @@ import {
 import { flushSync } from "react-dom";
 import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
 import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
+import { GameTopBar } from "../../shared/GameTopBar";
 import type { FindNumberRewardKey } from "../../shared/learning-coins";
 import {
   findNumberResultSpeech,
@@ -375,10 +376,7 @@ export function FindNumberGame() {
     return (
       <div className="find-number-page find-number-setup">
         <div className="find-number-stars" aria-hidden="true" />
-        <header className="find-number-topbar">
-          <a href="/" className="find-number-back">← 学习大厅</a>
-          <div className="find-number-brand"><span aria-hidden="true">⌕</span><strong>找数字</strong></div>
-          <button
+        <GameTopBar title="找数字" backHref="/" backLabel="学习大厅" controls={<button
             type="button"
             className={`find-number-voice voice-${voiceState}`}
             onClick={() => void toggleRecognition()}
@@ -387,8 +385,7 @@ export function FindNumberGame() {
           >
             <i aria-hidden="true" />
             <span><strong>{voiceLabel(voiceState)}</strong><small>{voiceState === "listening" ? "说“开始一局”" : "点击开启"}</small></span>
-          </button>
-        </header>
+          </button>} />
         <main className="find-number-setup-main">
           <section className="find-number-setup-copy">
             <p className="find-number-eyebrow">NUMBER RADAR · 数字雷达舱</p>
@@ -448,18 +445,14 @@ export function FindNumberGame() {
     return (
       <div className={`find-number-page find-number-result ${solved ? "is-solved" : "is-ended"}`}>
         <div className="find-number-stars" aria-hidden="true" />
-        <header className="find-number-topbar">
-          <a href="/" className="find-number-back">← 学习大厅</a>
-          <div className="find-number-brand"><span aria-hidden="true">⌕</span><strong>找数字</strong></div>
-          <button
+        <GameTopBar title="找数字" backHref="/" backLabel="学习大厅" controls={<button
             type="button"
             className={`find-number-voice voice-${voiceState}`}
             onClick={() => void toggleRecognition()}
             disabled={asrConfigured !== true}
           >
             <i aria-hidden="true" /><span><strong>{voiceLabel(voiceState)}</strong><small>说“下一局”</small></span>
-          </button>
-        </header>
+          </button>} />
         <main className="find-number-result-main">
           <section className="result-hero">
             <p>{solved ? "MISSION COMPLETE · 数字锁定" : "ROUND COMPLETE · 本局结束"}</p>
@@ -536,10 +529,7 @@ export function FindNumberGame() {
   return (
     <div className={`find-number-page find-number-playing ${celebrating ? "is-celebrating" : ""}`}>
       <div className="find-number-stars" aria-hidden="true" />
-      <header className="find-number-topbar play-topbar">
-        <a href="/" className="find-number-back">← 学习大厅</a>
-        <div className="find-number-brand"><span aria-hidden="true">⌕</span><strong>找数字</strong></div>
-        <div className="play-top-actions">
+      <GameTopBar title="找数字" backHref="/" backLabel="学习大厅" controls={<div className="play-top-actions">
           <button
             type="button"
             className={`find-number-voice voice-${voiceState}`}
@@ -551,8 +541,7 @@ export function FindNumberGame() {
             <span><strong>{voiceLabel(voiceState)}</strong><small>{voiceState === "limited" ? "点击继续" : `上限 ${ASR_SESSION_LIMIT_MINUTES} 分钟`}</small></span>
           </button>
           <button type="button" className="end-round-button" disabled={celebrating} onClick={() => void finishRoundEarly()}>结束一局</button>
-        </div>
-      </header>
+        </div>} />
 
       <main className="find-number-game-main">
         <section className="number-radar-panel">

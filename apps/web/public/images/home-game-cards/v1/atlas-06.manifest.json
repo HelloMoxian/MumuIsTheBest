@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/.codex/generated_images/01a0ebd6-ee3d-7033-a97f-eaac1f7d615a/exec-d838fff1-d68c-48f8-9005-6d6eebb86377.webp",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 2,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "common-characters-1500",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "common-characters-1500.webp",
+      "sourceBox": [
+        2,
+        2,
+        885,
+        294
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        193,
+        246,
+        238,
+        247
+      ],
+      "warnings": []
+    },
+    {
+      "id": "common-characters-2000",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "common-characters-2000.webp",
+      "sourceBox": [
+        889,
+        2,
+        1772,
+        294
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        236,
+        225,
+        245,
+        236
+      ],
+      "warnings": []
+    },
+    {
+      "id": "common-characters-2500",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "common-characters-2500.webp",
+      "sourceBox": [
+        2,
+        298,
+        885,
+        589
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 291,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        234,
+        246,
+        233,
+        243
+      ],
+      "warnings": []
+    },
+    {
+      "id": "rhyme-enlightenment",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "rhyme-enlightenment.webp",
+      "sourceBox": [
+        889,
+        298,
+        1772,
+        589
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 291,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        244,
+        240,
+        238,
+        222
+      ],
+      "warnings": []
+    },
+    {
+      "id": "university-top100",
+      "index": 4,
+      "row": 2,
+      "column": 0,
+      "filename": "university-top100.webp",
+      "sourceBox": [
+        2,
+        593,
+        885,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        237,
+        244,
+        115,
+        232
+      ],
+      "warnings": []
+    },
+    {
+      "id": "galaxy-racer",
+      "index": 5,
+      "row": 2,
+      "column": 1,
+      "filename": "galaxy-racer.webp",
+      "sourceBox": [
+        889,
+        593,
+        1772,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        240,
+        227,
+        209,
+        180
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

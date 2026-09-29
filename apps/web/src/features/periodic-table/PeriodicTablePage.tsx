@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -710,13 +711,8 @@ export function PeriodicTablePage() {
   return (
     <div className="periodic-page">
       <div className="periodic-stars" aria-hidden="true" />
-      <header className="periodic-topbar">
-        <a href="/" className="periodic-back"><span aria-hidden="true">←</span> 学习大厅</a>
-        <div className="periodic-brand">
-          <span aria-hidden="true">⚛</span>
-          <div><strong>元素星际图鉴</strong><small>木木的化学探索舱</small></div>
-        </div>
-        <button
+      <GameTopBar title="元素周期表" backHref="/" backLabel="学习大厅" controls={<>
+<button
           type="button"
           className={`voice-control state-${voiceState}`}
           onClick={() => void (listening ? stopVoice() : startVoice())}
@@ -730,7 +726,7 @@ export function PeriodicTablePage() {
             <small>{listening ? "点击停止" : voiceState === "limited" ? "点击继续识别" : "点击开启"}</small>
           </span>
         </button>
-      </header>
+</>} />
 
       <main className="periodic-main">
         <section className="periodic-intro" aria-labelledby="periodic-page-title">

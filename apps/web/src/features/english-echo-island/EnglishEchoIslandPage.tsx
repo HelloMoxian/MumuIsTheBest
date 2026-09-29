@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -554,19 +555,12 @@ export function EnglishEchoIslandPage() {
   return (
     <div className="echo-page" data-skip-startup-greeting>
       <div className="echo-stars" aria-hidden="true" />
-      <header className="echo-topbar">
-        <button type="button" className="echo-back" disabled={navigationLocked} onClick={() => { window.location.href = "/"; }}>
-          <span aria-hidden="true">←</span> 返回学习岛
-        </button>
-        <div className="echo-heading">
-          <span className="echo-kicker">真人声音 · 听懂一整句</span>
-          <h1>英语回声岛</h1>
-        </div>
-        <button type="button" className="echo-library-launcher" disabled={navigationLocked} onClick={() => setLibraryOpen(true)}>
+      <GameTopBar title="英语回声岛" backHref="/" backLabel="学习大厅" backDisabled={navigationLocked} controls={<>
+<button type="button" className="echo-library-launcher" disabled={navigationLocked} onClick={() => setLibraryOpen(true)}>
           <span aria-hidden="true">☷</span>
           <span><strong>全部句子</strong><small>{catalog.counts.sentences} 句</small></span>
         </button>
-      </header>
+</>} />
 
       <main className="echo-stage">
         <div className="echo-orbit echo-orbit-one" aria-hidden="true" />

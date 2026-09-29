@@ -1,0 +1,1814 @@
+{
+  "schemaVersion": 1,
+  "id": "core-language-regions",
+  "createdAt": "2026-09-29T00:00:00Z",
+  "updatedAt": "2026-09-29T00:00:00Z",
+  "description": "18 curated language groups, at most two per territory. Educational national/regional overview, not population ranking or within-country language boundaries.",
+  "selection": "CLDR 47 national official/de facto languages with >=5% speakers, plus regional official languages with >=20%. If no national language is recorded, consider >=50%. Filter to curated groups and keep the two largest CLDR population percentages. Chinese varieties and script variants merge using maximum, never sum. Others remain neutral. CLDR estimates have differing dates and include second-language speakers.",
+  "languages": [
+    {
+      "id": "zh",
+      "name": "中文",
+      "color": "#EF8687"
+    },
+    {
+      "id": "ja",
+      "name": "日语",
+      "color": "#E8B67C"
+    },
+    {
+      "id": "ko",
+      "name": "韩语 / 朝鲜语",
+      "color": "#CC92CB"
+    },
+    {
+      "id": "en",
+      "name": "英语",
+      "color": "#789FF0"
+    },
+    {
+      "id": "fr",
+      "name": "法语",
+      "color": "#BA9DEC"
+    },
+    {
+      "id": "ru",
+      "name": "俄语",
+      "color": "#67BBCB"
+    },
+    {
+      "id": "pt",
+      "name": "葡萄牙语",
+      "color": "#68BC99"
+    },
+    {
+      "id": "es",
+      "name": "西班牙语",
+      "color": "#E1CC6D"
+    },
+    {
+      "id": "ar",
+      "name": "阿拉伯语",
+      "color": "#BAAA68"
+    },
+    {
+      "id": "de",
+      "name": "德语",
+      "color": "#CC9272"
+    },
+    {
+      "id": "it",
+      "name": "意大利语",
+      "color": "#A3BF7B"
+    },
+    {
+      "id": "hi",
+      "name": "印地语",
+      "color": "#EDACB5"
+    },
+    {
+      "id": "bn",
+      "name": "孟加拉语",
+      "color": "#89CED2"
+    },
+    {
+      "id": "ur",
+      "name": "乌尔都语",
+      "color": "#9C95D2"
+    },
+    {
+      "id": "id",
+      "name": "印度尼西亚语",
+      "color": "#E1BCA2"
+    },
+    {
+      "id": "tr",
+      "name": "土耳其语",
+      "color": "#CD7795"
+    },
+    {
+      "id": "fa",
+      "name": "波斯语",
+      "color": "#83AABB"
+    },
+    {
+      "id": "sw",
+      "name": "斯瓦希里语",
+      "color": "#B2C593"
+    }
+  ],
+  "regions": {
+    "countries-0": {
+      "name": "印度尼西亚",
+      "territory": "ID",
+      "languages": [
+        "id"
+      ]
+    },
+    "countries-1": {
+      "name": "马来西亚",
+      "territory": "MY",
+      "languages": []
+    },
+    "countries-2": {
+      "name": "智利",
+      "territory": "CL",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-3": {
+      "name": "玻利维亚",
+      "territory": "BO",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-4": {
+      "name": "秘鲁",
+      "territory": "PE",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-5": {
+      "name": "阿根廷",
+      "territory": "AR",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-6": {
+      "name": "泽凯利亚军营",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-7": {
+      "name": "塞浦路斯",
+      "territory": "CY",
+      "languages": [
+        "tr"
+      ]
+    },
+    "countries-8": {
+      "name": "印度",
+      "territory": "IN",
+      "languages": [
+        "hi",
+        "en"
+      ]
+    },
+    "countries-9": {
+      "name": "中华人民共和国",
+      "territory": "CN",
+      "languages": [
+        "zh"
+      ]
+    },
+    "countries-10": {
+      "name": "以色列",
+      "territory": "IL",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-11": {
+      "name": "巴勒斯坦",
+      "territory": "PS",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-12": {
+      "name": "黎巴嫩",
+      "territory": "LB",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-13": {
+      "name": "埃塞俄比亚",
+      "territory": "ET",
+      "languages": []
+    },
+    "countries-14": {
+      "name": "南苏丹",
+      "territory": "SS",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-15": {
+      "name": "索马里",
+      "territory": "SO",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-16": {
+      "name": "肯尼亚",
+      "territory": "KE",
+      "languages": [
+        "sw",
+        "en"
+      ]
+    },
+    "countries-17": {
+      "name": "马拉维",
+      "territory": "MW",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-18": {
+      "name": "坦桑尼亚",
+      "territory": "TZ",
+      "languages": [
+        "sw",
+        "en"
+      ]
+    },
+    "countries-19": {
+      "name": "叙利亚",
+      "territory": "SY",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-20": {
+      "name": "索马里兰",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-21": {
+      "name": "法国",
+      "territory": "FR",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-22": {
+      "name": "苏里南",
+      "territory": "SR",
+      "languages": []
+    },
+    "countries-23": {
+      "name": "圭亚那",
+      "territory": "GY",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-24": {
+      "name": "大韩民国",
+      "territory": "KR",
+      "languages": [
+        "ko"
+      ]
+    },
+    "countries-25": {
+      "name": "朝鲜民主主义人民共和国",
+      "territory": "KP",
+      "languages": [
+        "ko"
+      ]
+    },
+    "countries-26": {
+      "name": "摩洛哥",
+      "territory": "MA",
+      "languages": [
+        "ar",
+        "fr"
+      ]
+    },
+    "countries-27": {
+      "name": "西撒哈拉",
+      "territory": "EH",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-28": {
+      "name": "哥斯达黎加",
+      "territory": "CR",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-29": {
+      "name": "尼加拉瓜",
+      "territory": "NI",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-30": {
+      "name": "刚果共和国",
+      "territory": "CG",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-31": {
+      "name": "刚果民主共和国",
+      "territory": "CD",
+      "languages": [
+        "fr",
+        "sw"
+      ]
+    },
+    "countries-32": {
+      "name": "不丹",
+      "territory": "BT",
+      "languages": []
+    },
+    "countries-33": {
+      "name": "乌克兰",
+      "territory": "UA",
+      "languages": [
+        "ru"
+      ]
+    },
+    "countries-34": {
+      "name": "白俄罗斯",
+      "territory": "BY",
+      "languages": [
+        "ru"
+      ]
+    },
+    "countries-35": {
+      "name": "纳米比亚",
+      "territory": "NA",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-36": {
+      "name": "南非",
+      "territory": "ZA",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-37": {
+      "name": "法属圣马丁",
+      "territory": "MF",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-38": {
+      "name": "荷属圣马丁",
+      "territory": "SX",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-39": {
+      "name": "阿曼",
+      "territory": "OM",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-40": {
+      "name": "乌兹别克斯坦",
+      "territory": "UZ",
+      "languages": []
+    },
+    "countries-41": {
+      "name": "哈萨克斯坦",
+      "territory": "KZ",
+      "languages": [
+        "ru"
+      ]
+    },
+    "countries-42": {
+      "name": "塔吉克斯坦",
+      "territory": "TJ",
+      "languages": []
+    },
+    "countries-43": {
+      "name": "立陶宛",
+      "territory": "LT",
+      "languages": []
+    },
+    "countries-44": {
+      "name": "巴西",
+      "territory": "BR",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-45": {
+      "name": "乌拉圭",
+      "territory": "UY",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-46": {
+      "name": "蒙古国",
+      "territory": "MN",
+      "languages": []
+    },
+    "countries-47": {
+      "name": "俄罗斯",
+      "territory": "RU",
+      "languages": [
+        "ru"
+      ]
+    },
+    "countries-48": {
+      "name": "捷克",
+      "territory": "CZ",
+      "languages": []
+    },
+    "countries-49": {
+      "name": "德国",
+      "territory": "DE",
+      "languages": [
+        "de"
+      ]
+    },
+    "countries-50": {
+      "name": "爱沙尼亚",
+      "territory": "EE",
+      "languages": []
+    },
+    "countries-51": {
+      "name": "拉脱维亚",
+      "territory": "LV",
+      "languages": []
+    },
+    "countries-52": {
+      "name": "挪威",
+      "territory": "NO",
+      "languages": []
+    },
+    "countries-53": {
+      "name": "瑞典",
+      "territory": "SE",
+      "languages": []
+    },
+    "countries-54": {
+      "name": "芬兰",
+      "territory": "FI",
+      "languages": []
+    },
+    "countries-55": {
+      "name": "越南",
+      "territory": "VN",
+      "languages": []
+    },
+    "countries-56": {
+      "name": "柬埔寨",
+      "territory": "KH",
+      "languages": []
+    },
+    "countries-57": {
+      "name": "卢森堡",
+      "territory": "LU",
+      "languages": [
+        "fr",
+        "de"
+      ]
+    },
+    "countries-58": {
+      "name": "阿拉伯联合酋长国",
+      "territory": "AE",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-59": {
+      "name": "比利时",
+      "territory": "BE",
+      "languages": [
+        "fr",
+        "de"
+      ]
+    },
+    "countries-60": {
+      "name": "格鲁吉亚",
+      "territory": "GE",
+      "languages": []
+    },
+    "countries-61": {
+      "name": "北马其顿",
+      "territory": "MK",
+      "languages": []
+    },
+    "countries-62": {
+      "name": "阿尔巴尼亚",
+      "territory": "AL",
+      "languages": []
+    },
+    "countries-63": {
+      "name": "阿塞拜疆",
+      "territory": "AZ",
+      "languages": []
+    },
+    "countries-64": {
+      "name": "科索沃",
+      "territory": "XK",
+      "languages": []
+    },
+    "countries-65": {
+      "name": "土耳其",
+      "territory": "TR",
+      "languages": [
+        "tr"
+      ]
+    },
+    "countries-66": {
+      "name": "西班牙",
+      "territory": "ES",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-67": {
+      "name": "老挝",
+      "territory": "LA",
+      "languages": []
+    },
+    "countries-68": {
+      "name": "吉尔吉斯斯坦",
+      "territory": "KG",
+      "languages": [
+        "ru"
+      ]
+    },
+    "countries-69": {
+      "name": "亚美尼亚",
+      "territory": "AM",
+      "languages": []
+    },
+    "countries-70": {
+      "name": "丹麦",
+      "territory": "DK",
+      "languages": [
+        "de"
+      ]
+    },
+    "countries-71": {
+      "name": "利比亚",
+      "territory": "LY",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-72": {
+      "name": "突尼斯",
+      "territory": "TN",
+      "languages": [
+        "ar",
+        "fr"
+      ]
+    },
+    "countries-73": {
+      "name": "罗马尼亚",
+      "territory": "RO",
+      "languages": []
+    },
+    "countries-74": {
+      "name": "匈牙利",
+      "territory": "HU",
+      "languages": []
+    },
+    "countries-75": {
+      "name": "斯洛伐克",
+      "territory": "SK",
+      "languages": []
+    },
+    "countries-76": {
+      "name": "波兰",
+      "territory": "PL",
+      "languages": []
+    },
+    "countries-77": {
+      "name": "爱尔兰",
+      "territory": "IE",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-78": {
+      "name": "英国",
+      "territory": "GB",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-79": {
+      "name": "希腊",
+      "territory": "GR",
+      "languages": []
+    },
+    "countries-80": {
+      "name": "赞比亚",
+      "territory": "ZM",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-81": {
+      "name": "塞拉利昂",
+      "territory": "SL",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-82": {
+      "name": "几内亚",
+      "territory": "GN",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-83": {
+      "name": "利比里亚",
+      "territory": "LR",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-84": {
+      "name": "中非共和国",
+      "territory": "CF",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-85": {
+      "name": "苏丹",
+      "territory": "SD",
+      "languages": [
+        "ar",
+        "en"
+      ]
+    },
+    "countries-86": {
+      "name": "吉布提",
+      "territory": "DJ",
+      "languages": [
+        "fr",
+        "ar"
+      ]
+    },
+    "countries-87": {
+      "name": "厄立特里亚",
+      "territory": "ER",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-88": {
+      "name": "奥地利",
+      "territory": "AT",
+      "languages": [
+        "de"
+      ]
+    },
+    "countries-89": {
+      "name": "伊拉克",
+      "territory": "IQ",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-90": {
+      "name": "意大利",
+      "territory": "IT",
+      "languages": [
+        "it",
+        "fr"
+      ]
+    },
+    "countries-91": {
+      "name": "瑞士",
+      "territory": "CH",
+      "languages": [
+        "de",
+        "fr"
+      ]
+    },
+    "countries-92": {
+      "name": "伊朗",
+      "territory": "IR",
+      "languages": [
+        "fa"
+      ]
+    },
+    "countries-93": {
+      "name": "荷兰",
+      "territory": "NL",
+      "languages": []
+    },
+    "countries-94": {
+      "name": "列支敦士登",
+      "territory": "LI",
+      "languages": [
+        "de"
+      ]
+    },
+    "countries-95": {
+      "name": "科特迪瓦",
+      "territory": "CI",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-96": {
+      "name": "塞尔维亚",
+      "territory": "RS",
+      "languages": []
+    },
+    "countries-97": {
+      "name": "马里",
+      "territory": "ML",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-98": {
+      "name": "塞内加尔",
+      "territory": "SN",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-99": {
+      "name": "尼日利亚",
+      "territory": "NG",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-100": {
+      "name": "贝宁",
+      "territory": "BJ",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-101": {
+      "name": "安哥拉",
+      "territory": "AO",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-102": {
+      "name": "克罗地亚",
+      "territory": "HR",
+      "languages": []
+    },
+    "countries-103": {
+      "name": "斯洛文尼亚",
+      "territory": "SI",
+      "languages": []
+    },
+    "countries-104": {
+      "name": "卡塔尔",
+      "territory": "QA",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-105": {
+      "name": "沙特阿拉伯",
+      "territory": "SA",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-106": {
+      "name": "博茨瓦纳",
+      "territory": "BW",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-107": {
+      "name": "津巴布韦",
+      "territory": "ZW",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-108": {
+      "name": "巴基斯坦",
+      "territory": "PK",
+      "languages": [
+        "ur",
+        "en"
+      ]
+    },
+    "countries-109": {
+      "name": "保加利亚",
+      "territory": "BG",
+      "languages": []
+    },
+    "countries-110": {
+      "name": "泰国",
+      "territory": "TH",
+      "languages": []
+    },
+    "countries-111": {
+      "name": "圣马力诺",
+      "territory": "SM",
+      "languages": [
+        "it"
+      ]
+    },
+    "countries-112": {
+      "name": "海地",
+      "territory": "HT",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-113": {
+      "name": "多米尼加",
+      "territory": "DO",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-114": {
+      "name": "乍得",
+      "territory": "TD",
+      "languages": [
+        "ar",
+        "fr"
+      ]
+    },
+    "countries-115": {
+      "name": "科威特",
+      "territory": "KW",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-116": {
+      "name": "萨尔瓦多",
+      "territory": "SV",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-117": {
+      "name": "危地马拉",
+      "territory": "GT",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-118": {
+      "name": "东帝汶",
+      "territory": "TL",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-119": {
+      "name": "文莱",
+      "territory": "BN",
+      "languages": []
+    },
+    "countries-120": {
+      "name": "摩纳哥",
+      "territory": "MC",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-121": {
+      "name": "阿尔及利亚",
+      "territory": "DZ",
+      "languages": [
+        "ar",
+        "fr"
+      ]
+    },
+    "countries-122": {
+      "name": "莫桑比克",
+      "territory": "MZ",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-123": {
+      "name": "斯威士兰",
+      "territory": "SZ",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-124": {
+      "name": "布隆迪",
+      "territory": "BI",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-125": {
+      "name": "卢旺达",
+      "territory": "RW",
+      "languages": [
+        "en",
+        "fr"
+      ]
+    },
+    "countries-126": {
+      "name": "缅甸",
+      "territory": "MM",
+      "languages": []
+    },
+    "countries-127": {
+      "name": "孟加拉国",
+      "territory": "BD",
+      "languages": [
+        "bn"
+      ]
+    },
+    "countries-128": {
+      "name": "安道尔",
+      "territory": "AD",
+      "languages": []
+    },
+    "countries-129": {
+      "name": "阿富汗",
+      "territory": "AF",
+      "languages": [
+        "fa"
+      ]
+    },
+    "countries-130": {
+      "name": "黑山",
+      "territory": "ME",
+      "languages": []
+    },
+    "countries-131": {
+      "name": "波斯尼亚和黑塞哥维那",
+      "territory": "BA",
+      "languages": []
+    },
+    "countries-132": {
+      "name": "乌干达",
+      "territory": "UG",
+      "languages": [
+        "sw"
+      ]
+    },
+    "countries-133": {
+      "name": "关塔那摩湾海军基地",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-134": {
+      "name": "古巴",
+      "territory": "CU",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-135": {
+      "name": "洪都拉斯",
+      "territory": "HN",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-136": {
+      "name": "厄瓜多尔",
+      "territory": "EC",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-137": {
+      "name": "哥伦比亚",
+      "territory": "CO",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-138": {
+      "name": "巴拉圭",
+      "territory": "PY",
+      "languages": []
+    },
+    "countries-139": {
+      "name": "巴西岛",
+      "territory": "BR",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-140": {
+      "name": "葡萄牙",
+      "territory": "PT",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-141": {
+      "name": "摩尔多瓦",
+      "territory": "MD",
+      "languages": []
+    },
+    "countries-142": {
+      "name": "土库曼斯坦",
+      "territory": "TM",
+      "languages": []
+    },
+    "countries-143": {
+      "name": "约旦",
+      "territory": "JO",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-144": {
+      "name": "尼泊尔",
+      "territory": "NP",
+      "languages": []
+    },
+    "countries-145": {
+      "name": "莱索托",
+      "territory": "LS",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-146": {
+      "name": "喀麦隆",
+      "territory": "CM",
+      "languages": [
+        "fr",
+        "en"
+      ]
+    },
+    "countries-147": {
+      "name": "加蓬",
+      "territory": "GA",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-148": {
+      "name": "尼日尔",
+      "territory": "NE",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-149": {
+      "name": "布基纳法索",
+      "territory": "BF",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-150": {
+      "name": "多哥",
+      "territory": "TG",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-151": {
+      "name": "加纳",
+      "territory": "GH",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-152": {
+      "name": "几内亚比绍",
+      "territory": "GW",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-153": {
+      "name": "直布罗陀",
+      "territory": "GI",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-154": {
+      "name": "美国",
+      "territory": "US",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-155": {
+      "name": "加拿大",
+      "territory": "CA",
+      "languages": [
+        "en",
+        "fr"
+      ]
+    },
+    "countries-156": {
+      "name": "墨西哥",
+      "territory": "MX",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-157": {
+      "name": "伯利兹",
+      "territory": "BZ",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-158": {
+      "name": "巴拿马",
+      "territory": "PA",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-159": {
+      "name": "委内瑞拉",
+      "territory": "VE",
+      "languages": [
+        "es"
+      ]
+    },
+    "countries-160": {
+      "name": "巴布亚新几内亚",
+      "territory": "PG",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-161": {
+      "name": "埃及",
+      "territory": "EG",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-162": {
+      "name": "也门",
+      "territory": "YE",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-163": {
+      "name": "毛里塔尼亚",
+      "territory": "MR",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-164": {
+      "name": "赤道几内亚",
+      "territory": "GQ",
+      "languages": [
+        "es",
+        "fr"
+      ]
+    },
+    "countries-165": {
+      "name": "冈比亚",
+      "territory": "GM",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-166": {
+      "name": "中国香港",
+      "territory": "HK",
+      "languages": [
+        "zh",
+        "en"
+      ]
+    },
+    "countries-167": {
+      "name": "梵蒂冈",
+      "territory": "VA",
+      "languages": [
+        "it"
+      ]
+    },
+    "countries-168": {
+      "name": "北塞浦路斯土耳其共和国",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-169": {
+      "name": "塞浦路斯联合国缓冲区",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-170": {
+      "name": "锡亚琴冰川",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-171": {
+      "name": "拜科努尔",
+      "territory": "KZ",
+      "languages": [
+        "ru"
+      ]
+    },
+    "countries-172": {
+      "name": "阿克罗蒂里主权基地区",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-173": {
+      "name": "南巴塔哥尼亚冰原",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-174": {
+      "name": "比尔泰维勒",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-175": {
+      "name": "南极洲",
+      "territory": "AQ",
+      "languages": []
+    },
+    "countries-176": {
+      "name": "澳大利亚",
+      "territory": "AU",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-177": {
+      "name": "格陵兰",
+      "territory": "GL",
+      "languages": []
+    },
+    "countries-178": {
+      "name": "斐济",
+      "territory": "FJ",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-179": {
+      "name": "新西兰",
+      "territory": "NZ",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-180": {
+      "name": "新喀里多尼亚",
+      "territory": "NC",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-181": {
+      "name": "马达加斯加",
+      "territory": "MG",
+      "languages": [
+        "fr",
+        "en"
+      ]
+    },
+    "countries-182": {
+      "name": "菲律宾",
+      "territory": "PH",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-183": {
+      "name": "斯里兰卡",
+      "territory": "LK",
+      "languages": []
+    },
+    "countries-184": {
+      "name": "库拉索",
+      "territory": "CW",
+      "languages": []
+    },
+    "countries-185": {
+      "name": "阿鲁巴",
+      "territory": "AW",
+      "languages": []
+    },
+    "countries-186": {
+      "name": "巴哈马",
+      "territory": "BS",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-187": {
+      "name": "特克斯和凯科斯群岛",
+      "territory": "TC",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-188": {
+      "name": "中国台湾",
+      "territory": "TW",
+      "languages": [
+        "zh"
+      ]
+    },
+    "countries-189": {
+      "name": "日本",
+      "territory": "JP",
+      "languages": [
+        "ja"
+      ]
+    },
+    "countries-190": {
+      "name": "圣皮埃尔和密克隆",
+      "territory": "PM",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-191": {
+      "name": "冰岛",
+      "territory": "IS",
+      "languages": []
+    },
+    "countries-192": {
+      "name": "皮特凯恩群岛",
+      "territory": "PN",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-193": {
+      "name": "法属波利尼西亚",
+      "territory": "PF",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-194": {
+      "name": "法属南部和南极领地",
+      "territory": "TF",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-195": {
+      "name": "塞舌尔",
+      "territory": "SC",
+      "languages": [
+        "fr",
+        "en"
+      ]
+    },
+    "countries-196": {
+      "name": "基里巴斯",
+      "territory": "KI",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-197": {
+      "name": "马绍尔群岛",
+      "territory": "MH",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-198": {
+      "name": "特立尼达和多巴哥",
+      "territory": "TT",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-199": {
+      "name": "格林纳达",
+      "territory": "GD",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-200": {
+      "name": "圣文森特和格林纳丁斯",
+      "territory": "VC",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-201": {
+      "name": "巴巴多斯",
+      "territory": "BB",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-202": {
+      "name": "圣卢西亚",
+      "territory": "LC",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-203": {
+      "name": "多米尼克",
+      "territory": "DM",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-204": {
+      "name": "美国本土外小岛屿",
+      "territory": "UM",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-205": {
+      "name": "蒙特塞拉特",
+      "territory": "MS",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-206": {
+      "name": "安提瓜和巴布达",
+      "territory": "AG",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-207": {
+      "name": "圣基茨和尼维斯",
+      "territory": "KN",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-208": {
+      "name": "美属维尔京群岛",
+      "territory": "VI",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-209": {
+      "name": "圣巴泰勒米",
+      "territory": "BL",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-210": {
+      "name": "波多黎各",
+      "territory": "PR",
+      "languages": [
+        "es",
+        "en"
+      ]
+    },
+    "countries-211": {
+      "name": "安圭拉",
+      "territory": "AI",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-212": {
+      "name": "英属维尔京群岛",
+      "territory": "VG",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-213": {
+      "name": "牙买加",
+      "territory": "JM",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-214": {
+      "name": "开曼群岛",
+      "territory": "KY",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-215": {
+      "name": "百慕大",
+      "territory": "BM",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-216": {
+      "name": "赫德岛和麦克唐纳群岛",
+      "territory": "HM",
+      "languages": []
+    },
+    "countries-217": {
+      "name": "圣赫勒拿",
+      "territory": "SH",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-218": {
+      "name": "毛里求斯",
+      "territory": "MU",
+      "languages": [
+        "fr",
+        "en"
+      ]
+    },
+    "countries-219": {
+      "name": "科摩罗",
+      "territory": "KM",
+      "languages": [
+        "ar",
+        "fr"
+      ]
+    },
+    "countries-220": {
+      "name": "圣多美和普林西比",
+      "territory": "ST",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-221": {
+      "name": "佛得角",
+      "territory": "CV",
+      "languages": [
+        "pt"
+      ]
+    },
+    "countries-222": {
+      "name": "马耳他",
+      "territory": "MT",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-223": {
+      "name": "泽西",
+      "territory": "JE",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-224": {
+      "name": "根西",
+      "territory": "GG",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-225": {
+      "name": "马恩岛",
+      "territory": "IM",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-226": {
+      "name": "奥兰",
+      "territory": "AX",
+      "languages": []
+    },
+    "countries-227": {
+      "name": "法罗群岛",
+      "territory": "FO",
+      "languages": []
+    },
+    "countries-228": {
+      "name": "澳属印度洋领地",
+      "territory": "AU",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-229": {
+      "name": "英属印度洋领地",
+      "territory": "IO",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-230": {
+      "name": "新加坡",
+      "territory": "SG",
+      "languages": [
+        "en",
+        "zh"
+      ]
+    },
+    "countries-231": {
+      "name": "诺福克岛",
+      "territory": "NF",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-232": {
+      "name": "库克群岛",
+      "territory": "CK",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-233": {
+      "name": "汤加",
+      "territory": "TO",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-234": {
+      "name": "瓦利斯和富图纳",
+      "territory": "WF",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-235": {
+      "name": "萨摩亚",
+      "territory": "WS",
+      "languages": []
+    },
+    "countries-236": {
+      "name": "所罗门群岛",
+      "territory": "SB",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-237": {
+      "name": "图瓦卢",
+      "territory": "TV",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-238": {
+      "name": "马尔代夫",
+      "territory": "MV",
+      "languages": []
+    },
+    "countries-239": {
+      "name": "瑙鲁",
+      "territory": "NR",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-240": {
+      "name": "密克罗尼西亚联邦",
+      "territory": "FM",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-241": {
+      "name": "南乔治亚和南桑威奇群岛",
+      "territory": "GS",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-242": {
+      "name": "福克兰群岛",
+      "territory": "FK",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-243": {
+      "name": "瓦努阿图",
+      "territory": "VU",
+      "languages": [
+        "en",
+        "fr"
+      ]
+    },
+    "countries-244": {
+      "name": "纽埃",
+      "territory": "NU",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-245": {
+      "name": "美属萨摩亚",
+      "territory": "AS",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-246": {
+      "name": "帕劳",
+      "territory": "PW",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-247": {
+      "name": "关岛",
+      "territory": "GU",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-248": {
+      "name": "北马里亚纳群岛",
+      "territory": "MP",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-249": {
+      "name": "巴林",
+      "territory": "BH",
+      "languages": [
+        "ar"
+      ]
+    },
+    "countries-250": {
+      "name": "珊瑚海群岛",
+      "territory": "AU",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-251": {
+      "name": "威克岛",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-252": {
+      "name": "克利珀顿岛",
+      "territory": "FR",
+      "languages": [
+        "fr"
+      ]
+    },
+    "countries-253": {
+      "name": "中国澳门",
+      "territory": "MO",
+      "languages": [
+        "zh"
+      ]
+    },
+    "countries-254": {
+      "name": "阿什莫尔和卡捷群岛",
+      "territory": "AU",
+      "languages": [
+        "en"
+      ]
+    },
+    "countries-255": {
+      "name": "巴霍努埃沃浅滩",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-256": {
+      "name": "塞拉尼拉浅滩",
+      "territory": "-99",
+      "languages": []
+    },
+    "countries-257": {
+      "name": "黄岩岛",
+      "territory": "-99",
+      "languages": []
+    }
+  },
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/unicode-org/cldr-json/47.0.0/cldr-json/cldr-core/supplemental/territoryInfo.json",
+      "sha256": "1fc8e5625dd4abe7b37f8261ee88c5295f3ca323526bd1ea590f046ddfb946fb",
+      "license": "Unicode-3.0"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_admin_0_countries.geojson",
+      "sha256": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255",
+      "license": "Public Domain"
+    }
+  ],
+  "licenseFile": "unicode-license.txt"
+}

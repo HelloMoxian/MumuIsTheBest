@@ -10,7 +10,7 @@ import { emptyHistory, historySchema, registerGemConnectHistoryApi, migrateHisto
 import { registerFruitSliceHistoryApi } from "./fruit-slice-history.js";
 import { registerWorldTowerApi } from "./world-tower.js";
 
-const payload = () => ({ rulesVersion: 3 as const, id: randomUUID(), level: 1, durationMs: 12345, hints: 1, shuffles: 2, pairCount: 30 });
+const payload = () => ({ rulesVersion: 5 as const, id: randomUUID(), level: 1, durationMs: 12345, hints: 1, shuffles: 2, pairCount: 30 });
 async function setup(t: TestContext) {
   const dir = await mkdtemp(join(tmpdir(), "mumu-gem-test-"));
   const app = Fastify();
@@ -40,7 +40,7 @@ test("空记录、保存、重复重试、并发写入、重启恢复及权限",
 });
 test("拒绝非法输入、损坏文件和未来版本，不能覆盖原记录", async t => {
   const { app, path } = await setup(t);
-  for (const invalid of [{ ...payload(), level: 11 }, { ...payload(), durationMs: -1 }, { ...payload(), pairCount: 7 }, { ...payload(), extra: true }]) {
+  for (const invalid of [{ ...payload(), level: 16 }, { ...payload(), rulesVersion: 3, level: 11, pairCount: 104 }, { ...payload(), durationMs: -1 }, { ...payload(), pairCount: 7 }, { ...payload(), extra: true }]) {
     assert.equal((await app.inject({ method: "POST", url: "/api/games/gem-connect/history", payload: invalid })).statusCode, 400);
   }
   await mkdir(join(path, ".."), { recursive: true });
@@ -62,10 +62,10 @@ test("写入失败后队列可恢复，不返回虚假的已保存状态", async
   assert.equal(retry.json().records.length, 1);
 });
 
-test("新版十关各发10至100双币，原有钱包余额准确且重试不重复", async t => {
+test("新版十五关各发10至150双币，原有钱包余额准确且重试不重复", async t => {
   const { app, dir } = await setup(t);
-  const pairs = [30,36,42,48,54,60,70,77,84,90];
-  for (let level = 1; level <= 10; level++) {
+  const pairs = [30,36,42,49,56,64,72,81,90,100,110,121,132,144,156];
+  for (let level = 1; level <= 15; level++) {
     const data = { ...payload(), level, pairCount: pairs[level - 1] };
     const request = { method: "POST" as const, url: "/api/games/gem-connect/history", payload: data };
     const first = await app.inject(request);
@@ -75,10 +75,10 @@ test("新版十关各发10至100双币，原有钱包余额准确且重试不重
   }
   const energy = JSON.parse(await readFile(join(dir, "learning/games/fruit-slice-history.json"), "utf8"));
   const knowledge = JSON.parse(await readFile(join(dir, "learning/world-tower/progress.json"), "utf8"));
-  assert.equal(energy.energyCoinBalance, 550);
-  assert.equal(knowledge.coinBalance, 550);
-  assert.equal(Object.keys(energy.gemConnectRewards).length, 10);
-  assert.equal(Object.keys(knowledge.gemConnectRewards).length, 10);
+  assert.equal(energy.energyCoinBalance, 1200);
+  assert.equal(knowledge.coinBalance, 1200);
+  assert.equal(Object.keys(energy.gemConnectRewards).length, 15);
+  assert.equal(Object.keys(knowledge.gemConnectRewards).length, 15);
 });
 test("一方钱包失败后重启可补发另一方，不重复入账", async t => {
   const dir = await mkdtemp(join(tmpdir(), "mumu-gem-partial-"));
@@ -143,7 +143,7 @@ test("版本2升级保留原成绩和钱包收据，创建不可覆盖恢复点�
   assert.equal(await readFile(path, "utf8"), bytes, "只读旧历史不改文件");
   const result = await app.inject({ method: "POST", url: "/api/games/gem-connect/history", payload: payload() });
   assert.equal(result.statusCode, 200);
-  assert.deepEqual(result.json().records.map((record: { rulesVersion: number }) => record.rulesVersion), [2, 3]);
+  assert.deepEqual(result.json().records.map((record: { rulesVersion: number }) => record.rulesVersion), [2, 5]);
   assert.equal(await readFile(path + ".v2.bak", "utf8"), bytes);
   assert.equal(JSON.parse(await readFile(join(dir, "learning/world-tower/progress.json"), "utf8")).coinBalance, 10);
   if (process.platform !== "win32") assert.equal((await stat(path + ".v2.bak")).mode & 0o777, 0o600);

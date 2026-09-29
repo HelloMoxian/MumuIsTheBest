@@ -26,6 +26,7 @@ import {
 import "./learning-coins.css";
 
 type CoinStatusContextValue = {
+  session: LearningRewardSession | null;
   status: LearningCoinBalance | null;
   error: string | null;
   refresh: () => Promise<void>;
@@ -167,7 +168,7 @@ export function LearningCoinLayer({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const contextValue = useMemo(() => ({ status, error, refresh }), [error, refresh, status]);
+  const contextValue = useMemo(() => ({ status, error, refresh, session }), [error, refresh, status, session]);
   const gameSource = GAME_SOURCE_BY_PATH[window.location.pathname];
 
   return (
@@ -210,7 +211,7 @@ export function useLearningCoinStatus() {
 }
 
 export function LearningCoinBalancePill({ className = "", displayBalance }: { className?: string; displayBalance?: number | null }) {
-  const { status, error } = useLearningCoinStatus();
+  const { status, error, session } = useLearningCoinStatus();
   const balance = displayBalance === undefined ? status?.coinBalance : displayBalance;
   return (
     <div
@@ -221,6 +222,7 @@ export function LearningCoinBalancePill({ className = "", displayBalance }: { cl
     >
       <span className="learning-coin-symbol" aria-hidden="true">✦</span>
       <span><small>知识币</small><strong>{balance?.toLocaleString("zh-CN") ?? "…"}</strong></span>
+      {session?.source === GAME_SOURCE_BY_PATH[window.location.pathname] && session?.multiplier === 3 && <em>本局 ×3 已锁定</em>}
     </div>
   );
 }

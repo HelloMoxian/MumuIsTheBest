@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -532,15 +533,8 @@ export function PinyinBridgePage() {
   return (
     <div className={`pinyin-page ${compact ? "is-compact" : ""}`}>
       <div className="pinyin-stars" aria-hidden="true" />
-      <header className="pinyin-topbar">
-        <a href="/" className="pinyin-back">
-          <span aria-hidden="true">←</span> 学习大厅
-        </a>
-        <div className="pinyin-brand">
-          <span aria-hidden="true">ā</span>
-          <div><strong>拼音星桥</strong><small>声母、韵母和汉字在这里相遇</small></div>
-        </div>
-        <button
+      <GameTopBar title="拼音星桥" backHref="/" backLabel="学习大厅" controls={<>
+<button
           type="button"
           className={`pinyin-voice state-${voiceState}`}
           onClick={() => void (listening ? stopVoice() : startVoice())}
@@ -560,7 +554,7 @@ export function PinyinBridgePage() {
             </small>
           </span>
         </button>
-      </header>
+</>} />
 
       <main className="pinyin-main">
         <section className="pinyin-command-deck" aria-label="当前拼音和语音提示">

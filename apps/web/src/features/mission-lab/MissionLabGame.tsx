@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -376,11 +377,9 @@ export function MissionLabGame({
     return (
       <div className={`mission-lab-page accent-${definition.accent}`}>
         <div className="mission-lab-stars" aria-hidden="true" />
-        <header className="mission-lab-topbar">
-          <a href="/" className="mission-back">← 学习大厅</a>
-          <div className="mission-brand"><span aria-hidden="true">{definition.mark}</span><strong>{definition.title}</strong></div>
-          <span className={`mission-voice-chip state-${voiceState}`}><i />{voiceLabel(voiceState)}</span>
-        </header>
+        <GameTopBar title={definition.title} backHref="/" backLabel="学习大厅" controls={<>
+<span className={`mission-voice-chip state-${voiceState}`}><i />{voiceLabel(voiceState)}</span>
+</>} />
         <main className="mission-setup-main">
           <section className="mission-intro-card">
             <div className="intro-orbit" aria-hidden="true"><i /><i /><i /><b>{definition.mark}</b></div>
@@ -438,11 +437,9 @@ export function MissionLabGame({
     return (
       <div className={`mission-lab-page accent-${definition.accent}`}>
         <div className="mission-lab-stars" aria-hidden="true" />
-        <header className="mission-lab-topbar">
-          <a href="/" className="mission-back">← 学习大厅</a>
-          <div className="mission-brand"><span aria-hidden="true">{definition.mark}</span><strong>{definition.title}</strong></div>
-          <span className={`mission-voice-chip state-${voiceState}`}><i />{voiceLabel(voiceState)}</span>
-        </header>
+        <GameTopBar title={definition.title} backHref="/" backLabel="学习大厅" controls={<>
+<span className={`mission-voice-chip state-${voiceState}`}><i />{voiceLabel(voiceState)}</span>
+</>} />
         <main className="mission-summary-main">
           <section className="mission-summary-hero">
             <p>{summary.completeRound ? "本局星图完成" : "已经保存这次观察"}</p>
@@ -488,19 +485,18 @@ export function MissionLabGame({
   return (
     <div className={`mission-lab-page is-playing accent-${definition.accent}`}>
       <div className="mission-lab-stars" aria-hidden="true" />
-      <header className="mission-lab-topbar playing-topbar">
-        <a href="/" className="mission-back">← 大厅</a>
-        <div className="mission-progress" aria-label={`第 ${currentIndex + 1} 个，共 ${round.length} 个`}>
+      <GameTopBar title={definition.title} backHref="/" backLabel="学习大厅" controls={<>
+<div className="mission-progress" aria-label={`第 ${currentIndex + 1} 个，共 ${round.length} 个`}>
           <span>发现 {currentIndex + 1} / {round.length}</span>
           <i><b style={{ width: `${progress}%` }} /></i>
         </div>
-        <div className="mission-audio-status">
+<div className="mission-audio-status">
           <span className={`mission-voice-chip state-${voiceState}`}><i />{voiceLabel(voiceState)}</span>
           <button type="button" onClick={() => void readCurrentMission()} disabled={ttsState.status === "speaking"}>
             {ttsState.status === "speaking" ? "正在朗读" : "朗读题目"}
           </button>
         </div>
-      </header>
+</>} />
       <main className="mission-playing-main">
         <MissionVisualStage mission={currentMission} />
         <section className="mission-question-panel" aria-labelledby="mission-prompt">

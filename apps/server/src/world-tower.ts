@@ -216,8 +216,9 @@ const autoPlayRewardBatchSchema = z.object({
 const progressSchema = z.object({
   schemaVersion: z.literal(1),
   bejeweledRewardTotal: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
-  gemConnectRewards: z.record(z.string().uuid(), z.number().int().min(1).max(10)).default({}),
+  gemConnectRewards: z.record(z.string().uuid(), z.number().int().min(1).max(15)).default({}),
   sudokuRewards: z.record(z.string().uuid(), z.number().int().min(1).max(6)).default({}),
+  twentyFourRewards: z.record(z.string().uuid(), z.union([z.literal(5), z.literal(10), z.literal(20), z.literal(30), z.literal(40)])).default({}),
   id: z.string().uuid(),
   graphId: z.string().min(1).max(160),
   createdAt: z.string().datetime(),
@@ -649,6 +650,7 @@ export function registerWorldTowerApi(
       appliedGrantIds: [LEARNING_COIN_RESET_GRANT_ID],
       gemConnectRewards: {},
       sudokuRewards: {},
+      twentyFourRewards: {},
       rewardSessions: [],
       autoPlayRewardBatches: [],
       transactions: [],
@@ -1432,6 +1434,24 @@ export function registerWorldTowerApi(
   });
   return {
     creditBejeweled,
+    async awardTwentyFour(eventId: string, amount: number) {
+      const input = z.object({ eventId: z.string().uuid(), amount: z.union([z.literal(5), z.literal(10), z.literal(20), z.literal(30), z.literal(40)]) }).parse({ eventId, amount });
+      const progress = await updateProgress(current => {
+        const prior = current.twentyFourRewards[input.eventId];
+        if (prior !== undefined && prior !== input.amount) throw new Error("KNOWLEDGE_COIN_EVENT_ID_COLLISION");
+        if (prior !== undefined) return current;
+        const now = new Date().toISOString();
+        return {
+          ...current, updatedAt: now, coinBalance: current.coinBalance + input.amount,
+          twentyFourRewards: { ...current.twentyFourRewards, [input.eventId]: input.amount },
+          transactions: [...current.transactions, {
+            id: input.eventId, kind: "learning-reward" as const, targetId: "math:twenty-four",
+            quantity: input.amount, coinDelta: input.amount, balanceAfter: current.coinBalance + input.amount, createdAt: now,
+          }].slice(-20_000),
+        };
+      });
+      return { balance: progress.coinBalance, updatedAt: progress.updatedAt };
+    },
     async awardSudoku(eventId: string, level: number) {
       const input = z.object({ eventId: z.string().uuid(), level: z.number().int().min(1).max(6) }).parse({ eventId, level });
       const progress = await updateProgress(current => {
@@ -1451,7 +1471,7 @@ export function registerWorldTowerApi(
       return { balance: progress.coinBalance, updatedAt: progress.updatedAt };
     },
     async awardGemConnect(eventId: string, level: number) {
-      const input = z.object({ eventId: z.string().uuid(), level: z.number().int().min(1).max(10) }).parse({ eventId, level });
+      const input = z.object({ eventId: z.string().uuid(), level: z.number().int().min(1).max(15) }).parse({ eventId, level });
       const progress = await updateProgress(current => {
         const prior = current.gemConnectRewards[input.eventId];
         if (prior !== undefined && prior !== input.level) throw new Error("KNOWLEDGE_COIN_EVENT_ID_COLLISION");

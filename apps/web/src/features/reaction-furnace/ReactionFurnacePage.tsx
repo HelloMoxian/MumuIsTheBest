@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -406,16 +407,11 @@ function ReactionFurnaceExperience({ initialState }: { initialState: FurnaceInit
   return (
     <div className="furnace-page">
       <div className="furnace-stars" aria-hidden="true" />
-      <header className="furnace-topbar">
-        <a href="/" className="furnace-back"><span aria-hidden="true">←</span> 学习大厅</a>
-        <div className="furnace-brand">
-          <span aria-hidden="true">⚗</span>
-          <div><strong>反应熔炉</strong><small>木木的微观组装舱</small></div>
-        </div>
-        <button type="button" className="new-batch-button" onClick={resetBatch}>
+      <GameTopBar title="反应熔炉" backHref="/" backLabel="学习大厅" controls={<>
+<button type="button" className="new-batch-button" onClick={resetBatch}>
           <span aria-hidden="true">↻</span> 换一批 10 种
         </button>
-      </header>
+</>} />
 
       <main className="furnace-main">
         <section className="furnace-heading">

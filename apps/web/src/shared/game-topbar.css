@@ -70,6 +70,9 @@
 .game-topbar__controls .mkt-metric :is(strong, span) { font-size: 18px; white-space: nowrap; }
 .game-topbar__controls .mkt-metric :is(em, .mkt-progress-track) { display: none; }
 .game-topbar__controls .mt-coin { display: none; }
+.sg-page > .game-topbar { position: absolute; top: 0; left: 0; right: 0; }
+.mt-page { display: flex; flex-direction: column; }
+.mt-page > .mt-workspace { flex: 1; min-height: 0; height: auto; }
 .game-topbar__controls > :is(div, nav, fieldset) { display: flex; align-items: center; flex-wrap: nowrap; flex: 0 0 auto; gap: 8px; margin: 0; }
 .game-topbar__controls :is(button, a, label) { flex-shrink: 0; white-space: nowrap; }
 .game-topbar__controls button { min-height: 48px; padding: 6px 12px; border: 1px solid var(--line-glow); border-radius: 14px; color: var(--ink-primary); background: var(--glass-500); font: 800 18px var(--font-display); }
@@ -80,7 +83,11 @@
 .game-topbar__title + .game-topbar__wallets { margin-left: auto; }
 .game-topbar__controls .drawing-file-input { display: none; }
 .game-topbar.racer-topbar { top: 0; left: 0; right: 0; width: 100%; }
+.tetris-immersive .game-topbar, .gc-focused .game-topbar { display: none; }
 
+/* Pages whose root used to constrain the header to a narrow centered column. */
+body[data-compact-game-ui] :is(.tetris-page, .bj-page, .workout-page, .geo-page, .gc-page) { width: 100%; max-width: none; padding-top: 0; }
+body[data-compact-game-ui] :is(.bj-layout, .geo-header, .geo-tabs, .geo-status, .geo-dig-layout, .geo-catalog) { max-width: none; width: 100%; }
 
 .game-topbar__wallets {
   display: flex;

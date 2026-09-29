@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTts } from "../../shared/speech";
 import {
@@ -167,22 +168,12 @@ export function RhymeEnlightenmentPage() {
     <div className="rhyme-page">
       <div className="rhyme-stars" aria-hidden="true" />
 
-      <header className="rhyme-topbar">
-        <a className="rhyme-back" href="/">
-          <span aria-hidden="true">←</span> 返回学习大厅
-        </a>
-        <div className="rhyme-brand">
-          <span aria-hidden="true">雅</span>
-          <div>
-            <strong>声律启蒙</strong>
-            <small>国学 · 对句精读舱</small>
-          </div>
-        </div>
-        <button className="catalog-trigger" type="button" onClick={() => setCatalogOpen(true)}>
+      <GameTopBar title="声律启蒙" backHref="/" backLabel="学习大厅" controls={<>
+<button className="catalog-trigger" type="button" onClick={() => setCatalogOpen(true)}>
           <span aria-hidden="true">☷</span>
           <span><strong>全书目录</strong><small>上、下卷共 30 章</small></span>
         </button>
-      </header>
+</>} />
 
       <main className="rhyme-main">
         <section className="reading-controls" aria-label="朗读控制台">

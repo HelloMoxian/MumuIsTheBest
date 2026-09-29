@@ -1,4 +1,4 @@
-import { LEGACY_PAIRS, LEVELS, type Completion, type RecordEntry } from "./logic";
+import { LEGACY_PAIRS, PREVIOUS_PAIRS, LEVELS, type Completion, type RecordEntry } from "./logic";
 
 export function parseHistory(value: unknown): RecordEntry[] {
   if (!value || typeof value !== "object") throw new Error("记录格式不正确");
@@ -14,10 +14,11 @@ export function parseHistory(value: unknown): RecordEntry[] {
       || !Number.isSafeInteger(record.durationMs) || record.durationMs <= 0
       || !Number.isSafeInteger(record.hints) || record.hints < 0
       || !Number.isSafeInteger(record.shuffles) || record.shuffles < 0
-      || ![1, 2, 3].includes(record.rulesVersion)
+      || ![1, 2, 3, 4, 5].includes(record.rulesVersion)
+      || record.level > (record.rulesVersion >= 4 ? 15 : 10)
       || !["legacy", "pending", "granted"].includes(record.rewardStatus)
       || (record.rulesVersion === 1 ? record.rewardStatus !== "legacy" : record.rewardStatus === "legacy")
-      || record.pairCount !== (record.rulesVersion === 1 ? LEGACY_PAIRS[record.level - 1] : config.rows * config.cols / 2)
+      || record.pairCount !== (record.rulesVersion === 1 ? LEGACY_PAIRS[record.level - 1] : record.rulesVersion < 5 ? PREVIOUS_PAIRS[record.level - 1] : config.rows * config.cols / 2)
       || typeof record.createdAt !== "string" || !Number.isFinite(Date.parse(record.createdAt))
       || typeof record.updatedAt !== "string" || !Number.isFinite(Date.parse(record.updatedAt))) throw new Error("记录格式不正确");
     ids.add(record.id);

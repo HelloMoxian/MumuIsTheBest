@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -49,6 +50,8 @@ import {
   type Bounds,
   type DrawingDocument,
   type DrawingElement,
+  type DrawingSymmetry,
+  type DrawingSymmetryKind,
   type DrawingPreset,
   type HistoryNode,
   type LineStyle,
@@ -95,7 +98,7 @@ import { getPaintingReference } from "./painting-references";
 import { portfolioContentSignature, preparePortfolioOpening, type PortfolioWork } from "./portfolio";
 import "./drawing-studio.css";
 
-type ToolId = DrawingShortcutTool | "text";
+type ToolId = DrawingShortcutTool | "text" | "symmetry-brush";
 type DrawerId = "history" | "works" | "author" | null;
 type AutoSaveStatus = "loading" | "saving" | "saved" | "error";
 type Gesture =
@@ -103,6 +106,7 @@ type Gesture =
   | { type: "move"; pointerId: number; startWorld: Point; elements: DrawingElement[]; moved: boolean }
   | { type: "marquee"; pointerId: number; startWorld: Point; currentWorld: Point }
   | { type: "draw"; pointerId: number; points: Point[] }
+  | { type: "symmetry-center"; pointerId: number; brushId: string; originalElements: DrawingElement[]; moved: boolean }
   | { type: "free-shape"; pointerId: number; startWorld: Point; currentWorld: Point; kind: FreeShapeKind }
   | null;
 
@@ -132,6 +136,7 @@ const TOOL_OPTIONS: Array<{
   { id: "preset", label: "预制件", mark: "▦", shortcut: DRAWING_TOOL_SHORTCUTS.preset, speech: drawingActionSpeech("tool-preset") },
   { id: "text", label: "文字", mark: "文", shortcut: DRAWING_TOOL_SHORTCUTS.text, speech: drawingActionSpeech("tool-text") },
   { id: "brush", label: "画笔", mark: "╱", shortcut: DRAWING_TOOL_SHORTCUTS.brush, speech: drawingActionSpeech("tool-brush") },
+  { id: "symmetry-brush", label: "对称画笔", mark: "✣", speech: drawingActionSpeech("tool-brush") },
   { id: "eraser", label: "橡皮擦", mark: "⌫", shortcut: DRAWING_TOOL_SHORTCUTS.eraser, speech: drawingActionSpeech("tool-eraser") },
   { id: "fill", label: "填色", mark: "●", shortcut: DRAWING_TOOL_SHORTCUTS.fill, speech: drawingActionSpeech("tool-fill") },
 ];
@@ -260,7 +265,7 @@ async function createCanvasThumbnail(canvas: SVGSVGElement | null): Promise<stri
   const rect = canvas.getBoundingClientRect();
   if (rect.width < 1 || rect.height < 1) return null;
   const clone = canvas.cloneNode(true) as SVGSVGElement;
-  clone.querySelectorAll(".drawing-selection-box, .drawing-marquee-box, .drawing-draft-stroke, .drawing-free-draft")
+  clone.querySelectorAll(".drawing-selection-box, .drawing-marquee-box, .drawing-draft-stroke, .drawing-free-draft, .drawing-symmetry-guide")
     .forEach((node) => node.remove());
   clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
   clone.setAttribute("width", String(rect.width));
@@ -309,6 +314,27 @@ function pathFromPoints(points: Point[], smoothing: boolean) {
   return path;
 }
 
+function symmetryTransforms(symmetry?: DrawingSymmetry) {
+  if (!symmetry || symmetry.kind === "none") return [""];
+  const { x, y } = symmetry.center;
+  if (symmetry.kind === "mirror-horizontal") return ["", `translate(0 ${2 * y}) scale(1 -1)`];
+  if (symmetry.kind === "mirror-vertical") return ["", `translate(${2 * x} 0) scale(-1 1)`];
+  if (symmetry.kind === "cyclic") return Array.from({ length: symmetry.order }, (_, index) => `rotate(${index * 360 / symmetry.order} ${x} ${y})`);
+  const rotations = symmetry.order / 2;
+  return Array.from({ length: rotations }, (_, index) => {
+    const rotation = `rotate(${index * 360 / rotations} ${x} ${y})`;
+    return [rotation, `${rotation} translate(0 ${2 * y}) scale(1 -1)`];
+  }).flat();
+}
+
+function symmetryGuideAngles(symmetry: DrawingSymmetry) {
+  if (symmetry.kind === "none") return [];
+  if (symmetry.kind === "mirror-horizontal") return [0];
+  if (symmetry.kind === "mirror-vertical") return [Math.PI / 2];
+  const lines = symmetry.order / 2;
+  return Array.from({ length: lines }, (_, index) => index * Math.PI / lines);
+}
+
 function optionGroups<T extends string>(options: CatalogOption<T>[]) {
   return Array.from(new Set(options.map((option) => option.group)));
 }
@@ -340,6 +366,7 @@ export function DrawingStudioPage() {
   const [brushWidth, setBrushWidth] = useState(7);
   const [lineStyle, setLineStyle] = useState<LineStyle>("smooth");
   const [smoothing, setSmoothing] = useState(true);
+  const [symmetryBrush, setSymmetryBrush] = useState<(DrawingSymmetry & { layer: number }) | null>(null);
   const [draftPoints, setDraftPoints] = useState<Point[]>([]);
   const [textDraft, setTextDraft] = useState("木木的画");
   const [textColor, setTextColor] = useState("#171536");
@@ -380,6 +407,8 @@ export function DrawingStudioPage() {
 
   documentRef.current = document;
   viewportRef.current = viewport;
+
+  useEffect(() => { setSymmetryBrush(null); }, [document.id]);
   persistenceReadyRef.current = persistenceReady;
   persistenceEnabledRef.current = persistenceEnabled;
 
@@ -393,6 +422,15 @@ export function DrawingStudioPage() {
   const matchingPreset = useMemo(() => selectedElements.length >= 2
     ? document.presets.find((preset) => presetContentSignature(preset.elements) === selectionSignature)
     : undefined, [document.presets, selectedElements.length, selectionSignature]);
+  const savedSymmetryBrushes = useMemo(() => {
+    const found = new Map<string, DrawingSymmetry & { layer: number }>();
+    for (const element of document.elements) {
+      if (element.type === "stroke" && element.symmetry && !found.has(element.symmetry.brushId)) {
+        found.set(element.symmetry.brushId, { ...element.symmetry, center: { ...element.symmetry.center }, layer: element.layer });
+      }
+    }
+    return [...found.values()].sort((first, second) => second.layer - first.layer);
+  }, [document.elements]);
   const focusCanvas = () => canvasRef.current?.focus({ preventScroll: true });
 
   const commitElements = useCallback((label: string, elements: DrawingElement[], presets = documentRef.current.presets) => {
@@ -485,6 +523,31 @@ export function DrawingStudioPage() {
     const rect = stageRef.current?.getBoundingClientRect();
     if (!rect) return { x: 0, y: 0 };
     return screenPointToWorld({ x: rect.width / 2, y: rect.height / 2 }, viewportRef.current);
+  };
+
+  const createSymmetryBrush = () => {
+    const layers = documentRef.current.elements.map(element => element.layer);
+    const next: DrawingSymmetry & { layer: number } = {
+      brushId: crypto.randomUUID(), kind: "cyclic", order: 8, center: viewCenterWorld(),
+      layer: Math.min(MAX_DRAWING_LAYER, (layers.length ? Math.max(...layers) : -1) + 1),
+    };
+    setSymmetryBrush(next); setTool("symmetry-brush"); setPanelOpen(true); setSelectedIds([]);
+    setMessage("新的八向对称画笔准备好了，可以拖动中心点后开始画。"); focusCanvas();
+  };
+
+  const selectSymmetryBrush = (brush: DrawingSymmetry & { layer: number }) => {
+    setSymmetryBrush({ ...brush, center: { ...brush.center } }); setTool("symmetry-brush"); setSelectedIds([]);
+    setMessage("已切换对称画笔，可以继续画或拖动中心点。"); focusCanvas();
+  };
+
+  const updateSymmetryBrush = (change: Partial<Pick<DrawingSymmetry, "kind" | "order" | "center">>, label: string) => {
+    if (!symmetryBrush) return;
+    const next = { ...symmetryBrush, ...change, center: change.center ? { ...change.center } : symmetryBrush.center };
+    setSymmetryBrush(next);
+    const updated = documentRef.current.elements.map(element => element.type === "stroke" && element.symmetry?.brushId === next.brushId
+      ? { ...element, symmetry: { brushId: next.brushId, kind: next.kind, order: next.order, center: { ...next.center } } }
+      : element);
+    if (updated.some((element, index) => element !== documentRef.current.elements[index])) commitElements(label, updated);
   };
 
   const addElement = (type: "shape" | "solid" | "sticker", id: ShapeKind | SolidKind | StickerKind) => {
@@ -785,6 +848,12 @@ export function DrawingStudioPage() {
     if (!rect) return;
     const worldPoint = screenPointToWorld({ x: event.clientX - rect.left, y: event.clientY - rect.top }, viewportRef.current);
 
+    if (tool === "symmetry-brush" && symmetryBrush
+      && Math.hypot(worldPoint.x - symmetryBrush.center.x, worldPoint.y - symmetryBrush.center.y) <= 18 / viewportRef.current.zoom) {
+      gestureRef.current = { type: "symmetry-center", pointerId: event.pointerId, brushId: symmetryBrush.brushId, originalElements: cloneElements(documentRef.current.elements), moved: false };
+      event.currentTarget.setPointerCapture(event.pointerId); return;
+    }
+
     if (tool === "shape" && freeShape) {
       gestureRef.current = { type: "free-shape", pointerId: event.pointerId, startWorld: worldPoint, currentWorld: worldPoint, kind: freeShape };
       setSelectedIds([]);
@@ -793,7 +862,7 @@ export function DrawingStudioPage() {
       return;
     }
 
-    if (tool === "brush") {
+    if (tool === "brush" || (tool === "symmetry-brush" && symmetryBrush)) {
       gestureRef.current = { type: "draw", pointerId: event.pointerId, points: [worldPoint] };
       setDraftPoints([worldPoint]);
       event.currentTarget.setPointerCapture(event.pointerId);
@@ -860,6 +929,14 @@ export function DrawingStudioPage() {
       setFreeDraft({ kind: gesture.kind, bounds: { ...bounds, width: Math.min(10_000, bounds.width), height: Math.min(10_000, bounds.height) } });
       return;
     }
+    if (gesture.type === "symmetry-center") {
+      gesture.moved = true;
+      setSymmetryBrush(current => current?.brushId === gesture.brushId ? { ...current, center: worldPoint } : current);
+      replaceElementsLive(documentRef.current.elements.map(element => element.type === "stroke" && element.symmetry?.brushId === gesture.brushId
+        ? { ...element, symmetry: { ...element.symmetry, center: worldPoint } }
+        : element));
+      return;
+    }
     const last = gesture.points.at(-1);
     if (!last || Math.hypot(worldPoint.x - last.x, worldPoint.y - last.y) >= 2 / viewportRef.current.zoom) {
       gesture.points = [...gesture.points, worldPoint];
@@ -894,6 +971,9 @@ export function DrawingStudioPage() {
     if (gesture.type === "move" && gesture.moved) {
       commitElements(gesture.elements.length === 1 ? "移动一个图元" : `整体移动 ${gesture.elements.length} 个图元`, documentRef.current.elements);
     }
+    if (gesture.type === "symmetry-center" && gesture.moved) {
+      commitElements("移动对称画笔中心", documentRef.current.elements);
+    }
     if (gesture.type === "marquee") {
       const ids = elementIdsInSelection(documentRef.current.elements, gesture.startWorld, gesture.currentWorld);
       setSelectedIds(ids);
@@ -921,10 +1001,13 @@ export function DrawingStudioPage() {
           points: gesture.points.map((point) => ({ x: point.x - minX, y: point.y - minY })),
           lineStyle,
           smoothing,
-          layer: 0,
+          layer: tool === "symmetry-brush" && symmetryBrush ? symmetryBrush.layer : 0,
           createdOrder: nextCreatedOrder(documentRef.current.elements),
+          ...(tool === "symmetry-brush" && symmetryBrush ? { symmetry: {
+            brushId: symmetryBrush.brushId, kind: symmetryBrush.kind, order: symmetryBrush.order, center: { ...symmetryBrush.center },
+          } } : {}),
         };
-        commitElements("画下一笔", [...documentRef.current.elements, stroke]);
+        commitElements(tool === "symmetry-brush" ? "用对称画笔画下一笔" : "画下一笔", [...documentRef.current.elements, stroke]);
       }
     }
     if (gesture.type === "draw" && gesture.points.length < 2) {
@@ -1355,18 +1438,23 @@ export function DrawingStudioPage() {
   const renderElement = (element: DrawingElement, interactive = true) => {
     if (element.type === "stroke") {
       return (
-        <path
+        <g
           key={element.id}
           data-element-id={interactive ? element.id : undefined}
-          d={pathFromPoints(element.points, element.smoothing)}
-          transform={`translate(${element.x} ${element.y}) rotate(${element.rotation} ${element.width / 2} ${element.height / 2})`}
-          fill="none"
-          stroke={element.stroke}
-          strokeWidth={element.strokeWidth}
-          strokeLinecap={element.lineStyle === "sharp" ? "square" : "round"}
-          strokeLinejoin={element.lineStyle === "sharp" ? "miter" : "round"}
-          strokeDasharray={element.lineStyle === "dashed" ? `${element.strokeWidth * 2.2} ${element.strokeWidth * 1.6}` : undefined}
-        />
+        >
+          {symmetryTransforms(element.symmetry).map((copyTransform, index) => (
+            <g transform={copyTransform || undefined} key={`${element.id}-${index}`}>
+              <path
+                d={pathFromPoints(element.points, element.smoothing)}
+                transform={`translate(${element.x} ${element.y}) rotate(${element.rotation} ${element.width / 2} ${element.height / 2})`}
+                fill="none" stroke={element.stroke} strokeWidth={element.strokeWidth}
+                strokeLinecap={element.lineStyle === "sharp" ? "square" : "round"}
+                strokeLinejoin={element.lineStyle === "sharp" ? "miter" : "round"}
+                strokeDasharray={element.lineStyle === "dashed" ? `${element.strokeWidth * 2.2} ${element.strokeWidth * 1.6}` : undefined}
+              />
+            </g>
+          ))}
+        </g>
       );
     }
     if (element.type === "text") {
@@ -1497,16 +1585,15 @@ export function DrawingStudioPage() {
   return (
     <div className="drawing-page" data-skip-startup-greeting>
       <div className="drawing-stars" aria-hidden="true" />
-      <header className="drawing-topbar">
-        <a className="drawing-home" href="/" aria-label="返回学习岛首页"><span aria-hidden="true">←</span><strong>画图</strong></a>
-        <div className="drawing-document-name">
+      <GameTopBar title="画图" backHref="/" backLabel="学习大厅" controls={<>
+<div className="drawing-document-name">
           <span>正在创作</span>
           <strong>{document.title}</strong>
           <small className={`is-${autoSaveStatus}`} aria-live="polite">
             {autoSaveStatus === "loading" ? "正在恢复…" : autoSaveStatus === "saving" ? "自动保存中…" : autoSaveStatus === "saved" ? "已自动保存" : "自动保存暂停"}
           </small>
         </div>
-        <nav className="drawing-top-actions" aria-label="作品功能">
+<nav className="drawing-top-actions" aria-label="作品功能">
           <button className="drawing-top-action" type="button" onClick={newDrawing}><span aria-hidden="true">＋</span>新画布</button>
           <button className="drawing-top-action" type="button" disabled={!persistenceReady || workSaving}
             onClick={() => { finishKeyboardEdit(); setDrawer(null); setPortfolioOpen(true); }}><span aria-hidden="true">▦</span>预制作品集</button>
@@ -1523,8 +1610,8 @@ export function DrawingStudioPage() {
           <button className={topActionClass(drawer === "works")} type="button" onClick={() => { const opening = drawer !== "works"; setDrawer(opening ? "works" : null); if (opening) void refreshWorks(); }}><span aria-hidden="true">▦</span>作品</button>
           <button className={topActionClass(drawer === "author")} type="button" onClick={() => setDrawer(drawer === "author" ? null : "author")}><span aria-hidden="true">○</span>作者</button>
         </nav>
-        <input ref={fileInputRef} className="drawing-file-input" type="file" accept=".json,.mumu-drawing.json,application/json" onChange={loadWork} />
-      </header>
+<input ref={fileInputRef} className="drawing-file-input" type="file" accept=".json,.mumu-drawing.json,application/json" onChange={loadWork} />
+</>} />
 
       <main className="drawing-workspace" aria-busy={!persistenceReady}>
         {!persistenceReady && (
@@ -1593,17 +1680,23 @@ export function DrawingStudioPage() {
                   vectorEffect="non-scaling-stroke"
                 />
               )}
+              {tool === "symmetry-brush" && symmetryBrush && (
+                <g className="drawing-symmetry-guide" pointerEvents="none">
+                  {symmetryGuideAngles(symmetryBrush).map((angle, index) => {
+                    return <line key={index} x1={symmetryBrush.center.x - Math.cos(angle) * 1800} y1={symmetryBrush.center.y - Math.sin(angle) * 1800} x2={symmetryBrush.center.x + Math.cos(angle) * 1800} y2={symmetryBrush.center.y + Math.sin(angle) * 1800} vectorEffect="non-scaling-stroke" />;
+                  })}
+                  <circle cx={symmetryBrush.center.x} cy={symmetryBrush.center.y} r={9 / viewport.zoom} vectorEffect="non-scaling-stroke" />
+                </g>
+              )}
               {draftPoints.length > 0 && (
-                <path
-                  className="drawing-draft-stroke"
-                  d={pathFromPoints(draftPoints, smoothing)}
-                  fill="none"
-                  stroke={brushColor}
-                  strokeWidth={brushWidth}
-                  strokeLinecap={lineStyle === "sharp" ? "square" : "round"}
-                  strokeLinejoin={lineStyle === "sharp" ? "miter" : "round"}
-                  strokeDasharray={lineStyle === "dashed" ? `${brushWidth * 2.2} ${brushWidth * 1.6}` : undefined}
-                />
+                <g className="drawing-draft-stroke">
+                  {symmetryTransforms(tool === "symmetry-brush" && symmetryBrush ? symmetryBrush : undefined).map((copyTransform, index) => <path
+                    key={index} transform={copyTransform || undefined} d={pathFromPoints(draftPoints, smoothing)} fill="none"
+                    stroke={brushColor} strokeWidth={brushWidth} strokeLinecap={lineStyle === "sharp" ? "square" : "round"}
+                    strokeLinejoin={lineStyle === "sharp" ? "miter" : "round"}
+                    strokeDasharray={lineStyle === "dashed" ? `${brushWidth * 2.2} ${brushWidth * 1.6}` : undefined}
+                  />)}
+                </g>
               )}
             </g>
           </svg>
@@ -1632,7 +1725,12 @@ export function DrawingStudioPage() {
                     className={tool === option.id ? "is-active" : ""}
                     key={option.id}
                     data-tool={option.id}
-                    onClick={(event) => { chooseTool(option.id); event.currentTarget.focus({ preventScroll: true }); }}
+                    onClick={(event) => {
+                      if (option.id === "symmetry-brush" && !symmetryBrush) {
+                        if (savedSymmetryBrushes[0]) selectSymmetryBrush(savedSymmetryBrushes[0]); else createSymmetryBrush();
+                      } else chooseTool(option.id);
+                      event.currentTarget.focus({ preventScroll: true });
+                    }}
                     aria-pressed={tool === option.id}
                     aria-keyshortcuts={option.shortcut}
                     aria-label={option.shortcut ? `${option.label}，快捷键 ${option.shortcut}` : option.label}
@@ -1743,8 +1841,18 @@ export function DrawingStudioPage() {
                 </div>
               )}
 
-              {tool === "brush" && (
+              {(tool === "brush" || tool === "symmetry-brush") && (
                 <div className="drawing-tool-settings">
+                  {tool === "symmetry-brush" && symmetryBrush && <div className="drawing-symmetry-settings">
+                    <div className="drawing-level-label"><span>对称</span><strong>画笔与规则</strong></div>
+                    <button className="drawing-new-symmetry-brush" type="button" onClick={createSymmetryBrush}>＋ 新建对称画笔</button>
+                    {savedSymmetryBrushes.length > 0 && <div className="drawing-symmetry-brushes" aria-label="已有对称画笔">{savedSymmetryBrushes.map((brush, index) => <button type="button" className={brush.brushId === symmetryBrush.brushId ? "is-active" : ""} onClick={() => selectSymmetryBrush(brush)} key={brush.brushId}>画笔 {savedSymmetryBrushes.length - index}</button>)}</div>}
+                    <div className="drawing-symmetry-rules" role="group" aria-label="对称规则">
+                      {([['none','•','无'],['mirror-horizontal','↕','横轴'],['mirror-vertical','↔','纵轴'],['cyclic','⟳','旋转'],['dihedral','✣','镜像']] as const).map(([kind, mark, label]) => <button type="button" className={symmetryBrush.kind === kind ? "is-active" : ""} onClick={() => updateSymmetryBrush({ kind }, "修改对称画笔规则")} key={kind}><span>{mark}</span><small>{label}</small></button>)}
+                    </div>
+                    {(symmetryBrush.kind === "cyclic" || symmetryBrush.kind === "dihedral") && <div className="drawing-symmetry-orders" role="group" aria-label="对称方向数">{(symmetryBrush.kind === "cyclic" ? [3,4,5,6,8,10,12,24] : [4,6,8,10,12,24]).map(order => <button type="button" className={symmetryBrush.order === order ? "is-active" : ""} onClick={() => updateSymmetryBrush({ order }, "修改对称画笔方向数")} key={order}>{order}</button>)}</div>}
+                    <p className="drawing-tool-tip">直接拖动画布中的中心圆点，可以移动这支画笔的对称中心。</p>
+                  </div>}
                   <div className="drawing-level-label"><span>二级</span><strong>线条形式</strong></div>
                   <div className="drawing-segmented" data-drawing-nav="controls">
                     {(["smooth", "sharp", "dashed"] as LineStyle[]).map((style) => (

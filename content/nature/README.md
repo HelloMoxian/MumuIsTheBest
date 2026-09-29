@@ -1,5 +1,9 @@
 # 自然内容
 
+## 世界、中国与足迹
+
+三个地图玩法已正式接入八个世界图层、中国省市区县分级地图与点亮，以及本机足迹照片。运行时行为、安装与存储合同见 [NATURE_GEOGRAPHY.md](../../docs/NATURE_GEOGRAPHY.md)；来源、快照哈希与 ImageGen 提示词见 [maps/README.md](maps/README.md)。公开地图包安装到仓库外，research 目录只保留历史研究样本，不能当作当前完整的正式行政边界。
+
 ## 岩石与矿物
 
 `rock-mineral-catalog.v1.json` 是“岩石与矿物”玩法的唯一内容事实来源。当前包含 128 个可发现样本：

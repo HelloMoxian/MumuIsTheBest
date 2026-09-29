@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
-import { formatTime, GEMS, LEVELS, RULES_VERSION, rankRecords, type Completion, type RecordEntry } from "./logic";
-import { entryDelay, hintGame, newGame, pauseGame, pickGem, resumeGame, shuffleGame, tickGame, type Game } from "./engine";
+import { findPath, formatTime, GEMS, LEVELS, RULES_VERSION, rankRecords, type Completion, type Point, type RecordEntry } from "./logic";
+import { entryDelay, hintGame, pauseGame, pickGem, resumeGame, shuffleGame, tickGame, type Game } from "./engine";
+import { browserSessions } from "./session";
 import { fetchHistory, type Settlement } from "./api";
 import { LearningCoinBalancePill, useLearningCoinStatus } from "../../shared/LearningCoinLayer";
 import { EnergyCoinBalancePill } from "../../shared/EnergyCoinBalancePill";
 import { LEARNING_COINS_AWARDED_EVENT, LEARNING_COINS_CHANGED_EVENT, type LearningCoinAward } from "../../shared/learning-coins";
 import { useGameFullscreen } from "../../shared/useGameFullscreen";
+import { GameTopBar } from "../../shared/GameTopBar";
 import { displayIndex, displayPoint, fitBoard, logicalIndex } from "./layout";
 import "./gem-connect.css";
 
@@ -18,9 +20,29 @@ function Gem({ kind }: { kind: number }) {
 }
 export function GemConnectGame() {
   const { refresh: refreshKnowledgeCoins } = useLearningCoinStatus();
-  const [game, setGame] = useState<Game>(() => newGame(1));
+  const [sessions] = useState(browserSessions);
+  const [game, setGame] = useState<Game>(() => sessions.load(sessions.activeLevel()));
+  const [guidePaths, setGuidePaths] = useState<Point[][]>([]);
+  const [guideActivity, setGuideActivity] = useState(0);
+  const resetGuides = () => { setGuidePaths([]); setGuideActivity(value => value + 1); };
+  useEffect(() => {
+    setGuidePaths([]);
+    if (game.phase !== "playing" || game.selected === null) return;
+    const selected = game.selected, board = game.board;
+    const timer = window.setTimeout(() => {
+      const paths: Point[][] = [];
+      for (let target = 0; target < board.tiles.length; target++) {
+        if (target === selected || board.tiles[target] === null) continue;
+        // Show reachability only, including different gemstone patterns.
+        const path = findPath(board, selected, target, false);
+        if (path) paths.push(path);
+      }
+      setGuidePaths(paths);
+    }, 3000);
+    return () => window.clearTimeout(timer);
+  }, [game.id, game.board, game.selected, game.phase, guideActivity]);
   const current = useRef(game), clock = useRef(performance.now());
-  const commit = (next: Game) => { current.current = next; setGame(next); };
+  const commit = (next: Game) => { current.current = next; sessions.save(next); setGame(next); };
   const reduced = useRef(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [showTime, setShowTime] = useState(true);
   const [records, setRecords] = useState<RecordEntry[]>([]);
@@ -115,19 +137,24 @@ export function GemConnectGame() {
   actions.current = { sync };
   useEffect(() => {
     const timer = setInterval(() => {
+      const previousPhase = current.current.phase;
       let next = actions.current.sync();
-      if (next.phase === "complete" && next.level < 10) {
-        next = newGame(next.level + 1);
+      if (previousPhase !== "complete" && next.phase === "complete" && next.level < LEVELS.length) {
+        sessions.save(next, true);
+        next = sessions.load(next.level + 1);
+        sessions.save(next, true);
         if (document.hidden) next = pauseGame(next);
         clock.current = performance.now(); commit(next);
       }
     }, 80);
     const hidden = () => {
-      if (document.hidden) commit(pauseGame(actions.current.sync()));
+      if (document.hidden) { commit(pauseGame(actions.current.sync())); sessions.save(current.current, true); }
     };
     document.addEventListener("visibilitychange", hidden);
     if (document.hidden) hidden();
-    return () => { clearInterval(timer); document.removeEventListener("visibilitychange", hidden); };
+    const persist = () => { actions.current.sync(); sessions.save(current.current, true); };
+    window.addEventListener("pagehide", persist);
+    return () => { sessions.save(current.current, true); clearInterval(timer); document.removeEventListener("visibilitychange", hidden); window.removeEventListener("pagehide", persist); };
   }, []);
   useEffect(() => {
     const completion = game.completion;
@@ -143,7 +170,14 @@ export function GemConnectGame() {
     return () => clearInterval(timer);
   }, [savePending]);
   function chooseLevel(level: number) {
-    const next = newGame(level);
+    sessions.save(sync(), true);
+    const next = sessions.load(level);
+    sessions.save(next, true);
+    clock.current = performance.now(); commit(next);
+  }
+  function startNewGame(level = current.current.level) {
+    sessions.save(sync(), true);
+    const next = sessions.restart(level);
     clock.current = performance.now(); commit(next);
   }
   const config = LEVELS[game.level - 1];
@@ -167,20 +201,15 @@ export function GemConnectGame() {
       if (game.board.tiles[logical] !== null) { tilesRef.current[logical]?.focus(); return; }
     }
   }
-  return <main ref={pageRef} className={`gc-page ${fullscreen.focused ? "gc-focused" : ""}`}>
-    <header className="gc-topbar">
-      <a href="/?tab=games" className="gc-button">← 游戏大厅</a>
-      <div className="gc-brand"><span aria-hidden="true">✧</span><strong>宝石连连看</strong></div>
-      <label className="gc-level-select">关卡<select value={game.level} onChange={event => chooseLevel(Number(event.target.value))}>{LEVELS.map((level, i) => <option key={level.name} value={i + 1}>第 {i + 1} 关 · {level.name}</option>)}</select></label>
-      <div className="gc-wallets"><LearningCoinBalancePill /><EnergyCoinBalancePill key={energyRevision} /></div>
-    </header>
-    <nav className="gc-levels" aria-label="十关星光航线">{LEVELS.map((level, index) => {
+  return <main ref={pageRef} className={`gc-page ${fullscreen.focused ? "gc-focused" : ""}`} onClickCapture={resetGuides} onKeyDownCapture={resetGuides}>
+    <GameTopBar title="宝石连连看" controls={<label className="gc-level-select">关卡<select value={game.level} onChange={event => chooseLevel(Number(event.target.value))}>{LEVELS.map((level, i) => <option key={level.name} value={i + 1}>第 {i + 1} 关 · {level.name}</option>)}</select></label>} wallets={<><LearningCoinBalancePill /><EnergyCoinBalancePill key={energyRevision} /></>} />
+    <nav className="gc-levels" aria-label="十五关星光航线">{LEVELS.map((level, index) => {
       const completed = records.some(record => record.rulesVersion === RULES_VERSION && record.level === index + 1) || pending.some(record => record.level === index + 1);
-      return <button key={level.name} aria-current={game.level === index + 1 ? "step" : undefined} onClick={() => chooseLevel(index + 1)} aria-label={`第 ${index + 1} 关 ${level.name}${completed ? "，已通关" : ""}`}><span>{completed ? "✓" : String(index + 1).padStart(2, "0")}</span><small>{level.name}</small></button>;
+      return <button key={level.name} aria-current={game.level === index + 1 ? "step" : undefined} onClick={() => chooseLevel(index + 1)} aria-label={`第 ${index + 1} 关 ${level.name}${completed ? "，已通关" : ""}`}><span>{String(index + 1).padStart(2, "0")}{completed && <i aria-hidden="true"> ✓</i>}</span><small>{level.name}</small></button>;
     })}</nav>
     <header className="gc-focusbar" hidden={!fullscreen.focused}>
       <div className="gc-metric"><span>已用时间</span><strong>{formatTime(game.elapsed)}</strong></div>
-      <div className="gc-metric"><span>得分</span><strong>{score}</strong></div>
+      <div className="gc-metric"><span>已连接</span><strong>{total - remaining} / {total}</strong></div>
       <button className="gc-button" data-fullscreen-exit disabled={fullscreen.switching} onClick={() => void fullscreen.leave()}>退出全屏</button>
     </header>
     <section className="gc-play" aria-label="宝石棋盘">
@@ -194,6 +223,7 @@ export function GemConnectGame() {
           <button className="gc-button" disabled={game.phase === "complete"} onClick={() => {
             const g = sync(); commit(paused ? resumeGame(g) : pauseGame(g)); clock.current = performance.now();
           }}>{paused ? "继续玩" : "Ⅱ 休息"}</button>
+          <button className="gc-button" onClick={() => startNewGame()}>开始新一局</button>
         </div>
       </div>
       <div className="gc-progress"><span>已连接 <b>{total - remaining}</b> / {total} 对</span><progress value={total - remaining} max={total} aria-label="配对进度" /><span>通关奖励：知识币 +{game.level * 10} · 能量币 +{game.level * 10}</span></div>
@@ -222,12 +252,15 @@ export function GemConnectGame() {
               </button>}</div>;
             })}
           </div>
+          {game.phase === "playing" && game.selected !== null && guidePaths.length > 0 && <svg className="gc-guide-paths" viewBox={`0 0 ${layout.cols + 2} ${layout.rows + 2}`} preserveAspectRatio="none" aria-hidden="true">
+            {guidePaths.map((path, index) => <polyline key={index} points={path.map(point => { const position = displayPoint(point, layout.transposed); return `${position.c + 1.5},${position.r + 1.5}`; }).join(" ")} />)}
+          </svg>}
           {game.matches.length > 0 && <svg className={`gc-path ${paused ? "gc-concealed" : ""}`} viewBox={`0 0 ${layout.cols + 2} ${layout.rows + 2}`} preserveAspectRatio="none" aria-hidden="true">
             {game.matches.map(match => <polyline key={game.id + ":" + game.entrance + ":" + match.a + ":" + match.b} pathLength="1" points={match.path.map(point => { const position = displayPoint(point, layout.transposed); return `${position.c + 1.5},${position.r + 1.5}`; }).join(" ")} />)}
           </svg>}
         </div>
         </div>{paused && <div className="gc-pause-card"><h2>星光正在等你</h2><button className="gc-button gc-primary" onClick={() => { clock.current = performance.now(); commit(resumeGame(current.current)); }}>继续玩 →</button></div>}
-        {celebrating && <div className="gc-completion" role="status"><div className="gc-emblem"><Gem kind={3} /></div><h2>{game.level < 10 ? "这一关，点亮啦！" : "璀璨星河，点亮啦！"}</h2><p>通关用时 {preciseTime(game.elapsed)}</p>{game.level < 10 ? <p>星光带你去下一关 ✧</p> : <button className="gc-button gc-primary" onClick={() => chooseLevel(1)}>再游一次星河 →</button>}</div>}
+        {celebrating && <div className="gc-completion" role="status"><div className="gc-emblem"><Gem kind={3} /></div><h2>{game.level < LEVELS.length ? "这一关，点亮啦！" : "宇宙之心，点亮啦！"}</h2><p>通关用时 {preciseTime(game.elapsed)}</p>{game.level < LEVELS.length ? (game.phase === "complete" ? <button className="gc-button gc-primary" onClick={() => chooseLevel(game.level + 1)}>前往下一关 →</button> : <p>星光带你去下一关 ✧</p>) : <button className="gc-button gc-primary" onClick={() => startNewGame(1)}>再游一次星河 →</button>}</div>}
       </div>
       <div className="gc-bottom-line"><p className="gc-feedback" role="status">{game.message}</p><button className="gc-button" onClick={() => recordsDialog.current?.showModal()}>星光榜</button><button className="gc-button" onClick={() => setShowTime(value => !value)}>{showTime ? "隐藏计时" : "显示计时"}</button></div>
     </section>

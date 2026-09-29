@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { browserTts } from "../../shared/speech";
 import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
 import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   arithmeticResultSpeech,
   LocalizedLines,
@@ -513,16 +514,11 @@ export function AddSubtractGame() {
   return (
     <div className="practice-page">
       <div className="practice-stars" aria-hidden="true" />
-      <header className="practice-topbar">
-        <a className="practice-brand" href="/">
-          <span aria-hidden="true">←</span>
-          木木学习岛
-        </a>
-        <span className="practice-mission">数学任务 · 加减练习</span>
+      <GameTopBar title="加减练习" backHref="/" backLabel="学习大厅" controls={
         <button className="history-button" type="button" onClick={() => void loadHistory()}>
           <span aria-hidden="true">◷</span> 历史记录
         </button>
-      </header>
+      } />
 
       <main className="practice-main">
         <section className="practice-cockpit" aria-label="本局配置">

@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/github/MumuIsTheBest/assets/nature/geography/v3/atlas.grid.png",
+  "sourceWidth": 1024,
+  "sourceHeight": 1536,
+  "columns": 1,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 0,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "world",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "world.png",
+      "sourceBox": [
+        0,
+        0,
+        1024,
+        512
+      ],
+      "trimBox": null,
+      "outputWidth": 1024,
+      "outputHeight": 512,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "china",
+      "index": 1,
+      "row": 1,
+      "column": 0,
+      "filename": "china.png",
+      "sourceBox": [
+        0,
+        512,
+        1024,
+        1024
+      ],
+      "trimBox": null,
+      "outputWidth": 1024,
+      "outputHeight": 512,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    },
+    {
+      "id": "footprints",
+      "index": 2,
+      "row": 2,
+      "column": 0,
+      "filename": "footprints.png",
+      "sourceBox": [
+        0,
+        1024,
+        1024,
+        1536
+      ],
+      "trimBox": null,
+      "outputWidth": 1024,
+      "outputHeight": 512,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

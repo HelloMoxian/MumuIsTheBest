@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/.codex/generated_images/01a0ebd6-ee3d-7033-a97f-eaac1f7d615a/exec-f5c01c6c-4bf3-4676-8734-01b3aa98ca9f.webp",
+  "sourceWidth": 1672,
+  "sourceHeight": 941,
+  "columns": 2,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "sudoku",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "sudoku.webp",
+      "sourceBox": [
+        2,
+        2,
+        834,
+        312
+      ],
+      "trimBox": null,
+      "outputWidth": 832,
+      "outputHeight": 310,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        212,
+        245,
+        246,
+        249
+      ],
+      "warnings": []
+    },
+    {
+      "id": "tetris",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "tetris.webp",
+      "sourceBox": [
+        838,
+        2,
+        1670,
+        312
+      ],
+      "trimBox": null,
+      "outputWidth": 832,
+      "outputHeight": 310,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        244,
+        243,
+        248,
+        248
+      ],
+      "warnings": []
+    },
+    {
+      "id": "super-blocks",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "super-blocks.webp",
+      "sourceBox": [
+        2,
+        316,
+        834,
+        625
+      ],
+      "trimBox": null,
+      "outputWidth": 832,
+      "outputHeight": 309,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        241,
+        248,
+        244,
+        247
+      ],
+      "warnings": []
+    },
+    {
+      "id": "gem-connect",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "gem-connect.webp",
+      "sourceBox": [
+        838,
+        316,
+        1670,
+        625
+      ],
+      "trimBox": null,
+      "outputWidth": 832,
+      "outputHeight": 309,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        248,
+        245,
+        246,
+        239
+      ],
+      "warnings": []
+    },
+    {
+      "id": "bejeweled",
+      "index": 4,
+      "row": 2,
+      "column": 0,
+      "filename": "bejeweled.webp",
+      "sourceBox": [
+        2,
+        629,
+        834,
+        939
+      ],
+      "trimBox": null,
+      "outputWidth": 832,
+      "outputHeight": 310,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        245,
+        247,
+        199,
+        241
+      ],
+      "warnings": []
+    },
+    {
+      "id": "workout",
+      "index": 5,
+      "row": 2,
+      "column": 1,
+      "filename": "workout.webp",
+      "sourceBox": [
+        838,
+        629,
+        1670,
+        939
+      ],
+      "trimBox": null,
+      "outputWidth": 832,
+      "outputHeight": 310,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        247,
+        243,
+        241,
+        238
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

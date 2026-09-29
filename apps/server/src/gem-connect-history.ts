@@ -4,25 +4,28 @@ import { dirname, resolve } from "node:path";
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 
-const PAIRS = [30, 36, 42, 48, 54, 60, 70, 77, 84, 90];
+const PAIRS = [30, 36, 42, 49, 56, 64, 72, 81, 90, 100, 110, 121, 132, 144, 156];
+const PREVIOUS_PAIRS = [30, 36, 42, 48, 54, 60, 70, 77, 84, 90, 104, 112, 126, 135, 144];
 const LEGACY_PAIRS = [6, 8, 10, 12, 15, 18, 21, 24, 27, 30];
 const count = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
 const fields = {
-  id: z.string().uuid(), level: z.number().int().min(1).max(10),
+  id: z.string().uuid(), level: z.number().int().min(1).max(15),
   durationMs: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
   hints: count, shuffles: count, pairCount: z.number().int(),
 };
-export const completionSchema = z.object({ ...fields, rulesVersion: z.union([z.literal(2), z.literal(3)]) }).strict()
-  .refine(value => value.pairCount === PAIRS[value.level - 1], "通关宝石数量不符合关卡");
+export const completionSchema = z.object({ ...fields, rulesVersion: z.union([z.literal(2), z.literal(3), z.literal(4), z.literal(5)]) }).strict()
+  .refine(value => value.level <= (value.rulesVersion >= 4 ? 15 : 10)
+    && value.pairCount === (value.rulesVersion === 5 ? PAIRS : PREVIOUS_PAIRS)[value.level - 1], "通关宝石数量不符合关卡或规则版本");
 const legacyEntry = z.object({
   ...fields, createdAt: z.string().datetime(), updatedAt: z.string().datetime(),
 }).strict().refine(value => value.pairCount === LEGACY_PAIRS[value.level - 1], "旧版数量不正确");
 const entrySchema = z.object({
-  ...fields, rulesVersion: z.union([z.literal(1), z.literal(2), z.literal(3)]),
+  ...fields, rulesVersion: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
   rewardStatus: z.enum(["legacy", "pending", "granted"]),
   createdAt: z.string().datetime(), updatedAt: z.string().datetime(),
 }).strict().refine(value =>
-  value.pairCount === (value.rulesVersion === 1 ? LEGACY_PAIRS : PAIRS)[value.level - 1]
+  value.level <= (value.rulesVersion >= 4 ? 15 : 10)
+  && value.pairCount === (value.rulesVersion === 1 ? LEGACY_PAIRS : value.rulesVersion === 5 ? PAIRS : PREVIOUS_PAIRS)[value.level - 1]
   && (value.rulesVersion === 1 ? value.rewardStatus === "legacy" : value.rewardStatus !== "legacy"), "版本与关卡不一致");
 const historyFields = {
   stableId: z.literal("gem-connect-history"),
@@ -30,7 +33,7 @@ const historyFields = {
 };
 const legacyHistorySchema = z.object({ ...historyFields, schemaVersion: z.literal(1), records: z.array(legacyEntry) }).strict();
 const versionTwoHistorySchema = z.object({
-  ...historyFields, schemaVersion: z.literal(2), records: z.array(entrySchema.refine(record => record.rulesVersion !== 3)),
+  ...historyFields, schemaVersion: z.literal(2), records: z.array(entrySchema.refine(record => record.rulesVersion === 2)),
 }).strict();
 export const historySchema = z.object({
   ...historyFields, schemaVersion: z.literal(3), records: z.array(entrySchema),

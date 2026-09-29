@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -501,13 +502,8 @@ export function CommonCharactersGame() {
   return (
     <div className={`characters-page phase-${phase}`}>
       <div className="characters-stars" aria-hidden="true" />
-      <header className="characters-topbar">
-        <a href="/" className="characters-back">← 学习大厅</a>
-        <div className="characters-brand">
-          <span aria-hidden="true">文</span>
-          <div><strong>常用 {poolSize} 字</strong><small>木木的文字星图</small></div>
-        </div>
-        <div className="characters-top-actions">
+      <GameTopBar title={`常用 ${poolSize} 字`} backHref="/" backLabel="学习大厅" controls={<>
+<div className="characters-top-actions">
           <button
             type="button"
             className="characters-list-button"
@@ -517,7 +513,7 @@ export function CommonCharactersGame() {
           </button>
           {voiceButton}
         </div>
-      </header>
+</>} />
 
       {phase === "setup" && (
         <main className="characters-setup-main">

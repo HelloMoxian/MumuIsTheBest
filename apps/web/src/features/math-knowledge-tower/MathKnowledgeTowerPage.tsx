@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -207,10 +208,7 @@ export function MathKnowledgeTowerPage() {
     return (
       <div className="mkt-page">
         <div className="mkt-stars" aria-hidden="true" />
-        <header className="mkt-loading-header">
-          <a href="/" className="mkt-back">← 返回学习岛</a>
-          <strong>数学知识塔</strong>
-        </header>
+        <GameTopBar title="数学知识塔" backHref="/" backLabel="学习大厅" />
         <main className="mkt-state" aria-live="polite">
           {fatalError ? (
             <>
@@ -245,15 +243,8 @@ export function MathKnowledgeTowerPage() {
   return (
     <div className="mkt-page">
       <div className="mkt-stars" aria-hidden="true" />
-      <header className="mkt-dashboard">
-        <div className="mkt-dashboard__identity">
-          <a href="/" className="mkt-back" aria-label="返回木木学习岛">← 返回</a>
-          <div>
-            <p>从一年级到九年级 · 由下向上</p>
-            <h1>数学知识塔</h1>
-          </div>
-        </div>
-        <div className="mkt-dashboard__metrics" aria-label="数学知识塔成长进度">
+      <GameTopBar title="数学知识塔" backHref="/" backLabel="学习大厅" controls={<>
+<div className="mkt-dashboard__metrics" aria-label="数学知识塔成长进度">
           <section className="mkt-metric is-score">
             <span>当前得分</span>
             <strong>{progress.score}<small> / {progress.maxScore}</small></strong>
@@ -279,11 +270,7 @@ export function MathKnowledgeTowerPage() {
             <em>相当于这么大的小朋友</em>
           </section>
         </div>
-        <div className="mkt-dashboard__guide">
-          <p><strong>四步点亮：</strong>先知道 → 懂原理 → 会计算 → 能灵活使用</p>
-          <p>每亮一盏得 1 分；年龄是趣味进度，不是能力评估。</p>
-        </div>
-      </header>
+</>} />
 
       <main className="mkt-workspace">
         <nav className="mkt-grade-rail" aria-label="按年级跳转">

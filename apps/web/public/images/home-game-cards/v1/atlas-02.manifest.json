@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/.codex/generated_images/01a0ebd6-ee3d-7033-a97f-eaac1f7d615a/exec-0167ba25-625e-4c3d-b4c0-9425f86f2d69.webp",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 2,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "fat-burn",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "fat-burn.webp",
+      "sourceBox": [
+        2,
+        2,
+        885,
+        294
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 0.823361,
+      "cornerAlphas": [
+        2,
+        247,
+        9,
+        250
+      ],
+      "warnings": []
+    },
+    {
+      "id": "fruit-slice",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "fruit-slice.webp",
+      "sourceBox": [
+        889,
+        2,
+        1772,
+        294
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 0.772468,
+      "cornerAlphas": [
+        2,
+        246,
+        0,
+        251
+      ],
+      "warnings": []
+    },
+    {
+      "id": "drawing-studio",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "drawing-studio.webp",
+      "sourceBox": [
+        2,
+        298,
+        885,
+        589
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 291,
+      "opaqueCoverage": 0.900997,
+      "cornerAlphas": [
+        10,
+        251,
+        35,
+        246
+      ],
+      "warnings": []
+    },
+    {
+      "id": "symmetry-drawing",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "symmetry-drawing.webp",
+      "sourceBox": [
+        889,
+        298,
+        1772,
+        589
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 291,
+      "opaqueCoverage": 0.819313,
+      "cornerAlphas": [
+        7,
+        250,
+        36,
+        247
+      ],
+      "warnings": []
+    },
+    {
+      "id": "add-subtract",
+      "index": 4,
+      "row": 2,
+      "column": 0,
+      "filename": "add-subtract.webp",
+      "sourceBox": [
+        2,
+        593,
+        885,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 0.944057,
+      "cornerAlphas": [
+        16,
+        234,
+        2,
+        241
+      ],
+      "warnings": []
+    },
+    {
+      "id": "twenty-four",
+      "index": 5,
+      "row": 2,
+      "column": 1,
+      "filename": "twenty-four.webp",
+      "sourceBox": [
+        889,
+        593,
+        1772,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 0.795145,
+      "cornerAlphas": [
+        9,
+        248,
+        2,
+        240
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

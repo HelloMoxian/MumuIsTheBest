@@ -10,6 +10,8 @@ export const MAX_ZOOM = 4;
 export type Point = { x: number; y: number };
 export type Viewport = { x: number; y: number; zoom: number };
 export type LineStyle = "smooth" | "sharp" | "dashed";
+export type DrawingSymmetryKind = "none" | "mirror-horizontal" | "mirror-vertical" | "cyclic" | "dihedral";
+export type DrawingSymmetry = { brushId: string; kind: DrawingSymmetryKind; order: number; center: Point };
 export type TextLayout = "horizontal" | "vertical";
 export type ShapeKind =
   | "circle"
@@ -178,6 +180,7 @@ export type StrokeElement = BaseElement & {
   points: Point[];
   lineStyle: LineStyle;
   smoothing: boolean;
+  symmetry?: DrawingSymmetry;
 };
 
 export type TextElement = BaseElement & {
@@ -654,12 +657,29 @@ function parseElement(value: unknown, fallbackOrder: number): DrawingElement | u
       }
       points.push({ x: point.x, y: point.y });
     }
+    let symmetry: DrawingSymmetry | undefined;
+    if (value.symmetry !== undefined) {
+      if (!isObject(value.symmetry)
+        || !isShortString(value.symmetry.brushId, 80)
+        || !["none", "mirror-horizontal", "mirror-vertical", "cyclic", "dihedral"].includes(String(value.symmetry.kind))
+        || !Number.isInteger(value.symmetry.order) || ![3, 4, 5, 6, 8, 10, 12, 24].includes(value.symmetry.order as number)
+        || !isObject(value.symmetry.center)
+        || !isFiniteInRange(value.symmetry.center.x, -1_000_000, 1_000_000)
+        || !isFiniteInRange(value.symmetry.center.y, -1_000_000, 1_000_000)) return undefined;
+      symmetry = {
+        brushId: value.symmetry.brushId,
+        kind: value.symmetry.kind as DrawingSymmetryKind,
+        order: value.symmetry.order as number,
+        center: { x: value.symmetry.center.x, y: value.symmetry.center.y },
+      };
+    }
     return {
       ...base,
       type: "stroke",
       points,
       lineStyle: value.lineStyle as LineStyle,
       smoothing: value.smoothing,
+      ...(symmetry ? { symmetry } : {}),
     };
   }
 

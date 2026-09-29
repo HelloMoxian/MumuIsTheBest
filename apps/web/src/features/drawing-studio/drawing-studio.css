@@ -723,6 +723,20 @@
 .drawing-author-form input { width: 100%; min-height: 52px; padding: 0 14px; border: 1px solid var(--line-glow); border-radius: 14px; color: white; background: rgba(255,255,255,.065); }
 .drawing-author-form p { margin: 0; color: var(--ink-secondary); font-size: 13px; }
 
+.drawing-symmetry-settings { display: grid; gap: 9px; margin-bottom: 16px; padding-bottom: 15px; border-bottom: 1px solid var(--line-glow); }
+.drawing-new-symmetry-brush { min-height: 48px; border: 1px solid rgba(89,231,255,.42); border-radius: 14px; color: white; background: linear-gradient(135deg, rgba(89,231,255,.16), rgba(141,115,255,.24)); font-weight: 950; }
+.drawing-symmetry-brushes { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 3px; }
+.drawing-symmetry-brushes button { min-width: max-content; min-height: 38px; padding: 0 11px; border: 1px solid var(--line-glow); border-radius: 11px; color: var(--ink-secondary); background: rgba(255,255,255,.05); font-weight: 850; }
+.drawing-symmetry-brushes button.is-active { border-color: var(--cyan-300); color: white; background: rgba(89,231,255,.12); }
+.drawing-symmetry-rules { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.drawing-symmetry-rules button { display: grid; min-width: 0; min-height: 62px; place-items: center; padding: 6px 2px; border: 1px solid var(--line-glow); border-radius: 12px; color: var(--ink-secondary); background: rgba(255,255,255,.045); }
+.drawing-symmetry-rules button span { font-size: 21px; }.drawing-symmetry-rules button small { font-size: 10px; font-weight: 850; }
+.drawing-symmetry-rules button.is-active, .drawing-symmetry-orders button.is-active { border-color: var(--violet-400); color: white; background: rgba(141,115,255,.22); box-shadow: 0 0 16px rgba(141,115,255,.12); }
+.drawing-symmetry-orders { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+.drawing-symmetry-orders button { min-width: 0; min-height: 38px; padding: 0; border: 1px solid var(--line-glow); border-radius: 10px; color: var(--ink-secondary); background: rgba(255,255,255,.045); font-weight: 900; }
+.drawing-symmetry-guide line { stroke: rgba(105,80,220,.42); stroke-width: 1.5; stroke-dasharray: 7 8; }
+.drawing-symmetry-guide circle { fill: white; stroke: var(--violet-600); stroke-width: 3; cursor: grab; pointer-events: all; }
+
 @media (max-width: 1180px) {
   .drawing-document-name { display: none; }
   .drawing-toolbox { flex-basis: 326px; }

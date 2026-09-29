@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 2,
+  "id": "nature-geography-art",
+  "createdAt": "2026-09-29T00:00:00Z",
+  "updatedAt": "2026-09-29T00:00:00Z",
+  "tool": "image_gen.imagegen",
+  "reference": "apps/web/public/images/home-game-cards/v1/rock-minerals.webp",
+  "derivation": "Each original 2170x725 PNG resized proportionally to 1200x401 and encoded WebP quality 88. Original generated files retained.",
+  "images": [
+    {
+      "id": "world",
+      "path": "apps/web/public/images/nature/geography/world.webp",
+      "prompt": "Use case: stylized-concept. Generate a polished 3D illustrated website game card background, very wide 3:1 composition, no text, no UI, no borders, no flat vector line icons. Match the reference's deep indigo space observatory, richly textured miniatures, violet/cyan glows, restrained warm gold metal, soft cinematic lighting and sophisticated child-friendly style. Keep the LEFT 48 percent dark low-detail empty space for a title added by HTML. Put the main object in the RIGHT half, completely inside the image and legible at small size. This is a standalone artwork, not a screenshot. Subject: a beautiful luminous blue-and-green physical Earth globe held in a small brass observatory cradle, clouds and ocean glints, subtle orbit rings, on a futuristic desk against distant stars. It represents exploring the world; do not draw political borders or text."
+    },
+    {
+      "id": "china",
+      "path": "apps/web/public/images/nature/geography/china.webp",
+      "prompt": "Use case: stylized-concept. Generate a polished 3D illustrated website game card background, very wide 3:1 composition, no text, no UI, no borders, no flat vector line icons. Match the reference's deep indigo space observatory, richly textured miniatures, violet/cyan glows, restrained warm gold metal, soft cinematic lighting and sophisticated child-friendly style. Keep the LEFT 48 percent dark low-detail empty space for a title added by HTML. Put the main object in the RIGHT half, completely inside the image and legible at small size. This is a standalone artwork, not a screenshot. Subject: a miniature Chinese landscape on a glowing floating atlas platform, sculpted emerald mountains and blue winding river, a small Great Wall section and elegant traditional pavilion. It represents exploring China. No map outline or political boundaries; the terrain and cultural landmarks communicate the subject. No text."
+    },
+    {
+      "id": "footprints",
+      "path": "apps/web/public/images/nature/geography/footprints.webp",
+      "prompt": "Use case: stylized-concept. Generate a polished 3D illustrated website game card background, very wide 3:1 composition, no text, no UI, no borders, no flat vector line icons. Match the reference's deep indigo space observatory, richly textured miniatures, violet/cyan glows, restrained warm gold metal, soft cinematic lighting and sophisticated child-friendly style. Keep the LEFT 48 percent dark low-detail empty space for a title added by HTML. Put the main object in the RIGHT half, completely inside the image and legible at small size. This is a standalone artwork, not a screenshot. Subject: a travel memory album open on an observatory desk, several small glossy photographs depicting scenic mountains and lakes tucked into its right-hand page, a polished cyan/gold location pin and a tiny camera nearby, with a gentle dotted light trail. No people, no faces, no writing on the photographs or album."
+    }
+  ]
+}

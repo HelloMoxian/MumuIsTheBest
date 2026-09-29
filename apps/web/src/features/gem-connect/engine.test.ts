@@ -95,16 +95,16 @@ test("无可连配对时等动画结束再自动重排", () => {
   assert.equal(game.matches.length, 0);
   assert.ok(findMove(game.board));
 });
-test("180颗在一轮动画内连续完成，全部收尾后只生成一次回执", () => {
-  let game = { ...fixture(Array.from({ length: 180 }, (_, i) => Math.floor(i / 2) % 8), 15), level: 10 };
-  for (let i = 0; i < 90; i++) {
+test("288颗在一轮动画内连续完成，全部收尾后只生成一次回执", () => {
+  let game = { ...fixture(Array.from({ length: 288 }, (_, i) => Math.floor(i / 2) % 27), 18), level: 15 };
+  for (let i = 0; i < 144; i++) {
     const pair = findMove(game.board)!;
     assert.ok(pair);
-    game = tickGame(game, 5);
+    game = tickGame(game, 1);
     game = connect(game, pair[0], pair[1]);
   }
   assert.equal(game.board.tiles.every(tile => tile === null), true);
-  assert.equal(game.matches.length, 90);
+  assert.equal(game.matches.length, 144);
   assert.equal(game.phase, "settling");
   assert.equal(game.completion, null);
   assert.equal(pickGem(game, 0), game);
@@ -113,8 +113,8 @@ test("180颗在一轮动画内连续完成，全部收尾后只生成一次回�
   assert.equal(game.matches.length, 1);
   game = tickGame(game, 1);
   assert.equal(game.phase, "celebrating");
-  assert.equal(game.completion?.pairCount, 90);
-  assert.equal(game.completion?.durationMs, 450);
+  assert.equal(game.completion?.pairCount, 144);
+  assert.equal(game.completion?.durationMs, 144);
   const completion = game.completion;
   game = tickGame(pauseGame(game), 10000); assert.equal(game.phase, "paused");
   game = tickGame(resumeGame(game), LEVEL_TRANSITION_MS);

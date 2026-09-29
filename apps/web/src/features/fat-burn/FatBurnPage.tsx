@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGameFullscreen } from "../../shared/useGameFullscreen";
 import { MomCoach } from "./MomCoach";
@@ -175,13 +176,12 @@ export function FatBurnPage() {
   const retryAudio = () => { setAudioError(""); void audio.current?.setMusic(music); audio.current?.setVoice(voice); audio.current?.setRunning(runningRef.current); };
 
   return <div ref={root} className={`fat-burn ${fullscreen.focused ? "is-fullscreen" : ""}`} data-elapsed-ms={Math.floor(elapsed)} data-running={running} data-course-id={course.id}>
-    <header className="fat-burn-header">
-      <a className="fat-burn-brand" href="/" aria-label="返回木木学习岛"><span aria-hidden="true">✦</span><div>燃脂 <small>妈妈的运动课</small></div></a>
-      <div className="fat-burn-header-actions">
+    <GameTopBar title="陪妈妈跳操" backHref="/" backLabel="学习大厅" wallets={false} controls={<>
+<div className="fat-burn-header-actions">
         <button className="fb-button fb-quiet" onClick={() => openDialog("week")}>一周课表</button>
         <button className="fb-button fb-quiet" data-fullscreen-exit disabled={fullscreen.switching} onClick={() => void (fullscreen.focused ? fullscreen.leave() : fullscreen.enter())}>{fullscreen.focused ? "退出全屏" : "全屏跟练"}</button>
       </div>
-    </header>
+</>} />
 
     <main className="fat-burn-main">
       <section className="fat-burn-selected-course" aria-label="当前课程">

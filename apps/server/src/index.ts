@@ -1,4 +1,6 @@
 import { registerSudokuApi } from "./sudoku.js";
+import { registerNatureGeographyApi } from "./nature-geography.js";
+import { registerTwentyFourApi } from "./twenty-four.js";
 import { registerWorkoutApi } from "./workout.js";
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
@@ -548,9 +550,11 @@ async function main() {
   registerCommonCharacterProgressApi(app, appDataDir);
   registerPersistentUserDataApi(app, appDataDir);
   registerDrawingStudioWorksApi(app, appDataDir);
+  registerNatureGeographyApi(app, appDataDir);
   const energyWallet = registerFruitSliceHistoryApi(app, appDataDir);
   registerWorkoutApi(app, appDataDir, energyWallet.creditWorkout);
   const knowledgeWallet = registerWorldTowerApi(app, appDataDir, projectRoot);
+  registerTwentyFourApi(app, appDataDir, knowledgeWallet.awardTwentyFour);
   registerSudokuApi(app, appDataDir, {
     knowledge: knowledgeWallet.awardSudoku,
     energy: energyWallet.awardSudoku,

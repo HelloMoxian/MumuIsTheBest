@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "id": "country-teaching-notes",
+  "createdAt": "2026-09-29T00:00:00Z",
+  "updatedAt": "2026-09-29T00:00:00Z",
+  "records": {
+    "CN": {
+      "culture": "制茶、饮茶与待客相连；春节团聚、辞旧迎新，是重要的节日传统。",
+      "sources": [
+        "https://ich.unesco.org/en/RL/traditional-tea-processing-techniques-and-associated-social-practices-in-china-01884",
+        "https://courier.unesco.org/en/articles/china-story-movable-feast"
+      ]
+    },
+    "JP": {
+      "culture": "和食重视时令食材与节庆分享，新年餐食也是传统文化的一部分。",
+      "economy": "汽车、机械和电子零部件是重要的出口产品。",
+      "sources": [
+        "https://ich.unesco.org/doc/src/LHE-25-PRO_FOOD-Presentation.pdf",
+        "https://www.mfa.gov.cn/web/gjhdq_676201/gj_676203/yz_676205/1206_676836/"
+      ]
+    },
+    "KR": {
+      "culture": "一起制作、分享泡菜的“越冬泡菜”传统，连接家人和邻里。",
+      "sources": [
+        "https://ich.unesco.org/doc/src/LHE-25-PRO_FOOD-Presentation.pdf"
+      ]
+    },
+    "FR": {
+      "culture": "传统聚餐重视食材、摆桌和交流，享受一起吃饭的时光。",
+      "economy": "航空航天、汽车、农业食品与旅游，都是有代表性的产业。",
+      "sources": [
+        "https://www.france.fr/en/article/gastronomic-meal-french/",
+        "https://www.mfa.gov.cn/gjhdq_676201/gj_676203/oz_678770/1206_679134/1206x0_679136/"
+      ]
+    },
+    "BR": {
+      "culture": "巴伊亚的桑巴舞圈融合音乐、舞蹈与诗歌，是当地节庆传统。",
+      "sources": [
+        "https://www.unesco.org/en/intangible-cultural-heritage/list?sort=sort_title_desc"
+      ]
+    },
+    "ES": {
+      "culture": "安达卢西亚的弗拉门戈，把歌唱、舞蹈与乐器演奏结合起来。",
+      "sources": [
+        "https://www.unesco.org/en/intangible-cultural-heritage/list?sort=sort_title_desc"
+      ]
+    },
+    "IT": {
+      "culture": "从家常烹饪到共同用餐，意大利饮食传统强调分享与地方食材。",
+      "sources": [
+        "https://unesco.cultura.gov.it/en/news/la-cucina-italiana-iscritta-nella-lista-del-patrimonio-culturale-immateriale-dellumanita/"
+      ]
+    },
+    "MX": {
+      "culture": "传统饮食连着种植、烹饪和共同用餐，是认识当地生活的窗口。",
+      "sources": [
+        "https://courier.unesco.org/en/articles/food-and-intangible-heritage-flavourful-relationship"
+      ]
+    },
+    "PE": {
+      "culture": "酸橘汁腌鱼是代表性传统菜肴，常与本地种植的食物搭配。",
+      "sources": [
+        "https://courier.unesco.org/en/articles/food-and-intangible-heritage-flavourful-relationship"
+      ]
+    },
+    "PT": {
+      "culture": "地中海饮食传统不只是食谱，也包括分享食物和共同用餐。",
+      "sources": [
+        "https://courier.unesco.org/en/articles/food-and-intangible-heritage-flavourful-relationship"
+      ]
+    },
+    "GR": {
+      "culture": "共同用餐、分享地方食物，是地中海饮食传统的重要部分。",
+      "sources": [
+        "https://courier.unesco.org/en/articles/food-and-intangible-heritage-flavourful-relationship"
+      ]
+    },
+    "LK": {
+      "sources": [
+        "https://www.mfa.gov.lk/national-profile-and-geography",
+        "https://www.geonames.org/1238992/sri-jayewardenepura-kotte.html"
+      ]
+    },
+    "BO": {
+      "sources": [
+        "https://www.fmprc.gov.cn/gjhdq_676201/gj_676203/nmz_680924/1206_681022/1206x0_681024/"
+      ]
+    },
+    "ZA": {
+      "sources": [
+        "https://www.fmprc.gov.cn/web/gjhdq_676201/gj_676203/fz_677316/1206_678284/1206x0_678286/"
+      ]
+    },
+    "NR": {
+      "sources": [
+        "https://dgff2021.unctad.org/nauru/"
+      ]
+    }
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "source": "/Users/wangjian/.codex/generated_images/01a0ebd6-ee3d-7033-a97f-eaac1f7d615a/exec-622921ce-c731-46a1-8f3b-a45ad90698cc.webp",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 2,
+  "rows": 3,
+  "indexOrder": "row-major-zero-based",
+  "inset": 2,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "math-knowledge-tower",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "math-knowledge-tower.webp",
+      "sourceBox": [
+        2,
+        2,
+        885,
+        294
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        117,
+        246,
+        198,
+        247
+      ],
+      "warnings": []
+    },
+    {
+      "id": "english-echo-island",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "english-echo-island.webp",
+      "sourceBox": [
+        889,
+        2,
+        1772,
+        294
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        144,
+        237,
+        196,
+        239
+      ],
+      "warnings": []
+    },
+    {
+      "id": "periodic-table",
+      "index": 2,
+      "row": 1,
+      "column": 0,
+      "filename": "periodic-table.webp",
+      "sourceBox": [
+        2,
+        298,
+        885,
+        589
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 291,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        182,
+        246,
+        180,
+        236
+      ],
+      "warnings": []
+    },
+    {
+      "id": "reaction-furnace",
+      "index": 3,
+      "row": 1,
+      "column": 1,
+      "filename": "reaction-furnace.webp",
+      "sourceBox": [
+        889,
+        298,
+        1772,
+        589
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 291,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        185,
+        229,
+        173,
+        234
+      ],
+      "warnings": []
+    },
+    {
+      "id": "molecule-factory",
+      "index": 4,
+      "row": 2,
+      "column": 0,
+      "filename": "molecule-factory.webp",
+      "sourceBox": [
+        2,
+        593,
+        885,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        191,
+        230,
+        117,
+        163
+      ],
+      "warnings": []
+    },
+    {
+      "id": "world-tower",
+      "index": 5,
+      "row": 2,
+      "column": 1,
+      "filename": "world-tower.webp",
+      "sourceBox": [
+        889,
+        593,
+        1772,
+        885
+      ],
+      "trimBox": null,
+      "outputWidth": 883,
+      "outputHeight": 292,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        172,
+        237,
+        122,
+        169
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

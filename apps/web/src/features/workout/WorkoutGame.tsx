@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MOVES, DEFAULT_MOVES, DEFAULT_SETTINGS, validSettings, earnedRewards, type WorkoutSettings, validPlan, validPool, moveById, stageAt, advanceWorkout, WORKOUT_MS, type MoveId, type Stage } from "../../../../server/src/workout-contract";
-import { EnergyCoinBalancePill } from "../../shared/EnergyCoinBalancePill";
+import { GameTopBar } from "../../shared/GameTopBar";
 import { Coach3D as Coach } from "./Coach3D";
 import { WorkoutAudio } from "./audio";
 import "./workout.css";
@@ -237,20 +237,16 @@ export function WorkoutGame() {
     audio.current?.tick(session?.id+":"+current?.index,title+"。"+(cue??""),count,stage?.cycleMs??1000);
   }, [paused, loading, complete, session?.id, current?.index, title, cue, count, stage?.cycleMs, spoken]);
   return <main className="workout-page" data-skip-startup-greeting>
-    <header className="workout-top">
-      <a href="/#games-title" onClick={event=>{
+    <GameTopBar title="跳操" backHref="/#games-title" backLabel="游戏大厅" onBack={event=>{
         if(session && !loading){event.preventDefault();setPause(true);void (async()=>{
           if(pendingSync.current)await pendingSync.current;
           if(await sync())location.href="/#games-title";
         })();}
-      }}>‹ 游戏大厅</a><span className="workout-brand">跳操 <small>星际活力站</small></span>
-      <EnergyCoinBalancePill key={revision} />
-      <div className="workout-actions">
+      }} controls={<div className="workout-actions">
         <button disabled={loading || !session || complete} onClick={() => setPause(!paused)}>{paused ? "继续运动" : "暂停休息"}</button>
         <button ref={chooseButton} disabled={loading || !session} onClick={openConfig}>选择动作</button>
         <button disabled={loading || syncBusy || (complete && !reward)} onClick={() => void restart()}>刷新重开</button>
-      </div>
-    </header>
+      </div>} />
     <div className="workout-progress">
       <div><span>五分钟活力旅行</span><strong>{timeText(Math.min(elapsed, WORKOUT_MS))} / 5:00</strong><span>已得 <b>{earned}</b> / 200 能量币</span></div>
       <progress value={elapsed} max={WORKOUT_MS} aria-label="整节运动进度" />

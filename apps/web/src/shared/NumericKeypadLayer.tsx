@@ -25,15 +25,22 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
   const placeRowRef = useRef<HTMLDivElement | null>(null);
   const isHome = window.location.pathname === "/";
   const isImmersiveCameraGame = [
+    "/math/twenty-four",
     "/math/2048",
+    "/math/sliding-puzzle",
+    "/physics/house-building",
     "/games/sudoku",
     "/games/tetris",
+    "/games/super-blocks",
     "/games/gem-connect",
     "/games/workout",
     "/games/fruit-slice",
     "/games/galaxy-racer",
     "/games/bejeweled",
     "/nature/stargazing",
+    "/nature/world",
+    "/nature/china",
+    "/nature/footprints",
   ].includes(window.location.pathname);
   const value = digits ? Number(digits) : null;
   const spokenValue = useMemo(

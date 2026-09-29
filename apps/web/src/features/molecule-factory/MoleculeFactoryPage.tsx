@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   useCallback,
   useEffect,
@@ -585,19 +586,13 @@ function MoleculeFactoryExperience({ initialState }: { initialState: BasinInitia
   return (
     <div className="furnace-page treasure-page">
       <div className="furnace-stars" aria-hidden="true" />
-      <header className="treasure-topbar">
-        <a href="/" className="treasure-back" aria-label="返回学习大厅">← 大厅</a>
-        <div className="treasure-title">
-          <span aria-hidden="true">✦</span>
-          <strong>分子工厂</strong>
-          <small>投放原子，选择或自动合成物质</small>
-        </div>
-        <div className="treasure-top-stats" aria-label="探索统计">
+      <GameTopBar title="分子工厂" backHref="/" backLabel="学习大厅" controls={<>
+<div className="treasure-top-stats" aria-label="探索统计">
           <span><strong>{freeAtomCount}</strong> 游离原子</span>
           <span><strong>{formedIons.length}</strong> 个原子团</span>
           <span><strong>{discoveries.length}</strong> 种发现</span>
         </div>
-        <fieldset className="factory-options" disabled={factoryBusy}>
+<fieldset className="factory-options" disabled={factoryBusy}>
           <legend className="sr-only">分子工厂合成选项</legend>
           <label>
             <input
@@ -618,13 +613,13 @@ function MoleculeFactoryExperience({ initialState }: { initialState: BasinInitia
             <strong>自动合成</strong>
           </label>
         </fieldset>
-        <div className="treasure-actions">
+<div className="treasure-actions">
           <button type="button" onClick={clearFreeAtoms} disabled={(freeAtomCount === 0 && formedIons.length === 0) || factoryBusy}>
             清空原子和原子团
           </button>
           <button type="button" onClick={restart}>重新开始</button>
         </div>
-      </header>
+</>} />
 
       <main className="treasure-main">
         <section className="treasure-workspace">

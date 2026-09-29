@@ -4,7 +4,7 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { EnergyCoinBalancePill } from "../../shared/EnergyCoinBalancePill";
+import { GameTopBar } from "../../shared/GameTopBar";
 import { settleRacerRun, type RacerSettlement } from "./api";
 import { RACER_THEMES, energyCoinUrl, preloadRacerTheme } from "./assets";
 import { RacerAudio } from "./audio";
@@ -461,8 +461,7 @@ export function GalaxyRacerGame() {
         <small>{previewHeadX === null ? "把脸移进小窗口" : "移动整个头部，不用歪头"}</small>
       </aside>
 
-      <header className="racer-topbar">
-        <a className="racer-icon-button racer-exit" href="/" aria-label="返回游戏岛">‹ <span>游戏岛</span></a>
+      <GameTopBar className="racer-topbar" title="星际极速赛" backHref="/" backLabel="游戏岛" controls={<>
         <div className="racer-stage-strip" aria-label="六关进度">
           {RACER_STAGES.map((stage) => {
             const attempt = attempts.find((item) => item.level === stage.level);
@@ -478,7 +477,6 @@ export function GalaxyRacerGame() {
             );
           })}
         </div>
-        <EnergyCoinBalancePill />
         <button type="button" className="racer-icon-button" onClick={toggleSound} aria-pressed={soundEnabled}>
           {soundEnabled ? "声音开" : "声音关"}
         </button>
@@ -490,7 +488,7 @@ export function GalaxyRacerGame() {
         >
           {status === "paused" ? "继续" : "暂停"}
         </button>
-      </header>
+      </>} />
 
       <section className="racer-hud" aria-label="当前赛程">
         <div className="racer-level-badge">

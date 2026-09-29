@@ -1,0 +1,87 @@
+{
+  "version": 2,
+  "generator": "built-in image_gen",
+  "sourceSize": [
+    1983,
+    793
+  ],
+  "grid": {
+    "columns": 5,
+    "rows": 2,
+    "order": "row-major"
+  },
+  "processing": "Split with project chroma-atlas-extractor using preserved RGBA background; 0 warnings. Runtime assets normalized to 384×384 RGBA without cropping the silhouette.",
+  "prompt": "Use case: stylized-concept. Asset type: production sprite atlas for a beautiful children's cosmic gemstone connect-pairs game. Primary request: create EXACTLY TEN distinct isolated gemstone icons in one atlas, arranged in an exact 5 columns × 2 rows regular grid, reading left-to-right then top-to-bottom. Each cell contains exactly one centered gem and no other object. Subjects in exact reading order: (1) vivid lime-green LEAF crystal; (2) hot-magenta BOW crystal; (3) icy cobalt-blue SIX-ARM SNOWFLAKE crystal; (4) copper-bronze EIGHT-TOOTH GEAR crystal; (5) royal-violet THREE-POINT CROWN crystal; (6) bright turquoise HOLLOW RING crystal; (7) cherry-red KEY crystal; (8) neon chartreuse FLAME crystal; (9) deep-indigo HOURGLASS crystal; (10) clear rainbow TRAPEZOID PRISM crystal. Match premium luminous chunky 3D faceted jewels used in a polished gem-matching game; consistent lighting, camera, scale, bevel depth and rendering quality. Wide exact 5×2 equal cells, genuine transparent alpha, one centered icon per cell, no text, grid lines, borders, shadows, settings, decorations, logos or watermark.",
+  "assets": [
+    {
+      "id": "leaf",
+      "name": "青柠叶片",
+      "introducedAtLevel": 11,
+      "source": "assets/game/gem-connect/expansion.v2/leaf.png",
+      "runtime": "apps/web/public/images/gem-connect/leaf.png"
+    },
+    {
+      "id": "bow",
+      "name": "玫红蝴蝶结",
+      "introducedAtLevel": 11,
+      "source": "assets/game/gem-connect/expansion.v2/bow.png",
+      "runtime": "apps/web/public/images/gem-connect/bow.png"
+    },
+    {
+      "id": "snowflake",
+      "name": "冰蓝雪花",
+      "introducedAtLevel": 12,
+      "source": "assets/game/gem-connect/expansion.v2/snowflake.png",
+      "runtime": "apps/web/public/images/gem-connect/snowflake.png"
+    },
+    {
+      "id": "gear",
+      "name": "琥珀齿轮",
+      "introducedAtLevel": 12,
+      "source": "assets/game/gem-connect/expansion.v2/gear.png",
+      "runtime": "apps/web/public/images/gem-connect/gear.png"
+    },
+    {
+      "id": "crown",
+      "name": "紫晶皇冠",
+      "introducedAtLevel": 13,
+      "source": "assets/game/gem-connect/expansion.v2/crown.png",
+      "runtime": "apps/web/public/images/gem-connect/crown.png"
+    },
+    {
+      "id": "ring",
+      "name": "青色圆环",
+      "introducedAtLevel": 13,
+      "source": "assets/game/gem-connect/expansion.v2/ring.png",
+      "runtime": "apps/web/public/images/gem-connect/ring.png"
+    },
+    {
+      "id": "key",
+      "name": "赤红钥匙",
+      "introducedAtLevel": 14,
+      "source": "assets/game/gem-connect/expansion.v2/key.png",
+      "runtime": "apps/web/public/images/gem-connect/key.png"
+    },
+    {
+      "id": "flame",
+      "name": "青柠火焰",
+      "introducedAtLevel": 14,
+      "source": "assets/game/gem-connect/expansion.v2/flame.png",
+      "runtime": "apps/web/public/images/gem-connect/flame.png"
+    },
+    {
+      "id": "hourglass",
+      "name": "靛蓝沙漏",
+      "introducedAtLevel": 15,
+      "source": "assets/game/gem-connect/expansion.v2/hourglass.png",
+      "runtime": "apps/web/public/images/gem-connect/hourglass.png"
+    },
+    {
+      "id": "prism",
+      "name": "虹彩棱镜",
+      "introducedAtLevel": 15,
+      "source": "assets/game/gem-connect/expansion.v2/prism.png",
+      "runtime": "apps/web/public/images/gem-connect/prism.png"
+    }
+  ]
+}

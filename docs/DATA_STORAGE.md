@@ -1,6 +1,16 @@
 # 本机数据目录与迁移规范
 
+## 自然地图、地区点亮与足迹
+
+- `learning/nature/geography.json`：schemaVersion 1、稳定 ID `nature-geography`、创建/更新时间、revision、地区 adcode 点亮列表与 UUID 足迹记录；每条足迹固定 GCJ-02 坐标与地图快照时间。
+- `media/nature-footprints/<UUID>.webp`、`<UUID>.thumb.webp`：重新编码去 EXIF 的本机照片与缩略图，不写 Git 或 public。单进程写队列、原子替换、私有权限；记录发布失败回滚本次图片。未知版本/损坏文件拒绝覆盖；第一阶段没有个人旧档需要迁移。
+- `cache/nature-maps/{china,world}.json.gz`：公开地图离线缓存，可通过安装脚本重建。个人备份应同时包含元数据与整个照片目录；公开缓存可选保留。本次不更改默认数据根目录或导入导出格式。详见 `NATURE_GEOGRAPHY.md`。
+
+- 数学「华容道」按用户要求使用浏览器缓存 `mumu:sliding-puzzle:v1`（schemaVersion 1，UUID/创建更新时间），保存图片裁剪、完整打乱轨迹、棋盘与可撤销的玩家历史。读取重放校验、写入失败重试、冲突停止编辑；不新建服务端数据文件，清除站点数据会删除此缓存，不纳入服务端备份。详见 `SLIDING_PUZZLE.md`。
+
 - 数学「2048」通过通用持久化 API 保存于 `learning/math/2048-state.json`（稳定 ID `math-2048`，外壳与载荷版本 1），包含三种尺寸各自的棋盘、分数、最高分与生成档位，以及上次选择。复用仓库外目录、UUID/时间、串行原子写入与 0600 权限；不使用浏览器长期存储。没有旧档迁移，未知版本拒绝覆盖；未来备份需包含此文件，不更改既有目录或备份格式。详见 `2048.md`。
+
+- 物理「盖房子」v3 使用 `learning/physics/house-workspace.v2.json`（稳定 ID `physics-house-workspace`，载荷 v2）缓存布局、参数、随机任务、显示开关与视角；`learning/physics/house-history.json`（`physics-house-history`，载荷 v1，记录 modelVersion=2/3，新 v3 含造价 result.cost，旧 v2 保留不重算）保存通关报告与完整方案。旧 `house-design.json`（`physics-house`，v1）只作为缺少新缓存时的迁移源，保留不覆盖，支持回退。通用外壳仍为 v1，沿用私有权限与串行原子写入；记录按 UUID 幂等追加合并，最多 1000 条，损坏/未来版本拒绝覆盖。倒塌不覆盖原布局，清空不删历史。未来备份应包含这三个文件，数据根目录与备份格式不变。详见 `HOUSE_BUILDING.md`。
 
 ## 跳操数据
 
@@ -38,12 +48,13 @@
 | 加减练习 | `learning/math/add-subtract-history.json` | 完整场次、逐题首次正确与耗时 |
 | 算数大战 | `learning/math/arithmetic-battle-history.json` | 难度、并行题目、解题顺序与耗时 |
 | 乘法小能手 | `learning/math/multiplication-history.json` | 档位、乘除题目、正确率与耗时 |
+| 24点 | `learning/math/twenty-four-state.json` | 八选四题目、算式、撤销、服务端计时、参考解状态、通关与待发知识币；详见 `TWENTY_FOUR.md` |
 | 数学知识塔 | `learning/math/knowledge-tower-progress.json` | 已点亮知识灯与目录版本 |
 | 常用汉字 | `learning/chinese/common-characters-progress.json` | 学习、掌握、继续复习次数与时间 |
 | 英语回声岛 | `learning/english/echo-island-progress.json` | 学习池、完成次数、标记与幂等事件 |
 | 宝石迷阵 | `learning/games/bejeweled-state.json` | 完整续玩棋盘、模式、等级、总得分、总消除数、七色消除数与幂等版本；详见 `BEJEWELED.md` |
 | 切水果、星际极速赛与能量币 | `learning/games/fruit-slice-history.json` | 六个家庭角色的切水果逐局战报、星际极速赛批量关卡奖励、独立能量币余额与幂等收支账本 |
-| 宝石连连看 | `learning/games/gem-connect-history.json` | 新版 60—180 颗通关时间、规则版本、提示/重排次数、幂等 ID 与双钱包待发状态；不保存姓名或未完成棋盘 |
+| 宝石连连看 | `learning/games/gem-connect-history.json` | 新版 60—312 颗通关时间、规则版本、提示/重排次数、幂等 ID 与双钱包待发状态；不保存姓名或未完成棋盘 |
 | 物质塔与知识币 | `learning/world-tower/progress.json` | 节点、知识币余额、奖励场次、英语连续播放批次额度、幂等标记与交易 |
 | 岩石与矿物 | `learning/nature/rock-minerals-state.json` | 当前 5 × 6 地层、深度、地质锤、样本库存、发现与研究词条 |
 | 反应熔炉 | `learning/chemistry/reaction-furnace-state.json` | 当前批次、原子、稳定结构与批次编号 |
@@ -65,7 +76,7 @@
 
 宝石迷阵当前为 `schemaVersion: 3`，棋盘为 12 列 × 10 行。第一、二版升级将原 8 × 8 宝石保留在左上角并补齐新区域，保留全部历史及已有奖励，revision 增加 1 防止旧坐标提交；首次升级写入前在同目录保存对应来源版本的 `.v1.bak` 或 `.v2.bak` 恢复点，历史消除不补发奖励。知识币与能量币原文件增加默认 0 的 `bejeweledRewardTotal` 游标，仍各用原有写队列与原子替换；游标不随消费、管理余额或日志截断而改变。备份/恢复须同时包含宝石存档与两个钱包，不能单独回滚一种文件；详见 `BEJEWELED.md`。
 
-宝石连连看历史为 `schemaVersion: 3`，17 种宝石使用 `rulesVersion: 3`，旧版成绩保留为 `rulesVersion: 1/2` 且与新榜单隔离。版本 1/2 首次升级写入前在同目录生成不可覆盖的 `gem-connect-history.json.v1.bak` 或 `.v2.bak` 私有恢复点；不重复发放已到账奖励，旧待发状态仍可恢复。新版每关发放关卡号 × 10 枚知识币和同量能量币；历史先持久化待发记录，再通过两个钱包原有队列发币。知识币、能量币文件新增可缺省的 `gemConnectRewards`（UUID→关卡）去重收据，旧文件默认空；启动与读取历史会恢复未完全结算记录。备份和恢复必须同时保留两钱包收据和历史，不能单删收据或只回滚余额。详见 `GEM_CONNECT.md`。
+宝石连连看历史为 `schemaVersion: 3`，27 种宝石、十五关使用 `rulesVersion: 5`，旧版成绩保留为 `rulesVersion: 1/2/3/4` 且与新榜单隔离。版本 1/2 首次升级写入前在同目录生成不可覆盖的 `gem-connect-history.json.v1.bak` 或 `.v2.bak` 私有恢复点；不重复发放已到账奖励，旧待发状态仍可恢复。新版每关发放关卡号 × 10 枚知识币和同量能量币；历史先持久化待发记录，再通过两个钱包原有队列发币。知识币、能量币文件新增可缺省的 `gemConnectRewards`（UUID→关卡）去重收据，旧文件默认空；启动与读取历史会恢复未完全结算记录。备份和恢复必须同时保留两钱包收据和历史，不能单删收据或只回滚余额。详见 `GEM_CONNECT.md`。
 
 ## 3. 旧 `var/` 迁移
 
@@ -98,3 +109,5 @@
 - 知识币 `learning/world-tower/progress.json` 和能量币 `learning/games/fruit-slice-history.json` 各兼容增加默认空的 `sudokuRewards` 回执表，按局 ID 防重；现有余额和其他玩法记录保持兼容。
 - 两种币各按难度发放 `30 + 20 ×（难度序号 − 1）`。先持久保存通关资格，再发币；中断后由服务端补齐，已到账一方不重复发放。
 - 试玩数据不自动迁入正式目录。未知数独版本拒绝读写；未来备份和恢复必须同时包含数独存档及两个钱包文件，不单独回退回执。详细契约见 `SUDOKU.md`。
+
+宝石连连看的进行中棋盘按用户要求例外保存在浏览器 localStorage：`mumu:gem-connect:session:v1:rules5:<关卡号>`，另以 `active` 保存上次关卡。每关独立恢复棋盘、活动时间和实例 ID；新一局仅覆盖该关，切关不累计离开时间。缓存按规则版本隔离，损坏仅影响对应关卡，浏览器禁用存储时降级为页面内保留。该缓存不写入 Git 或服务器文件，也不纳入服务器备份；清除浏览器站点数据会清除进行中的棋盘。正式成绩与钱包仍按既有服务端规则持久化。

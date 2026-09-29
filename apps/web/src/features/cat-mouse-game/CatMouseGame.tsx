@@ -15,6 +15,7 @@ import {
 } from "./logic";
 import { useLearningRewardSession } from "../../shared/LearningCoinLayer";
 import { useNumericKeypadSubmission } from "../../shared/numeric-keypad";
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   catMouseResultSpeech,
   speakLearningMoment,
@@ -328,11 +329,7 @@ export function CatMouseGame() {
   return (
     <div className={`cat-mouse-page state-${answerState}`}>
       <div className="cat-mouse-stars" aria-hidden="true" />
-      <header className="cat-mouse-topbar">
-        <a href="/" className="cat-mouse-back">← 学习大厅</a>
-        <div className="cat-mouse-brand"><span aria-hidden="true">x?</span><strong>猫鼠游戏</strong></div>
-        <button type="button" className="topbar-next" onClick={nextPuzzle}>换一道题</button>
-      </header>
+      <GameTopBar title="猫鼠游戏" backHref="/" backLabel="学习大厅" controls={<button type="button" className="topbar-next" onClick={nextPuzzle}>换一道题</button>} />
 
       <main className="cat-mouse-main">
         <section className="cat-mouse-mission" aria-labelledby="cat-mouse-title">

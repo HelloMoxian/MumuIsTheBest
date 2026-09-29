@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "id": "nature-map-research-v1",
+  "createdAt": "2026-09-29T00:00:00.000Z",
+  "updatedAt": "2026-09-29T00:00:00.000Z",
+  "purpose": "research-only",
+  "runtimeEnabled": false,
+  "datasets": [
+    {
+      "id": "world-land-10m",
+      "file": "research/ne-10m-land.v5.1.2.geojson.gz",
+      "encoding": "gzip",
+      "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_land.geojson",
+      "version": "Natural Earth v5.1.2",
+      "license": "Public Domain",
+      "licenseUrl": "https://www.naturalearthdata.com/about/terms-of-use/",
+      "attribution": "Made with Natural Earth",
+      "featureCount": 11,
+      "sha256": "6642c0dfdb15359c3fb5135bd525f76392ca01df7efd2a4652fa60c4cd961294",
+      "sourceSha256": "1ac90796408bc6ad6911d69448485d3c4dbf2190370080368a09976e1c9f7416",
+      "bytes": 3569322,
+      "uncompressedBytes": 10157965,
+      "scope": "Global land geometry; 1:10 million scale, NOT 10 metre accuracy",
+      "transform": "Lossless gzip with mtime=0; no geometry changes"
+    },
+    {
+      "id": "china-provinces-research",
+      "file": "research/chn-adm1.geoboundaries-9469f09.geojson",
+      "encoding": "identity",
+      "source": "https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/9469f09/releaseData/gbOpen/CHN/ADM1/geoBoundaries-CHN-ADM1.geojson",
+      "metadataUrl": "https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM1/",
+      "version": "9469f09",
+      "dataYear": 2019,
+      "license": "Public Domain",
+      "licenseUrl": "https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM1/",
+      "attribution": "geoBoundaries; Wikimedia Commons",
+      "featureCount": 34,
+      "sha256": "3a00467a0db9b4136facb5f2f3d0edbfd96adb15651cfdf63991da9281030e85",
+      "bytes": 270578,
+      "scope": "Historical province overview; not current high-resolution production boundaries",
+      "transform": "None"
+    },
+    {
+      "id": "china-counties-detail-sample",
+      "file": "research/hangzhou-area-adm3.sample.geojson",
+      "encoding": "identity",
+      "source": "https://media.githubusercontent.com/media/wmgeolab/geoBoundaries/9469f09/releaseData/gbOpen/CHN/ADM3/geoBoundaries-CHN-ADM3.geojson",
+      "metadataUrl": "https://www.geoboundaries.org/api/current/gbOpen/CHN/ADM3/",
+      "version": "9469f09",
+      "dataYear": 2017,
+      "license": "ODbL-1.0",
+      "licenseUrl": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "attribution": "© OpenStreetMap contributors; Lee Beryman; geoBoundaries",
+      "featureCount": 9,
+      "sha256": "d51dc0d32c97c6e9b4d7f04db4383ec877b64edc1b26a7f455e1cbdebcc93aac",
+      "bytes": 259875,
+      "sourceSha256": "3cc71d6cd23e7dbb5646422b40dd92a7a74d8779f340eb9377158c961dec310e",
+      "sourceBytes": 88780624,
+      "sourceFeatureCount": 2864,
+      "metadataFeatureCount": 2867,
+      "scope": "Hangzhou vicinity spatial sample, NOT all of Hangzhou or current county boundaries",
+      "transform": "Select features whose bbox midpoint is in [119.7,29.8,120.5,30.5]; preserve feature coordinates and attributes; add researchProvenance"
+    }
+  ],
+  "probes": [
+    {
+      "id": "datav-country",
+      "url": "https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json",
+      "featureCount": 35,
+      "bytes": 582522,
+      "redistribution": "unverified",
+      "note": "34 province records and one unnamed 100000_JD feature"
+    },
+    {
+      "id": "datav-zhejiang-cities",
+      "url": "https://geo.datav.aliyun.com/areas_v3/bound/330000_full.json",
+      "featureCount": 11,
+      "bytes": 120401,
+      "redistribution": "unverified"
+    },
+    {
+      "id": "datav-hangzhou-counties",
+      "url": "https://geo.datav.aliyun.com/areas_v3/bound/330100_full.json",
+      "featureCount": 13,
+      "bytes": 108019,
+      "redistribution": "unverified"
+    }
+  ]
+}

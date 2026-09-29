@@ -11,6 +11,7 @@ import {
   type GameSnapshot,
   type PlayerSnapshot,
 } from "./game-engine";
+import { GameTopBar } from "../../shared/GameTopBar";
 import "./red-fortress.css";
 
 const initialPlayer: PlayerSnapshot = {
@@ -212,16 +213,7 @@ export function RedFortressGame() {
   return (
     <div className="red-fortress-page" style={stageStyle}>
       <div className="red-fortress-stars" aria-hidden="true" />
-      <header className="red-fortress-topbar">
-        <a className="red-fortress-back" href="/#games">← 返回游戏 Tab</a>
-        <div className="red-fortress-brand">
-          <span className="red-fortress-brand-mark" aria-hidden="true">RF</span>
-          <span>
-            <strong>赤色要塞</strong>
-            <small>双车星际远征</small>
-          </span>
-        </div>
-        <div className="red-fortress-top-actions">
+      <GameTopBar title="赤色要塞" backHref="/#games" backLabel="游戏大厅" controls={<div className="red-fortress-top-actions">
           <button
             type="button"
             className={snapshot.soundEnabled ? "is-active" : ""}
@@ -237,8 +229,7 @@ export function RedFortressGame() {
               {snapshot.phase === "paused" ? "▶ 继续" : "Ⅱ 暂停"}
             </button>
           )}
-        </div>
-      </header>
+        </div>} />
 
       <main className="red-fortress-main">
         <section className="red-fortress-stage-shell" ref={stageRef}>

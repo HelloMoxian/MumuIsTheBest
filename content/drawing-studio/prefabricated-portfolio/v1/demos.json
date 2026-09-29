@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "demos": [
+    {
+      "id": "pc-031",
+      "title": "预制作品集 · 蝴蝶花园",
+      "document": "pc-031.drawing.json",
+      "preview": "pc-031.svg",
+      "elementCount": 12,
+      "regionCount": 290,
+      "componentIds": [
+        "butterfly-medium",
+        "butterfly-rich-airy",
+        "butterfly-simple",
+        "cloud-simple",
+        "flower-daisy",
+        "flower-sunflower",
+        "flower-tulip",
+        "insect-ladybug",
+        "leaf-oval",
+        "nature-wave-patterned",
+        "sky-sun"
+      ]
+    },
+    {
+      "id": "pc-121",
+      "title": "预制作品集 · 湖畔星空营地",
+      "document": "pc-121.drawing.json",
+      "preview": "pc-121.svg",
+      "elementCount": 11,
+      "regionCount": 189,
+      "componentIds": [
+        "garden-mushroom",
+        "home-little-patterned",
+        "nature-mountain",
+        "nature-mountain-patterned",
+        "nature-raindrops-patterned",
+        "sky-moon",
+        "sky-moon-detailed",
+        "sky-star",
+        "tree-pine"
+      ]
+    },
+    {
+      "id": "pc-151",
+      "title": "预制作品集 · 珊瑚海底花园",
+      "document": "pc-151.drawing.json",
+      "preview": "pc-151.svg",
+      "elementCount": 13,
+      "regionCount": 156,
+      "componentIds": [
+        "free-ellipse",
+        "ocean-coral",
+        "ocean-coral-airy",
+        "ocean-coral-detailed",
+        "ocean-shell",
+        "ocean-shell-airy",
+        "ocean-shell-patterned",
+        "ocean-starfish",
+        "ocean-starfish-airy"
+      ]
+    },
+    {
+      "id": "pc-091",
+      "title": "预制作品集 · 周末家庭花园",
+      "document": "pc-091.drawing.json",
+      "preview": "pc-091.svg",
+      "elementCount": 11,
+      "regionCount": 278,
+      "componentIds": [
+        "animal-pet",
+        "cloud-simple",
+        "flower-tulip",
+        "garden-flowerpot",
+        "garden-watering-can",
+        "garden-watering-can-patterned",
+        "home-little",
+        "person-adult-active",
+        "person-child-outdoor-detailed",
+        "sky-sun",
+        "tree-round"
+      ]
+    },
+    {
+      "id": "pc-076",
+      "title": "预制作品集 · 机器人积木城",
+      "document": "pc-076.drawing.json",
+      "preview": "pc-076.svg",
+      "elementCount": 40,
+      "regionCount": 55,
+      "componentIds": [
+        "cloud-simple",
+        "free-ellipse",
+        "free-rectangle",
+        "sky-sun",
+        "star"
+      ]
+    },
+    {
+      "id": "pc-016",
+      "title": "预制作品集 · 分子积木展台",
+      "document": "pc-016.drawing.json",
+      "preview": "pc-016.svg",
+      "elementCount": 27,
+      "regionCount": 27,
+      "componentIds": [
+        "free-ellipse",
+        "free-rectangle",
+        "hexagon",
+        "star"
+      ]
+    }
+  ]
+}

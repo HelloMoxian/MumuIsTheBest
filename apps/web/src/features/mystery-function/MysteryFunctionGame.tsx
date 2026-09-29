@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CURVE_COLORS, FunctionGraphCanvas } from "./FunctionGraphCanvas";
+import { GameTopBar } from "../../shared/GameTopBar";
 import {
   functionDiscoverySpeech,
   LocalizedLines,
@@ -231,11 +232,7 @@ export function MysteryFunctionGame() {
     return (
       <div className="mystery-page mystery-intro-page">
         <div className="mystery-starfield" aria-hidden="true" />
-        <header className="mystery-topbar">
-          <a href="/" className="mystery-back">← 学习大厅</a>
-          <div className="mystery-brand"><span aria-hidden="true">ƒ</span><strong>神秘函数</strong></div>
-          <span className="mystery-top-chip">函数图像实验室</span>
-        </header>
+        <GameTopBar title="神秘函数" backHref="/" backLabel="学习大厅" />
         <main className="mystery-intro">
           <section className="mystery-intro-copy">
             <p className="mystery-eyebrow">FUNCTION ORBIT · 函数轨道舱</p>
@@ -282,11 +279,7 @@ export function MysteryFunctionGame() {
     return (
       <div className="mystery-page mystery-summary-page">
         <div className="mystery-starfield" aria-hidden="true" />
-        <header className="mystery-topbar">
-          <a href="/" className="mystery-back">← 学习大厅</a>
-          <div className="mystery-brand"><span aria-hidden="true">ƒ</span><strong>神秘函数</strong></div>
-          <span className="mystery-top-chip">探索完成</span>
-        </header>
+        <GameTopBar title="神秘函数" backHref="/" backLabel="学习大厅" />
         <main className="mystery-summary">
           <p className="mystery-eyebrow">ORBIT REPORT · 航线观察报告</p>
           <h1 data-no-ui-translation>
@@ -325,14 +318,10 @@ export function MysteryFunctionGame() {
   return (
     <div className="mystery-page mystery-lab-page">
       <div className="mystery-starfield" aria-hidden="true" />
-      <header className="mystery-topbar mystery-lab-topbar">
-        <a href="/" className="mystery-back">← 学习大厅</a>
-        <div className="mystery-brand"><span aria-hidden="true">ƒ</span><strong>神秘函数</strong></div>
-        <div className="mystery-top-actions">
+      <GameTopBar title="神秘函数" backHref="/" backLabel="学习大厅" controls={<div className="mystery-top-actions">
           <button type="button" className="mystery-top-button" onClick={restartLab}>↻ 重置实验</button>
           <button type="button" className="mystery-finish" disabled={curves.length === 0} onClick={() => setPhase("summary")}>完成探索 →</button>
-        </div>
-      </header>
+        </div>} />
 
       <main className="mystery-workspace">
         <section className="mystery-graph-panel">

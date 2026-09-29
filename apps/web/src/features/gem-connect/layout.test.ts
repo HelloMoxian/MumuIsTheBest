@@ -3,7 +3,7 @@ import test from "node:test";
 import { displayIndex, displayPoint, fitBoard, logicalIndex } from "./layout";
 import { LEVELS, findPath } from "./logic";
 
-test("十关在横屏、竖屏、小窗口及全屏剩余空间内完整显示，含外缘连线", () => {
+test("十五关在横屏、竖屏、小窗口及全屏剩余空间内完整显示，含外缘连线", () => {
   for (const [width, height] of [[1440, 700], [1920, 980], [3840, 2080], [390, 540], [360, 360], [844, 260], [320, 180], [0, 0]]) {
     for (const level of LEVELS) {
       const layout = fitBoard(level.rows, level.cols, width, height);
@@ -18,9 +18,9 @@ test("十关在横屏、竖屏、小窗口及全屏剩余空间内完整显示�
       }
     }
   }
-  assert.equal(fitBoard(12, 15, 390, 700).transposed, true);
-  assert.equal(fitBoard(12, 15, 1400, 700).transposed, false);
-  assert.ok(fitBoard(12, 15, 3840, 2080).cell > 100, "大屏幕宝石随空间增大");
+  assert.equal(fitBoard(16, 18, 390, 700).transposed, true);
+  assert.equal(fitBoard(16, 18, 1400, 700).transposed, false);
+  assert.ok(fitBoard(16, 18, 3840, 2080).cell > 100, "大屏幕宝石随空间增大");
 });
 test("屏幕转置保留相邻关系和外缘路径，不改变正在消除的逻辑位置", () => {
   const board = { rows: 1, cols: 3, tiles: [0, 1, 0] };

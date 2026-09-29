@@ -1,3 +1,4 @@
+import { GameTopBar } from "../../shared/GameTopBar";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent as DialogKeyboardEvent } from "react";
 import { STARS, CONSTELLATIONS, SOURCES } from "./catalog";
 import catalogSourceNotes from "./CATALOG_SOURCES.md?raw";
@@ -191,17 +192,12 @@ export function StargazingPage({ homeHref = "/#nature-title" }: { homeHref?: str
     {star && <div className={`sg-globe-stage${!details || hidden ? " sg-globe-wide" : ""}`}><StellarGlobe star={star} reducedMotion={reducedMotion} paused={paused || !!panel} onSelectEmptySpace={resetSky} /></div>}
     <div className="sg-vignette" aria-hidden="true" />
     {!hidden && <>
-      <header className="sg-header">
-        <div className="sg-brand-group">
-          {dedicatedView ? <button className="sg-button sg-back" onClick={returnToSky}><Icon kind="back" /><span>返回星图</span></button>
-            : <a className="sg-button sg-back" href={homeHref}><Icon kind="back" /><span>自然</span></a>}
-          <div className="sg-brand"><span className="sg-brand-symbol" aria-hidden="true">✧</span><div><strong>仰望星空</strong><small>LOOK UP, WONDER MORE</small></div></div>
-        </div>
-        <div className="sg-header-actions">
+      <GameTopBar title="仰望星空" wallets={false} backHref={homeHref} backLabel={dedicatedView ? "星图" : "自然"} onBack={event => { if (dedicatedView) { event.preventDefault(); returnToSky(); } }} controls={<>
+<div className="sg-header-actions">
           <button className="sg-button sg-search-button" aria-label="寻找星座与恒星" onClick={() => openPanel("catalog")}><Icon kind="search" /><span>寻找星座与恒星</span></button>
           <button className="sg-button" onClick={() => setHidden(true)} aria-label="隐藏界面，只看星空"><Icon kind="eye" /><span className="sg-optional-label">隐藏界面</span></button>
         </div>
-      </header>
+</>} />
 
       {!star && !atlas && <div className="sg-sky-caption">
         <span className="sg-overline">{constellation ? `CONSTELLATION / ${constellation.id.toUpperCase()}` : collection ? "A JOURNEY THROUGH THE STARS" : "THE NIGHT IS YOURS"}</span>

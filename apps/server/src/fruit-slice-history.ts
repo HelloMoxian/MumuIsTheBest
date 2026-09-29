@@ -165,7 +165,7 @@ const historySchema = z.object({
   schemaVersion: z.literal(2),
   workoutRewardTotal: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).default(0),
   bejeweledRewardTotal: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
-  gemConnectRewards: z.record(z.string().uuid(), z.number().int().min(1).max(10)).default({}),
+  gemConnectRewards: z.record(z.string().uuid(), z.number().int().min(1).max(15)).default({}),
   sudokuRewards: z.record(z.string().uuid(), z.number().int().min(1).max(6)).default({}),
   id: z.string().uuid(),
   stableId: z.literal("game-fruit-slice-history"),
@@ -634,7 +634,7 @@ export function registerFruitSliceHistoryApi(app: FastifyInstance, appDataDir: s
       return operation;
     },
     awardGemConnect(eventId: string, level: number) {
-      const input = z.object({ eventId: z.string().uuid(), level: z.number().int().min(1).max(10) }).parse({ eventId, level });
+      const input = z.object({ eventId: z.string().uuid(), level: z.number().int().min(1).max(15) }).parse({ eventId, level });
       const operation = writeQueue.then(async () => {
         const history = await readHistory();
         const prior = history.gemConnectRewards[input.eventId];

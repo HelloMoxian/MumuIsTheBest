@@ -3,8 +3,8 @@ import { bindingLabel, defaultBindings, type GameControlDefinition, type PlayerC
 import type { GameControllerSession } from "./useGameControllers";
 import "./controllers.css";
 
-export function ControllerSetup({ definition, session, lockPlayerCount = false }: {
-  definition: GameControlDefinition; session: GameControllerSession; lockPlayerCount?: boolean;
+export function ControllerSetup({ definition, session, lockPlayerCount = false, showOverview = true, showDetails = true, showStatus = true }: {
+  definition: GameControlDefinition; session: GameControllerSession; lockPlayerCount?: boolean; showOverview?: boolean; showDetails?: boolean; showStatus?: boolean;
 }) {
   const { profile, devices, saved, capture } = session;
   const busy = saved.status === "loading" || !!capture;
@@ -12,7 +12,7 @@ export function ControllerSetup({ definition, session, lockPlayerCount = false }
     session.update({ ...profile, players: profile.players.map((p, i) => i === index ? player : p) });
   }
   return <section className="controller-setup" aria-label={`${definition.label}控制设置`}>
-    <div className="controller-mode" role="group" aria-label="游戏人数">
+    {showOverview && <><div className="controller-mode" role="group" aria-label="游戏人数">
       {Array.from({ length: definition.maxPlayers }, (_, i) => i + 1).map(count => <button type="button" key={count}
         disabled={busy || lockPlayerCount} aria-pressed={profile.playerCount === count}
         onClick={() => session.update({ ...profile, playerCount: count })}>
@@ -34,8 +34,8 @@ export function ControllerSetup({ definition, session, lockPlayerCount = false }
           <p title={connected?.device.id}>{player.mode === "keyboard" ? "键盘与屏幕按钮可用" : connected ? `✓ ${connected.device.id.length > 48 ? `${connected.device.id.slice(0, 48)}…` : connected.device.id} · 第 ${connected.device.occurrence + 1} 只` : "等待选择或连接手柄 · 可先用键盘"}</p>
         </div>;
       })}
-    </div>
-    <details className="controller-details" open={capture ? true : undefined}>
+    </div></>}
+    {showDetails && <details className="controller-details" open={capture ? true : undefined}>
       <summary>手柄与键位 · {devices.length ? `${devices.length} 只已连接` : "连接与设置"}</summary>
       <p>先用 USB 或蓝牙在电脑上连接手柄，再回到此页按一下手柄。每位玩家选择自己的设备；键盘始终可用。</p>
       {session.problem && <p className="controller-error" role="status">{session.problem}</p>}
@@ -76,15 +76,15 @@ export function ControllerSetup({ definition, session, lockPlayerCount = false }
           <button type="button" disabled={!!capture} onClick={() => updatePlayer(index, { ...player, bindings: standard ? defaultBindings(definition) : Object.fromEntries(definition.actions.map(a => [a.id, []])) })}>{standard ? "恢复这位玩家的默认键位" : "清空这位玩家的键位"}</button>
         </fieldset>;
       })}
-    </details>
-    {capture && <div className="controller-capture" role="status">
+    </details>}
+    {showDetails && capture && <div className="controller-capture" role="status">
       <strong>玩家 {capture.player + 1} · {definition.actions.find(a => a.id === capture.action)?.label}</strong>
       <p>{capture.ready ? "现在按想使用的键，或推动摇杆方向。" : "先松开所有按键，让摇杆回到中间。"}</p>
       <button type="button" onClick={session.cancelCapture}>取消换键（Escape）</button>
     </div>}
-    {session.notice && <p role="status">{session.notice}</p>}
-    <div className={`controller-save ${saved.status.endsWith("error") ? "controller-error" : ""}`} role="status">
+    {showDetails && session.notice && <p role="status">{session.notice}</p>}
+    {showStatus && <div className={`controller-save ${saved.status.endsWith("error") ? "controller-error" : ""}`} role="status">
       <span>{saved.message}</span>{saved.status.endsWith("error") && <button type="button" disabled={lockPlayerCount && saved.status === "read-error"} onClick={() => void session.retry()}>{saved.status === "read-error" ? lockPlayerCount ? "本局结束后重试读取" : "重试读取并保存选择" : "重试保存"}</button>}
-    </div>
+    </div>}
   </section>;
 }

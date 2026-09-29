@@ -18,19 +18,44 @@ import { openNumericKeypad } from "./shared/numeric-keypad";
 import {
   CompactExperienceControls,
   GlobalExperienceLayer,
-  LocalizedLines,
-  translateUiText,
 } from "./shared/experience";
+import { SiteFullscreenButton, SiteFullscreenProvider } from "./shared/SiteFullscreen";
+import { GLOBAL_GAMEPAD_SETTINGS_EVENT, GlobalGamepadNavigation } from "./shared/GlobalGamepadNavigation";
 import "./styles.css";
+import { GEOGRAPHY_PAGES } from "./features/nature-geography/catalog";
+
+const GeographyPage = lazy(async () => {
+  const module = await import("./features/nature-geography/GeographyPage");
+  return { default: module.GeographyPage };
+});
+
+const TetrisGame = lazy(async () => {
+  const module = await import("./features/tetris/TetrisGame");
+  return { default: module.TetrisGame };
+});
+
+const SlidingPuzzleGame = lazy(async () => {
+  const module = await import("./features/sliding-puzzle/SlidingPuzzleGame");
+  return { default: module.SlidingPuzzleGame };
+});
 
 const Game2048Page = lazy(async () => {
   const module = await import("./features/game-2048/Game2048Page");
   return { default: module.Game2048Page };
 });
 
-const TetrisGame = lazy(async () => {
-  const module = await import("./features/tetris/TetrisGame");
-  return { default: module.TetrisGame };
+// Keep an unfinished optional game from preventing every route from loading.
+const twentyFourPages = import.meta.glob<{ TwentyFourGame: () => React.JSX.Element }>("./features/twenty-four/TwentyFourGame.tsx");
+const TwentyFourGame = lazy(async () => {
+  const load = twentyFourPages["./features/twenty-four/TwentyFourGame.tsx"];
+  if (!load) return { default: () => <main className="app-shell"><h1>24 点正在准备中</h1><a className="button" href="/#math-title">返回数学玩法</a></main> };
+  const module = await load();
+  return { default: module.TwentyFourGame };
+});
+
+const SuperBlocksGame = lazy(async () => {
+  const module = await import("./features/super-blocks/SuperBlocksGame");
+  return { default: module.SuperBlocksGame };
 });
 
 const FindNumberGame = lazy(async () => {
@@ -137,6 +162,11 @@ const DrawingStudioPage = lazy(async () => {
   return { default: module.DrawingStudioPage };
 });
 
+const SymmetryDrawingPage = lazy(async () => {
+  const module = await import("./features/symmetry-drawing/SymmetryDrawingPage");
+  return { default: module.SymmetryDrawingPage };
+});
+
 const RockMineralGame = lazy(async () => {
   const module = await import("./features/rock-minerals/RockMineralGame");
   return { default: module.RockMineralGame };
@@ -222,7 +252,10 @@ type AsrConfiguration = {
   isConfigured: boolean;
   storage: "local-file" | "environment" | "none";
 };
-type SubjectIconKind = "games" | "art" | "exercise" | "math" | "english" | "chemistry" | "nature" | "chinese" | "classics" | "planning";
+const HouseBuildingPage = lazy(async () => {
+  const module = await import("./features/house-building/HouseBuildingPage");
+  return { default: module.HouseBuildingPage };
+});
 type GamePlaceholder = {
   title: string;
   mark: string;
@@ -235,8 +268,6 @@ type GamePlaceholder = {
 type SubjectBoard = {
   id: string;
   title: string;
-  caption: string;
-  icon: SubjectIconKind;
   games: GamePlaceholder[];
 };
 
@@ -244,10 +275,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "games",
     title: "游戏",
-    caption: "动一动、想一想，一起探索游戏星河",
-    icon: "games",
     games: [
-      { title: "跳操", mark: "✦", description: "跟着立体小熊动起来，每组得能量，五分钟共 200 币", shape: "wide", href: "/games/workout" },
       { title: "星页数独", mark: "▦", description: "用精美图案拼故事，六档推理挑战赢取知识币和能量币", shape: "wide", href: "/games/sudoku" },
       {
         title: "俄罗斯方块",
@@ -257,11 +285,11 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         href: "/games/tetris",
       },
       {
-        title: "星际极速赛",
-        mark: "✦",
-        description: "移动头部换车道，驾驶三套赛车连续点亮六座星门",
+        title: "超级积木",
+        mark: "▦",
+        description: "20 列宽屏挑战，探索一至五格的 29 种连续积木",
         shape: "wide",
-        href: "/games/galaxy-racer",
+        href: "/games/super-blocks",
       },
       {
         title: "宝石连连看",
@@ -269,13 +297,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         description: "连接彩色宝石，轻松探索十关，记录每一次通关时间",
         shape: "wide",
         href: "/games/gem-connect",
-      },
-      {
-        title: "赤色要塞",
-        mark: "∞",
-        description: "双车协作闯四关，营救升级并挑战关卡 Boss",
-        shape: "wide",
-        href: "/games/red-fortress",
       },
       {
         title: "宝石迷阵",
@@ -289,9 +310,8 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "exercise",
     title: "锻炼",
-    caption: "挥挥手、动动身体，一起快乐锻炼",
-    icon: "exercise",
     games: [
+      { title: "跳操", mark: "✦", description: "跟着立体小熊动起来，每组得能量，五分钟共 200 币", shape: "wide", href: "/games/workout" },
       {
         title: "陪妈妈跳操",
         mark: "✦",
@@ -311,8 +331,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "art",
     title: "艺术",
-    caption: "画一画、拼一拼，把想象变成作品",
-    icon: "art",
     games: [
       {
         title: "画图",
@@ -321,16 +339,23 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         shape: "wide",
         href: "/games/drawing-studio",
       },
+      {
+        title: "对称画",
+        mark: "✣",
+        description: "旋转与镜像复制每一笔，画出万花筒般的图案",
+        shape: "wide",
+        href: "/games/symmetry-drawing",
+      },
     ],
   },
   {
     id: "math",
     title: "数学",
-    caption: "让数字变成好玩的闯关伙伴",
-    icon: "math",
     games: [
       { title: "加减练习", mark: "＋−", description: "0—20 快速计算", shape: "wide", href: "/math/add-subtract", rewardSource: "math:add-subtract" },
+      { title: "24点", mark: "24", description: "8 个数字选 4 个，拼出 24 赢知识币", shape: "wide", href: "/math/twenty-four" },
       { title: "2048", mark: "2048", description: "合并数字一直玩，三种棋盘随时续玩", shape: "wide", href: "/math/2048" },
+      { title: "华容道", mark: "▦", description: "滑动数字，把图片拼回来", shape: "wide", href: "/math/sliding-puzzle" },
       {
         title: "算数大战",
         mark: "⚔",
@@ -363,14 +388,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         rewardSource: "math:find-number",
       },
       {
-        title: "猫鼠游戏",
-        mark: "x?",
-        description: "观察动画场景，列式解开谜题",
-        shape: "compact",
-        href: "/math/cat-mouse-game",
-        rewardSource: "math:cat-mouse-game",
-      },
-      {
         title: "数学知识塔",
         mark: "517",
         description: "点亮四级熟练度，从一年级向九年级攀登",
@@ -382,8 +399,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "english",
     title: "英语",
-    caption: "先听声音，再把英文和中文连起来",
-    icon: "english",
     games: [
       {
         title: "英语回声岛",
@@ -398,8 +413,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "chemistry",
     title: "化学",
-    caption: "把小小粒子变成大大发现",
-    icon: "chemistry",
     games: [
       {
         title: "元素周期表",
@@ -423,13 +436,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         href: "/chemistry/molecule-factory",
       },
       {
-        title: "实验大师",
-        mark: "⌁",
-        description: "先预测，再解释实验现象",
-        shape: "compact",
-        href: "/chemistry/experiment-master",
-      },
-      {
         title: "物质塔",
         mark: "✦",
         description: "十六层精选节点，从基本粒子发现到宇宙",
@@ -441,8 +447,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "nature",
     title: "自然",
-    caption: "从脚下的岩石，到头顶的星空",
-    icon: "nature",
     games: [
       {
         title: "岩石与矿物",
@@ -458,13 +462,22 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
         shape: "wide",
         href: "/nature/stargazing",
       },
+      ...GEOGRAPHY_PAGES.map(page => ({
+        title: page.title,
+        mark: "◎",
+        description: page.description,
+        href: `/nature/${page.id}`,
+      })),
     ],
+  },
+  {
+    id: "physics",
+    title: "物理",
+    games: [{ title: "盖房子", mark: "⌂", description: "搭积木、接桥梁，观察风和地震中的平衡", shape: "wide", href: "/physics/house-building" }],
   },
   {
     id: "chinese",
     title: "语文",
-    caption: "读一读、认一认，文字会发光",
-    icon: "chinese",
     games: [
       { title: "拼音星桥", mark: "ā", description: "浏览全部拼音和相关汉字", shape: "compact", href: "/chinese/pinyin" },
       { title: "常用500字", mark: "500", description: "每天认识一点", shape: "wide", href: "/chinese/common-characters/500" },
@@ -477,8 +490,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "classics",
     title: "国学",
-    caption: "读懂古人的词语、画面和故事",
-    icon: "classics",
     games: [
       {
         title: "声律启蒙",
@@ -492,8 +503,6 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
   {
     id: "planning",
     title: "规划",
-    caption: "看看更远的目标，认识未来可以去的地方",
-    icon: "planning",
     games: [
       {
         title: "大学",
@@ -504,41 +513,95 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
       },
     ],
   },
+  {
+    id: "discarded",
+    title: "废弃",
+    games: [
+      {
+        title: "星际极速赛",
+        mark: "✦",
+        description: "移动头部换车道，驾驶三套赛车连续点亮六座星门",
+        shape: "wide",
+        href: "/games/galaxy-racer",
+      },
+      {
+        title: "赤色要塞",
+        mark: "∞",
+        description: "双车协作闯四关，营救升级并挑战关卡 Boss",
+        shape: "wide",
+        href: "/games/red-fortress",
+      },
+      {
+        title: "猫鼠游戏",
+        mark: "x?",
+        description: "观察动画场景，列式解开谜题",
+        shape: "compact",
+        href: "/math/cat-mouse-game",
+        rewardSource: "math:cat-mouse-game",
+      },
+      {
+        title: "实验大师",
+        mark: "⌁",
+        description: "先预测，再解释实验现象",
+        shape: "compact",
+        href: "/chemistry/experiment-master",
+      },
+    ],
+  },
 ];
 
-function SubjectGlyph({ kind }: { kind: SubjectIconKind }) {
-  if (kind === "exercise") {
-    return <span className="subject-glyph glyph-letter" aria-hidden="true">↗</span>;
+const HOME_GAME_CARD_IMAGES: Record<string, string> = {
+  "/games/sudoku": "sudoku",
+  "/games/tetris": "tetris",
+  "/games/super-blocks": "super-blocks",
+  "/games/gem-connect": "gem-connect",
+  "/games/bejeweled": "bejeweled",
+  "/games/workout": "workout",
+  "/fat-burn/index.html": "fat-burn",
+  "/games/fruit-slice": "fruit-slice",
+  "/games/drawing-studio": "drawing-studio",
+  "/games/symmetry-drawing": "symmetry-drawing",
+  "/math/add-subtract": "add-subtract",
+  "/math/twenty-four": "twenty-four",
+  "/math/2048": "game-2048",
+  "/math/sliding-puzzle": "sliding-puzzle",
+  "/math/arithmetic-battle": "arithmetic-battle",
+  "/math/multiplication": "multiplication",
+  "/math/mystery-function": "mystery-function",
+  "/math/find-number": "find-number",
+  "/math/knowledge-tower": "math-knowledge-tower",
+  "/english/echo-island": "english-echo-island",
+  "/chemistry/periodic-table": "periodic-table",
+  "/chemistry/reaction-furnace": "reaction-furnace",
+  "/chemistry/molecule-factory": "molecule-factory",
+  "/world-tower": "world-tower",
+  "/nature/rock-minerals": "rock-minerals",
+  "/nature/stargazing": "stargazing",
+  "/physics/house-building": "house-building",
+  "/chinese/pinyin": "pinyin",
+  "/chinese/common-characters/500": "common-characters-500",
+  "/chinese/common-characters/1000": "common-characters-1000",
+  "/chinese/common-characters/1500": "common-characters-1500",
+  "/chinese/common-characters/2000": "common-characters-2000",
+  "/chinese/common-characters/2500": "common-characters-2500",
+  "/classics/rhyme-enlightenment": "rhyme-enlightenment",
+  "/universities/top100": "university-top100",
+  "/games/galaxy-racer": "galaxy-racer",
+  "/games/red-fortress": "red-fortress",
+  "/math/cat-mouse-game": "cat-mouse-game",
+  "/chemistry/experiment-master": "experiment-master",
+};
+
+function gameCardStyle(href?: string) {
+  const geographyPage = GEOGRAPHY_PAGES.find(page => href === `/nature/${page.id}`);
+  if (geographyPage) {
+    return { "--game-card-image": `url(/images/nature/geography/${geographyPage.id}.webp)` } as React.CSSProperties;
   }
-  if (kind === "art") {
-    return <span className="subject-glyph glyph-letter" aria-hidden="true">✎</span>;
-  }
-  if (kind === "games") {
-    return <span className="subject-glyph glyph-games" aria-hidden="true"><i /><b>⚡</b></span>;
-  }
-  if (kind === "math") {
-    return <span className="subject-glyph glyph-math" aria-hidden="true"><i /><b>×</b></span>;
-  }
-  if (kind === "chemistry") {
-    return <span className="subject-glyph glyph-chemistry" aria-hidden="true"><i /><i /><i /></span>;
-  }
-  if (kind === "nature") {
-    return <span className="subject-glyph glyph-nature" aria-hidden="true"><i /><i /><b>◇</b></span>;
-  }
-  if (kind === "english") {
-    return <span className="subject-glyph glyph-letter glyph-english" aria-hidden="true">Aa</span>;
-  }
-  if (kind === "chinese") {
-    return <span className="subject-glyph glyph-letter" aria-hidden="true">文</span>;
-  }
-  if (kind === "classics") {
-    return <span className="subject-glyph glyph-letter glyph-classics" aria-hidden="true">雅</span>;
-  }
-  if (kind === "planning") {
-    return <span className="subject-glyph glyph-planning" aria-hidden="true"><i /><i /><b>TOP</b></span>;
-  }
-  return null;
+  const imageName = href ? HOME_GAME_CARD_IMAGES[href] : undefined;
+  if (!imageName) return undefined;
+  return { "--game-card-image": `url(/images/home-game-cards/v1/${imageName}.webp)` } as React.CSSProperties;
 }
+
 
 class PcmCapture {
   private context?: AudioContext;
@@ -637,6 +700,14 @@ function HomeHeader() {
       <CompactExperienceControls />
       <nav className="nav-actions" aria-label="主导航">
         <a className="nav-link" href="/">学习大厅</a>
+        <SiteFullscreenButton />
+        <button
+          className="test-trigger"
+          type="button"
+          onClick={() => window.dispatchEvent(new Event(GLOBAL_GAMEPAD_SETTINGS_EVENT))}
+        >
+          手柄设置
+        </button>
         <button
           className="test-trigger numeric-keypad-nav-button"
           type="button"
@@ -683,52 +754,32 @@ function App() {
   );
 
   return (
-    <div className="app-shell">
+    <div className="app-shell home-shell">
       <div className="star-field" aria-hidden="true" />
       <HomeHeader />
       <main id="top">
-        <section className="hero" aria-labelledby="hero-title">
-          <div className="hero-art" aria-hidden="true" />
-          <div className="hero-content">
-            <p className="eyebrow"><span aria-hidden="true">✦</span> 木木的学习乐园 · 每天进步一点点</p>
-            <h1 id="hero-title" data-no-ui-translation>
-              <LocalizedLines
-                zh={<>木木最努力，<em>{encouragement}</em></>}
-                en={<>Mumu keeps trying. <em>{translateUiText(encouragement)}</em></>}
-              />
-            </h1>
-            <p className="hero-copy">
-              把好玩的小任务、知识问答和探索挑战，装进同一座星际学习岛。每一次认真尝试，都会让木木更有力量。
-            </p>
-            <a className="hero-button" href="#subject-board">开始今天的小冒险 <span aria-hidden="true">↓</span></a>
-          </div>
+        <section className="home-status-bar" aria-labelledby="home-status-title">
+          <span className="home-status-orb" aria-hidden="true">✦</span>
+          <h1 id="home-status-title" data-no-ui-translation>
+            <span>木木最努力</span>
+            <em>{encouragement}</em>
+          </h1>
         </section>
 
-        <section id="subject-board" className="subject-board" aria-labelledby="subject-board-title">
-          <div className="subject-board-heading">
-            <div>
-              <p className="eyebrow"><span aria-hidden="true">✦</span> 学科探索地图 · 玩法正在集合</p>
-              <h2 id="subject-board-title" data-no-ui-translation>
-                <LocalizedLines
-                  zh={<>挑一块星图，<em>开始努力闯关。</em></>}
-                  en={<>Choose a star map. <em>Start your learning mission.</em></>}
-                />
-              </h2>
-            </div>
-            <p>每一门学科都有不同的好玩入口。先从想试试的那一块开始吧！</p>
-          </div>
+        <nav className="subject-index" aria-label="快速选择学科">
+          {SUBJECT_BOARDS.map((subject) => (
+            <a href={`#subject-${subject.id}`} key={subject.id}>
+              {subject.title}
+            </a>
+          ))}
+        </nav>
 
+        <section id="subject-board" className="subject-board" aria-label="全部学科和玩法">
           <div className="subject-rows">
             {SUBJECT_BOARDS.map((subject) => (
-              <section className={`subject-row subject-${subject.id}`} key={subject.id} aria-labelledby={`${subject.id}-title`}>
-                <div className="subject-intro">
-                  <SubjectGlyph kind={subject.icon} />
-                  <div>
-                    <span className="subject-kicker">探索学科</span>
-                    <h3 id={`${subject.id}-title`}>{subject.title}</h3>
-                    <p>{subject.caption}</p>
-                  </div>
-                  <span className="subject-spark" aria-hidden="true">✦</span>
+              <section id={`subject-${subject.id}`} className={`subject-row subject-${subject.id}`} key={subject.id} aria-labelledby={`${subject.id}-title`}>
+                <div className="subject-intro" style={{ "--subject-card-image": `url(/images/home-subjects/v1/${subject.id}.webp)` } as React.CSSProperties}>
+                  <h2 id={`${subject.id}-title`}>{subject.title}</h2>
                 </div>
                 <div className="game-cluster" aria-label={`${subject.title}小游戏`}>
                   {subject.games.map((game) => {
@@ -736,28 +787,17 @@ function App() {
                       && learningCoinStatus?.promotion.source === game.rewardSource
                       ? learningCoinStatus.promotion
                       : null;
-                    const isTripleReward = Boolean(activePromotion);
                     const gameHref = game.href && activePromotion
                       ? `${game.href}?promotion=${encodeURIComponent(activePromotion.id)}`
                       : game.href;
                     const content = (
-                      <>
-                        {isTripleReward && <span className="game-triple-badge">×3 知识币</span>}
-                        <span className="game-mark" aria-hidden="true">{game.mark}</span>
-                        <div>
-                          <h4>{game.title}</h4>
-                          <p>{game.description}</p>
-                        </div>
-                        <span className="game-status">
-                          {game.href ? "开始练习 →" : game.comingSoon ? "正在准备" : "即将开放"}
-                        </span>
-                      </>
+                      <h3>{game.title}</h3>
                     );
-                    const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""} ${isTripleReward ? "is-triple-reward" : ""}`;
+                    const className = `game-card ${game.shape ?? ""} ${game.comingSoon ? "is-coming" : ""} ${game.href ? "is-ready" : ""}`;
                     return gameHref ? (
-                      <a className={className} href={gameHref} key={game.title} data-skip-startup-greeting={game.href === "/games/workout" || game.href === "/fat-burn/index.html" || game.href === "/nature/stargazing" ? true : undefined}>{content}</a>
+                      <a className={className} href={gameHref} key={game.title} style={gameCardStyle(game.href)} data-skip-startup-greeting={game.href === "/games/workout" || game.href === "/fat-burn/index.html" || game.href === "/nature/stargazing" ? true : undefined}>{content}</a>
                     ) : (
-                      <article className={className} key={game.title}>{content}</article>
+                      <article className={className} key={game.title} style={gameCardStyle(game.href)}>{content}</article>
                     );
                   })}
                 </div>
@@ -1099,12 +1139,21 @@ function AsrLabPage() {
 }
 
 function CurrentPage() {
+  const compactGameUi = /^\/(games|math|chemistry|chinese|english|classics|nature|physics)(\/|$)/.test(window.location.pathname);
+  document.body.toggleAttribute("data-compact-game-ui", compactGameUi);
+  document.body.toggleAttribute("data-home-page", window.location.pathname === "/");
   if (window.location.pathname === "/" && window.location.hash === "#asr-lab") {
     window.history.replaceState({}, "", "/tools/asr-lab");
   }
   if (window.location.pathname === "/tools/asr-lab") return <AsrLabPage />;
+  if (window.location.pathname === "/physics/house-building") {
+    return <Suspense fallback={<ChemistryLoading label="盖房子实验台" />}><HouseBuildingPage /></Suspense>;
+  }
   if (window.location.pathname === "/games/tetris") {
     return <Suspense fallback={<ChemistryLoading label="水晶俄罗斯方块" />}><TetrisGame /></Suspense>;
+  }
+  if (window.location.pathname === "/games/super-blocks") {
+    return <Suspense fallback={<ChemistryLoading label="超级积木" />}><SuperBlocksGame /></Suspense>;
   }
   if (window.location.pathname === "/games/sudoku") {
     return <Suspense fallback={<ChemistryLoading label="星页数独" />}><SudokuGame /></Suspense>;
@@ -1124,6 +1173,9 @@ function CurrentPage() {
   if (window.location.pathname === "/games/drawing-studio") {
     return <Suspense fallback={<ChemistryLoading label="星空画图舱" />}><DrawingStudioPage /></Suspense>;
   }
+  if (window.location.pathname === "/games/symmetry-drawing") {
+    return <Suspense fallback={<ChemistryLoading label="对称画创作舱" />}><SymmetryDrawingPage /></Suspense>;
+  }
   if (window.location.pathname === "/games/fruit-slice") {
     return <Suspense fallback={<ChemistryLoading label="切水果体感舱" />}><FruitSliceGame /></Suspense>;
   }
@@ -1139,8 +1191,14 @@ function CurrentPage() {
   if (window.location.pathname === "/nature/stargazing") {
     return <Suspense fallback={<ChemistryLoading label="仰望星空" />}><StargazingPage /></Suspense>;
   }
+  const geographyPage = GEOGRAPHY_PAGES.find(page => window.location.pathname === `/nature/${page.id}`);
+  if (geographyPage) {
+    return <Suspense fallback={<ChemistryLoading label={geographyPage.title} />}><GeographyPage pageId={geographyPage.id} /></Suspense>;
+  }
   if (window.location.pathname === "/math/add-subtract") return <AddSubtractGame />;
+  if (window.location.pathname === "/math/twenty-four") return <Suspense fallback={<ChemistryLoading label="24点" />}><TwentyFourGame /></Suspense>;
   if (window.location.pathname === "/math/2048") return <Suspense fallback={<ChemistryLoading label="2048" />}><Game2048Page /></Suspense>;
+  if (window.location.pathname === "/math/sliding-puzzle") return <Suspense fallback={<ChemistryLoading label="华容道" />}><SlidingPuzzleGame /></Suspense>;
   if (window.location.pathname === "/math/arithmetic-battle") return <ArithmeticBattleGame />;
   if (window.location.pathname === "/math/multiplication") return <MultiplicationGame />;
   if (window.location.pathname === "/math/mystery-function") return <MysteryFunctionGame />;
@@ -1274,12 +1332,26 @@ function CurrentPage() {
   return <App />;
 }
 
+function SiteRouter() {
+  const [, setLocationVersion] = useState(0);
+  useEffect(() => {
+    const renderLocation = () => setLocationVersion((version) => version + 1);
+    window.addEventListener("popstate", renderLocation);
+    return () => window.removeEventListener("popstate", renderLocation);
+  }, []);
+  return <CurrentPage />;
+}
+
 createRoot(document.getElementById("root")!).render(
   <GlobalMusicLayer>
     <GlobalExperienceLayer>
       <LearningCoinLayer>
         <NumericKeypadLayer>
-          <CurrentPage />
+          <SiteFullscreenProvider>
+            <GlobalGamepadNavigation>
+              <SiteRouter />
+            </GlobalGamepadNavigation>
+          </SiteFullscreenProvider>
         </NumericKeypadLayer>
       </LearningCoinLayer>
     </GlobalExperienceLayer>

@@ -3,8 +3,9 @@ import { LEVELS, THEMES, peers, range, type ThemeId, type CellAction } from "../
 import { requestSudoku, SudokuApiError, type SudokuCommand, type SudokuView } from "./api";
 import { LearningCoinBalancePill, useLearningCoinStatus } from "../../shared/LearningCoinLayer";
 import { EnergyCoinBalancePill } from "../../shared/EnergyCoinBalancePill";
+import { GameTopBar } from "../../shared/GameTopBar";
 import { LEARNING_COINS_AWARDED_EVENT, LEARNING_COINS_CHANGED_EVENT, type LearningCoinAward } from "../../shared/learning-coins";
-import { useTts } from "../../shared/speech/use-tts";
+
 import "./sudoku.css";
 
 const gemNames = ["水滴晶", "菱形晶", "六角晶", "三角晶", "八角晶", "梯形晶", "星星晶", "风筝晶", "方形晶"];
@@ -41,7 +42,7 @@ export function SudokuGame() {
   const [energyRevision, setEnergyRevision] = useState(0);
   const alive = useRef(true), buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const { refresh } = useLearningCoinStatus();
-  const tts = useTts({ stopOnUnmount: true });
+
   const accept = useCallback((next: SudokuView) => {
     if (!alive.current) return;
     if (next.game?.id !== latest.current?.game?.id) { setSelected(null); setPanel(false); setHint(null); }
@@ -80,7 +81,7 @@ export function SudokuGame() {
   async function execute(command: SudokuCommand) {
     if (working.current) return;
     const focused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    working.current = true; pending.current = command; setBusy(true); setError(""); tts.stop();
+    working.current = true; pending.current = command; setBusy(true); setError("");
     if (command.type !== "hint") setHint(null);
     try {
       const next = await requestSudoku(command);
@@ -139,11 +140,14 @@ export function SudokuGame() {
   const values = range(spec.n).map(i => i + 1), related = selected === null ? [] : peers(selected, spec);
   const cell = selected === null ? null : game?.cells[selected];
   const usable = game && selected !== null && !game.given[selected] && !game.completedAt;
-  const readable = game?.story.rows.filter(row => row.complete).map(row => row.pieces.join("")).join("\n") ?? "";
+
   const errorContent = error && <div className="sd-error" role="alert"><p>{error}</p><button disabled={busy} onClick={() => stale ? void reload(true) : pending.current ? void execute(pending.current) : void reload()}>{stale ? "恢复最新棋盘" : "重试"}</button></div>;
   return <main className="sd-page">
-    <header className="sd-topbar"><a href="/?tab=games" className="sd-button">← 游戏大厅</a><strong>星页数独</strong><div className="sd-wallets"><LearningCoinBalancePill /><EnergyCoinBalancePill key={energyRevision} /></div></header>
-    <section className="sd-intro"><div><span className="sd-eyebrow">图案推理 · 故事探索</span><h1>把图案，拼成故事。</h1><p>填一格，发现线索。拼一行，读一段冒险。</p></div><div className="sd-actions"><button onClick={() => setHelp(true)}>怎么玩</button><button className="sd-primary" disabled={locked} onClick={openSetup}>新的故事</button></div></section>
+    <GameTopBar
+      title="星页数独"
+      wallets={<><LearningCoinBalancePill /><EnergyCoinBalancePill key={energyRevision} /></>}
+      controls={<><button onClick={() => setHelp(true)}>怎么玩</button><button className="sd-primary" disabled={locked} onClick={openSetup}>新的故事</button></>}
+    />
     {!setup && errorContent}
     {!data && <section className="sd-card sd-loading" aria-live="polite">{busy ? "正在恢复你的数独棋盘……" : "请重试打开探索地图"}</section>}
     {data && !game && <section className="sd-card sd-loading"><h2>第一段冒险，从这里开始</h2><p>选择一个图案世界和探索难度。</p><button className="sd-primary" disabled={locked} onClick={openSetup}>选择新故事</button></section>}
@@ -182,14 +186,11 @@ export function SudokuGame() {
           <button className="sd-wide" disabled={locked || !game.canUndo || !!game.completedAt} onClick={() => send({ type: "undo" })}>↶ 撤销上一步</button>
         </section><section className="sd-card sd-reward"><h3>这一局的星光奖励</h3><p><strong>+{spec.reward}</strong> 知识币 <strong>+{spec.reward}</strong> 能量币</p><span>完整拼好后获得 · 不限时 · 不扣币</span><progress value={game.story.rows.filter(row => row.complete).length} max={spec.n} aria-label="故事完成进度" /></section></aside>
       </div>
-      <section className="sd-card sd-story"><div className="sd-section-head"><div><span className="sd-eyebrow">正在编织的冒险</span><h2>{game.story.title}</h2><p>{game.story.teaser}</p></div><div className="sd-actions"><button disabled={!readable} onClick={() => void tts.speak({ text: readable, lang: "zh-CN", preferLocalVoice: true })}>朗读已拼好的故事</button>{tts.status === "speaking" && <button onClick={tts.pause}>暂停朗读</button>}{tts.status === "paused" && <button onClick={tts.resume}>继续朗读</button>}{["speaking", "paused", "loading"].includes(tts.status) && <button onClick={tts.stop}>停止朗读</button>}</div></div>
-        {tts.error && <p className="sd-speech-note" role="status">{tts.error.message} 仍然可以看故事和继续玩。</p>}
-        {game.story.rows.map((row, index) => <div key={index} className={`sd-story-row ${row.complete ? "sd-done" : ""} ${selected !== null && Math.floor(selected / spec.n) === index ? "sd-active" : ""}`}><span className="sd-row-mark">{row.complete ? "✓" : index + 1}</span><div><div className="sd-fragments">{row.pieces.map((piece, i) => <span key={i} className={piece === null ? "sd-missing" : ""}>{piece ?? "···"}</span>)}</div><p>第 {index + 1} 行 · {row.complete ? "故事已拼好" : "填入图案，让故事连起来"}</p></div></div>)}
-      </section><footer className="sd-footer"><span role="status">{busy ? "正在保存……" : pending.current ? "这一步尚未确认，请重试" : data.message || "✓ 已自动保存在本机"}</span><span>已完成 {data.completedCount} 个故事</span></footer>
+      <footer className="sd-footer"><span role="status">{busy ? "正在保存……" : pending.current ? "这一步尚未确认，请重试" : data.message || "✓ 已自动保存在本机"}</span><span>已完成 {data.completedCount} 个故事</span></footer>
     </>}
     <Modal open={setup} title="下一页，去哪里冒险？" busy={busy} onClose={() => setSetup(false)}><p>六档难度都可以自由选择，每局都有新地图和新故事。</p><h3>选择探索难度</h3><div className="sd-level-options">{LEVELS.map((level, index) => <button key={index} disabled={locked} aria-pressed={draftLevel === index} onClick={() => setDraftLevel(index)}><strong>{draftLevel === index ? "✓" : index + 1} {level.name}</strong><span>{level.n} × {level.n} · {level.clues} 个已知格</span><span>两种币各 +{level.reward}</span></button>)}</div><h3>选择故事世界</h3><div className="sd-theme-options">{THEMES.map(theme => <button key={theme.id} disabled={locked} aria-pressed={draftTheme === theme.id} onClick={() => setDraftTheme(theme.id as ThemeId)}><Symbol theme={theme.id as ThemeId} value={1} />{draftTheme === theme.id && "✓ "}{theme.name}</button>)}</div>
       {game && !game.completedAt && <p className="sd-warning">开始后会替换当前未完成的棋盘，已获得的奖励会保留。</p>}{setup && errorContent}<button className="sd-primary" disabled={locked || !data} onClick={() => data && void execute({ type: "new", level: draftLevel, theme: draftTheme, revision: data.revision, operationId: crypto.randomUUID() })}>{game && !game.completedAt ? "放下本局，开始新故事" : "开始新故事"}</button>
     </Modal>
-    <Modal open={help} title="一起拼一页故事" onClose={() => setHelp(false)}><p>每行、每列、每个粗框里，每种图案只能出现一次。金色亮框和圆点是题目固定的线索。</p><ol><li>点一个空格，在工作台里看全部图案。</li><li>点“不可能”的图案打叉，再点可以恢复。</li><li>收起后留下问号和剩余候选小图片。只剩一种时自动填上。</li><li>也可以直接填写，再用撤销或重新考虑修改。</li><li>每拼好一行，故事就连成一句话；全盘完成后，两种币各奖励 {spec.reward} 枚。</li></ol><p>方向键移动，1—9 或 A—I 按图案顺序操作，Escape 收起，Backspace 清空。没有倒计时。</p></Modal>
+    <Modal open={help} title="一起拼一页故事" onClose={() => setHelp(false)}><p>每行、每列、每个粗框里，每种图案只能出现一次。金色亮框和圆点是题目固定的线索。</p><ol><li>点一个空格，在工作台里看全部图案。</li><li>点“不可能”的图案打叉，再点可以恢复。</li><li>收起后留下问号和剩余候选小图片。只剩一种时自动填上。</li><li>也可以直接填写，再用撤销或重新考虑修改。</li><li>全盘完成后，两种币各奖励 {spec.reward} 枚。</li></ol><p>方向键移动，1—9 或 A—I 按图案顺序操作，Escape 收起，Backspace 清空。没有倒计时。</p></Modal>
   </main>;
 }
