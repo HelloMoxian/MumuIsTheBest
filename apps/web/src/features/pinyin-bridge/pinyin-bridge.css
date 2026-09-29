@@ -422,20 +422,13 @@
 }
 
 .pinyin-unit > strong {
-  align-self: end;
+  width: 100%;
   color: var(--group-accent);
-  font-size: clamp(22px, 2.2vw, 34px);
+  font-size: clamp(32px, 3.1vw, 48px);
   font-weight: 950;
   line-height: 1;
+  text-align: center;
   text-shadow: 0 0 16px rgba(var(--group-rgb), 0.22);
-}
-
-.pinyin-unit > small {
-  align-self: end;
-  margin-top: 2px;
-  color: rgba(229, 228, 255, 0.62);
-  font-size: 8px;
-  font-weight: 800;
 }
 
 .pinyin-unit:hover,
@@ -1036,7 +1029,7 @@
   }
 
   .pinyin-unit > strong {
-    font-size: clamp(22px, 7vw, 33px);
+    font-size: clamp(30px, 9vw, 44px);
   }
 
   .pinyin-dialog-backdrop {

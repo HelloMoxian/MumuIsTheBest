@@ -627,7 +627,6 @@ export function PinyinBridgePage() {
                     >
                       <span>{String(index + 1).padStart(2, "0")}</span>
                       <strong>{unit.value}</strong>
-                      <small>{GROUP_LABEL[unit.group]}</small>
                     </button>
                   ))}
                 </div>
