@@ -16,7 +16,7 @@ function Gem({ kind }: { kind: number }) {
   const [broken, setBroken] = useState(false);
   const gem = GEMS[kind];
   return broken ? <span className="gc-fallback">{gem.symbol}<small>{gem.name}</small></span>
-    : <img src={`/images/gem-connect/${gem.id}.png`} alt="" draggable={false} onError={() => setBroken(true)} />;
+    : <img src={`/images/gem-connect/${gem.id}.webp`} alt="" draggable={false} onError={() => setBroken(true)} />;
 }
 export function GemConnectGame() {
   const { refresh: refreshKnowledgeCoins } = useLearningCoinStatus();

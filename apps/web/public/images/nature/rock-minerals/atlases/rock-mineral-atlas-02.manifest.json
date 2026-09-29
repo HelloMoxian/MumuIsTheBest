@@ -17,7 +17,7 @@
       "index": 0,
       "row": 0,
       "column": 0,
-      "filename": "bornite.png",
+      "filename": "bornite.webp",
       "sourceBox": [
         4,
         4,
@@ -41,7 +41,7 @@
       "index": 1,
       "row": 0,
       "column": 1,
-      "filename": "chalcocite.png",
+      "filename": "chalcocite.webp",
       "sourceBox": [
         422,
         4,
@@ -65,7 +65,7 @@
       "index": 2,
       "row": 0,
       "column": 2,
-      "filename": "galena.png",
+      "filename": "galena.webp",
       "sourceBox": [
         840,
         4,
@@ -89,7 +89,7 @@
       "index": 3,
       "row": 1,
       "column": 0,
-      "filename": "sphalerite.png",
+      "filename": "sphalerite.webp",
       "sourceBox": [
         4,
         422,
@@ -113,7 +113,7 @@
       "index": 4,
       "row": 1,
       "column": 1,
-      "filename": "cinnabar.png",
+      "filename": "cinnabar.webp",
       "sourceBox": [
         422,
         422,
@@ -137,7 +137,7 @@
       "index": 5,
       "row": 1,
       "column": 2,
-      "filename": "stibnite.png",
+      "filename": "stibnite.webp",
       "sourceBox": [
         840,
         422,
@@ -161,7 +161,7 @@
       "index": 6,
       "row": 2,
       "column": 0,
-      "filename": "molybdenite.png",
+      "filename": "molybdenite.webp",
       "sourceBox": [
         4,
         840,
@@ -185,7 +185,7 @@
       "index": 7,
       "row": 2,
       "column": 1,
-      "filename": "arsenopyrite.png",
+      "filename": "arsenopyrite.webp",
       "sourceBox": [
         422,
         840,
@@ -209,7 +209,7 @@
       "index": 8,
       "row": 2,
       "column": 2,
-      "filename": "pyrrhotite.png",
+      "filename": "pyrrhotite.webp",
       "sourceBox": [
         840,
         840,

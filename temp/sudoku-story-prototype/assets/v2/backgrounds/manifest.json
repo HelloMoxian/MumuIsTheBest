@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "source": "../../source-v2/backgrounds-atlas.png",
+  "source": "../../../../../assets/game/sudoku/source/backgrounds-atlas.png",
   "sourceWidth": 1774,
   "sourceHeight": 887,
   "columns": 2,

@@ -17,7 +17,7 @@
       "index": 0,
       "row": 0,
       "column": 0,
-      "filename": "lepidolite.png",
+      "filename": "lepidolite.webp",
       "sourceBox": [
         4,
         4,
@@ -41,7 +41,7 @@
       "index": 1,
       "row": 0,
       "column": 1,
-      "filename": "olivine.png",
+      "filename": "olivine.webp",
       "sourceBox": [
         422,
         4,
@@ -65,7 +65,7 @@
       "index": 2,
       "row": 0,
       "column": 2,
-      "filename": "augite.png",
+      "filename": "augite.webp",
       "sourceBox": [
         840,
         4,
@@ -89,7 +89,7 @@
       "index": 3,
       "row": 1,
       "column": 0,
-      "filename": "diopside.png",
+      "filename": "diopside.webp",
       "sourceBox": [
         4,
         422,
@@ -113,7 +113,7 @@
       "index": 4,
       "row": 1,
       "column": 1,
-      "filename": "hornblende.png",
+      "filename": "hornblende.webp",
       "sourceBox": [
         422,
         422,
@@ -137,7 +137,7 @@
       "index": 5,
       "row": 1,
       "column": 2,
-      "filename": "beryl.png",
+      "filename": "beryl.webp",
       "sourceBox": [
         840,
         422,
@@ -161,7 +161,7 @@
       "index": 6,
       "row": 2,
       "column": 0,
-      "filename": "tourmaline.png",
+      "filename": "tourmaline.webp",
       "sourceBox": [
         4,
         840,
@@ -185,7 +185,7 @@
       "index": 7,
       "row": 2,
       "column": 1,
-      "filename": "topaz.png",
+      "filename": "topaz.webp",
       "sourceBox": [
         422,
         840,
@@ -209,7 +209,7 @@
       "index": 8,
       "row": 2,
       "column": 2,
-      "filename": "zircon.png",
+      "filename": "zircon.webp",
       "sourceBox": [
         840,
         840,

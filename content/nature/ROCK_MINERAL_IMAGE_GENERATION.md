@@ -4,7 +4,7 @@
 
 - 原始图集：`apps/web/public/images/nature/rock-minerals/atlases/rock-mineral-atlas-01.png` 至 `15.png`
 - 图集清单：与每张图集同名的 `.manifest.json`
-- 运行时单图：`apps/web/public/images/nature/rock-minerals/samples/<stable-id>.png`
+- 运行时单图：`apps/web/public/images/nature/rock-minerals/samples/<stable-id>.webp`（WebP quality 70，透明通道 quality 90）
 - 图片和资料的绑定关系：`rock-mineral-catalog.v1.json` 中的 `image` 字段
 
 原始图集采用严格的 3 × 3 行优先格位。前 14 张各含 9 个图鉴样本；第 15 张前两格是铝土矿和褐铁矿，余下七格依次为四种土层、晶洞、地质锤和碎石支持图。

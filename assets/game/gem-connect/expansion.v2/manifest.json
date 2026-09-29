@@ -18,70 +18,70 @@
       "name": "青柠叶片",
       "introducedAtLevel": 11,
       "source": "assets/game/gem-connect/expansion.v2/leaf.png",
-      "runtime": "apps/web/public/images/gem-connect/leaf.png"
+      "runtime": "apps/web/public/images/gem-connect/leaf.webp"
     },
     {
       "id": "bow",
       "name": "玫红蝴蝶结",
       "introducedAtLevel": 11,
       "source": "assets/game/gem-connect/expansion.v2/bow.png",
-      "runtime": "apps/web/public/images/gem-connect/bow.png"
+      "runtime": "apps/web/public/images/gem-connect/bow.webp"
     },
     {
       "id": "snowflake",
       "name": "冰蓝雪花",
       "introducedAtLevel": 12,
       "source": "assets/game/gem-connect/expansion.v2/snowflake.png",
-      "runtime": "apps/web/public/images/gem-connect/snowflake.png"
+      "runtime": "apps/web/public/images/gem-connect/snowflake.webp"
     },
     {
       "id": "gear",
       "name": "琥珀齿轮",
       "introducedAtLevel": 12,
       "source": "assets/game/gem-connect/expansion.v2/gear.png",
-      "runtime": "apps/web/public/images/gem-connect/gear.png"
+      "runtime": "apps/web/public/images/gem-connect/gear.webp"
     },
     {
       "id": "crown",
       "name": "紫晶皇冠",
       "introducedAtLevel": 13,
       "source": "assets/game/gem-connect/expansion.v2/crown.png",
-      "runtime": "apps/web/public/images/gem-connect/crown.png"
+      "runtime": "apps/web/public/images/gem-connect/crown.webp"
     },
     {
       "id": "ring",
       "name": "青色圆环",
       "introducedAtLevel": 13,
       "source": "assets/game/gem-connect/expansion.v2/ring.png",
-      "runtime": "apps/web/public/images/gem-connect/ring.png"
+      "runtime": "apps/web/public/images/gem-connect/ring.webp"
     },
     {
       "id": "key",
       "name": "赤红钥匙",
       "introducedAtLevel": 14,
       "source": "assets/game/gem-connect/expansion.v2/key.png",
-      "runtime": "apps/web/public/images/gem-connect/key.png"
+      "runtime": "apps/web/public/images/gem-connect/key.webp"
     },
     {
       "id": "flame",
       "name": "青柠火焰",
       "introducedAtLevel": 14,
       "source": "assets/game/gem-connect/expansion.v2/flame.png",
-      "runtime": "apps/web/public/images/gem-connect/flame.png"
+      "runtime": "apps/web/public/images/gem-connect/flame.webp"
     },
     {
       "id": "hourglass",
       "name": "靛蓝沙漏",
       "introducedAtLevel": 15,
       "source": "assets/game/gem-connect/expansion.v2/hourglass.png",
-      "runtime": "apps/web/public/images/gem-connect/hourglass.png"
+      "runtime": "apps/web/public/images/gem-connect/hourglass.webp"
     },
     {
       "id": "prism",
       "name": "虹彩棱镜",
       "introducedAtLevel": 15,
       "source": "assets/game/gem-connect/expansion.v2/prism.png",
-      "runtime": "apps/web/public/images/gem-connect/prism.png"
+      "runtime": "apps/web/public/images/gem-connect/prism.webp"
     }
   ]
 }

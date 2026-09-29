@@ -2,7 +2,7 @@
   min-height: 100dvh;
   padding: 20px clamp(12px, 2.8vw, 48px) 32px;
   color: var(--ink-primary);
-  background: linear-gradient(var(--glass-500), var(--space-950)), url("/images/bejeweled/sanctuary.png") center / cover fixed;
+  background: linear-gradient(var(--glass-500), var(--space-950)), url("/images/bejeweled/sanctuary.webp") center / cover fixed;
   font-size: 18px;
 }
 .bj-page * { box-sizing: border-box; }

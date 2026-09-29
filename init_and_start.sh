@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 # One-command local launcher for Mumu 学习岛.
-# Default behavior: install dependencies, free this app's ports, start services, and open the browser.
+# Default behavior: start immediately with the current checkout, then update in the background.
 set -Eeuo pipefail
 
-PROJECT_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="${MUMU_PROJECT_ROOT:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)}"
 WEB_PORT=5173
 SERVER_PORT=8787
 WEB_URL="http://localhost:${WEB_PORT}/"
@@ -57,11 +57,80 @@ configure_data_directory() {
   LOG_DIR="${APP_DATA_DIR}/logs"
   LOG_FILE="${LOG_DIR}/mumu-dev.log"
   PID_FILE="${RUNTIME_DIR}/mumu-dev.pid"
+  UPDATE_LOG_FILE="${LOG_DIR}/mumu-update.log"
+  UPDATE_PID_FILE="${RUNTIME_DIR}/mumu-update.pid"
+  UPDATE_LOCK_DIR="${RUNTIME_DIR}/mumu-update.lock"
+  UPDATER_SCRIPT="${RUNTIME_DIR}/mumu-updater.sh"
   mkdir -p "${APP_DATA_DIR}" "${RUNTIME_DIR}" "${LOG_DIR}" \
     || fail "无法创建本机数据目录：${APP_DATA_DIR}"
   chmod 700 "${APP_DATA_DIR}" "${RUNTIME_DIR}" "${LOG_DIR}" \
     || fail "无法保护本机数据目录权限：${APP_DATA_DIR}"
   export APP_DATA_DIR
+}
+
+dependencies_ready() {
+  [[ -x "${PROJECT_ROOT}/apps/web/node_modules/.bin/vite" \
+    && -x "${PROJECT_ROOT}/apps/server/node_modules/.bin/tsx" ]]
+}
+
+install_dependencies() {
+  "${PNPM[@]}" install --frozen-lockfile --prefer-offline
+}
+
+log_update() {
+  printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$1"
+}
+
+run_background_update() {
+  if ! mkdir "${UPDATE_LOCK_DIR}" 2>/dev/null; then
+    log_update "已有后台更新任务在运行，本次跳过。"
+    return 0
+  fi
+  echo "$$" > "${UPDATE_PID_FILE}"
+
+  cleanup_update() {
+    rmdir "${UPDATE_LOCK_DIR}" 2>/dev/null || true
+    rm -f "${UPDATE_PID_FILE}"
+  }
+  trap cleanup_update EXIT
+
+  command -v git >/dev/null 2>&1 || {
+    log_update "未找到 Git，跳过后台更新。"
+    return 0
+  }
+
+  cd "${PROJECT_ROOT}"
+  log_update "开始检查远端更新；当前游戏服务不会等待此任务。"
+  if [[ -n "$(git status --porcelain --untracked-files=normal 2>/dev/null)" ]]; then
+    log_update "检测到本地改动；将保留改动，若远端有冲突 Git 会停止拉取。"
+  fi
+
+  export GIT_TERMINAL_PROMPT=0
+  if [[ -z "${GIT_SSH_COMMAND:-}" ]]; then
+    export GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=2"
+  fi
+
+  if ! git -c http.lowSpeedLimit=1 -c http.lowSpeedTime=30 pull --ff-only --no-rebase; then
+    log_update "拉取失败或无法快进；已保留当前代码和本地改动，下次启动会再次尝试。"
+    return 0
+  fi
+
+  log_update "代码拉取完成，开始按最新锁文件安装依赖。"
+  if ! install_dependencies; then
+    log_update "依赖安装失败；学习数据未受影响，下次启动会继续使用现有环境并再次尝试。"
+    return 0
+  fi
+
+  log_update "后台更新完成；本次可能触发一次热更新，下次启动将直接使用最新版本。"
+}
+
+start_background_update() {
+  [[ "${MUMU_SKIP_UPDATE:-0}" == "1" ]] && return 0
+
+  cp "${BASH_SOURCE[0]}" "${UPDATER_SCRIPT}"
+  chmod 700 "${UPDATER_SCRIPT}"
+  MUMU_PROJECT_ROOT="${PROJECT_ROOT}" APP_DATA_DIR="${APP_DATA_DIR}" \
+    nohup bash "${UPDATER_SCRIPT}" --background-update >>"${UPDATE_LOG_FILE}" 2>&1 < /dev/null &
 }
 
 port_pids() {
@@ -126,12 +195,17 @@ configure_pnpm
 configure_data_directory
 cd "${PROJECT_ROOT}"
 
-say "初始化依赖环境"
-"${PNPM[@]}" install --frozen-lockfile --prefer-offline
+if [[ "${1:-}" == "--background-update" ]]; then
+  run_background_update
+  exit 0
+fi
 
-# pnpm 10+ protects installs by requiring native/postinstall builds to be explicitly approved.
-# The lockfile fixes the exact dependency set; this makes a fresh clone launchable in one step.
-"${PNPM[@]}" approve-builds --all
+if [[ "${MUMU_REPAIR:-0}" == "1" ]] || ! dependencies_ready; then
+  say "首次运行或修复模式：安装启动所需依赖"
+  install_dependencies
+else
+  say "使用当前版本和现有依赖快速启动"
+fi
 
 say "清理旧的本项目服务"
 stop_port "${WEB_PORT}"
@@ -143,7 +217,9 @@ echo "$!" > "${PID_FILE}"
 
 wait_for_services
 open_browser
+start_background_update
 
 printf '\n✅ Mumu 学习岛已启动：%s\n' "${WEB_URL}"
 printf '   启动日志：%s\n' "${LOG_FILE}"
-printf '   下次重新运行此脚本会自动替换旧服务。\n'
+printf '   后台更新日志：%s\n' "${UPDATE_LOG_FILE}"
+printf '   后台更新不会阻塞当前使用；下次启动会直接使用已更新版本。\n'

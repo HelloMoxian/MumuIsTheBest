@@ -79,7 +79,7 @@ for (const [index, item] of catalog.items.entries()) {
   invariant(typeof item.value?.description === "string", `${label} 缺少价值说明`);
   invariant(typeof item.safety === "string" && item.safety.length >= 6, `${label} 缺少安全提示`);
   invariant(
-    item.image?.path === `/images/nature/rock-minerals/samples/${item.id}.png`,
+    item.image?.path === `/images/nature/rock-minerals/samples/${item.id}.webp`,
     `${label} 图片路径必须与稳定 ID 对齐`,
   );
   invariant(

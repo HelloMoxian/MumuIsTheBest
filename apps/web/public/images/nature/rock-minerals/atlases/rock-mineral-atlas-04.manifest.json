@@ -17,7 +17,7 @@
       "index": 0,
       "row": 0,
       "column": 0,
-      "filename": "chromite.png",
+      "filename": "chromite.webp",
       "sourceBox": [
         4,
         4,
@@ -41,7 +41,7 @@
       "index": 1,
       "row": 0,
       "column": 1,
-      "filename": "ilmenite.png",
+      "filename": "ilmenite.webp",
       "sourceBox": [
         422,
         4,
@@ -65,7 +65,7 @@
       "index": 2,
       "row": 0,
       "column": 2,
-      "filename": "pyrolusite.png",
+      "filename": "pyrolusite.webp",
       "sourceBox": [
         840,
         4,
@@ -89,7 +89,7 @@
       "index": 3,
       "row": 1,
       "column": 0,
-      "filename": "cuprite.png",
+      "filename": "cuprite.webp",
       "sourceBox": [
         4,
         422,
@@ -113,7 +113,7 @@
       "index": 4,
       "row": 1,
       "column": 1,
-      "filename": "uraninite.png",
+      "filename": "uraninite.webp",
       "sourceBox": [
         422,
         422,
@@ -137,7 +137,7 @@
       "index": 5,
       "row": 1,
       "column": 2,
-      "filename": "spinel.png",
+      "filename": "spinel.webp",
       "sourceBox": [
         840,
         422,
@@ -161,7 +161,7 @@
       "index": 6,
       "row": 2,
       "column": 0,
-      "filename": "zincite.png",
+      "filename": "zincite.webp",
       "sourceBox": [
         4,
         840,
@@ -185,7 +185,7 @@
       "index": 7,
       "row": 2,
       "column": 1,
-      "filename": "halite.png",
+      "filename": "halite.webp",
       "sourceBox": [
         422,
         840,
@@ -209,7 +209,7 @@
       "index": 8,
       "row": 2,
       "column": 2,
-      "filename": "sylvite.png",
+      "filename": "sylvite.webp",
       "sourceBox": [
         840,
         840,

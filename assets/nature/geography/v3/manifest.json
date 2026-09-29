@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "source": "/Users/wangjian/github/MumuIsTheBest/assets/nature/geography/v3/atlas.grid.png",
+  "source": "/Users/wangjian/github/MumuIsTheBest/assets/nature/geography/v3/atlas.grid.webp",
   "sourceWidth": 1024,
   "sourceHeight": 1536,
   "columns": 1,
@@ -17,7 +17,7 @@
       "index": 0,
       "row": 0,
       "column": 0,
-      "filename": "world.png",
+      "filename": "world.webp",
       "sourceBox": [
         0,
         0,
@@ -41,7 +41,7 @@
       "index": 1,
       "row": 1,
       "column": 0,
-      "filename": "china.png",
+      "filename": "china.webp",
       "sourceBox": [
         0,
         512,
@@ -65,7 +65,7 @@
       "index": 2,
       "row": 2,
       "column": 0,
-      "filename": "footprints.png",
+      "filename": "footprints.webp",
       "sourceBox": [
         0,
         1024,

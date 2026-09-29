@@ -1,5 +1,5 @@
 {
-  "source": "crew-atlas.png",
+  "source": "../../../../assets/game/sudoku/source/crew-atlas.png",
   "placements": [
     {
       "id": "symbol-01",

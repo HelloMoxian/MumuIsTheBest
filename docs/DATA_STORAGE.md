@@ -65,6 +65,7 @@
 | 界面偏好 | `preferences/experience.json` | 界面语言与朗读模式 |
 | 游戏控制偏好 | `preferences/game-controllers.json` | 按游戏保存人数、玩家输入方式、手柄型号/同型号序号与动作键位；不保存输入轨迹 |
 | 启动辅助 | `run/mumu-dev.pid`、`logs/mumu-dev.log` | 当前启动进程号与不含个人内容/密钥的日志 |
+| 后台更新辅助 | `run/mumu-update.pid`、`run/mumu-update.lock/`、`run/mumu-updater.sh`、`logs/mumu-update.log` | 启动后异步执行 Git 快进拉取与依赖安装所需的进程号、互斥锁、脚本副本和日志；不包含学习数据或密钥 |
 
 画图作品外壳为 schemaVersion 2，包含 locked 状态；内部画布继续为版本 3。旧作品默认未锁定，首次更新前保留同目录 `.json.v1.bak` 私有恢复点，未来备份应一并包含作品、恢复点和 trash。锁定作品禁止覆盖及删除；只有显式解锁后才允许，重命名不改变图元。删除只将原文件原子移动到回收目录，不自动清理；恢复可将回收文件复制回 `<原 UUID>.json`，若该 ID 已存在应先另存现有文件，避免覆盖。
 

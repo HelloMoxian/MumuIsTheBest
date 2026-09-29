@@ -17,7 +17,7 @@
       "index": 0,
       "row": 0,
       "column": 0,
-      "filename": "ruby.png",
+      "filename": "ruby.webp",
       "sourceBox": [
         2,
         2,
@@ -41,7 +41,7 @@
       "index": 1,
       "row": 0,
       "column": 1,
-      "filename": "sapphire.png",
+      "filename": "sapphire.webp",
       "sourceBox": [
         446,
         2,
@@ -65,7 +65,7 @@
       "index": 2,
       "row": 0,
       "column": 2,
-      "filename": "emerald.png",
+      "filename": "emerald.webp",
       "sourceBox": [
         889,
         2,
@@ -89,7 +89,7 @@
       "index": 3,
       "row": 0,
       "column": 3,
-      "filename": "gold.png",
+      "filename": "gold.webp",
       "sourceBox": [
         1332,
         2,
@@ -113,7 +113,7 @@
       "index": 4,
       "row": 1,
       "column": 0,
-      "filename": "amethyst.png",
+      "filename": "amethyst.webp",
       "sourceBox": [
         2,
         446,
@@ -137,7 +137,7 @@
       "index": 5,
       "row": 1,
       "column": 1,
-      "filename": "amber.png",
+      "filename": "amber.webp",
       "sourceBox": [
         446,
         446,
@@ -161,7 +161,7 @@
       "index": 6,
       "row": 1,
       "column": 2,
-      "filename": "rose.png",
+      "filename": "rose.webp",
       "sourceBox": [
         889,
         446,
@@ -185,7 +185,7 @@
       "index": 7,
       "row": 1,
       "column": 3,
-      "filename": "moon.png",
+      "filename": "moon.webp",
       "sourceBox": [
         1332,
         446,

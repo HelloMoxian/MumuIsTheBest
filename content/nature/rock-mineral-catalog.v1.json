@@ -136,7 +136,7 @@
       },
       "safety": "普通标本也很贵重；只观察来源合法的标本，不自行淘挖",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/native-gold.png",
+        "path": "/images/nature/rock-minerals/samples/native-gold.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 0
       }
@@ -184,7 +184,7 @@
       },
       "safety": "不要用化学药剂自行清洗或提炼",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/native-silver.png",
+        "path": "/images/nature/rock-minerals/samples/native-silver.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 1
       }
@@ -232,7 +232,7 @@
       },
       "safety": "表面铜盐不入口，接触后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/native-copper.png",
+        "path": "/images/nature/rock-minerals/samples/native-copper.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 2
       }
@@ -280,7 +280,7 @@
       },
       "safety": "只使用正规标本，不进行加热或冶炼",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/native-platinum.png",
+        "path": "/images/nature/rock-minerals/samples/native-platinum.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 3
       }
@@ -328,7 +328,7 @@
       },
       "safety": "易燃；不要加热、点燃或靠近火源",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/native-sulfur.png",
+        "path": "/images/nature/rock-minerals/samples/native-sulfur.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 4
       }
@@ -376,7 +376,7 @@
       },
       "safety": "粉尘不要吸入，观察后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/graphite.png",
+        "path": "/images/nature/rock-minerals/samples/graphite.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 5
       }
@@ -424,7 +424,7 @@
       },
       "safety": "硬但可能沿解理破裂；不做敲击实验",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/diamond.png",
+        "path": "/images/nature/rock-minerals/samples/diamond.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 6
       }
@@ -471,7 +471,7 @@
       },
       "safety": "受潮氧化可能产生酸性物质；保持干燥，不舔舐",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/pyrite.png",
+        "path": "/images/nature/rock-minerals/samples/pyrite.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 7
       }
@@ -516,7 +516,7 @@
       },
       "safety": "不自行粉碎或冶炼，接触粉末后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/chalcopyrite.png",
+        "path": "/images/nature/rock-minerals/samples/chalcopyrite.webp",
         "atlasId": "rock-mineral-atlas-01",
         "cellIndex": 8
       }
@@ -562,7 +562,7 @@
       },
       "safety": "彩膜不是涂料；不磨粉、不入口",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/bornite.png",
+        "path": "/images/nature/rock-minerals/samples/bornite.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 0
       }
@@ -606,7 +606,7 @@
       },
       "safety": "避免粉尘和自行冶炼",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/chalcocite.png",
+        "path": "/images/nature/rock-minerals/samples/chalcocite.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 1
       }
@@ -651,7 +651,7 @@
       },
       "safety": "含铅；只隔着展示盒观察，接触后认真洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/galena.png",
+        "path": "/images/nature/rock-minerals/samples/galena.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 2
       }
@@ -696,7 +696,7 @@
       },
       "safety": "不磨粉，避免接触含镉杂质的未知标本",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/sphalerite.png",
+        "path": "/images/nature/rock-minerals/samples/sphalerite.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 3
       }
@@ -741,7 +741,7 @@
       },
       "safety": "含汞；禁止触摸粉末、研磨、加热或带离展示盒",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/cinnabar.png",
+        "path": "/images/nature/rock-minerals/samples/cinnabar.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 4
       }
@@ -786,7 +786,7 @@
       },
       "safety": "含锑；不要摸粉末、折断晶体或加热",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/stibnite.png",
+        "path": "/images/nature/rock-minerals/samples/stibnite.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 5
       }
@@ -832,7 +832,7 @@
       },
       "safety": "粉末不要吸入，观察后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/molybdenite.png",
+        "path": "/images/nature/rock-minerals/samples/molybdenite.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 6
       }
@@ -877,7 +877,7 @@
       },
       "safety": "含砷；禁止敲碎、加热、闻气味或徒手把玩",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/arsenopyrite.png",
+        "path": "/images/nature/rock-minerals/samples/arsenopyrite.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 7
       }
@@ -920,7 +920,7 @@
       },
       "safety": "易氧化；保持干燥，不磨粉",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/pyrrhotite.png",
+        "path": "/images/nature/rock-minerals/samples/pyrrhotite.webp",
         "atlasId": "rock-mineral-atlas-02",
         "cellIndex": 8
       }
@@ -966,7 +966,7 @@
       },
       "safety": "不磨粉或冶炼，避免含镍粉尘",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/pentlandite.png",
+        "path": "/images/nature/rock-minerals/samples/pentlandite.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 0
       }
@@ -1011,7 +1011,7 @@
       },
       "safety": "含砷且怕光；密封避光，禁止触摸粉末和加热",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/realgar.png",
+        "path": "/images/nature/rock-minerals/samples/realgar.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 1
       }
@@ -1056,7 +1056,7 @@
       },
       "safety": "含砷；只能密封观察，不触摸、不研磨、不加热",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/orpiment.png",
+        "path": "/images/nature/rock-minerals/samples/orpiment.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 2
       }
@@ -1104,7 +1104,7 @@
       },
       "safety": "粉尘不要吸入，磁性通常弱于磁铁矿",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/hematite.png",
+        "path": "/images/nature/rock-minerals/samples/hematite.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 3
       }
@@ -1150,7 +1150,7 @@
       },
       "safety": "大块标本较重，防止掉落砸伤",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/magnetite.png",
+        "path": "/images/nature/rock-minerals/samples/magnetite.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 4
       }
@@ -1193,7 +1193,7 @@
       },
       "safety": "粉尘不要吸入，尖锐针状晶体不要徒手按压",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/goethite.png",
+        "path": "/images/nature/rock-minerals/samples/goethite.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 5
       }
@@ -1239,7 +1239,7 @@
       },
       "safety": "硬而脆，不用它划玻璃或互相撞击",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/corundum.png",
+        "path": "/images/nature/rock-minerals/samples/corundum.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 6
       }
@@ -1285,7 +1285,7 @@
       },
       "safety": "普通标本安全，避免吸入加工粉尘",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/rutile.png",
+        "path": "/images/nature/rock-minerals/samples/rutile.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 7
       }
@@ -1331,7 +1331,7 @@
       },
       "safety": "不自行磨碎或冶炼，重块注意防跌落",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/cassiterite.png",
+        "path": "/images/nature/rock-minerals/samples/cassiterite.webp",
         "atlasId": "rock-mineral-atlas-03",
         "cellIndex": 8
       }
@@ -1377,7 +1377,7 @@
       },
       "safety": "不进行化学处理；天然三价铬矿物与有害六价铬化合物不同",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/chromite.png",
+        "path": "/images/nature/rock-minerals/samples/chromite.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 0
       }
@@ -1421,7 +1421,7 @@
       },
       "safety": "粉尘不要吸入，砂矿标本装盒保存",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/ilmenite.png",
+        "path": "/images/nature/rock-minerals/samples/ilmenite.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 1
       }
@@ -1467,7 +1467,7 @@
       },
       "safety": "粉末不要吸入或入口，观察后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/pyrolusite.png",
+        "path": "/images/nature/rock-minerals/samples/pyrolusite.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 2
       }
@@ -1511,7 +1511,7 @@
       },
       "safety": "不磨粉、不入口，接触后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/cuprite.png",
+        "path": "/images/nature/rock-minerals/samples/cuprite.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 3
       }
@@ -1556,7 +1556,7 @@
       },
       "safety": "有放射性且可能含有毒重金属；只能使用合规密封教具，禁止个人采集",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/uraninite.png",
+        "path": "/images/nature/rock-minerals/samples/uraninite.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 4
       }
@@ -1602,7 +1602,7 @@
       },
       "safety": "硬而脆，避免撞击和吞咽小晶体",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/spinel.png",
+        "path": "/images/nature/rock-minerals/samples/spinel.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 5
       }
@@ -1646,7 +1646,7 @@
       },
       "safety": "来源要标明天然或人工；粉尘不要吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/zincite.png",
+        "path": "/images/nature/rock-minerals/samples/zincite.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 6
       }
@@ -1694,7 +1694,7 @@
       },
       "safety": "矿物标本可能含杂质，禁止舔尝",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/halite.png",
+        "path": "/images/nature/rock-minerals/samples/halite.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 7
       }
@@ -1738,7 +1738,7 @@
       },
       "safety": "教学标本不可食用，避免受潮溶解",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/sylvite.png",
+        "path": "/images/nature/rock-minerals/samples/sylvite.webp",
         "atlasId": "rock-mineral-atlas-04",
         "cellIndex": 8
       }
@@ -1784,7 +1784,7 @@
       },
       "safety": "不要自行用酸处理或加热；破碎边缘可能锋利",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/fluorite.png",
+        "path": "/images/nature/rock-minerals/samples/fluorite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 0
       }
@@ -1828,7 +1828,7 @@
       },
       "safety": "含氟；不磨粉、不加热，接触后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/cryolite.png",
+        "path": "/images/nature/rock-minerals/samples/cryolite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 1
       }
@@ -1874,7 +1874,7 @@
       },
       "safety": "稀酸会起泡，但儿童不要自行做酸反应",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/calcite.png",
+        "path": "/images/nature/rock-minerals/samples/calcite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 2
       }
@@ -1920,7 +1920,7 @@
       },
       "safety": "晶针易折，避免按压；不采集受保护洞穴沉积",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/aragonite.png",
+        "path": "/images/nature/rock-minerals/samples/aragonite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 3
       }
@@ -1966,7 +1966,7 @@
       },
       "safety": "粉尘不要吸入，建筑料标本边缘可能锋利",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/dolomite.png",
+        "path": "/images/nature/rock-minerals/samples/dolomite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 4
       }
@@ -2012,7 +2012,7 @@
       },
       "safety": "粉尘不要吸入，不自行煅烧",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/magnesite.png",
+        "path": "/images/nature/rock-minerals/samples/magnesite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 5
       }
@@ -2055,7 +2055,7 @@
       },
       "safety": "粉尘不要吸入，风化标本保持干燥",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/siderite.png",
+        "path": "/images/nature/rock-minerals/samples/siderite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 6
       }
@@ -2100,7 +2100,7 @@
       },
       "safety": "含锰粉尘不要吸入，避免用酸清洗",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/rhodochrosite.png",
+        "path": "/images/nature/rock-minerals/samples/rhodochrosite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 7
       }
@@ -2144,7 +2144,7 @@
       },
       "safety": "不磨粉或用酸处理，接触后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/smithsonite.png",
+        "path": "/images/nature/rock-minerals/samples/smithsonite.webp",
         "atlasId": "rock-mineral-atlas-05",
         "cellIndex": 8
       }
@@ -2189,7 +2189,7 @@
       },
       "safety": "含铜；不磨粉、不舔舐，不用酸清洗",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/malachite.png",
+        "path": "/images/nature/rock-minerals/samples/malachite.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 0
       }
@@ -2234,7 +2234,7 @@
       },
       "safety": "含铜；保持干燥，禁止磨粉和入口",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/azurite.png",
+        "path": "/images/nature/rock-minerals/samples/azurite.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 1
       }
@@ -2277,7 +2277,7 @@
       },
       "safety": "含铅；只能密封观察，接触后洗手，禁止磨粉",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/cerussite.png",
+        "path": "/images/nature/rock-minerals/samples/cerussite.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 2
       }
@@ -2321,7 +2321,7 @@
       },
       "safety": "可溶性钡化合物有毒；禁止入口、磨粉或酸处理",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/witherite.png",
+        "path": "/images/nature/rock-minerals/samples/witherite.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 3
       }
@@ -2367,7 +2367,7 @@
       },
       "safety": "易刮伤和吸水，展示时防潮，不把粉末入口",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/gypsum.png",
+        "path": "/images/nature/rock-minerals/samples/gypsum.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 4
       }
@@ -2412,7 +2412,7 @@
       },
       "safety": "遇水可能缓慢水化，保持干燥",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/anhydrite.png",
+        "path": "/images/nature/rock-minerals/samples/anhydrite.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 5
       }
@@ -2458,7 +2458,7 @@
       },
       "safety": "重块防跌落；医用硫酸钡必须是专用品，矿物标本不可食用",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/barite.png",
+        "path": "/images/nature/rock-minerals/samples/barite.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 6
       }
@@ -2503,7 +2503,7 @@
       },
       "safety": "晶体较脆，避免摔落；不要点燃或自制烟火",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/celestine.png",
+        "path": "/images/nature/rock-minerals/samples/celestine.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 7
       }
@@ -2546,7 +2546,7 @@
       },
       "safety": "不尝味、不自行加热或溶解",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/alunite.png",
+        "path": "/images/nature/rock-minerals/samples/alunite.webp",
         "atlasId": "rock-mineral-atlas-06",
         "cellIndex": 8
       }
@@ -2592,7 +2592,7 @@
       },
       "safety": "有害且易溶；禁止触摸后入口、舔尝或自行结晶",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/chalcanthite.png",
+        "path": "/images/nature/rock-minerals/samples/chalcanthite.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 0
       }
@@ -2635,7 +2635,7 @@
       },
       "safety": "含铅；禁止徒手长期接触、磨粉或入口",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/anglesite.png",
+        "path": "/images/nature/rock-minerals/samples/anglesite.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 1
       }
@@ -2681,7 +2681,7 @@
       },
       "safety": "矿物标本不可食用，含氟品种不磨粉",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/apatite.png",
+        "path": "/images/nature/rock-minerals/samples/apatite.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 2
       }
@@ -2726,7 +2726,7 @@
       },
       "safety": "多孔怕油污和化学品，不用清洁剂浸泡",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/turquoise.png",
+        "path": "/images/nature/rock-minerals/samples/turquoise.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 3
       }
@@ -2771,7 +2771,7 @@
       },
       "safety": "可能含钍并有放射性；只使用合规密封标本",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/monazite.png",
+        "path": "/images/nature/rock-minerals/samples/monazite.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 4
       }
@@ -2814,7 +2814,7 @@
       },
       "safety": "避强光保存，不磨粉或用于自制颜料",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/vivianite.png",
+        "path": "/images/nature/rock-minerals/samples/vivianite.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 5
       }
@@ -2860,7 +2860,7 @@
       },
       "safety": "不可入口或用于儿童实验，避免粉尘和长时间皮肤接触",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/borax.png",
+        "path": "/images/nature/rock-minerals/samples/borax.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 6
       }
@@ -2906,7 +2906,7 @@
       },
       "safety": "重块防跌落，不自行粉碎或冶炼",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/scheelite.png",
+        "path": "/images/nature/rock-minerals/samples/scheelite.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 7
       }
@@ -2953,7 +2953,7 @@
       },
       "safety": "不敲碎或冶炼，破口可能锋利",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/wolframite.png",
+        "path": "/images/nature/rock-minerals/samples/wolframite.webp",
         "atlasId": "rock-mineral-atlas-07",
         "cellIndex": 8
       }
@@ -2997,7 +2997,7 @@
       },
       "safety": "含铅；禁止触摸粉末、磨碎或入口",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/vanadinite.png",
+        "path": "/images/nature/rock-minerals/samples/vanadinite.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 0
       }
@@ -3044,7 +3044,7 @@
       },
       "safety": "断口锋利，避免敲碎；粉尘不可吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/quartz.png",
+        "path": "/images/nature/rock-minerals/samples/quartz.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 1
       }
@@ -3092,7 +3092,7 @@
       },
       "safety": "碎片边缘锋利，粉尘不要吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/orthoclase.png",
+        "path": "/images/nature/rock-minerals/samples/orthoclase.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 2
       }
@@ -3138,7 +3138,7 @@
       },
       "safety": "断口可能锋利，避免粉尘",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/microcline.png",
+        "path": "/images/nature/rock-minerals/samples/microcline.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 3
       }
@@ -3184,7 +3184,7 @@
       },
       "safety": "碎片边缘锋利，粉尘不要吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/albite.png",
+        "path": "/images/nature/rock-minerals/samples/albite.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 4
       }
@@ -3227,7 +3227,7 @@
       },
       "safety": "普通标本安全，注意锋利断口",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/anorthite.png",
+        "path": "/images/nature/rock-minerals/samples/anorthite.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 5
       }
@@ -3272,7 +3272,7 @@
       },
       "safety": "避免撞击和超声清洗，表面刮花后晕彩会减弱",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/labradorite.png",
+        "path": "/images/nature/rock-minerals/samples/labradorite.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 6
       }
@@ -3318,7 +3318,7 @@
       },
       "safety": "薄片边缘可能割手，不撕成细粉",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/muscovite.png",
+        "path": "/images/nature/rock-minerals/samples/muscovite.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 7
       }
@@ -3362,7 +3362,7 @@
       },
       "safety": "薄片边缘锋利，避免形成粉尘",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/biotite.png",
+        "path": "/images/nature/rock-minerals/samples/biotite.webp",
         "atlasId": "rock-mineral-atlas-08",
         "cellIndex": 8
       }
@@ -3407,7 +3407,7 @@
       },
       "safety": "不磨粉或自行提取锂，观察后洗手",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/lepidolite.png",
+        "path": "/images/nature/rock-minerals/samples/lepidolite.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 0
       }
@@ -3455,7 +3455,7 @@
       },
       "safety": "断口锋利，粉尘不要吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/olivine.png",
+        "path": "/images/nature/rock-minerals/samples/olivine.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 1
       }
@@ -3498,7 +3498,7 @@
       },
       "safety": "断口锋利，避免敲击产生飞屑",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/augite.png",
+        "path": "/images/nature/rock-minerals/samples/augite.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 2
       }
@@ -3542,7 +3542,7 @@
       },
       "safety": "脆且有解理，避免撞击",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/diopside.png",
+        "path": "/images/nature/rock-minerals/samples/diopside.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 3
       }
@@ -3588,7 +3588,7 @@
       },
       "safety": "长柱断口可能锋利，避免粉尘",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/hornblende.png",
+        "path": "/images/nature/rock-minerals/samples/hornblende.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 4
       }
@@ -3632,7 +3632,7 @@
       },
       "safety": "含铍；禁止磨粉、切割或吸入粉尘",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/beryl.png",
+        "path": "/images/nature/rock-minerals/samples/beryl.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 5
       }
@@ -3679,7 +3679,7 @@
       },
       "safety": "脆且断口锋利，避免高温和撞击",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/tourmaline.png",
+        "path": "/images/nature/rock-minerals/samples/tourmaline.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 6
       }
@@ -3725,7 +3725,7 @@
       },
       "safety": "虽硬但沿解理易裂，避免磕碰和快速加热",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/topaz.png",
+        "path": "/images/nature/rock-minerals/samples/topaz.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 7
       }
@@ -3771,7 +3771,7 @@
       },
       "safety": "部分古老晶体有极弱放射性；合规标本正常观察即可",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/zircon.png",
+        "path": "/images/nature/rock-minerals/samples/zircon.webp",
         "atlasId": "rock-mineral-atlas-09",
         "cellIndex": 8
       }
@@ -3817,7 +3817,7 @@
       },
       "safety": "价值鉴定需专业机构，不用敲击或化学处理",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/jadeite.png",
+        "path": "/images/nature/rock-minerals/samples/jadeite.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 0
       }
@@ -3862,7 +3862,7 @@
       },
       "safety": "不自行粉碎、焙烧或提锂，解理面易裂",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/spodumene.png",
+        "path": "/images/nature/rock-minerals/samples/spodumene.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 1
       }
@@ -3908,7 +3908,7 @@
       },
       "safety": "刀片状晶体易裂且边缘尖，不用手折",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/kyanite.png",
+        "path": "/images/nature/rock-minerals/samples/kyanite.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 2
       }
@@ -3957,7 +3957,7 @@
       },
       "safety": "颗粒硬且可能飞溅，不进行敲击或投掷",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/garnet.png",
+        "path": "/images/nature/rock-minerals/samples/garnet.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 3
       }
@@ -4004,7 +4004,7 @@
       },
       "safety": "只用合规无石棉滑石样品；不要吸入粉末",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/talc.png",
+        "path": "/images/nature/rock-minerals/samples/talc.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 4
       }
@@ -4050,7 +4050,7 @@
       },
       "safety": "粉尘不要吸入，教学样品不可入口",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/kaolinite.png",
+        "path": "/images/nature/rock-minerals/samples/kaolinite.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 5
       }
@@ -4096,7 +4096,7 @@
       },
       "safety": "未知纤维状样品可能含温石棉；禁止锯切、磨粉或吹扫粉尘",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/serpentine.png",
+        "path": "/images/nature/rock-minerals/samples/serpentine.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 6
       }
@@ -4143,7 +4143,7 @@
       },
       "safety": "断口锋利，放大聚光时避免长时间照向可燃物",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/rock-crystal.png",
+        "path": "/images/nature/rock-minerals/samples/rock-crystal.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 7
       }
@@ -4188,7 +4188,7 @@
       },
       "safety": "强光和高温可能使颜色变淡，避免暴晒",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/amethyst.png",
+        "path": "/images/nature/rock-minerals/samples/amethyst.webp",
         "atlasId": "rock-mineral-atlas-10",
         "cellIndex": 8
       }
@@ -4232,7 +4232,7 @@
       },
       "safety": "购买时应标明是否经过加热处理，避免骤冷骤热",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/citrine.png",
+        "path": "/images/nature/rock-minerals/samples/citrine.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 0
       }
@@ -4278,7 +4278,7 @@
       },
       "safety": "市场材料可能经人工辐照，应有处理说明",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/smoky-quartz.png",
+        "path": "/images/nature/rock-minerals/samples/smoky-quartz.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 1
       }
@@ -4326,7 +4326,7 @@
       },
       "safety": "强光可能使部分颜色变淡，避免磕碰",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/rose-quartz.png",
+        "path": "/images/nature/rock-minerals/samples/rose-quartz.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 2
       }
@@ -4372,7 +4372,7 @@
       },
       "safety": "常见染色材料应明确标注；切片边缘可能锋利",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/agate.png",
+        "path": "/images/nature/rock-minerals/samples/agate.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 3
       }
@@ -4420,7 +4420,7 @@
       },
       "safety": "避免摔落和用强酸清洗",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/jasper.png",
+        "path": "/images/nature/rock-minerals/samples/jasper.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 4
       }
@@ -4464,7 +4464,7 @@
       },
       "safety": "切磨粉尘不可吸入，避免撞击",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/tigers-eye.png",
+        "path": "/images/nature/rock-minerals/samples/tigers-eye.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 5
       }
@@ -4511,7 +4511,7 @@
       },
       "safety": "含水且怕干裂、骤温和碰撞，不长时间暴晒",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/opal.png",
+        "path": "/images/nature/rock-minerals/samples/opal.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 6
       }
@@ -4555,7 +4555,7 @@
       },
       "safety": "含铍且裂隙多；不磨粉，避免超声和剧烈温差",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/emerald.png",
+        "path": "/images/nature/rock-minerals/samples/emerald.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 7
       }
@@ -4599,7 +4599,7 @@
       },
       "safety": "含铍；不切磨粉碎，避免重击",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/aquamarine.png",
+        "path": "/images/nature/rock-minerals/samples/aquamarine.webp",
         "atlasId": "rock-mineral-atlas-11",
         "cellIndex": 8
       }
@@ -4643,7 +4643,7 @@
       },
       "safety": "不要自行加热改善颜色，避免猛烈撞击",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/ruby.png",
+        "path": "/images/nature/rock-minerals/samples/ruby.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 0
       }
@@ -4689,7 +4689,7 @@
       },
       "safety": "硬但可能崩角，不做刮划实验或自行加热",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/sapphire.png",
+        "path": "/images/nature/rock-minerals/samples/sapphire.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 1
       }
@@ -4736,7 +4736,7 @@
       },
       "safety": "不靠敲击判断真假，价值鉴定交给专业机构",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/nephrite.png",
+        "path": "/images/nature/rock-minerals/samples/nephrite.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 2
       }
@@ -4781,7 +4781,7 @@
       },
       "safety": "有解理，避免摔落和超声清洗",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/amazonite.png",
+        "path": "/images/nature/rock-minerals/samples/amazonite.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 3
       }
@@ -4825,7 +4825,7 @@
       },
       "safety": "解理明显，避免撞击、超声和高温",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/moonstone.png",
+        "path": "/images/nature/rock-minerals/samples/moonstone.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 4
       }
@@ -4871,7 +4871,7 @@
       },
       "safety": "板材和样本较重，搬运防砸；切割粉尘不可吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/granite.png",
+        "path": "/images/nature/rock-minerals/samples/granite.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 5
       }
@@ -4917,7 +4917,7 @@
       },
       "safety": "断面锋利，野外不攀爬松动柱体",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/basalt.png",
+        "path": "/images/nature/rock-minerals/samples/basalt.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 6
       }
@@ -4961,7 +4961,7 @@
       },
       "safety": "火山岩碎片边缘锋利，野外遵守火山安全管理",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/andesite.png",
+        "path": "/images/nature/rock-minerals/samples/andesite.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 7
       }
@@ -5005,7 +5005,7 @@
       },
       "safety": "边缘锋利，不在活火山区域擅自采集",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/rhyolite.png",
+        "path": "/images/nature/rock-minerals/samples/rhyolite.webp",
         "atlasId": "rock-mineral-atlas-12",
         "cellIndex": 8
       }
@@ -5050,7 +5050,7 @@
       },
       "safety": "样本较重且棱角坚硬，防止掉落",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/diorite.png",
+        "path": "/images/nature/rock-minerals/samples/diorite.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 0
       }
@@ -5094,7 +5094,7 @@
       },
       "safety": "重且硬，搬运防砸，切割粉尘不可吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/gabbro.png",
+        "path": "/images/nature/rock-minerals/samples/gabbro.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 1
       }
@@ -5142,7 +5142,7 @@
       },
       "safety": "断口像玻璃一样极锋利，禁止徒手敲碎",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/obsidian.png",
+        "path": "/images/nature/rock-minerals/samples/obsidian.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 2
       }
@@ -5190,7 +5190,7 @@
       },
       "safety": "粉尘不要吸入，不用粗糙表面摩擦皮肤",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/pumice.png",
+        "path": "/images/nature/rock-minerals/samples/pumice.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 3
       }
@@ -5237,7 +5237,7 @@
       },
       "safety": "孔洞边缘粗糙，避免摩擦皮肤，粉尘不要吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/scoria.png",
+        "path": "/images/nature/rock-minerals/samples/scoria.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 4
       }
@@ -5281,7 +5281,7 @@
       },
       "safety": "风化层可能松散，野外远离陡壁落石区",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/tuff.png",
+        "path": "/images/nature/rock-minerals/samples/tuff.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 5
       }
@@ -5327,7 +5327,7 @@
       },
       "safety": "表面粗糙，切割产生硅尘，禁止自行锯磨",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/sandstone.png",
+        "path": "/images/nature/rock-minerals/samples/sandstone.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 6
       }
@@ -5372,7 +5372,7 @@
       },
       "safety": "薄片边缘可能锋利，含化石地点遵守保护规定",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/shale.png",
+        "path": "/images/nature/rock-minerals/samples/shale.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 7
       }
@@ -5418,7 +5418,7 @@
       },
       "safety": "不破坏化石和洞穴地貌，粉尘不要吸入",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/limestone.png",
+        "path": "/images/nature/rock-minerals/samples/limestone.webp",
         "atlasId": "rock-mineral-atlas-13",
         "cellIndex": 8
       }
@@ -5462,7 +5462,7 @@
       },
       "safety": "突出砾石可能脱落，避免从陡坡采集",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/conglomerate.png",
+        "path": "/images/nature/rock-minerals/samples/conglomerate.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 0
       }
@@ -5506,7 +5506,7 @@
       },
       "safety": "棱角锋利且坡脚可能落石，不在危险地形采集",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/breccia.png",
+        "path": "/images/nature/rock-minerals/samples/breccia.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 1
       }
@@ -5554,7 +5554,7 @@
       },
       "safety": "断口极锋利，禁止敲制石器或互相撞击",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/chert.png",
+        "path": "/images/nature/rock-minerals/samples/chert.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 2
       }
@@ -5599,7 +5599,7 @@
       },
       "safety": "易燃且粉尘有害；禁止点燃、研磨或在密闭处堆放",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/coal.png",
+        "path": "/images/nature/rock-minerals/samples/coal.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 3
       }
@@ -5647,7 +5647,7 @@
       },
       "safety": "易受酸性液体腐蚀，板材较重且表面可能湿滑",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/marble.png",
+        "path": "/images/nature/rock-minerals/samples/marble.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 4
       }
@@ -5693,7 +5693,7 @@
       },
       "safety": "薄板边缘锋利，搬运戴手套",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/slate.png",
+        "path": "/images/nature/rock-minerals/samples/slate.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 5
       }
@@ -5739,7 +5739,7 @@
       },
       "safety": "含硅切割粉尘危险，禁止自行锯磨",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/quartzite.png",
+        "path": "/images/nature/rock-minerals/samples/quartzite.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 6
       }
@@ -5783,7 +5783,7 @@
       },
       "safety": "大块沉重，断口锐利，野外注意落石",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/gneiss.png",
+        "path": "/images/nature/rock-minerals/samples/gneiss.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 7
       }
@@ -5827,7 +5827,7 @@
       },
       "safety": "薄片易脱落且边缘锋利，不从不稳定岩壁剥取",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/schist.png",
+        "path": "/images/nature/rock-minerals/samples/schist.webp",
         "atlasId": "rock-mineral-atlas-14",
         "cellIndex": 8
       }
@@ -5873,7 +5873,7 @@
       },
       "safety": "粉尘不要吸入，不自行用强碱提取氧化铝",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/bauxite.png",
+        "path": "/images/nature/rock-minerals/samples/bauxite.webp",
         "atlasId": "rock-mineral-atlas-15",
         "cellIndex": 0
       }
@@ -5917,7 +5917,7 @@
       },
       "safety": "成分不固定，未知标本不用于颜料或皮肤涂抹",
       "image": {
-        "path": "/images/nature/rock-minerals/samples/limonite.png",
+        "path": "/images/nature/rock-minerals/samples/limonite.webp",
         "atlasId": "rock-mineral-atlas-15",
         "cellIndex": 1
       }

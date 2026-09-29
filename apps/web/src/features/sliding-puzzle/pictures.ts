@@ -3,12 +3,12 @@ export const PICTURES = [
   {
     "id": "science-station",
     "name": "科学空间站",
-    "src": "/images/sliding-puzzle/science-station.png"
+    "src": "/images/sliding-puzzle/science-station.webp"
   },
   {
     "id": "number-orbit",
     "name": "数字星球",
-    "src": "/images/sliding-puzzle/number-orbit.png"
+    "src": "/images/sliding-puzzle/number-orbit.webp"
   },
   {
     "id": "fortress",
@@ -43,76 +43,76 @@ export const PICTURES = [
   {
     "id": "sanctuary",
     "name": "宝石圣殿",
-    "src": "/images/sliding-puzzle/sanctuary.png"
+    "src": "/images/sliding-puzzle/sanctuary.webp"
   },
   {
     "id": "crystal-garden",
     "name": "水晶花园",
-    "src": "/images/sliding-puzzle/crystal-garden.png"
+    "src": "/images/sliding-puzzle/crystal-garden.webp"
   },
   {
     "id": "harbor-dock",
     "name": "港口码头",
-    "src": "/images/sliding-puzzle/harbor-dock.png"
+    "src": "/images/sliding-puzzle/harbor-dock.webp"
   },
   {
     "id": "basement-boiler",
     "name": "地下探险",
-    "src": "/images/sliding-puzzle/basement-boiler.png"
+    "src": "/images/sliding-puzzle/basement-boiler.webp"
   },
   {
     "id": "backyard",
     "name": "阳光后院",
-    "src": "/images/sliding-puzzle/backyard.png"
+    "src": "/images/sliding-puzzle/backyard.webp"
   },
   {
     "id": "city-alley",
     "name": "城市小巷",
-    "src": "/images/sliding-puzzle/city-alley.png"
+    "src": "/images/sliding-puzzle/city-alley.webp"
   },
   {
     "id": "hallway-stairs",
     "name": "楼梯走廊",
-    "src": "/images/sliding-puzzle/hallway-stairs.png"
+    "src": "/images/sliding-puzzle/hallway-stairs.webp"
   },
   {
     "id": "kitchen",
     "name": "快乐厨房",
-    "src": "/images/sliding-puzzle/kitchen.png"
+    "src": "/images/sliding-puzzle/kitchen.webp"
   },
   {
     "id": "living-room",
     "name": "温暖客厅",
-    "src": "/images/sliding-puzzle/living-room.png"
+    "src": "/images/sliding-puzzle/living-room.webp"
   },
   {
     "id": "dining-room",
     "name": "美味餐厅",
-    "src": "/images/sliding-puzzle/dining-room.png"
+    "src": "/images/sliding-puzzle/dining-room.webp"
   },
   {
     "id": "sudoku-elements",
     "name": "元素探索",
-    "src": "/images/sliding-puzzle/sudoku-elements.png"
+    "src": "/images/sliding-puzzle/sudoku-elements.webp"
   },
   {
     "id": "sudoku-letters",
     "name": "字母星桥",
-    "src": "/images/sliding-puzzle/sudoku-letters.png"
+    "src": "/images/sliding-puzzle/sudoku-letters.webp"
   },
   {
     "id": "sudoku-numbers",
     "name": "数字乐园",
-    "src": "/images/sliding-puzzle/sudoku-numbers.png"
+    "src": "/images/sliding-puzzle/sudoku-numbers.webp"
   },
   {
     "id": "sudoku-crew",
     "name": "太空伙伴",
-    "src": "/images/sliding-puzzle/sudoku-crew.png"
+    "src": "/images/sliding-puzzle/sudoku-crew.webp"
   },
   {
     "id": "sudoku-gems",
     "name": "宝石星河",
-    "src": "/images/sliding-puzzle/sudoku-gems.png"
+    "src": "/images/sliding-puzzle/sudoku-gems.webp"
   }
 ] as const;

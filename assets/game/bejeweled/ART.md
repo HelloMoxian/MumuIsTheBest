@@ -3,8 +3,8 @@
 使用内置 imagegen 生成原创 PNG；未使用 CLI/API fallback。晶体切面、华丽宝石色调与原版核心玩法相呼应，界面仍服从本站星际探索舱设计系统。
 
 - 源图集：`gem-atlas.png`，1774 × 887，4 × 2 网格，真实透明背景。
-- 运行时七色与超能 PNG：`apps/web/public/images/bejeweled/{red,orange,yellow,green,blue,purple,white,cube}.png`。
-- 运行时背景：`apps/web/public/images/bejeweled/sanctuary.png`。
+- 运行时七色与超能 WebP：`apps/web/public/images/bejeweled/{red,orange,yellow,green,blue,purple,white,cube}.webp`。
+- 运行时背景：`apps/web/public/images/bejeweled/sanctuary.webp`。
 - 格位、尺寸与透明度清单：`apps/web/public/images/bejeweled/manifest.json`。
 - 通过工程 chroma-atlas-extractor 脚本切分，保留完整格位与源 alpha，不抠掉宝石内部绿色，不裁剪公共格位。检查结果：8 个图标，所有角点透明，0 个警告。
 - 火焰、星形、新星复用七色图标并叠加实时光效与文字标识，消除粒子、选中框与下落由运行时绘制，不生成静态游戏截图替代玩法。

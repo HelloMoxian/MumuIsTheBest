@@ -14,7 +14,7 @@ export function GemIcon({ gem, small = false }: { gem: Pick<Gem, "color" | "spec
   const asset = gem.special === "cube" ? "cube" : gem.color;
   return <span className={"bj-gem bj-gem--" + gem.special + (small ? " bj-gem--small" : "")} data-color={gem.color} style={{ "--bj-aura-delay": -((gem.id ?? 0) % 17) * .23 + "s" } as CSSProperties}>
     {failed ? <span className="bj-fallback">{({ red: "■", orange: "⬡", yellow: "◆", green: "▣", blue: "▲", purple: "●", white: "♦" })[gem.color]}</span>
-      : <img src={"/images/bejeweled/" + asset + ".png"} alt="" draggable={false} onError={() => setFailed(true)} />}
+      : <img src={"/images/bejeweled/" + asset + ".webp"} alt="" draggable={false} onError={() => setFailed(true)} />}
     {gem.special !== "normal" && <SpecialGemAura special={gem.special} />}
   </span>;
 }

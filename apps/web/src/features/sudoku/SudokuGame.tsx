@@ -21,7 +21,7 @@ function Symbol({ theme, value }: { theme: ThemeId; value: number }) {
   const [broken, setBroken] = useState(false);
   useEffect(() => setBroken(false), [theme, value]);
   return broken ? <span className="sd-symbol sd-fallback" aria-hidden="true">{symbolLabel(theme, value)}</span>
-    : <img className="sd-symbol" src={`/images/sudoku/icons/${theme}/symbol-${String(value).padStart(2, "0")}.png`} alt="" aria-hidden="true" draggable={false} onError={() => setBroken(true)} />;
+    : <img className="sd-symbol" src={`/images/sudoku/icons/${theme}/symbol-${String(value).padStart(2, "0")}.webp`} alt="" aria-hidden="true" draggable={false} onError={() => setBroken(true)} />;
 }
 function Modal({ open, title, children, onClose, busy = false }: { open: boolean; title: string; children: ReactNode; onClose: () => void; busy?: boolean }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -155,7 +155,7 @@ export function SudokuGame() {
       {game.completedAt && <section className="sd-success" role="status"><h2>✓ 整本故事拼好啦！</h2><p>{data.reward?.status === "granted" ? `本局知识币 +${data.reward.amount}、能量币 +${data.reward.amount}，已存入全局钱包。` : "通关已保存，奖励正在途中，可以重试领取。"}</p><div className="sd-actions">{data.pendingRewards > 0 && <button disabled={locked} onClick={() => void reload()}>重试领奖</button>}<button className="sd-primary" disabled={locked} onClick={() => { setDraftLevel(Math.min(game.level + 1, 5)); setDraftTheme(game.theme); setSetup(true); }}>{game.level < 5 ? "挑战下一档" : "再拼一个故事"}</button></div></section>}
       {!game.completedAt && data.pendingRewards > 0 && <div className="sd-error" role="status">已有通关奖励等待补发。<button disabled={locked} onClick={() => void reload()}>重试领奖</button></div>}
       <div className="sd-workspace" onKeyDown={keyboard}>
-        <section className="sd-card"><div className="sd-scene"><img src={`/images/sudoku/backgrounds/${game.theme}.png`} alt="" onError={event => { event.currentTarget.hidden = true; }} /><div><span className="sd-eyebrow">第 {game.level + 1} 档 · {spec.name}</span><h2>{theme.name}</h2><p>{theme.tag}</p></div></div>
+        <section className="sd-card"><div className="sd-scene"><img src={`/images/sudoku/backgrounds/${game.theme}.webp`} alt="" onError={event => { event.currentTarget.hidden = true; }} /><div><span className="sd-eyebrow">第 {game.level + 1} 档 · {spec.name}</span><h2>{theme.name}</h2><p>{theme.tag}</p></div></div>
           <div className="sd-board-inner"><div className="sd-section-head"><h3>{spec.n} × {spec.n} 探索地图</h3><span>{game.cells.filter(cell => cell.value).length} / {spec.n ** 2} 已填</span></div>
             <div className="sd-scroll"><div className={`sd-board sd-n${spec.n}`} style={{ "--sd-n": spec.n } as CSSProperties} role="group" aria-label="数独棋盘，每行每列每宫图案不重复">
               {game.cells.map((cell, index) => {

@@ -1,5 +1,5 @@
 {
-  "source": "letters-atlas.png",
+  "source": "../../../../assets/game/sudoku/source/letters-atlas.png",
   "placements": [
     {
       "id": "symbol-01",

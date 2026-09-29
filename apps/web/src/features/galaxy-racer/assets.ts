@@ -2,9 +2,9 @@ import type { RacerThemeId } from "./types";
 
 const rawGameAssets = import.meta.glob(
   [
-    "../../../../../assets/game/galaxy-racer/backgrounds/*.png",
+    "../../../../../assets/game/galaxy-racer/backgrounds/*.webp",
     "../../../../../assets/game/galaxy-racer/sprites/{vehicles,vfx,props}/*.png",
-    "../../../../../assets/game/galaxy-racer/themes/*/backgrounds/*.png",
+    "../../../../../assets/game/galaxy-racer/themes/*/backgrounds/*.webp",
     "../../../../../assets/game/galaxy-racer/themes/*/sprites/{vehicles,vfx,props}/*.png",
   ],
   { eager: true, query: "?url", import: "default" },
@@ -79,7 +79,7 @@ function themed(
 export const RACER_THEMES: Record<RacerThemeId, RacerThemeAssets> = {
   neon: {
     id: "neon",
-    background: gameAsset("backgrounds/space-city-horizon.v1.png"),
+    background: gameAsset("backgrounds/space-city-horizon.v1.webp"),
     player: playerSet(""),
     obstacles: [
       "obstacle-coral",
@@ -117,7 +117,7 @@ export const RACER_THEMES: Record<RacerThemeId, RacerThemeAssets> = {
   crystal: themed(
     "themes/crystal",
     "crystal",
-    "crystal-comet-canyon.v1.png",
+    "crystal-comet-canyon.v1.webp",
     new URL(
       "../../../../../assets/audio/galaxy-racer/theme-crystal-loop.cc0.ogg",
       import.meta.url,
@@ -130,7 +130,7 @@ export const RACER_THEMES: Record<RacerThemeId, RacerThemeAssets> = {
   solar: themed(
     "themes/solar",
     "solar",
-    "solar-ring-garden.v1.png",
+    "solar-ring-garden.v1.webp",
     new URL(
       "../../../../../assets/audio/galaxy-racer/theme-solar-loop.cc0.mp3",
       import.meta.url,

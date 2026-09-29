@@ -9,85 +9,85 @@
     {
       "id": "games",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small muted game controller, softly bevelled puzzle pieces and a few play blocks tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-c4beb88c-757a-4c52-8d2d-9def44ceb048.png",
-      "source": "assets/home-subjects/v1/games.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-c4beb88c-757a-4c52-8d2d-9def44ceb048.webp",
+      "source": "assets/home-subjects/v1/games.webp",
       "path": "apps/web/public/images/home-subjects/v1/games.webp"
     },
     {
       "id": "exercise",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small athletic sneaker, curved skipping rope and rolled exercise mat tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-11c095ad-b023-4c39-bf2c-387979ac84f9.png",
-      "source": "assets/home-subjects/v1/exercise.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-11c095ad-b023-4c39-bf2c-387979ac84f9.webp",
+      "source": "assets/home-subjects/v1/exercise.webp",
       "path": "apps/web/public/images/home-subjects/v1/exercise.webp"
     },
     {
       "id": "art",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small painter brushes, a restrained paint palette and soft pigment strokes tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-14f02d58-67e8-4946-8172-4fb8df497b64.png",
-      "source": "assets/home-subjects/v1/art.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-14f02d58-67e8-4946-8172-4fb8df497b64.webp",
+      "source": "assets/home-subjects/v1/art.webp",
       "path": "apps/web/public/images/home-subjects/v1/art.webp"
     },
     {
       "id": "math",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small compass tool, translucent geometric solids, a ruler and a few counting beads tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-d93c8424-f5c2-4517-95fa-e0725d23ed05.png",
-      "source": "assets/home-subjects/v1/math.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-d93c8424-f5c2-4517-95fa-e0725d23ed05.webp",
+      "source": "assets/home-subjects/v1/math.webp",
       "path": "apps/web/public/images/home-subjects/v1/math.webp"
     },
     {
       "id": "english",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small closed books, a feather pen and subtle overlapping speech-bubble silhouettes tucked in the corners, absolutely no letters.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-4a1fd230-8db0-42b2-a798-7a5ae64d9112.png",
-      "source": "assets/home-subjects/v1/english.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-4a1fd230-8db0-42b2-a798-7a5ae64d9112.webp",
+      "source": "assets/home-subjects/v1/english.webp",
       "path": "apps/web/public/images/home-subjects/v1/english.webp"
     },
     {
       "id": "chemistry",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small translucent laboratory flasks and a delicate molecular model tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-a3ed2231-baed-4122-8373-336659b5b2f5.png",
-      "source": "assets/home-subjects/v1/chemistry.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-a3ed2231-baed-4122-8373-336659b5b2f5.webp",
+      "source": "assets/home-subjects/v1/chemistry.webp",
       "path": "apps/web/public/images/home-subjects/v1/chemistry.webp"
     },
     {
       "id": "nature",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small fern leaves, quiet mountain contours, a modest mineral and sparse constellation fragments tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-6341907e-e0a0-4133-a77f-d9c28eaf1062.png",
-      "source": "assets/home-subjects/v1/nature.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-6341907e-e0a0-4133-a77f-d9c28eaf1062.webp",
+      "source": "assets/home-subjects/v1/nature.webp",
       "path": "apps/web/public/images/home-subjects/v1/nature.webp"
     },
     {
       "id": "physics",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small pendulum, understated gears, magnet and spring tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-32ddddb6-5d96-4866-af2c-2c49285faca8.png",
-      "source": "assets/home-subjects/v1/physics.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-32ddddb6-5d96-4866-af2c-2c49285faca8.webp",
+      "source": "assets/home-subjects/v1/physics.webp",
       "path": "apps/web/public/images/home-subjects/v1/physics.webp"
     },
     {
       "id": "chinese",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small calligraphy brush, inkstone and open blank book tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-29592dc1-390f-4d95-ac80-ccf8a0bb84ad.png",
-      "source": "assets/home-subjects/v1/chinese.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-29592dc1-390f-4d95-ac80-ccf8a0bb84ad.webp",
+      "source": "assets/home-subjects/v1/chinese.webp",
       "path": "apps/web/public/images/home-subjects/v1/chinese.webp"
     },
     {
       "id": "classics",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small bamboo leaves, a rolled classical scroll and distant ink-wash mountain fragments tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-8e9a411f-1eb1-46fc-a096-b67f016b4d84.png",
-      "source": "assets/home-subjects/v1/classics.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-8e9a411f-1eb1-46fc-a096-b67f016b4d84.webp",
+      "source": "assets/home-subjects/v1/classics.webp",
       "path": "apps/web/public/images/home-subjects/v1/classics.webp"
     },
     {
       "id": "planning",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small navigation compass, winding dotted route and graduation cap tucked in the corners.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-8966c0ce-e381-4db7-8b00-a01cff1888c6.png",
-      "source": "assets/home-subjects/v1/planning.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-8966c0ce-e381-4db7-8b00-a01cff1888c6.webp",
+      "source": "assets/home-subjects/v1/planning.webp",
       "path": "apps/web/public/images/home-subjects/v1/planning.webp"
     },
     {
       "id": "discarded",
       "prompt": "Use case: stylized-concept. Create a polished restrained background illustration for a first-level subject card in a children's learning website. Landscape 2:1 image, full bleed. Visual style: finely painted soft 3D digital illustration, gentle matte surfaces, atmospheric depth, dark navy and muted lavender/teal/slate with only tiny dusty pastel accents. This is secondary atmosphere behind a very prominent white Chinese subject title that will be added by HTML. CRITICAL composition: central 65% width and central 55% height must be quiet, almost empty deep navy with a subtle misty gradient; ALL recognizable subject objects lie close to the outer corners and outermost 15% edges, partly cropped by those edges. Small peripheral objects, not a central hero or spotlight. The four corners suggest a delicate frame without an actual border. Low contrast, low visual weight, no saturated neon, no gold, no gems or luxury ornament, no bright bloom, no sharp white highlights, no characters. Keep corners thoughtfully crafted but subdued. No writing, no readable text, no numerals, no logos, no watermark, no border, no UI. Subject-specific peripheral atmosphere: small closed archival box, folded paper and a few old puzzle pieces tucked in the corners, extra muted slate gray.",
-      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-bdfcfb55-ae2c-422b-b850-5544e7bc7418.png",
-      "source": "assets/home-subjects/v1/discarded.png",
+      "generatedOriginal": "/Users/wangjian/.codex/generated_images/01a0ec11-ccad-7031-8c54-259272e90fb5/exec-bdfcfb55-ae2c-422b-b850-5544e7bc7418.webp",
+      "source": "assets/home-subjects/v1/discarded.webp",
       "path": "apps/web/public/images/home-subjects/v1/discarded.webp"
     }
   ]

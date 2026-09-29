@@ -1,5 +1,5 @@
 {
-  "source": "numbers-atlas.png",
+  "source": "../../../../assets/game/sudoku/source/numbers-atlas.png",
   "placements": [
     {
       "id": "symbol-01",

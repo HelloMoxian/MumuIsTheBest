@@ -4,10 +4,10 @@
 
 ## 目录
 
-- `concepts/opening.v1.png`、`collision.v1.png`、`finish.v1.png`、`results.v1.png`：用户认可的开场、碰撞、终点和结算风格参考。
-- `concepts/gameplay-high-angle.v1.png`：修订后的较高机位、斜后方俯视进行中概念图。旧版低机位进行中图不进入正式资产。
+- `concepts/opening.v1.webp`、`collision.v1.webp`、`finish.v1.webp`、`results.v1.webp`：用户认可的开场、碰撞、终点和结算风格参考。
+- `concepts/gameplay-high-angle.v1.webp`：修订后的较高机位、斜后方俯视进行中概念图。旧版低机位进行中图不进入正式资产。
 - `concepts/` 下图片只用于构图与美术参考，不直接作为运行时背景或 HUD。
-- `backgrounds/space-city-horizon.v1.png`：无道路、无车辆、无 HUD 的远景城市层。正式使用前应通过平移拼接检查；道路循环不依赖这张图完成。
+- `backgrounds/space-city-horizon.v1.webp`：无道路、无车辆、无 HUD 的远景城市层。正式使用前应通过平移拼接检查；道路循环不依赖这张图完成。
 - `source/*.png`：三张规则绿幕源图集。它们是唯一可回溯的切分源，不得覆盖。
 - `sprites/vehicles/`：4 × 2 车辆图集切出的 8 个透明精灵。
 - `sprites/vfx/`：4 × 3 特效图集切出的 12 个透明精灵。

@@ -17,7 +17,7 @@
 
 图片位于：
 
-`apps/web/public/images/nature/rock-minerals/samples/<id>.png`
+`apps/web/public/images/nature/rock-minerals/samples/<id>.webp`
 
 原始 3 × 3 图集位于：
 

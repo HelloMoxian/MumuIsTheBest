@@ -17,7 +17,7 @@
       "index": 0,
       "row": 0,
       "column": 0,
-      "filename": "diorite.png",
+      "filename": "diorite.webp",
       "sourceBox": [
         4,
         4,
@@ -41,7 +41,7 @@
       "index": 1,
       "row": 0,
       "column": 1,
-      "filename": "gabbro.png",
+      "filename": "gabbro.webp",
       "sourceBox": [
         422,
         4,
@@ -65,7 +65,7 @@
       "index": 2,
       "row": 0,
       "column": 2,
-      "filename": "obsidian.png",
+      "filename": "obsidian.webp",
       "sourceBox": [
         840,
         4,
@@ -89,7 +89,7 @@
       "index": 3,
       "row": 1,
       "column": 0,
-      "filename": "pumice.png",
+      "filename": "pumice.webp",
       "sourceBox": [
         4,
         422,
@@ -113,7 +113,7 @@
       "index": 4,
       "row": 1,
       "column": 1,
-      "filename": "scoria.png",
+      "filename": "scoria.webp",
       "sourceBox": [
         422,
         422,
@@ -137,7 +137,7 @@
       "index": 5,
       "row": 1,
       "column": 2,
-      "filename": "tuff.png",
+      "filename": "tuff.webp",
       "sourceBox": [
         840,
         422,
@@ -161,7 +161,7 @@
       "index": 6,
       "row": 2,
       "column": 0,
-      "filename": "sandstone.png",
+      "filename": "sandstone.webp",
       "sourceBox": [
         4,
         840,
@@ -185,7 +185,7 @@
       "index": 7,
       "row": 2,
       "column": 1,
-      "filename": "shale.png",
+      "filename": "shale.webp",
       "sourceBox": [
         422,
         840,
@@ -209,7 +209,7 @@
       "index": 8,
       "row": 2,
       "column": 2,
-      "filename": "limestone.png",
+      "filename": "limestone.webp",
       "sourceBox": [
         840,
         840,

@@ -666,7 +666,7 @@ export function EnglishEchoIslandPage() {
 
       {criticalVisible && (
         <div className="echo-critical" role="status" aria-live="assertive">
-          <img src="/images/english/echo-island/knowledge-coin-critical-frame.png" alt="" />
+          <img src="/images/english/echo-island/knowledge-coin-critical-frame.webp" alt="" />
           <div><span>五倍惊喜</span><strong>知识币暴击</strong><b>+5 知识币</b></div>
         </div>
       )}

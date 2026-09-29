@@ -1,6 +1,6 @@
 .gc-page {
   min-height: 100dvh; color: var(--ink-primary); padding: 22px clamp(12px, 3vw, 48px) 48px;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--space-950) 24%, transparent), color-mix(in srgb, var(--space-950) 65%, transparent)), url("/images/gem-connect/crystal-garden.png") center / cover fixed, var(--space-950);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--space-950) 24%, transparent), color-mix(in srgb, var(--space-950) 65%, transparent)), url("/images/gem-connect/crystal-garden.webp") center / cover fixed, var(--space-950);
   font-family: var(--font-display, ui-rounded, "PingFang SC", sans-serif); font-size: 18px;
 }
 .gc-page, .gc-page * { box-sizing: border-box; }

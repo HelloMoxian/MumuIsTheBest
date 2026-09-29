@@ -73,8 +73,8 @@ GET/POST `/api/games/gem-connect/history`；新版使用 `rulesVersion: 5`；服
 
 内置 imagegen 生成（非 API CLI）：
 - 源图集：`assets/game/gem-connect/gems-atlas.v1.png`，透明 RGBA，4 列 × 2 行。
-- 运行时 17 颗 PNG 与原八种的切分清单：`apps/web/public/images/gem-connect/`。
-- 背景：同目录 `crystal-garden.png`。
+- 运行时 27 颗透明 WebP 与切分清单：`apps/web/public/images/gem-connect/`。
+- 背景：同目录 `crystal-garden.webp`。
 - 使用工程 `.agents/skills/chroma-atlas-extractor/`，`--keep-background` 保留生成透明通道；不对透明素材执行色键移除，不覆盖源图集。切分报告 0 warnings。
 - 红心、蓝菱、绿方、金星、紫滴、橙六角、粉椭圆、白月牙依次进入玩法种类池。无文字烘焙进图片、无远程美术依赖。
 - 新增九张独立宝石由内置 image_gen 分别生成。1254×1254 原图及完整逐张提示词保留于 `assets/game/gem-connect/expansion.v1/`；`manifest.json` 记录引入关卡与运行时路径。运行时统一转换为 384×384 RGBA，保留透明画布与原图，不做色键处理。
