@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { act, cells, createGame, fits, HEIGHT, intervalFor, KEY_BINDINGS, landing, levelFor, SHAPES, speedFor, tick, WIDTH, type Game, type Kind } from "./logic";
+import { act, cells, createGame, fits, HEIGHT, intervalFor, KEY_BINDINGS, landing, levelFor, previewZoneFor, SHAPES, speedFor, tick, WIDTH, type Game, type Kind } from "./logic";
 
 const manual = { initialSpeed: 0, speedIncrement: 0 };
 function verticalLine(game: Game) {
@@ -29,6 +29,21 @@ test("零速度在空中与触底后都不自动移动或固定", () => {
   assert.deepEqual(game, grounded);
   act(game, "down");
   assert.ok(game.board.flat().some(Boolean));
+});
+
+test("下一块预览按已落定积木的最高行锁定在下中上三区", () => {
+  const game = createGame(manual, 42);
+  assert.equal(previewZoneFor(game.board), "bottom");
+  game.board[19][0] = "O";
+  assert.equal(previewZoneFor(game.board), "bottom");
+  game.board[14][1] = "T";
+  assert.equal(previewZoneFor(game.board), "bottom");
+  game.board[13][2] = "S";
+  assert.equal(previewZoneFor(game.board), "middle");
+  game.board[7][3] = "Z";
+  assert.equal(previewZoneFor(game.board), "middle");
+  game.board[6][4] = "J";
+  assert.equal(previewZoneFor(game.board), "top");
 });
 
 test("每二十行升级，增量为零不加速，速度封顶100", () => {
@@ -177,13 +192,11 @@ test("消行保存完整破损画面，动画期间冻结操作与重力，结�
   assert.equal(game.clearing?.board[19][9], "I");
   const score = game.score;
   const piece = structuredClone(game.piece);
-  for (let i = 0; i < 4; i++) {
-    assert.equal(act(game, "drop"), false);
-    tick(game, 250);
-    assert.deepEqual(game.piece, piece);
-  }
+  assert.equal(act(game, "drop"), false);
+  assert.equal(tick(game, 200), false);
+  assert.deepEqual(game.piece, piece);
   assert.ok(game.clearing);
-  tick(game, 40);
+  assert.equal(tick(game, 220), true);
   assert.equal(game.clearing, null);
   assert.equal(game.board[11][0], "L");
   assert.equal(game.score, score);

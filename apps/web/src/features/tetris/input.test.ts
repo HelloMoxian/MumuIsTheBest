@@ -11,9 +11,9 @@ test("双人同时按住移动各自连发，松开一人不会停止另一人",
   assert.equal(input.press("KeyN", 30), true);
   assert.equal(input.press("ArrowLeft", 20), false);
   assert.deepEqual(input.repeat(169), []);
-  assert.deepEqual(input.repeat(170), [[1, "left"], [0, "right"]]);
+  assert.deepEqual(input.repeat(170), [[1, "left", 0], [0, "right", 0]]);
   input.release("ArrowLeft");
-  assert.deepEqual(input.repeat(245), [[0, "right"]]);
+  assert.deepEqual(input.repeat(245), [[0, "right", 0]]);
   input.clear();
   assert.deepEqual(input.repeat(5000), []);
 });
@@ -21,9 +21,9 @@ test("双人同时按住移动各自连发，松开一人不会停止另一人",
 test("下移与水平移动各有节奏；旋转直落不因按住反复触发", () => {
   const input = new TetrisHeldInput();
   for (const code of ["ArrowDown", "KeyA", "KeyN", "KeyK", "Enter", "KeyE"]) input.press(code, 0);
-  assert.deepEqual(input.repeat(170), [[1, "down"], [0, "left"]]);
-  assert.deepEqual(input.repeat(220), [[1, "down"]]);
-  assert.deepEqual(input.repeat(245), [[0, "left"]]);
+  assert.deepEqual(input.repeat(170), [[1, "down", 0], [1, "down", 0], [0, "left", 0]]);
+  assert.deepEqual(input.repeat(220), [[1, "down", 0], [1, "down", 0], [1, "down", 0]]);
+  assert.deepEqual(input.repeat(245), [[0, "left", 0]]);
   input.release("Enter");
   assert.equal(input.press("Enter", 250), true);
   assert.equal(input.press("Tab", 250), false);
@@ -35,8 +35,8 @@ test("长按只影响按下时的积木；松开重按后恢复，左右不受�
   const input = new TetrisHeldInput();
   input.press("KeyS", 0, 4);
   input.press("KeyA", 0, 4);
-  assert.deepEqual(input.repeat(170, [4, 0]), [[0, "down"], [0, "left"]]);
-  assert.deepEqual(input.repeat(250, [5, 0]), [[0, "left"]]);
+  assert.deepEqual(input.repeat(170, [4, 0]), [[0, "down", 4], [0, "down", 4], [0, "left", 4]]);
+  assert.deepEqual(input.repeat(250, [5, 0]), [[0, "left", 4]]);
   assert.equal(input.press("KeyS", 300, 5), false);
   input.release("KeyS");
   assert.equal(input.press("KeyS", 300, 5), true);
@@ -48,8 +48,8 @@ test("自定义键、触控按住、消行期间按住均遵循积木身份", ()
   assert.equal(input.press("KeyS", 0), false);
   input.press("KeyF", 0, 2);
   input.press("pointer-1", 0, 7, [1, "down"]);
-  assert.deepEqual(input.repeat(170, [2, 7]), [[0, "down"], [1, "down"]]);
-  assert.deepEqual(input.repeat(220, [3, 7]), [[1, "down"]]);
+  assert.deepEqual(input.repeat(170, [2, 7]), [[0, "down", 2], [0, "down", 2], [1, "down", 7], [1, "down", 7]]);
+  assert.deepEqual(input.repeat(220, [3, 7]), [[1, "down", 7], [1, "down", 7], [1, "down", 7]]);
   input.clear();
   input.press("KeyF", 300, -1);
   assert.deepEqual(input.repeat(500, [3, 7]), []);
@@ -61,14 +61,18 @@ test("持续下落固定一块后下一块保持出生位置，多输入来源�
   input.press("KeyS", 0, game.pieceId);
   input.press("pointer-1", 0, game.pieceId, [0, "down"]);
   for (let now = 170; now < 6000; now += 50) {
-    for (const [, action] of input.repeat(now, [game.pieceId])) act(game, action);
+    for (const [, action, pieceId] of input.repeat(now, [game.pieceId])) {
+      if (pieceId === game.pieceId) act(game, action);
+    }
   }
   assert.equal(game.pieceId, 1);
   assert.equal(game.piece.y, 0);
   input.release("KeyS");
   input.press("KeyS", 6000, game.pieceId);
-  for (const [, action] of input.repeat(6170, [game.pieceId])) act(game, action);
-  assert.equal(game.piece.y, 1);
+  for (const [, action, pieceId] of input.repeat(6170, [game.pieceId])) {
+    if (pieceId === game.pieceId) act(game, action);
+  }
+  assert.equal(game.piece.y, 2);
   act(game, "drop");
   assert.deepEqual(input.repeat(7000, [game.pieceId]), []);
 });
