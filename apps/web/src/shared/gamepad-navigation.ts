@@ -1,28 +1,38 @@
 export type GamepadDirection = "up" | "down" | "left" | "right";
 
 export type GlobalGamepadBindings = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   accept: number;
   back: number;
+  columnSwitch: number;
   fullscreenEnter: number;
   fullscreenExit: number;
 };
 
 export const DEFAULT_GLOBAL_GAMEPAD_BINDINGS: GlobalGamepadBindings = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   accept: 0,
   back: 1,
+  columnSwitch: 5,
   fullscreenEnter: 10,
   fullscreenExit: 10,
 };
 
 export function parseGlobalGamepadBindings(value: unknown): GlobalGamepadBindings | null {
   if (!value || typeof value !== "object") return null;
-  const candidate = value as Partial<GlobalGamepadBindings>;
-  if (candidate.schemaVersion !== 1) return null;
-  const bindings = [candidate.accept, candidate.back, candidate.fullscreenEnter, candidate.fullscreenExit];
+  const candidate = value as Record<string, unknown>;
+  if (candidate.schemaVersion !== 1 && candidate.schemaVersion !== 2) return null;
+  const bindings = [candidate.accept, candidate.back, candidate.fullscreenEnter, candidate.fullscreenExit,
+    ...(candidate.schemaVersion === 2 ? [candidate.columnSwitch] : [])];
   if (!bindings.every(binding => Number.isInteger(binding) && Number(binding) >= 0 && Number(binding) <= 31)) return null;
-  return candidate as GlobalGamepadBindings;
+  return {
+    schemaVersion: 2,
+    accept: candidate.accept as number,
+    back: candidate.back as number,
+    columnSwitch: candidate.schemaVersion === 2 ? candidate.columnSwitch as number : DEFAULT_GLOBAL_GAMEPAD_BINDINGS.columnSwitch,
+    fullscreenEnter: candidate.fullscreenEnter as number,
+    fullscreenExit: candidate.fullscreenExit as number,
+  };
 }
 
 export type NavigationRect = {

@@ -8,6 +8,31 @@ export type ConnectedController = { device: ControllerDevice; index: number; but
 export const deviceKey = (device: ControllerDevice) => JSON.stringify([device.id, device.mapping, device.occurrence]);
 export const sameDevice = (a: ControllerDevice | null, b: ControllerDevice | null) => !!a && !!b && deviceKey(a) === deviceKey(b);
 
+export function autoAssignGamepads(config: GameControls, devices: readonly ConnectedController[]): GameControls {
+  const available = [...devices].sort((a, b) => a.index - b.index);
+  const claimed = new Set<string>();
+  const reservations = new Map(config.players.slice(0, config.playerCount).flatMap((player, index) => {
+    const preferred = available.find(device => sameDevice(device.device, player.device));
+    return preferred ? [[index, deviceKey(preferred.device)] as const] : [];
+  }));
+  return {
+    ...config,
+    players: config.players.map((player, index) => {
+      if (index >= config.playerCount) return player;
+      const preferredKey = reservations.get(index);
+      reservations.delete(index);
+      const reservedForLater = new Set(reservations.values());
+      const preferred = available.find(device => !claimed.has(deviceKey(device.device)) && deviceKey(device.device) === preferredKey);
+      const selected = preferred
+        ?? available.find(device => !claimed.has(deviceKey(device.device)) && !reservedForLater.has(deviceKey(device.device)))
+        ?? available.find(device => !claimed.has(deviceKey(device.device)));
+      if (!selected) return { ...player, mode: "keyboard", device: null };
+      claimed.add(deviceKey(selected.device));
+      return { ...player, mode: "gamepad", device: selected.device };
+    }),
+  };
+}
+
 // Keep holes when a pad disconnects: removing pad 1 must never move pad 2 into its seat.
 export class ControllerRoster {
   private entries: (ConnectedController & { connected: boolean })[] = [];
@@ -54,12 +79,20 @@ export class ControllerInput {
   step(definition: GameControlDefinition, config: GameControls, devices: ConnectedController[], samples: readonly (PadSample | null)[], now: number): ControllerActionEvent[] {
     const events: ControllerActionEvent[] = [];
     const alive = new Set<string>();
-    config.players.slice(0, config.playerCount).forEach((player, index) => {
-      const device = player.mode === "gamepad" && devices.find(d => sameDevice(d.device, player.device));
-      const pad = device && samples.find(p => p?.connected && p.index === device.index);
-      if (!device || !pad) { this.armed.delete(index); return; }
-      const signature = `${deviceKey(device.device)}:${device.index}`;
-      const raw = new Map(definition.actions.map(action => [action.id, Math.max(0, ...(player.bindings[action.id] ?? []).map(b => valueFor(b, pad)))]));
+    const automatic = autoAssignGamepads(config, devices);
+    automatic.players.slice(0, automatic.playerCount).forEach((player, index) => {
+      const assigned = automatic.playerCount === 1
+        ? devices
+        : devices.filter(device => sameDevice(device.device, player.device));
+      const pads = assigned.flatMap(device => {
+        const pad = samples.find(sample => sample?.connected && sample.index === device.index);
+        return pad ? [{ device, pad }] : [];
+      });
+      if (!pads.length) { this.armed.delete(index); return; }
+      const signature = pads.map(({ device }) => `${deviceKey(device.device)}:${device.index}`).sort().join("|");
+      const raw = new Map(definition.actions.map(action => [action.id, Math.max(0,
+        ...pads.flatMap(({ pad }) => (player.bindings[action.id] ?? []).map(binding => valueFor(binding, pad))),
+      )]));
       if (this.armed.get(index) !== signature) {
         if ([...raw.values()].every(v => v < .35)) this.armed.set(index, signature);
         return;

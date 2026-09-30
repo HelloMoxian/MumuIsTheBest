@@ -6,7 +6,7 @@ type FocusTarget = HTMLElement | SVGElement;
 type InteractionMode = "navigation" | "adjust" | "control";
 type Overlay = { left: number; top: number; width: number; height: number; kind: "orb" | "frame" } | null;
 type NumericEditor = { target: HTMLInputElement | HTMLTextAreaElement; draft: string; original: string };
-type PadAction = "up" | "down" | "left" | "right" | "accept" | "back" | "secondary" | "fullscreenToggle" | "fullscreenEnter" | "fullscreenExit";
+type PadAction = "up" | "down" | "left" | "right" | "accept" | "back" | "secondary" | "columnSwitch" | "fullscreenToggle" | "fullscreenEnter" | "fullscreenExit";
 type BindingAction = Exclude<keyof GlobalGamepadBindings, "schemaVersion">;
 
 export const GLOBAL_GAMEPAD_SETTINGS_EVENT = "mumu:global-gamepad-settings";
@@ -15,6 +15,7 @@ const BUTTON_NAMES = ["A / ×", "B / ○", "X / □", "Y / △", "LB / L1", "RB 
 const BINDING_LABELS: Record<BindingAction, string> = {
   accept: "确认、点击与进入编辑",
   back: "完成编辑与返回",
+  columnSwitch: "栏目切换",
   fullscreenEnter: "快速进入全屏",
   fullscreenExit: "快速退出全屏",
 };
@@ -209,6 +210,7 @@ function readPadActions(pad: Gamepad, bindings: GlobalGamepadBindings): Record<P
     accept: buttonValue(pad, bindings.accept),
     back: buttonValue(pad, bindings.back),
     secondary: buttonValue(pad, 2),
+    columnSwitch: buttonValue(pad, bindings.columnSwitch),
     fullscreenToggle: sharedFullscreen && buttonValue(pad, bindings.fullscreenEnter),
     fullscreenEnter: !sharedFullscreen && buttonValue(pad, bindings.fullscreenEnter),
     fullscreenExit: !sharedFullscreen && buttonValue(pad, bindings.fullscreenExit),
@@ -342,6 +344,30 @@ export function GlobalGamepadNavigation({ children }: { children: ReactNode }) {
     }
   }, [choose]);
 
+  const switchColumn = useCallback(() => {
+    if (numberEditor.current || mode.current !== "navigation" || modalScope()) {
+      setAnnouncement("请先按 B 完成当前操作，再切换栏目");
+      return;
+    }
+    const groups = [...document.querySelectorAll<HTMLElement>("[data-gamepad-columns], [role='tablist']")].filter(isVisible);
+    const group = groups.find(candidate => active.current && candidate.contains(active.current))
+      ?? groups.find(candidate => [...candidate.querySelectorAll("[aria-selected='true'], [aria-pressed='true'], .is-selected")].some(isVisible))
+      ?? groups[0];
+    const items = group ? [...group.querySelectorAll<FocusTarget>("[role='tab'], button:not(:disabled), a[href]")]
+      .filter(target => !isUnavailable(target) && isVisible(target)) : [];
+    if (!items.length) {
+      setAnnouncement("当前页面没有可切换的栏目");
+      return;
+    }
+    let current = active.current ? items.indexOf(active.current) : -1;
+    if (current < 0) current = items.findIndex(item => item.matches("[aria-selected='true'], [aria-pressed='true'], .is-selected"));
+    if (current < 0 && window.location.hash) current = items.findIndex(item => item instanceof HTMLAnchorElement && item.hash === window.location.hash);
+    const next = items[(current + 1 + items.length) % items.length];
+    choose(next);
+    clickElement(next);
+    setAnnouncement(`已切换到${labelFor(next)}`);
+  }, [choose]);
+
   const activate = useCallback(() => {
     const target = active.current;
     if (!target?.isConnected) {
@@ -439,7 +465,7 @@ export function GlobalGamepadNavigation({ children }: { children: ReactNode }) {
     const current = bindingsRef.current;
     const fullscreenAction = capture.action === "fullscreenEnter" || capture.action === "fullscreenExit";
     const conflict = fullscreenAction
-      ? button === current.accept || button === current.back
+      ? button === current.accept || button === current.back || button === current.columnSwitch
       : Object.entries(current).some(([key, value]) => key !== "schemaVersion" && key !== capture.action && value === button);
     if (conflict) {
       setAnnouncement("这个按键已用于另一项操作；进入和退出全屏可以共用，其他功能请选不同按键");
@@ -462,6 +488,7 @@ export function GlobalGamepadNavigation({ children }: { children: ReactNode }) {
       if (action === "back" && type === "press") nativeGame.querySelector<HTMLElement>("[data-gamepad-pause]")?.click();
       return;
     }
+    if (type === "press" && action === "columnSwitch") { switchColumn(); return; }
     const editor = numberEditor.current;
     if (editor) {
       if (type !== "press" && type !== "repeat") return;
@@ -493,14 +520,14 @@ export function GlobalGamepadNavigation({ children }: { children: ReactNode }) {
       if (mode.current === "control" && active.current) dispatchPrimaryControl(active.current, true);
       else if (acceptsNumericText(active.current ?? document.body)) beginNumeric(active.current as HTMLInputElement | HTMLTextAreaElement);
     } else if (action === "back") goBack();
-  }, [activate, activateNumericKey, beginNumeric, closeNumeric, goBack, moveFocus, setFullscreen, updateNumeric]);
+  }, [activate, activateNumericKey, beginNumeric, closeNumeric, goBack, moveFocus, setFullscreen, switchColumn, updateNumeric]);
 
   useEffect(() => {
     let frame = 0;
     let armed = false;
     const previous: Partial<Record<PadAction, boolean>> = {};
     const repeats: Partial<Record<PadAction, number>> = {};
-    const actions: PadAction[] = ["up", "down", "left", "right", "accept", "back", "secondary", "fullscreenToggle", "fullscreenEnter", "fullscreenExit"];
+    const actions: PadAction[] = ["up", "down", "left", "right", "accept", "back", "secondary", "columnSwitch", "fullscreenToggle", "fullscreenEnter", "fullscreenExit"];
     const poll = (now: number) => {
       let pads: Gamepad[] = [];
       try { pads = [...navigator.getGamepads()].filter((candidate): candidate is Gamepad => Boolean(candidate?.connected)); } catch { pads = []; }
@@ -601,7 +628,7 @@ export function GlobalGamepadNavigation({ children }: { children: ReactNode }) {
     {connected && label && <div className={`gamepad-status gamepad-status--${modeView}`} role="status">
       <span aria-hidden="true">◉</span>
       <strong>{label.slice(0, 42)}</strong>
-      <small>{modeView === "navigation" ? "方向键移动 · A 确认 · B 返回" : modeView === "adjust" ? "方向键调节 · B 完成编辑" : "操控中 · A 主动作 · B 完成退出"}</small>
+      <small>{modeView === "navigation" ? "方向键移动 · A 确认 · RB 换栏目 · B 返回" : modeView === "adjust" ? "方向键调节 · B 完成编辑" : "操控中 · A 主动作 · B 完成退出"}</small>
     </div>}
     <span className="gamepad-live" aria-live="polite">{announcement}</span>
     {numeric && <section className="gamepad-number-pad" role="dialog" aria-modal="true" aria-labelledby="gamepad-number-title">
@@ -619,7 +646,7 @@ export function GlobalGamepadNavigation({ children }: { children: ReactNode }) {
     </section>}
     {settingsOpen && <section className="gamepad-settings-panel" role="dialog" aria-modal="true" aria-labelledby="gamepad-settings-title">
       <header><div><small>浏览器本地设置</small><h2 id="gamepad-settings-title">全站手柄键位</h2></div><button type="button" onClick={() => { captureRef.current = null; setCaptureBinding(null); setSettingsOpen(false); }}>关闭</button></header>
-      <p>两个手柄都可以操作。移动固定支持左摇杆与十字键，不需要绑定。</p>
+      <p>手柄接入后立即可用，不需要选择操作模式或 USB 设备；两个手柄都可以操作。移动固定支持左摇杆与十字键，不需要绑定。</p>
       <div className="gamepad-binding-list">
         {(Object.keys(BINDING_LABELS) as BindingAction[]).map(action => <div key={action}>
           <span><strong>{BINDING_LABELS[action]}</strong><small>{action === "fullscreenExit" && bindings.fullscreenExit === bindings.fullscreenEnter ? "当前与进入全屏共用" : "点击后按下任意手柄按键"}</small></span>
@@ -627,7 +654,7 @@ export function GlobalGamepadNavigation({ children }: { children: ReactNode }) {
         </div>)}
       </div>
       <div className="gamepad-settings-actions"><button type="button" onClick={() => saveBindings({ ...DEFAULT_GLOBAL_GAMEPAD_BINDINGS })}>恢复默认键位</button><button type="button" className="is-primary" onClick={() => { captureRef.current = null; setCaptureBinding(null); setSettingsOpen(false); }}>完成设置</button></div>
-      <p className="gamepad-settings-note">默认：A 确认并进入编辑，B 完成编辑并返回，按下左摇杆切换全屏。等待新按键 10 秒后会自动取消，不会卡住。</p>
+      <p className="gamepad-settings-note">默认：A 确认并进入编辑，B 完成编辑并返回，RB / R1 切换栏目，按下左摇杆切换全屏。等待新按键 10 秒后会自动取消，不会卡住。</p>
     </section>}
   </>;
 }

@@ -766,7 +766,7 @@ function App() {
           </h1>
         </section>
 
-        <nav className="subject-index" aria-label="快速选择学科">
+        <nav className="subject-index" aria-label="快速选择学科" data-gamepad-columns>
           {SUBJECT_BOARDS.map((subject) => (
             <a href={`#subject-${subject.id}`} key={subject.id}>
               {subject.title}

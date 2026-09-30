@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { activeBindings, BindingCapture, ControllerInput, ControllerRoster, sameDevice, type PadSample } from "./input";
+import { activeBindings, autoAssignGamepads, BindingCapture, ControllerInput, ControllerRoster, sameDevice, type PadSample } from "./input";
 import { defaultGameControls, rebindAction, registerGameControls, resolveGameControls } from "./registry";
 import { TETRIS_CONTROLS, tetrisControllerIntent } from "../../features/tetris/controls";
 import { act, createGame } from "../../features/tetris/logic";
@@ -12,10 +12,9 @@ function pad(index = 0, buttons: number[] = [], axes = [0, 0, 0, 0], id = "Test 
 }
 function setup(count = 1) {
   const roster = new ControllerRoster();
-  const devices = roster.update(Array.from({ length: count }, (_, i) => pad(i)));
+  roster.update(Array.from({ length: count }, (_, i) => pad(i)));
   const config = defaultGameControls(TETRIS_CONTROLS);
   config.playerCount = count;
-  devices.forEach((d, i) => { config.players[i].mode = "gamepad"; config.players[i].device = d.device; });
   const input = new ControllerInput();
   const step = (samples: (PadSample | null)[], now: number) => input.step(TETRIS_CONTROLS, config, roster.update(samples), samples, now);
   step(Array.from({ length: count }, (_, i) => pad(i)), 0);
@@ -72,10 +71,27 @@ test("pause, a held reconnect button and reused device indices require neutral r
   assert.deepEqual(step([pad(0, [3], undefined, "Different pad")], 70), []);
 });
 
-test("gamepad mode is opt-in per seat and unbound up never rotates or drops", () => {
-  const { config, step } = setup(2);
-  config.players[1].mode = "keyboard";
-  assert.deepEqual(step([pad(0, [12], [0, -1, 0, 0]), pad(1, [3])], 10), []);
+test("connected pads work without selecting gamepad mode", () => {
+  const { step } = setup(2);
+  assert.deepEqual(step([pad(0, [12], [0, -1, 0, 0]), pad(1, [3])], 10).map(event => [event.player, event.action]), [[1, "drop"]]);
+});
+
+test("single-player games accept simultaneous input from either connected pad", () => {
+  const { step } = setup();
+  step([pad(0), pad(1)], 10);
+  assert.deepEqual(step([pad(0, [14]), pad(1, [0])], 20).map(event => [event.player, event.action]), [[0, "left"], [0, "rotate"]]);
+});
+
+test("multiplayer auto assignment preserves connected saved seats then fills gaps", () => {
+  const roster = new ControllerRoster();
+  const devices = roster.update([pad(0, [], undefined, "First"), pad(1, [], undefined, "Second")]);
+  const config = defaultGameControls(TETRIS_CONTROLS);
+  config.playerCount = 2;
+  config.players[1].device = devices[0].device;
+  const automatic = autoAssignGamepads(config, devices);
+  assert.ok(sameDevice(automatic.players[1].device, devices[0].device));
+  assert.ok(sameDevice(automatic.players[0].device, devices[1].device));
+  assert.deepEqual(automatic.players.slice(0, 2).map(player => player.mode), ["gamepad", "gamepad"]);
 });
 
 test("analog triggers retain strength changes for games such as acceleration", () => {

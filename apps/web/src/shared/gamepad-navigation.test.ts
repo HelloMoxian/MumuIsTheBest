@@ -37,9 +37,14 @@ test("numeric drafts allow useful intermediate states but reject malformed value
   ["--1", "1.2.3", "abc", "1-"].forEach(value => assert.equal(isNumericDraft(value), false, value));
 });
 
-test("global bindings persist one shared default fullscreen key and reject corrupt caches", () => {
+test("global bindings add a default column key, migrate v1, and reject corrupt caches", () => {
   assert.equal(DEFAULT_GLOBAL_GAMEPAD_BINDINGS.fullscreenEnter, DEFAULT_GLOBAL_GAMEPAD_BINDINGS.fullscreenExit);
+  assert.equal(DEFAULT_GLOBAL_GAMEPAD_BINDINGS.columnSwitch, 5);
   assert.deepEqual(parseGlobalGamepadBindings(DEFAULT_GLOBAL_GAMEPAD_BINDINGS), DEFAULT_GLOBAL_GAMEPAD_BINDINGS);
+  assert.deepEqual(parseGlobalGamepadBindings({
+    schemaVersion: 1, accept: 0, back: 1, fullscreenEnter: 10, fullscreenExit: 10,
+  }), DEFAULT_GLOBAL_GAMEPAD_BINDINGS);
   assert.equal(parseGlobalGamepadBindings({ ...DEFAULT_GLOBAL_GAMEPAD_BINDINGS, accept: -1 }), null);
-  assert.equal(parseGlobalGamepadBindings({ ...DEFAULT_GLOBAL_GAMEPAD_BINDINGS, schemaVersion: 2 }), null);
+  assert.equal(parseGlobalGamepadBindings({ ...DEFAULT_GLOBAL_GAMEPAD_BINDINGS, columnSwitch: 40 }), null);
+  assert.equal(parseGlobalGamepadBindings({ ...DEFAULT_GLOBAL_GAMEPAD_BINDINGS, schemaVersion: 3 }), null);
 });

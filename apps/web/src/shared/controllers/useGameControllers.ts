@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
-import { activeBindings, BindingCapture, ControllerInput, ControllerRoster, deviceKey, sameDevice, type ConnectedController, type ControllerActionEvent, type PadSample } from "./input";
+import { activeBindings, autoAssignGamepads, BindingCapture, ControllerInput, ControllerRoster, deviceKey, sameDevice, type ConnectedController, type ControllerActionEvent, type PadSample } from "./input";
 import { controllerPreferences } from "./preferences";
 import { bindingLabel, rebindAction, resolveGameControls, type GameControlDefinition, type GameControls } from "./registry";
 
 type Options = { enabled: boolean; editing: boolean; onActions: (events: ControllerActionEvent[]) => void; onDisconnect: () => void };
-type View = { devices: ConnectedController[]; problem: string; active: Record<string, string> };
+type View = { devices: ConnectedController[]; problem: string; active: Record<string, string>; profile?: GameControls };
 type CaptureView = { player: number; action: string; ready: boolean };
 export function useGameControllers(definition: GameControlDefinition, options: Options) {
   const saved = useSyncExternalStore(controllerPreferences.subscribe, controllerPreferences.getSnapshot);
@@ -13,6 +13,7 @@ export function useGameControllers(definition: GameControlDefinition, options: O
   const [capture, setCapture] = useState<CaptureView | null>(null);
   const [notice, setNotice] = useState("");
   const input = useRef(new ControllerInput());
+  const runtimeProfile = useRef(profile);
   const captureRef = useRef<(CaptureView & { session: BindingCapture }) | null>(null);
   const latest = useRef({ options, profile });
   latest.current = { options, profile };
@@ -38,10 +39,11 @@ export function useGameControllers(definition: GameControlDefinition, options: O
     let lastLive = 0;
     let live: Record<string, string> = {};
     const disconnect = (event: GamepadEvent) => {
-      const { profile: current, options: callbacks } = latest.current;
+      const { options: callbacks } = latest.current;
       const affected = roster.at(event.gamepad.index);
       roster.disconnect(event.gamepad.index); reset();
-      if (affected && current.players.slice(0, current.playerCount).some(p => p.mode === "gamepad" && sameDevice(p.device, affected.device))) callbacks.onDisconnect();
+      const current = runtimeProfile.current;
+      if (affected && current.players.slice(0, current.playerCount).some(p => sameDevice(p.device, affected.device))) callbacks.onDisconnect();
     };
     const connect = () => reset();
     const blur = () => { cancelCapture(); };
@@ -58,10 +60,12 @@ export function useGameControllers(definition: GameControlDefinition, options: O
         else samples = navigator.getGamepads();
       } catch { problem = "浏览器暂未允许读取手柄，请在本机地址或 HTTPS 页面打开；键盘仍可用。"; }
       const devices = roster.update(samples);
+      const automatic = autoAssignGamepads(current, devices);
+      runtimeProfile.current = automatic;
       const foreground = !document.hidden && document.hasFocus() && !document.querySelector("dialog[open]");
-      const nextSignature = JSON.stringify([current, callbacks.enabled, callbacks.editing, foreground]);
+      const nextSignature = JSON.stringify([automatic, callbacks.enabled, callbacks.editing, foreground]);
       if (signature !== nextSignature) { reset(); previousConnected.clear(); signature = nextSignature; }
-      const connected = new Set(current.players.slice(0, current.playerCount).filter(p => p.mode === "gamepad" && devices.some(d => sameDevice(d.device, p.device))).map(p => deviceKey(p.device!)));
+      const connected = new Set(automatic.players.slice(0, automatic.playerCount).filter(p => devices.some(d => sameDevice(d.device, p.device))).map(p => deviceKey(p.device!)));
       if ([...previousConnected].some(key => !connected.has(key))) callbacks.onDisconnect();
       previousConnected = connected;
       if (callbacks.editing && now - lastLive >= 100) {
@@ -71,12 +75,12 @@ export function useGameControllers(definition: GameControlDefinition, options: O
           return [deviceKey(device.device), activeBindings(pad).slice(0, 4).map(b => bindingLabel(b, device.device.mapping === "standard")).join(" · ")];
         }));
       } else if (!callbacks.editing) live = {};
-      const nextView = { devices, problem, active: live };
+      const nextView = { devices, problem, active: live, profile: automatic };
       const viewSignature = JSON.stringify(nextView);
       if (lastView !== viewSignature) { lastView = viewSignature; setView(nextView); }
       const listening = captureRef.current;
       if (listening) {
-        const device = devices.find(d => sameDevice(d.device, current.players[listening.player]?.device ?? null));
+        const device = devices.find(d => sameDevice(d.device, automatic.players[listening.player]?.device ?? null));
         const pad = device && samples.find(p => p?.connected && p.index === device.index);
         if (!pad || !callbacks.editing || !foreground) {
           cancelCapture(); setNotice("已取消换键，请连接手柄后再试。");
@@ -87,17 +91,17 @@ export function useGameControllers(definition: GameControlDefinition, options: O
             setCapture({ player: listening.player, action: listening.action, ready: result.ready });
           }
           if (result.binding) {
-            const binding = rebindAction(current.players[listening.player], listening.action, result.binding);
+            const binding = rebindAction(automatic.players[listening.player], listening.action, result.binding);
             if (binding.conflict) setNotice(`这个键已用于“${definition.actions.find(a => a.id === binding.conflict)?.label ?? binding.conflict}”，请先清除那个动作的键位。`);
             else if (binding.player) {
-              update({ ...current, players: current.players.map((p, i) => i === listening.player ? binding.player! : p) });
+              update({ ...automatic, players: automatic.players.map((p, i) => i === listening.player ? binding.player! : p) });
               setNotice(`✓ ${definition.actions.find(a => a.id === listening.action)?.label}：${bindingLabel(result.binding, pad.mapping === "standard")}`);
             }
             cancelCapture();
           }
         }
       } else if (callbacks.enabled && !callbacks.editing && foreground) {
-        const events = input.current.step(definition, current, devices, samples, now);
+        const events = input.current.step(definition, automatic, devices, samples, now);
         if (events.length) callbacks.onActions(events);
       }
       frame = requestAnimationFrame(poll);
@@ -117,6 +121,6 @@ export function useGameControllers(definition: GameControlDefinition, options: O
       document.removeEventListener("visibilitychange", visibility);
     };
   }, [definition]);
-  return { ...view, profile, update, saved, retry: controllerPreferences.retry, capture, notice, beginCapture, cancelCapture, reset };
+  return { ...view, profile: view.profile ?? profile, update, saved, retry: controllerPreferences.retry, capture, notice, beginCapture, cancelCapture, reset };
 }
 export type GameControllerSession = ReturnType<typeof useGameControllers>;
