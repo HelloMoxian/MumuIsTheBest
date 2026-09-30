@@ -5,9 +5,9 @@ import type { Action } from "./logic";
 export const TETRIS_CONTROLS = registerGameControls({
   id: "tetris", label: "俄罗斯方块", maxPlayers: 2,
   actions: [
-    { id: "left", label: "左移", description: "按住可连续移动", defaults: [{ kind: "button", index: 14 }, { kind: "axis", index: 0, direction: -1 }], repeat: { delay: 170, interval: 75 }, exclusiveWith: ["right"] },
-    { id: "right", label: "右移", description: "按住可连续移动", defaults: [{ kind: "button", index: 15 }, { kind: "axis", index: 0, direction: 1 }], repeat: { delay: 170, interval: 75 }, exclusiveWith: ["left"] },
-    { id: "down", label: "下移", description: "按住可加快下移", defaults: [{ kind: "button", index: 13 }, { kind: "axis", index: 1, direction: 1 }], repeat: { delay: 170, interval: 50 } },
+    { id: "left", label: "左移", description: "按住可连续移动", direction: "left", defaults: [{ kind: "button", index: 14 }, { kind: "axis", index: 0, direction: -1 }], repeat: { delay: 170, interval: 75 }, exclusiveWith: ["right"] },
+    { id: "right", label: "右移", description: "按住可连续移动", direction: "right", defaults: [{ kind: "button", index: 15 }, { kind: "axis", index: 0, direction: 1 }], repeat: { delay: 170, interval: 75 }, exclusiveWith: ["left"] },
+    { id: "down", label: "下移", description: "按住可加快下移", direction: "down", defaults: [{ kind: "button", index: 13 }, { kind: "axis", index: 1, direction: 1 }], repeat: { delay: 170, interval: 50 } },
     { id: "rotate", label: "右旋", description: "每按一次，顺时针旋转", defaults: [{ kind: "button", index: 0 }] },
     { id: "reverse", label: "左旋", description: "每按一次，逆时针旋转", defaults: [{ kind: "button", index: 2 }] },
     { id: "drop", label: "直落", description: "直接落到底部并固定", defaults: [{ kind: "button", index: 3 }] },

@@ -48,6 +48,31 @@ test("movement repeats independently while rotation and hard drop fire once", ()
   assert.ok(release.some(e => e.player === 1 && e.action === "right" && e.type === "repeat"));
 });
 
+test("the D-pad and left stick always provide the same four directions", () => {
+  const directions = registerGameControls({ id: "test-fixed-directions", label: "方向测试", maxPlayers: 1, actions: [
+    { id: "up", label: "上", description: "向上", direction: "up", defaults: [] },
+    { id: "down", label: "下", description: "向下", direction: "down", defaults: [] },
+    { id: "left", label: "左", description: "向左", direction: "left", defaults: [] },
+    { id: "right", label: "右", description: "向右", direction: "right", defaults: [] },
+  ] });
+  const roster = new ControllerRoster();
+  const config = defaultGameControls(directions);
+  const input = new ControllerInput();
+  let now = 0;
+  const step = (sample: PadSample) => input.step(directions, config, roster.update([sample]), [sample], now += 10);
+  step(pad());
+  const cases = [
+    ["up", pad(0, [12])], ["up", pad(0, [], [0, -1, 0, 0])],
+    ["down", pad(0, [13])], ["down", pad(0, [], [0, 1, 0, 0])],
+    ["left", pad(0, [14])], ["left", pad(0, [], [-1, 0, 0, 0])],
+    ["right", pad(0, [15])], ["right", pad(0, [], [1, 0, 0, 0])],
+  ] as const;
+  for (const [direction, sample] of cases) {
+    assert.ok(step(sample).some(event => event.action === direction && event.type === "press"));
+    assert.ok(step(pad()).some(event => event.action === direction && event.type === "release"));
+  }
+});
+
 test("axis hysteresis ignores drift, prevents opposing directions and avoids catch-up bursts", () => {
   const { step } = setup();
   assert.deepEqual(step([pad(0, [], [.2, 0, 0, 0])], 10), []);

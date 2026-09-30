@@ -3,6 +3,13 @@ import { bindingLabel, defaultBindings, type GameControlDefinition, type PlayerC
 import type { GameControllerSession } from "./useGameControllers";
 import "./controllers.css";
 
+const FIXED_DIRECTION_LABELS = {
+  up: "十字键 ↑ / 左摇杆 ↑",
+  down: "十字键 ↓ / 左摇杆 ↓",
+  left: "十字键 ← / 左摇杆 ←",
+  right: "十字键 → / 左摇杆 →",
+};
+
 export function ControllerSetup({ definition, session, lockPlayerCount = false, showOverview = true, showDetails = true, showStatus = true }: {
   definition: GameControlDefinition; session: GameControllerSession; lockPlayerCount?: boolean; showOverview?: boolean; showDetails?: boolean; showStatus?: boolean;
 }) {
@@ -30,7 +37,7 @@ export function ControllerSetup({ definition, session, lockPlayerCount = false, 
     </div></>}
     {showDetails && <details className="controller-details" open={capture ? true : undefined}>
       <summary>手柄与键位 · {devices.length ? `${devices.length} 只已连接` : "连接与设置"}</summary>
-      <p>用 USB 或蓝牙连接后即可操作，不需要选择输入模式或指定设备。单人时所有已连接手柄都能操作；双人时自动分配给玩家 1 和玩家 2，键盘始终可用。</p>
+      <p>用 USB 或蓝牙连接后即可操作，不需要选择输入模式或指定设备。左摇杆和十字方向键始终执行同一套上下左右操作，用哪一个都可以。单人时所有已连接手柄都能操作；双人时自动分配给玩家 1 和玩家 2，键盘始终可用。</p>
       {session.problem && <p className="controller-error" role="status">{session.problem}</p>}
       {!devices.length && !session.problem && <p className="controller-empty">还没有发现手柄。连接后按一下按键，设备会自动出现在下面。</p>}
       <p>按键以物理位置为准，手柄上的字母可能不同。同型号的多只手柄按首次连接顺序编号，改变顺序后请核对玩家归属。</p>
@@ -47,10 +54,12 @@ export function ControllerSetup({ definition, session, lockPlayerCount = false, 
           </div>
           <div className="controller-bindings">
             {definition.actions.map(action => <div className="controller-binding" key={action.id}>
-              <div><strong>{action.label}</strong><span>{action.description}</span><b>{player.bindings[action.id]?.map(b => bindingLabel(b, standard)).join(" / ") || "尚未设置"}</b></div>
+              <div><strong>{action.label}</strong><span>{action.description}</span><b>{action.direction && standard ? FIXED_DIRECTION_LABELS[action.direction] : player.bindings[action.id]?.map(b => bindingLabel(b, standard)).join(" / ") || "尚未设置"}</b></div>
               <div className="controller-binding-buttons">
-                <button type="button" disabled={!connected || !!capture} onClick={() => session.beginCapture(index, action.id)} aria-label={`玩家 ${index + 1} ${action.label}换键`}>换键</button>
-                <button type="button" disabled={!!capture || !player.bindings[action.id]?.length} onClick={() => updatePlayer(index, { ...player, bindings: { ...player.bindings, [action.id]: [] } })} aria-label={`清除玩家 ${index + 1} ${action.label}键位`}>清除</button>
+                {action.direction && standard ? <span>固定双输入</span> : <>
+                  <button type="button" disabled={!connected || !!capture} onClick={() => session.beginCapture(index, action.id)} aria-label={`玩家 ${index + 1} ${action.label}换键`}>换键</button>
+                  <button type="button" disabled={!!capture || !player.bindings[action.id]?.length} onClick={() => updatePlayer(index, { ...player, bindings: { ...player.bindings, [action.id]: [] } })} aria-label={`清除玩家 ${index + 1} ${action.label}键位`}>清除</button>
+                </>}
               </div>
             </div>)}
           </div>

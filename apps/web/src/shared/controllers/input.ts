@@ -66,6 +66,22 @@ function valueFor(binding: ControlBinding, pad: PadSample) {
     : (pad.axes[binding.index] ?? 0) * binding.direction;
   return Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0;
 }
+
+const FIXED_DIRECTION_INPUTS = {
+  up: { button: 12, axis: 1, direction: -1 },
+  down: { button: 13, axis: 1, direction: 1 },
+  left: { button: 14, axis: 0, direction: -1 },
+  right: { button: 15, axis: 0, direction: 1 },
+} as const;
+
+function fixedDirectionValue(direction: keyof typeof FIXED_DIRECTION_INPUTS, pad: PadSample) {
+  const input = FIXED_DIRECTION_INPUTS[direction];
+  const button = pad.buttons[input.button];
+  const buttonValue = button?.value || (button?.pressed ? 1 : 0);
+  const axisValue = (pad.axes[input.axis] ?? 0) * input.direction;
+  return Math.max(0, Math.min(1, Math.max(buttonValue, axisValue)));
+}
+
 export type ControllerActionEvent = { player: number; action: string; type: "press" | "release" | "repeat" | "value"; value: number };
 type Held = { player: number; action: string; value: number; next: number };
 export class ControllerInput {
@@ -91,7 +107,10 @@ export class ControllerInput {
       if (!pads.length) { this.armed.delete(index); return; }
       const signature = pads.map(({ device }) => `${deviceKey(device.device)}:${device.index}`).sort().join("|");
       const raw = new Map(definition.actions.map(action => [action.id, Math.max(0,
-        ...pads.flatMap(({ pad }) => (player.bindings[action.id] ?? []).map(binding => valueFor(binding, pad))),
+        ...pads.flatMap(({ pad }) => [
+          ...(player.bindings[action.id] ?? []).map(binding => valueFor(binding, pad)),
+          ...(action.direction && pad.mapping === "standard" ? [fixedDirectionValue(action.direction, pad)] : []),
+        ]),
       )]));
       if (this.armed.get(index) !== signature) {
         if ([...raw.values()].every(v => v < .35)) this.armed.set(index, signature);

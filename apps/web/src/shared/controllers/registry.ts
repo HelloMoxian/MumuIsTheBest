@@ -7,6 +7,7 @@ export type GameAction = {
   label: string;
   description: string;
   defaults: ControlBinding[];
+  direction?: "up" | "down" | "left" | "right";
   repeat?: { delay: number; interval: number };
   exclusiveWith?: string[];
 };
