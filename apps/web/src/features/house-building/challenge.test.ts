@@ -311,3 +311,84 @@ test("history validates input and merges concurrent records without duplicate co
     undefined,
   );
 });
+
+test("independent required and forbidden areas evaluate occupied material and survive ground motion", () => {
+  const d = emptyDesign();
+  d.parts = [makePart("block", "block", "wood", 0, 0.4)];
+  const sim = new HouseSimulation(d);
+  sim.step(120);
+  const snapshot = sim.snapshot();
+  const c = {
+    ...generateChallenge(
+      { height: false, target: false, foundation: false },
+      1,
+    ),
+    layoutVersion: 3 as const,
+    zones: [
+      {
+        id: "required",
+        kind: "required" as const,
+        enabled: true,
+        left: -0.3,
+        right: 0.3,
+        bottom: 0.1,
+        top: 0.6,
+      },
+      {
+        id: "forbidden",
+        kind: "forbidden" as const,
+        enabled: true,
+        left: 2,
+        right: 3,
+        bottom: 0,
+        top: 1,
+      },
+    ],
+  };
+  assert.equal(evaluateChallenge(snapshot, c).ok, true);
+  const forbidden = {
+    ...c,
+    zones: [{ ...c.zones[1], left: -0.2, right: 0.2 }],
+  };
+  assert.equal(evaluateChallenge(snapshot, forbidden).ok, false);
+  assert.ok(
+    evaluateChallenge(snapshot, forbidden).reasons.some((s) =>
+      s.includes("禁入"),
+    ),
+  );
+  assert.equal(
+    evaluateChallenge(snapshot, {
+      ...c,
+      zones: [{ ...c.zones[0], left: 5, right: 6 }],
+    }).ok,
+    false,
+  );
+  const moved = {
+    ...snapshot,
+    ground: { x: 3, y: 0 },
+    pieces: snapshot.pieces.map((p) => ({ ...p, x: p.x + 3 })),
+  };
+  assert.equal(evaluateChallenge(moved, c).ok, true);
+  const switchedOff = {
+    ...c,
+    zones: c.zones.map((z) => ({ ...z, enabled: false })),
+  };
+  assert.equal(challengeActive(switchedOff), false);
+});
+test("a plank wider than its foundation remains forbidden even when visually supported", () => {
+  const d = emptyDesign();
+  d.parts = [
+    { ...makePart("wide", "bar", "wood", 0, 0.1), width: 4, height: 0.2 },
+  ];
+  const c = {
+    ...generateChallenge({ height: false, target: false, foundation: true }, 1),
+    layoutVersion: 2 as const,
+    regions: [{ left: -1, right: 1 }],
+  };
+  assert.equal(groundPlacementAllowed(d, c), false);
+  const sim = new HouseSimulation(d, { regions: c.regions });
+  sim.step(120);
+  const result = evaluateChallenge(sim.snapshot(), c);
+  assert.equal(result.ok, false);
+  assert.ok(result.reasons.some((s) => s.includes("贴地积木")));
+});

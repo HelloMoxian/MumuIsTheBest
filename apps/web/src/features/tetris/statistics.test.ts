@@ -114,11 +114,11 @@ test("清空统计会把持久记录覆盖为空值", () => {
   assert.equal(loaded.today.statistics.appearances.T, 0);
 });
 
-test("旧版偏好缺少方块外观时迁移到默认配色", () => {
+test("旧鼠标模式迁移为最佳匹配，缺少方块外观时迁移到默认配色", () => {
   const storage = memoryStorage();
   const now = new Date("2026-09-29T09:00:00+08:00").toISOString();
   storage.setItem("mumu.tetris.preferences.v1", JSON.stringify({ schemaVersion: 1, stableId: "tetris-preferences", mouseMode: true, createdAt: now, updatedAt: now }));
-  assert.deepEqual(loadTetrisPreferences(storage), { mouseMode: true, blockTheme: "default", createdAt: now, updatedAt: now });
+  assert.deepEqual(loadTetrisPreferences(storage), { bestMatch: true, blockTheme: "default", createdAt: now, updatedAt: now });
 });
 
 test("方块外观会随偏好保存并拒绝未知方案", () => {
@@ -127,6 +127,9 @@ test("方块外观会随偏好保存并拒绝未知方案", () => {
   saveTetrisPreferences(storage, preferences);
   assert.equal(loadTetrisPreferences(storage).blockTheme, "random-gem");
   const saved = JSON.parse(storage.getItem("mumu.tetris.preferences.v1")!) as Record<string, unknown>;
+  assert.equal(saved.schemaVersion, 2);
+  assert.equal(saved.bestMatch, false);
+  assert.equal(saved.mouseMode, undefined);
   storage.setItem("mumu.tetris.preferences.v1", JSON.stringify({ ...saved, blockTheme: "unknown" }));
   assert.throws(() => loadTetrisPreferences(storage), /设置不可用/);
 });

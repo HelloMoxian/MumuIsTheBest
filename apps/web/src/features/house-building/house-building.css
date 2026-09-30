@@ -118,6 +118,18 @@
   height: 100dvh;
 }
 .house-page .button {
+  appearance: none;
+  border: 1px solid var(--line-glow);
+  border-radius: 12px;
+  background: var(--glass-500);
+  color: var(--ink-primary);
+  font-family: inherit;
+  font-weight: 600;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition:
+    background 140ms,
+    border-color 140ms;
   min-height: 48px;
   min-width: 48px;
   font-size: 18px;
@@ -496,4 +508,344 @@
   .house-panel {
     padding: 12px;
   }
+}
+
+/* Compact, contextual experiment tools. */
+.house-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.house-panel-heading h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.house-page .house-panel-heading .button,
+.house-page .house-edit-tools .button,
+.house-page .house-inspector .button {
+  min-height: 34px;
+  min-width: 34px;
+  padding: 6px 9px;
+  font-size: 14px;
+}
+.house-page .house-tier {
+  font-size: 15px;
+  min-height: 36px;
+  min-width: 36px;
+  border-radius: 8px;
+}
+.house-material-tiers {
+  grid-template-columns: repeat(5, minmax(36px, 1fr));
+}
+.house-material-family > strong {
+  font-size: 16px;
+}
+.house-replace-frame {
+  padding: 10px;
+  border: 1px solid var(--line-glow);
+  border-left: 3px solid var(--cyan-300);
+  border-radius: 12px;
+  background: var(--glass-500);
+  margin: 10px 0;
+}
+.house-replace-frame h3 {
+  font-size: 14px;
+  color: var(--ink-secondary);
+  margin: 0 0 8px;
+}
+.house-replace-shapes {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.house-replace-shapes .house-shape-icon {
+  width: 20px;
+  height: 18px;
+}
+.house-page .house-replace-shapes .button {
+  padding: 5px;
+  font-size: 13px;
+  gap: 4px;
+}
+.house-inspector {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+.house-inspector .house-material-facts {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 8px 0;
+}
+.house-inspector .house-range {
+  margin: 6px 0;
+  font-size: 14px;
+}
+.house-inspector .house-range input {
+  min-height: 28px;
+}
+.house-panel .house-section {
+  margin-top: 10px;
+  padding-top: 8px;
+}
+.house-panel summary {
+  font-size: 15px;
+  min-height: 34px;
+  padding: 6px 0;
+}
+.house-toolbar {
+  gap: 10px;
+}
+.house-live-controls {
+  display: flex;
+  gap: 14px;
+  border: 0;
+  padding: 0;
+  margin: 0 8px;
+  min-width: 0;
+  flex: 1 1 340px;
+  max-width: 480px;
+}
+.house-live-force {
+  flex: 1;
+  min-width: 135px;
+}
+.house-live-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 28px;
+  font-size: 14px;
+}
+.house-live-heading label {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.house-live-heading input {
+  accent-color: var(--cyan-300);
+}
+.house-page .house-live-heading .button {
+  min-height: 26px;
+  min-width: 26px;
+  padding: 2px 6px;
+  font-size: 13px;
+}
+.house-live-controls .house-range {
+  margin: 0;
+  font-size: 12px;
+}
+.house-live-controls .house-range input {
+  min-height: 24px;
+  margin: 0;
+  display: block;
+}
+.house-live-controls:disabled {
+  opacity: 0.55;
+}
+.house-force-options {
+  position: relative;
+}
+.house-page .house-force-options summary {
+  min-height: 26px;
+  padding: 3px;
+  font-size: 13px;
+}
+.house-force-options > div {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 20;
+  width: 220px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line-glow);
+  background: var(--space-850);
+}
+.house-force-options .house-range {
+  font-size: 14px;
+}
+.house-page .button:focus-visible {
+  outline: 2px solid var(--cyan-300);
+  outline-offset: 2px;
+}
+@media (pointer: coarse) {
+  .house-page .house-tier,
+  .house-page .house-inspector .button,
+  .house-page .house-panel-heading .button,
+  .house-page .house-edit-tools .button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .house-live-controls .house-range input {
+    min-height: 44px;
+  }
+}
+@media (max-width: 700px) {
+  .house-live-controls {
+    order: 2;
+    flex-basis: 100%;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+.house-page .button:hover:not(:disabled) {
+  background: var(--glass-700);
+  border-color: var(--cyan-300);
+}
+.house-page .button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.house-page .button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.house-page .button-primary {
+  background: var(--violet-600);
+  border-color: var(--violet-400);
+}
+.house-page .button[aria-pressed="true"] {
+  background: var(--glass-700);
+  border-color: var(--cyan-300);
+  color: var(--cyan-300);
+}
+.house-page .house-edit-tools {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.house-page .house-replace-shapes {
+  margin: 0;
+}
+.house-running-panel .house-live-controls {
+  display: grid;
+  gap: 20px;
+  margin: 0;
+  max-width: none;
+}
+.house-running-panel .house-live-force {
+  border: 1px solid var(--line-glow);
+  border-radius: 12px;
+  padding: 12px;
+  background: var(--glass-500);
+}
+.house-running-panel .house-live-controls .house-range {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.house-running-panel .house-live-controls .house-range input {
+  min-height: 32px;
+}
+.house-running-panel .house-hint {
+  font-size: 14px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .house-page .button {
+    transition: none;
+  }
+  .house-page .button:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+.house-page .house-tier {
+  padding: 4px 1px;
+  white-space: nowrap;
+  min-height: 36px;
+}
+.house-page .house-shapes > .button {
+  font-size: 16px;
+  padding: 8px 6px;
+}
+.house-page .house-replace-shapes > .button {
+  font-size: 13px;
+  padding: 5px;
+}
+.house-shapes > .button .house-shape-icon {
+  width: 24px;
+  height: 22px;
+}
+.house-replace-shapes > .button .house-shape-icon {
+  width: 20px;
+  height: 18px;
+}
+@media (pointer: coarse) {
+  .house-page .house-tier {
+    min-height: 44px;
+  }
+}
+
+.house-task-panel .house-range {
+  font-size: 14px;
+  margin: 8px 0;
+}
+.house-task-panel .house-range input {
+  min-height: 28px;
+}
+.house-task-panel .house-check {
+  min-height: 36px;
+  font-size: 15px;
+}
+.house-task-panel .house-hint {
+  font-size: 14px;
+}
+.house-task-handle {
+  cursor: grab;
+}
+.house-task-handle:active {
+  cursor: grabbing;
+}
+.house-task-handle:focus-visible rect {
+  stroke: var(--ink-primary);
+  stroke-width: 4;
+}
+.house-task-handle text {
+  pointer-events: none;
+}
+
+.house-levels {
+  display: grid;
+  gap: var(--space-3, 12px);
+}
+.house-level-card {
+  border: 1px solid var(--line-glow);
+  border-radius: 16px;
+  padding: 12px;
+  background: var(--space-850);
+}
+.house-level-card h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.house-level-card input {
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+.house-levels .house-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.house-task-areas .house-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.house-task-areas fieldset {
+  margin: 12px 0;
+  min-width: 0;
+}
+.house-area-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.house-area-field input {
+  width: 110px;
+  min-height: 48px;
 }

@@ -108,6 +108,12 @@ export function previewZoneFor(board: readonly (readonly Cell[])[]): PreviewZone
   if (highestOccupiedRow >= 7) return "middle";
   return "top";
 }
+export function mouseBaseline(clientX: number, bounds: { left: number; right: number; width: number }) {
+  if (!(bounds.width > 0) || clientX <= bounds.left) return 0;
+  if (clientX >= bounds.right) return WIDTH - 2;
+  const pointedColumn = Math.floor((clientX - bounds.left) / bounds.width * WIDTH);
+  return Math.min(WIDTH - 2, Math.max(0, pointedColumn - 1));
+}
 function boardWithPiece(game: Game, piece: Piece) {
   const board = game.board.map(row => [...row]);
   for (const [x, y] of cells(piece)) board[y][x] = piece.kind;
@@ -152,6 +158,22 @@ export function bestMousePlacement(game: Game, baselineLeft: number): Piece | un
     }
   }
   return best?.piece;
+}
+export function directMousePlacement(game: Game, baselineLeft: number): Piece | undefined {
+  if (game.ended || game.clearing) return;
+  const left = Math.max(0, Math.min(WIDTH - 2, Math.floor(baselineLeft)));
+  const local = game.piece.matrix.flatMap((row, y) => row.flatMap((value, x) => value ? [[x, y] as [number, number]] : []));
+  const minX = Math.min(...local.map(([x]) => x));
+  const maxX = Math.max(...local.map(([x]) => x));
+  const minimumPieceX = -minX;
+  const maximumPieceX = WIDTH - 1 - maxX;
+  const centeredX = Math.round(left + 0.5 - (minX + maxX) / 2);
+  const x = left === 0 ? minimumPieceX : left === WIDTH - 2 ? maximumPieceX : Math.max(minimumPieceX, Math.min(maximumPieceX, centeredX));
+  const candidate = { ...game.piece, x };
+  return fits(game, candidate) ? candidate : undefined;
+}
+export function mousePlacement(game: Game, baselineLeft: number, bestMatch: boolean) {
+  return bestMatch ? bestMousePlacement(game, baselineLeft) : directMousePlacement(game, baselineLeft);
 }
 function lock(game: Game) {
   const previousLevel = levelFor(game.lines);

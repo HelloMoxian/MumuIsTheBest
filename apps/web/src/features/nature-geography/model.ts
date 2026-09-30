@@ -10,15 +10,21 @@ export interface Footprint { id: string; title: string; date: string; note: stri
 export interface GeographyState { schemaVersion: 1; id: string; revision: number; lights: string[]; footprints: Footprint[] }
 export interface MapInfo { schemaVersion: 1; updatedAt: string; coordinateSystem: string; attribution: string; description: string; layers: string[]; missing: string[] }
 export const EMPTY: Collection = { type: "FeatureCollection", features: [] };
+export const MAP_COLORS = ["#8656ed", "#20cbb6", "#ef619d", "#edbd32", "#32a5ef", "#79c43d", "#ba5bde"];
+export const CLIMATE_COLORS = ["#0abe97", "#f0ae23", "#61bd37", "#3e85ee", "#bb82ef"];
+export function oceanColorIndex(name: string) {
+  // Stable semantic identity, never feature order or hemisphere.
+  return [...name].reduce((hash, letter) => (hash * 31 + letter.charCodeAt(0)) >>> 0, 0) % MAP_COLORS.length;
+}
 export const WORLD_LAYERS = [
-  { id: "elevation", name: "海拔图", hint: "看看地形的高低起伏。点山峰可读海拔；底色是地形晕渲，不能当作测量值。" },
+  { id: "elevation", name: "海拔图", hint: "放大看看山脊、谷地和高原。关掉标记可专心看地形；峰名下的彩色数字表示海拔。" },
   { id: "countries", name: "国家图", hint: "选择国家，查看国旗、人口与面积。★ 是首都，● 是主要城市；放大后会显示更多城市名称。" },
-  { id: "continents", name: "大洲图", hint: "地球有七大洲。色块表示地理分区概览，沿岸细节请看底图。" },
+  { id: "continents", name: "大洲图", hint: "七大洲各有一种颜色，岛屿也有所属大洲。冰岛、英国属欧洲，加勒比地区属北美洲；大洋洲包含澳大利亚、新西兰和太平洋岛屿。" },
   { id: "oceans", name: "海洋图", hint: "看看五大洋，也找找海、海湾与海峡；陆地底色展示地形起伏。" },
   { id: "climate", name: "气候图", hint: "颜色表示长期气候：热带、干旱、温带、大陆性与极地。1980—2016 年平均，0.5° 网格，不是今天的天气。" },
   { id: "languages", name: "语种分布", hint: "认识 18 种主要语言。每个国家或地区最多展示两种：底色是一种，斜纹是另一种。灰色是其他语言；这是概览，不表示实际语言边界或人口比例。" },
-  { id: "mountains", name: "山脉图", hint: "寻找连绵的山脉与高原。色块是地理范围概览。" },
-  { id: "minerals", name: "矿藏图", hint: "探索 USGS 收录的历史矿点（资料等级 A / B）；这些点不代表今天仍在开采，也不表示现有储量。" },
+  { id: "mountains", name: "山脉图", hint: "寻找连绵的山脉与高原。切到中国山脉，可查看更细的范围和地形。" },
+  { id: "minerals", name: "矿藏图", hint: "勾选一种或多种资源，看看世界哪些国家比较重要。主要产国和储量分开看，历史矿点可按需打开。" },
 ] as const;
 export type WorldLayer = typeof WORLD_LAYERS[number]["id"];
 
@@ -88,7 +94,7 @@ export function featureWeight(feature: MapFeature) { featureCenter(feature); ret
 export function featureFocusBounds(feature: MapFeature) {
   featureCenter(feature);
   const ring = mainRings.get(feature);
-  return ring && ["countries", "languageareas", "province", "city", "district"].includes(String(feature.properties.kind))
+  return ring && ["countries", "resourceareas", "languageareas", "province", "city", "district"].includes(String(feature.properties.kind))
     ? featureBounds({ ...feature, geometry: { type: "Polygon", coordinates: [ring] } })
     : featureBounds(feature);
 }
@@ -109,6 +115,7 @@ export function normalizeWorldLabels(collection: Collection): Collection {
     const name = names[String(p.name)] ?? p.name;
     const chineseRegion = p.kind === "countries" && ["中国台湾", "中国香港", "中国澳门"].includes(String(name));
     return { ...feature, properties: { ...p, name,
+      ...(p.kind === "oceans" ? { color: oceanColorIndex(String(name)) } : {}),
       ...(chineseRegion ? { group: "中国", detail: String(name), color: china?.properties.color ?? 2 } : {}) } };
   }) };
 }
@@ -128,6 +135,7 @@ export function usesTerrain(layer: WorldLayer) { return layer === "elevation" ||
 export function selectedRegionIds(collection: Collection, selected: string): string[] {
   const feature = collection.features.find(f => String(f.properties.id) === selected);
   if (!feature) return [];
+  if (feature.properties.kind === "oceans") return collection.features.filter(f => f.properties.kind === "oceans" && f.properties.name === feature.properties.name).map(f => String(f.properties.id));
   if (!["countries", "languageareas"].includes(String(feature.properties.kind)) || !["中华人民共和国", "中国"].includes(String(feature.properties.name))) return [selected];
   const linkedNames = ["中华人民共和国", "中国", "中国香港", "中国台湾", "中国澳门"];
   return collection.features.filter(f => ["countries", "languageareas"].includes(String(f.properties.kind)) && linkedNames.includes(String(f.properties.name)))

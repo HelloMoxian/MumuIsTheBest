@@ -60,6 +60,7 @@
 | 反应熔炉 | `learning/chemistry/reaction-furnace-state.json` | 当前批次、原子、稳定结构与批次编号 |
 | 分子工厂 | `learning/chemistry/molecule-factory-state.json` | 原子、原子团、收藏、选项与中断状态 |
 | 画图 | `creative/drawing-studio-state.json` | 进行中的画布、视口、作品信息、图元和永久预制件目录 |
+| 节拍器作品集 | `creative/metronome-library.json` | 外壳 v1、作品集 v2；作品、乐器音轨、音符、节奏、四档节拍声、混音设置与递增 revision；详见 `METRONOME.md` |
 | 画图作品清单 | `creative/drawing-studio-works/<作品 UUID>.json` | 主动保存的独立作品、缩略图、名称、作者、创作时间、全部图元与预制件 |
 | 画图已移除作品 | `creative/drawing-studio-works/trash/<原 UUID>-<随机 UUID>.json` | 用户确认删除后的完整作品恢复文件，不进入作品清单 |
 | 界面偏好 | `preferences/experience.json` | 界面语言与朗读模式 |
@@ -98,6 +99,8 @@
 
 ## 4. 文件安全规则
 
+节拍器作品集使用独立 v2 契约（外壳仍 v1）、版本比较与串行原子保存。v1 的节拍开关在内存迁移为无/低，第一次保存 v2 前串行保留原文到 `creative/metronome-library.json.v1.<SHA-256>.bak`（0600、同步后原子链接、不覆盖已有恢复点）；失败不改原档。读取不写盘，未知版本/损坏文件拒绝覆盖。音乐模块导出 WAV 和 v2 可编辑作品集 JSON，兼容导入 v1/v2、校验迁移后以新 ID 追加。个人作品仅在仓库外保存；未来备份包含作品文件与迁移恢复点，既有全站备份格式与数据根目录不变。
+
 - 所有输入和磁盘文件都经过 schema 校验；损坏或未来版本不会被当成有效进度。
 - 新增或升级的持久化格式必须包含 `schemaVersion`、稳定 ID、`createdAt` 和 `updatedAt`；既有格式按各玩法规范兼容读取，并在其版本升级时补齐。
 - 业务写入使用单写入队列、同目录临时文件、原子替换和 `0600` 权限。
@@ -112,3 +115,7 @@
 - 试玩数据不自动迁入正式目录。未知数独版本拒绝读写；未来备份和恢复必须同时包含数独存档及两个钱包文件，不单独回退回执。详细契约见 `SUDOKU.md`。
 
 宝石连连看的进行中棋盘按用户要求例外保存在浏览器 localStorage：`mumu:gem-connect:session:v1:rules5:<关卡号>`，另以 `active` 保存上次关卡。每关独立恢复棋盘、活动时间和实例 ID；新一局仅覆盖该关，切关不累计离开时间。缓存按规则版本隔离，损坏仅影响对应关卡，浏览器禁用存储时降级为页面内保留。该缓存不写入 Git 或服务器文件，也不纳入服务器备份；清除浏览器站点数据会清除进行中的棋盘。正式成绩与钱包仍按既有服务端规则持久化。
+
+盖房子手调任务使用嵌套 challenge.layoutVersion=2，验证高度、目标坐标、1/2 段互不重叠的地基范围；未标记版本的旧 seed 任务按旧校验读取，不改写历史。外层工作区 v2、记录 v3、存储路径与备份格式不变，任务风震复用已有 settings/view 字段。
+
+- 物理自建关卡独立保存到仓库外 `learning/physics/house-levels.json`（稳定 ID `physics-house-levels`，外壳 v1，载荷 schemaVersion=1），包含布局、连接、任务区域、风震配置和视角；最多 500 个，按 ID 合并新增、revision 控制重命名、防止旧页面覆盖。默认空库，无预置关卡；不迁移或改写原缓存/通关历史，未来备份需包含此文件。任务布局 v3 新增独立区域并兼容旧布局。

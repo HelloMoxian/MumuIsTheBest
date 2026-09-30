@@ -9,8 +9,19 @@ export type ChallengeFlags = {
   target: boolean;
   foundation: boolean;
 };
+export type TaskZone = {
+  id: string;
+  kind: "required" | "forbidden";
+  left: number;
+  right: number;
+  bottom: number;
+  top: number;
+  enabled: boolean;
+};
 export type GroundRegion = { left: number; right: number };
 export type HouseChallenge = {
+  layoutVersion?: 2 | 3;
+  zones?: TaskZone[];
   seed: number;
   flags: ChallengeFlags;
   height: number;
@@ -59,7 +70,7 @@ export const DEFAULT_VIEW: HouseView = {
   quake: false,
 };
 export const challengeActive = (c: HouseChallenge) =>
-  Object.values(c.flags).some(Boolean);
+  Object.values(c.flags).some(Boolean) || !!c.zones?.some((z) => z.enabled);
 export function generateChallenge(
   flags: ChallengeFlags,
   seed: number,
@@ -123,6 +134,77 @@ export function parseChallenge(v: unknown): HouseChallenge | undefined {
     typeof v.flags.foundation !== "boolean"
   )
     return;
+  if (
+    v.layoutVersion !== undefined &&
+    v.layoutVersion !== 2 &&
+    v.layoutVersion !== 3
+  )
+    return;
+  if (v.layoutVersion === 2 || v.layoutVersion === 3) {
+    const zones: TaskZone[] = [];
+    if (v.layoutVersion === 3) {
+      if (!Array.isArray(v.zones) || v.zones.length > 24) return;
+      for (const z of v.zones) {
+        if (
+          !object(z) ||
+          typeof z.id !== "string" ||
+          !z.id ||
+          z.id.length > 180 ||
+          (z.kind !== "required" && z.kind !== "forbidden") ||
+          typeof z.enabled !== "boolean" ||
+          !number(z.left, -40, 40) ||
+          !number(z.right, -40, 40) ||
+          z.right - z.left < 0.1 ||
+          !number(z.bottom, 0, 40) ||
+          !number(z.top, 0, 40) ||
+          z.top - z.bottom < 0.1
+        )
+          return;
+        zones.push({
+          id: z.id,
+          kind: z.kind,
+          left: z.left,
+          right: z.right,
+          bottom: z.bottom,
+          top: z.top,
+          enabled: z.enabled,
+        });
+      }
+      if (new Set(zones.map((z) => z.id)).size !== zones.length) return;
+    }
+    if (
+      !number(v.height, 0.5, WORLD.top) ||
+      !object(v.target) ||
+      !number(v.target.x, WORLD.left, WORLD.right) ||
+      !number(v.target.y, 0.1, WORLD.top) ||
+      !Array.isArray(v.regions) ||
+      (v.regions.length < 1 && (v.layoutVersion !== 3 || v.flags.foundation)) ||
+      v.regions.length > (v.layoutVersion === 3 ? 12 : 2) ||
+      v.regions.some(
+        (r, i) =>
+          !object(r) ||
+          !number(r.left, WORLD.left, WORLD.right) ||
+          !number(r.right, WORLD.left, WORLD.right) ||
+          r.right - r.left < 0.5 ||
+          (i > 0 &&
+            r.left < (v.regions as { right: number }[])[i - 1].right + 0.1),
+      )
+    )
+      return;
+    return {
+      layoutVersion: v.layoutVersion,
+      ...(v.layoutVersion === 3 ? { zones } : {}),
+      seed: v.seed,
+      flags: {
+        height: v.flags.height,
+        target: v.flags.target,
+        foundation: v.flags.foundation,
+      },
+      height: v.height,
+      target: { x: v.target.x, y: v.target.y },
+      regions: v.regions.map((r) => ({ left: r.left, right: r.right })),
+    };
+  }
   const expected = generateChallenge(v.flags as ChallengeFlags, v.seed);
   // Seed is the single source of truth: goals cannot drift while switching UI panels.
   if (
@@ -144,7 +226,7 @@ export function parseChallenge(v: unknown): HouseChallenge | undefined {
 }
 export function parseWorkspace(v: unknown): HouseWorkspace | undefined {
   if (!object(v) || v.schemaVersion !== 2 || !object(v.view)) return;
-  const design = parseHouseDesign(v.design),
+  const design = parseHouseDesign(v.design, { legacyOverlap: true }),
     challenge = parseChallenge(v.challenge),
     view = v.view;
   if (
@@ -177,7 +259,7 @@ export function migrateHouseWorkspace(v: unknown): HouseWorkspace | undefined {
   return (
     parseWorkspace(v) ??
     (() => {
-      const design = parseHouseDesign(v);
+      const design = parseHouseDesign(v, { legacyOverlap: true });
       return design
         ? {
             schemaVersion: 2 as const,

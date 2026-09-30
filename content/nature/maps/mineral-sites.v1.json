@@ -1,0 +1,3867 @@
+{
+  "schemaVersion": 1,
+  "id": "mineral-sites",
+  "reviewedAt": "2026-09-30",
+  "method": "教学精选地点，不是完整矿产清单。一个点代表一个具名油气田、矿山、盐湖或矿区；未收录不等于无资源。符号等大，点数不表示储量。油气田排除 country-level only；不重复纳入同田的多期工程。",
+  "gem": {
+    "citation": "Global Oil and Gas Extraction Tracker, Global Energy Monitor, March 2026 Release",
+    "url": "https://globalenergymonitor.org/projects/global-oil-gas-extraction-tracker/",
+    "dataUrl": "https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/interim_maps/goget_map_2026-03.geojson",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "sha256": "a91682aff0a60cc143d09c7f6c0c4d8236af6c523e1330ccf5a9329e531261f7",
+    "changes": "精选、翻译、按矿种分类；保留来源记录 ID、代表坐标及带年份的产量；不按产量推算储量。"
+  },
+  "sites": [
+    {
+      "id": "L100000314115",
+      "name": "谢巴油田",
+      "nativeName": "Shaybah Oil and Gas Field (Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        53.6572,
+        21.7237
+      ],
+      "region": "沙特阿拉伯·鲁卜哈利沙漠",
+      "kind": "油气田",
+      "note": "2023 年原油产量：365 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Shaybah_Oil_and_Gas_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000314115",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000314113",
+      "name": "萨法尼亚油田",
+      "nativeName": "Safaniya Oil and Gas Field (Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        48.75,
+        28.28
+      ],
+      "region": "波斯湾·沙特阿拉伯近海",
+      "kind": "油气田",
+      "note": "2022 年原油产量：310.25 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Safaniya_Oil_and_Gas_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000314113",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000314121",
+      "name": "马尼法油田",
+      "nativeName": "Manifa Oil Field (Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        48.9834,
+        27.7159
+      ],
+      "region": "波斯湾·沙特阿拉伯近海",
+      "kind": "油气田",
+      "note": "2022 年原油产量：284.7 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Manifa_Oil_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000314121",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000314116",
+      "name": "祖鲁夫油田",
+      "nativeName": "Zuluf Oil and Gas Field (Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        49.059,
+        28.611
+      ],
+      "region": "波斯湾·沙特阿拉伯近海",
+      "kind": "油气田",
+      "note": "2022 年原油产量：277.4 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Zuluf_Oil_and_Gas_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000314116",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000314114",
+      "name": "卡提夫油田",
+      "nativeName": "Qatif Oil Field (Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        49.9393,
+        26.7077
+      ],
+      "region": "波斯湾·沙特阿拉伯东部",
+      "kind": "油气田",
+      "note": "2007 年原油产量：182.5 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Qatif_Oil_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000314114",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000314120",
+      "name": "马尔詹油田",
+      "nativeName": "Marjan Oil and Gas Field (Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        49.6746,
+        28.4389
+      ],
+      "region": "波斯湾·沙特阿拉伯近海",
+      "kind": "油气田",
+      "note": "2020 年原油产量：147.825 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Marjan_Oil_and_Gas_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000314120",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000314119",
+      "name": "阿布盖格油田",
+      "nativeName": "Abqaiq Oil Field (Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        49.7841,
+        26.1687
+      ],
+      "region": "沙特阿拉伯东部油区",
+      "kind": "油气田",
+      "note": "2007 年原油产量：146 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Abqaiq_Oil_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000314119",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000318037",
+      "name": "阿布萨法油田",
+      "nativeName": "Abu Sa`fah Oil Field (Saudi Arabia, Bahrain)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        50.4312,
+        26.79
+      ],
+      "region": "波斯湾·沙特阿拉伯与巴林近海",
+      "kind": "油气田",
+      "note": "2018 年原油产量：109.5 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Abu_Sa`fah_Oil_Field_(Saudi_Arabia,_Bahrain)",
+      "coordinateSource": "GOGET 2026-03 · L100000318037",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000319627",
+      "name": "加瓦尔油田·艾因达尔",
+      "nativeName": "Ain dar Oil Field (Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        49.4238,
+        25.9492
+      ],
+      "region": "沙特阿拉伯东部油区",
+      "kind": "油气田",
+      "note": "2020 年原油产量：63.875 百万桶",
+      "accuracy": "数据源标为概略位置",
+      "source": "https://www.gem.wiki/Ain_dar_Oil_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000319627",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000319113",
+      "name": "南加瓦尔气田",
+      "nativeName": "South Ghawar Gas Field (Saudi Arabia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        48.5299,
+        23.1897
+      ],
+      "region": "沙特阿拉伯东部气区",
+      "kind": "油气田",
+      "note": "2023 年天然气产量：2584 百万立方米",
+      "accuracy": "数据源标为概略位置",
+      "source": "https://www.gem.wiki/South_Ghawar_Gas_Field_(Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000319113",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312002",
+      "name": "鲁迈拉油田",
+      "nativeName": "Rumaila Oil Field (Iraq)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.3528,
+        30.5913
+      ],
+      "region": "波斯湾周缘·伊拉克南部",
+      "kind": "油气田",
+      "note": "2022 年原油产量：518.3 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Rumaila_Oil_Field_(Iraq)",
+      "coordinateSource": "GOGET 2026-03 · L100000312002",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311998",
+      "name": "西古尔纳一期油田",
+      "nativeName": "Qurna West 1 Oil and Gas Field (Iraq)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.305,
+        30.655
+      ],
+      "region": "波斯湾周缘·伊拉克南部",
+      "kind": "油气田",
+      "note": "2024 年原油产量：200.75 百万桶",
+      "accuracy": "数据源标为概略位置",
+      "source": "https://www.gem.wiki/Qurna_West_1_Oil_and_Gas_Field_(Iraq)",
+      "coordinateSource": "GOGET 2026-03 · L100000311998",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311979",
+      "name": "哈法亚油田",
+      "nativeName": "Halfaya Oil and Gas Field (Iraq)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.451,
+        31.546
+      ],
+      "region": "美索不达米亚盆地",
+      "kind": "油气田",
+      "note": "2023 年原油产量：135.05 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Halfaya_Oil_and_Gas_Field_(Iraq)",
+      "coordinateSource": "GOGET 2026-03 · L100000311979",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311985",
+      "name": "基尔库克油田",
+      "nativeName": "Kirkuk Oil Field (Iraq)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        44.191,
+        35.832
+      ],
+      "region": "伊拉克北部油区",
+      "kind": "油气田",
+      "note": "2024 年原油产量：89.425 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Kirkuk_Oil_Field_(Iraq)",
+      "coordinateSource": "GOGET 2026-03 · L100000311985",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312018",
+      "name": "祖拜尔油田",
+      "nativeName": "Zubair Oil and Gas Field (Iraq)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.608,
+        30.4189
+      ],
+      "region": "波斯湾周缘·伊拉克南部",
+      "kind": "油气田",
+      "note": "2024 年原油产量：80.3 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Zubair_Oil_and_Gas_Field_(Iraq)",
+      "coordinateSource": "GOGET 2026-03 · L100000312018",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311957",
+      "name": "拜哈桑油田",
+      "nativeName": "Bai Hassan Oil Field (Iraq)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        43.777,
+        35.81
+      ],
+      "region": "伊拉克北部油区",
+      "kind": "油气田",
+      "note": "2012 年原油产量：71.175 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Bai_Hassan_Oil_Field_(Iraq)",
+      "coordinateSource": "GOGET 2026-03 · L100000311957",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311986",
+      "name": "卢海斯油田",
+      "nativeName": "Luhais Oil Field (Iraq)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        46.952,
+        29.904
+      ],
+      "region": "波斯湾周缘·伊拉克南部",
+      "kind": "油气田",
+      "note": "2024 年原油产量：51.1 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Luhais_Oil_Field_(Iraq)",
+      "coordinateSource": "GOGET 2026-03 · L100000311986",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311987",
+      "name": "马季努油田",
+      "nativeName": "Majnoon Oil and Gas Field (Iraq)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.563,
+        31.224
+      ],
+      "region": "波斯湾周缘·伊拉克南部",
+      "kind": "油气田",
+      "note": "2025 年原油产量：43.8 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Majnoon_Oil_and_Gas_Field_(Iraq)",
+      "coordinateSource": "GOGET 2026-03 · L100000311987",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312163",
+      "name": "马伦油田",
+      "nativeName": "Marun Oil Field (Iran)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        49.3097,
+        31.1217
+      ],
+      "region": "扎格罗斯山前·伊朗",
+      "kind": "油气田",
+      "note": "2022 年原油产量：219 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Marun_Oil_Field_(Iran)",
+      "coordinateSource": "GOGET 2026-03 · L100000312163",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312129",
+      "name": "阿瓦士油田·阿斯马里",
+      "nativeName": "Ahvaz-Asmari Oil Field (Iran)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        48.8121,
+        31.3118
+      ],
+      "region": "扎格罗斯山前·伊朗",
+      "kind": "油气田",
+      "note": "2023 年原油产量：219 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Ahvaz-Asmari_Oil_Field_(Iran)",
+      "coordinateSource": "GOGET 2026-03 · L100000312129",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312180",
+      "name": "加奇萨兰油气田",
+      "nativeName": "Gachsaran Oil and Gas Field (Iran)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        50.7415,
+        30.2865
+      ],
+      "region": "扎格罗斯山前·伊朗",
+      "kind": "油气田",
+      "note": "2023 年原油产量：175.2 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Gachsaran_Oil_and_Gas_Field_(Iran)",
+      "coordinateSource": "GOGET 2026-03 · L100000312180",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312248",
+      "name": "南帕尔斯气田·6—8期",
+      "nativeName": "South Pars (Phase 6-8) Gas Phase (Iran)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        52.1813,
+        26.8614
+      ],
+      "region": "波斯湾·伊朗近海",
+      "kind": "油气田",
+      "note": "2016 年天然气产量：30229.3 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/South_Pars_(Phase_6-8)_Gas_Phase_(Iran)",
+      "coordinateSource": "GOGET 2026-03 · L100000312248",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312179",
+      "name": "坎甘气田",
+      "nativeName": "Kangan Gas Field (Iran)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        52.0119,
+        27.9656
+      ],
+      "region": "伊朗南部气区",
+      "kind": "油气田",
+      "note": "2022 年天然气产量：18980 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Kangan_Gas_Field_(Iran)",
+      "coordinateSource": "GOGET 2026-03 · L100000312179",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312389",
+      "name": "布尔干油气田",
+      "nativeName": "Burgan Oil and Gas Field (Kuwait)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        47.9611,
+        29.0054
+      ],
+      "region": "波斯湾·科威特",
+      "kind": "油气田",
+      "note": "已收录的具名油气田。",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Burgan_Oil_and_Gas_Field_(Kuwait)",
+      "coordinateSource": "GOGET 2026-03 · L100000312389",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312391",
+      "name": "劳扎坦油田",
+      "nativeName": "Raudhatain Oil Field (Kuwait)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.7164,
+        29.868
+      ],
+      "region": "波斯湾·科威特",
+      "kind": "油气田",
+      "note": "已收录的具名油气田。",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Raudhatain_Oil_Field_(Kuwait)",
+      "coordinateSource": "GOGET 2026-03 · L100000312391",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312390",
+      "name": "马格瓦油气田",
+      "nativeName": "Magwa Oil and Gas Field (Kuwait)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        47.9321,
+        29.1225
+      ],
+      "region": "波斯湾·科威特",
+      "kind": "油气田",
+      "note": "2025 年原油产量：109.5 百万桶",
+      "accuracy": "数据源标为概略位置",
+      "source": "https://www.gem.wiki/Magwa_Oil_and_Gas_Field_(Kuwait)",
+      "coordinateSource": "GOGET 2026-03 · L100000312390",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312397",
+      "name": "瓦夫拉油田",
+      "nativeName": "Wafra Oil Field (Kuwait, Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.8886,
+        28.5894
+      ],
+      "region": "科威特与沙特阿拉伯分区",
+      "kind": "油气田",
+      "note": "2028 年原油产量：109.5 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Wafra_Oil_Field_(Kuwait,_Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312397",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312404",
+      "name": "海夫吉油田",
+      "nativeName": "Khafji Oil Field (Kuwait, Saudi Arabia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        48.8864,
+        28.2744
+      ],
+      "region": "波斯湾·科威特与沙特阿拉伯近海",
+      "kind": "油气田",
+      "note": "2023 年原油产量：87.6 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Khafji_Oil_Field_(Kuwait,_Saudi_Arabia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312404",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312407",
+      "name": "萨布里亚油田",
+      "nativeName": "Sabriya Oil Field (Kuwait)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.8475,
+        29.8201
+      ],
+      "region": "波斯湾·科威特",
+      "kind": "油气田",
+      "note": "2016 年原油产量：36.5 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Sabriya_Oil_Field_(Kuwait)",
+      "coordinateSource": "GOGET 2026-03 · L100000312407",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312396",
+      "name": "乌姆古代尔油田",
+      "nativeName": "Umm Gudair Oil Field (Kuwait)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        47.7164,
+        28.8579
+      ],
+      "region": "波斯湾·科威特",
+      "kind": "油气田",
+      "note": "2010 年原油产量：36.5 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Umm_Gudair_Oil_Field_(Kuwait)",
+      "coordinateSource": "GOGET 2026-03 · L100000312396",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312392",
+      "name": "米纳吉什油气田",
+      "nativeName": "Minagish Oil and Gas Field (Kuwait)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        47.5543,
+        29.0172
+      ],
+      "region": "波斯湾·科威特",
+      "kind": "油气田",
+      "note": "2025 年原油产量：32.85 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Minagish_Oil_and_Gas_Field_(Kuwait)",
+      "coordinateSource": "GOGET 2026-03 · L100000312392",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312322",
+      "name": "上扎库姆油田",
+      "nativeName": "Upper Zakum Oil Field (United Arab Emirates)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        53.6563,
+        24.8429
+      ],
+      "region": "波斯湾·阿联酋近海",
+      "kind": "油气田",
+      "note": "2022 年原油产量：299.3 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Upper_Zakum_Oil_Field_(United_Arab_Emirates)",
+      "coordinateSource": "GOGET 2026-03 · L100000312322",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312268",
+      "name": "阿萨布油田",
+      "nativeName": "Asab Oil Field (United Arab Emirates)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        54.143,
+        23.32
+      ],
+      "region": "阿联酋陆上油区",
+      "kind": "油气田",
+      "note": "2020 年原油产量：164.25 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Asab_Oil_Field_(United_Arab_Emirates)",
+      "coordinateSource": "GOGET 2026-03 · L100000312268",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312269",
+      "name": "巴布油气田",
+      "nativeName": "Bab Oil and Gas Field (United Arab Emirates)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        53.634,
+        23.871
+      ],
+      "region": "阿联酋陆上油区",
+      "kind": "油气田",
+      "note": "2024 年原油产量：164.25 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Bab_Oil_and_Gas_Field_(United_Arab_Emirates)",
+      "coordinateSource": "GOGET 2026-03 · L100000312269",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312319",
+      "name": "乌姆沙伊夫油气田",
+      "nativeName": "Umm Shaif Oil and Gas Field (United Arab Emirates)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        53.283,
+        25.262
+      ],
+      "region": "波斯湾·阿联酋近海",
+      "kind": "油气田",
+      "note": "2024 年原油产量：100.375 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Umm_Shaif_Oil_and_Gas_Field_(United_Arab_Emirates)",
+      "coordinateSource": "GOGET 2026-03 · L100000312319",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312311",
+      "name": "沙阿油气田",
+      "nativeName": "Shah Oil and Gas Field (United Arab Emirates)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        53.719,
+        22.935
+      ],
+      "region": "阿联酋陆上油气区",
+      "kind": "油气田",
+      "note": "2025 年原油产量：25.55 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Shah_Oil_and_Gas_Field_(United_Arab_Emirates)",
+      "coordinateSource": "GOGET 2026-03 · L100000312311",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312477",
+      "name": "北方气田·Bravo区",
+      "nativeName": "North Field Bravo Oil and Gas Field (Qatar)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        51.8521,
+        26.5712
+      ],
+      "region": "波斯湾·卡塔尔近海",
+      "kind": "油气田",
+      "note": "2020 年天然气产量：16537.6 百万立方米",
+      "accuracy": "数据源标为概略位置",
+      "source": "https://www.gem.wiki/North_Field_Bravo_Oil_and_Gas_Field_(Qatar)",
+      "coordinateSource": "GOGET 2026-03 · L100000312477",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312468",
+      "name": "杜汉油气田",
+      "nativeName": "Dukhan Oil and Gas Field (Qatar)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        50.8151,
+        25.1866
+      ],
+      "region": "卡塔尔西部油气区",
+      "kind": "油气田",
+      "note": "2019 年原油产量：64.084 百万桶；2019 年天然气产量：4299.78 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Dukhan_Oil_and_Gas_Field_(Qatar)",
+      "coordinateSource": "GOGET 2026-03 · L100000312468",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312462",
+      "name": "沙欣油田",
+      "nativeName": "Al Shaheen Oil and Gas Field (Qatar)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        51.9219,
+        26.5142
+      ],
+      "region": "波斯湾·卡塔尔近海",
+      "kind": "油气田",
+      "note": "2020 年原油产量：88.8 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Al_Shaheen_Oil_and_Gas_Field_(Qatar)",
+      "coordinateSource": "GOGET 2026-03 · L100000312462",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312725",
+      "name": "沙拉拉油田",
+      "nativeName": "El Sharara Oil Field (Libya)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        11.936,
+        26.394
+      ],
+      "region": "北非·利比亚穆尔祖克盆地",
+      "kind": "油气田",
+      "note": "2025 年原油产量：113.504 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/El_Sharara_Oil_Field_(Libya)",
+      "coordinateSource": "GOGET 2026-03 · L100000312725",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312750",
+      "name": "瓦哈油气田",
+      "nativeName": "Waha Oil and Gas Field (Libya)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        21.44,
+        28.74
+      ],
+      "region": "北非·利比亚苏尔特盆地",
+      "kind": "油气田",
+      "note": "2021 年原油产量：104.025 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Waha_Oil_and_Gas_Field_(Libya)",
+      "coordinateSource": "GOGET 2026-03 · L100000312750",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312723",
+      "name": "德法油田",
+      "nativeName": "Defa Oil Field (Libya)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        19.9054,
+        27.9882
+      ],
+      "region": "北非·利比亚苏尔特盆地",
+      "kind": "油气田",
+      "note": "2010 年原油产量：103.006 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Defa_Oil_Field_(Libya)",
+      "coordinateSource": "GOGET 2026-03 · L100000312723",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312728",
+      "name": "贾卢油田",
+      "nativeName": "Gialo Oil Field (Libya)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        21.3797,
+        28.7086
+      ],
+      "region": "北非·利比亚苏尔特盆地",
+      "kind": "油气田",
+      "note": "2012 年原油产量：89.571 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Gialo_Oil_Field_(Libya)",
+      "coordinateSource": "GOGET 2026-03 · L100000312728",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312722",
+      "name": "达赫拉油气田",
+      "nativeName": "Dahra Oil and Gas Field (Libya)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        17.9257,
+        29.4822
+      ],
+      "region": "北非·利比亚苏尔特盆地",
+      "kind": "油气田",
+      "note": "2022 年原油产量：43.8 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Dahra_Oil_and_Gas_Field_(Libya)",
+      "coordinateSource": "GOGET 2026-03 · L100000312722",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312724",
+      "name": "象田油气田",
+      "nativeName": "El Feel Oil and Gas Field (Libya)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        12.1949,
+        26.0723
+      ],
+      "region": "北非·利比亚穆尔祖克盆地",
+      "kind": "油气田",
+      "note": "2024 年原油产量：32.85 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/El_Feel_Oil_and_Gas_Field_(Libya)",
+      "coordinateSource": "GOGET 2026-03 · L100000312724",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312744",
+      "name": "萨里尔油气田",
+      "nativeName": "Sarir Oil and Gas Field (Libya)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        22.5231,
+        27.6431
+      ],
+      "region": "北非·利比亚苏尔特盆地",
+      "kind": "油气田",
+      "note": "2024 年原油产量：19.345 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Sarir_Oil_and_Gas_Field_(Libya)",
+      "coordinateSource": "GOGET 2026-03 · L100000312744",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312713",
+      "name": "奥吉拉—纳富拉油田",
+      "nativeName": "Augila-Nafoora Oil Field (Libya)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        21.5227,
+        29.2538
+      ],
+      "region": "北非·利比亚苏尔特盆地",
+      "kind": "油气田",
+      "note": "2020 年原油产量：10.95 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Augila-Nafoora_Oil_Field_(Libya)",
+      "coordinateSource": "GOGET 2026-03 · L100000312713",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312632",
+      "name": "哈西迈萨乌德油气田",
+      "nativeName": "Hassi Messaoud Oil and Gas Field (Algeria)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        5.923,
+        31.608
+      ],
+      "region": "北非·阿尔及利亚撒哈拉油区",
+      "kind": "油气田",
+      "note": "2025 年原油产量：171.55 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Hassi_Messaoud_Oil_and_Gas_Field_(Algeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000312632",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312634",
+      "name": "哈西鲁迈勒油气田",
+      "nativeName": "Hassi R'Mel Oil and Gas Field (Algeria)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        3.1706,
+        32.9472
+      ],
+      "region": "北非·阿尔及利亚撒哈拉气区",
+      "kind": "油气田",
+      "note": "2023 年天然气产量：31214.7 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Hassi_R'Mel_Oil_and_Gas_Field_(Algeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000312634",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312629",
+      "name": "哈西伯尔金油气田",
+      "nativeName": "Hassi Berkine Oil and Gas Field (Algeria)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        8.109,
+        31.129
+      ],
+      "region": "北非·阿尔及利亚伯尔金盆地",
+      "kind": "油气田",
+      "note": "2019 年原油产量：104.025 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Hassi_Berkine_Oil_and_Gas_Field_(Algeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000312629",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312663",
+      "name": "乌尔胡德油田",
+      "nativeName": "Ourhoud Oil Field (Algeria)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        8.1248,
+        30.4595
+      ],
+      "region": "北非·阿尔及利亚伯尔金盆地",
+      "kind": "油气田",
+      "note": "2025 年原油产量：91.25 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Ourhoud_Oil_Field_(Algeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000312663",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312669",
+      "name": "鲁尔德努斯气田",
+      "nativeName": "Rhourde Nouss Gas Field (Algeria)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        6.445,
+        29.645
+      ],
+      "region": "北非·阿尔及利亚",
+      "kind": "油气田",
+      "note": "2023 年天然气产量：11162.9 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Rhourde_Nouss_Gas_Field_(Algeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000312669",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311619",
+      "name": "摩根油气田",
+      "nativeName": "Morgan Oil and Gas Field (Egypt)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        33.447,
+        28.214
+      ],
+      "region": "北非·埃及苏伊士湾",
+      "kind": "油气田",
+      "note": "2016 年原油产量：120.45 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Morgan_Oil_and_Gas_Field_(Egypt)",
+      "coordinateSource": "GOGET 2026-03 · L100000311619",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311578",
+      "name": "祖尔气田",
+      "nativeName": "Zohr Gas Field (Egypt)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        32.864,
+        32.364
+      ],
+      "region": "北非·埃及地中海近海",
+      "kind": "油气田",
+      "note": "2025 年天然气产量：13746.9 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Zohr_Gas_Field_(Egypt)",
+      "coordinateSource": "GOGET 2026-03 · L100000311578",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311629",
+      "name": "拉马丹油气田",
+      "nativeName": "Ramadan Oil and Gas Field (Egypt)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        33.167,
+        28.588
+      ],
+      "region": "北非·埃及苏伊士湾",
+      "kind": "油气田",
+      "note": "1978 年原油产量：45.625 百万桶；1978 年天然气产量：516.8 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Ramadan_Oil_and_Gas_Field_(Egypt)",
+      "coordinateSource": "GOGET 2026-03 · L100000311629",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311610",
+      "name": "盖斯尔油气田",
+      "nativeName": "Qasr Oil and Gas Field (Egypt)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        26.6,
+        30.5667
+      ],
+      "region": "北非·埃及西部沙漠",
+      "kind": "油气田",
+      "note": "2014 年天然气产量：6925.12 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Qasr_Oil_and_Gas_Field_(Egypt)",
+      "coordinateSource": "GOGET 2026-03 · L100000311610",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311620",
+      "name": "十月油气田",
+      "nativeName": "October Oil and Gas Field (Egypt)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        33.06,
+        28.816
+      ],
+      "region": "北非·埃及苏伊士湾",
+      "kind": "油气田",
+      "note": "2020 年原油产量：29.2 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/October_Oil_and_Gas_Field_(Egypt)",
+      "coordinateSource": "GOGET 2026-03 · L100000311620",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312037",
+      "name": "博瓦年科沃油气田",
+      "nativeName": "Bovanenkovskoye (Gazprom) Oil and Gas Asset (Yamalo-Nenets Autonomous Okrug, Russia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        68.078,
+        70.49
+      ],
+      "region": "俄罗斯·亚马尔半岛",
+      "kind": "油气田",
+      "note": "2023 年天然气产量：59000 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Bovanenkovskoye_(Gazprom)_Oil_and_Gas_Asset_(Yamalo-Nenets_Autonomous_Okrug,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312037",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312038",
+      "name": "扎波利亚尔内油气田",
+      "nativeName": "Zapolyarnoye Oil and Gas Field (Yamalo-Nenets Autonomous Okrug, Russia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        78.905,
+        66.743
+      ],
+      "region": "俄罗斯·西西伯利亚",
+      "kind": "油气田",
+      "note": "2023 年天然气产量：46200 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Zapolyarnoye_Oil_and_Gas_Field_(Yamalo-Nenets_Autonomous_Okrug,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312038",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312426",
+      "name": "乌连戈伊油气田",
+      "nativeName": "Urengoyskoye (Urengoyskoye) Oil and Gas Asset (Yamalo-Nenets Autonomous Okrug, Russia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        76.75,
+        66.6667
+      ],
+      "region": "俄罗斯·西西伯利亚",
+      "kind": "油气田",
+      "note": "2022 年天然气产量：44279.4 百万立方米",
+      "accuracy": "数据源标为概略位置",
+      "source": "https://www.gem.wiki/Urengoyskoye_(Urengoyskoye)_Oil_and_Gas_Asset_(Yamalo-Nenets_Autonomous_Okrug,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312426",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312039",
+      "name": "扬堡油气田",
+      "nativeName": "Yamburgskoye Oil and Gas Field (Yamalo-Nenets Autonomous Okrug, Russia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        75.9986,
+        68.0008
+      ],
+      "region": "俄罗斯·西西伯利亚",
+      "kind": "油气田",
+      "note": "2023 年天然气产量：37700 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Yamburgskoye_Oil_and_Gas_Field_(Yamalo-Nenets_Autonomous_Okrug,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312039",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312109",
+      "name": "北普里鄂毕油田",
+      "nativeName": "Severo-Priobskoye Oil Asset (Khanty-Mansi Autonomous Okrug, Russia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        70.4869,
+        61.3839
+      ],
+      "region": "俄罗斯·西西伯利亚",
+      "kind": "油气田",
+      "note": "2021 年原油产量：183.25 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Severo-Priobskoye_Oil_Asset_(Khanty-Mansi_Autonomous_Okrug,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312109",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312358",
+      "name": "萨莫特洛尔油气田",
+      "nativeName": "Samotlorskoye Oil and Gas Field (Khanty-Mansi Autonomous Okrug, Russia)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        76.6656,
+        61.1672
+      ],
+      "region": "俄罗斯·西西伯利亚",
+      "kind": "油气田",
+      "note": "2023 年原油产量：91.625 百万桶；2023 年天然气产量：3900 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Samotlorskoye_Oil_and_Gas_Field_(Khanty-Mansi_Autonomous_Okrug,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312358",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312134",
+      "name": "费多罗夫油气田",
+      "nativeName": "Fedorovskoye Oil and Gas Field (Khanty-Mansi Autonomous Okrug, Russia)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        73.8464,
+        61.7128
+      ],
+      "region": "俄罗斯·西西伯利亚",
+      "kind": "油气田",
+      "note": "2023 年原油产量：79.164 百万桶；2023 年天然气产量：400 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Fedorovskoye_Oil_and_Gas_Field_(Khanty-Mansi_Autonomous_Okrug,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312134",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312361",
+      "name": "罗马什金油田",
+      "nativeName": "Romashkinskoye Oil Field (Republic of Tatarstan, Russia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        52.81,
+        54.8336
+      ],
+      "region": "俄罗斯·伏尔加—乌拉尔油区",
+      "kind": "油气田",
+      "note": "2023 年原油产量：92.358 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Romashkinskoye_Oil_Field_(Republic_of_Tatarstan,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312361",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312042",
+      "name": "恰扬金油气田",
+      "nativeName": "Chayandinskoye (Gazprom) Oil and Gas Asset (Republic of Sakha, Russia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        112.282,
+        60.249
+      ],
+      "region": "俄罗斯·东西伯利亚",
+      "kind": "油气田",
+      "note": "2023 年天然气产量：18900 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Chayandinskoye_(Gazprom)_Oil_and_Gas_Asset_(Republic_of_Sakha,_Russia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312042",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312592",
+      "name": "卡沙甘油气田",
+      "nativeName": "Kashagan Oil and Gas Field (Kazakhstan)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        50.1374,
+        46.486
+      ],
+      "region": "哈萨克斯坦·里海北部",
+      "kind": "油气田",
+      "note": "2024 年原油产量：127.718 百万桶；2024 年天然气产量：11253 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Kashagan_Oil_and_Gas_Field_(Kazakhstan)",
+      "coordinateSource": "GOGET 2026-03 · L100000312592",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000320804",
+      "name": "大庆油田·萨尔图",
+      "nativeName": "Sartu Oil Field (Heilongjiang, China)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        125.0187,
+        46.6133
+      ],
+      "region": "中国·松辽盆地",
+      "kind": "油气田",
+      "note": "2005 年原油产量：192.193 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Sartu_Oil_Field_(Heilongjiang,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000320804",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000320841",
+      "name": "大庆油田·杏树岗",
+      "nativeName": "Xingshugang Oil Field (Heilongjiang, China)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        124.8596,
+        46.3074
+      ],
+      "region": "中国·松辽盆地",
+      "kind": "油气田",
+      "note": "2005 年原油产量：54.755 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Xingshugang_Oil_Field_(Heilongjiang,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000320841",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000317142",
+      "name": "胜利油田·胜坨",
+      "nativeName": "Shengtuo Oil Field (Shandong, China)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        118.4481,
+        37.5623
+      ],
+      "region": "中国·渤海湾盆地",
+      "kind": "油气田",
+      "note": "2023 年原油产量：1.035 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Shengtuo_Oil_Field_(Shandong,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000317142",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000317143",
+      "name": "胜利油田·孤岛",
+      "nativeName": "Gudao Oil Field (Shandong, China)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        118.8682,
+        37.7557
+      ],
+      "region": "中国·渤海湾盆地",
+      "kind": "油气田",
+      "note": "2023 年原油产量：23.456 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Gudao_Oil_Field_(Shandong,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000317143",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000310839",
+      "name": "克深气田",
+      "nativeName": "Keshen Gas Field (Xinjiang, China)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        81.8677,
+        41.8383
+      ],
+      "region": "中国·塔里木盆地",
+      "kind": "油气田",
+      "note": "2020 年天然气产量：10000 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Keshen_Gas_Field_(Xinjiang,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000310839",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000321229",
+      "name": "塔中一号油气田",
+      "nativeName": "Tazhong 1 Oil and Gas Field (Xinjiang, China)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        82.960434,
+        39.365743
+      ],
+      "region": "中国·塔里木盆地",
+      "kind": "油气田",
+      "note": "2022 年原油产量：1.867 百万桶；2022 年天然气产量：671.6 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Tazhong_1_Oil_and_Gas_Field_(Xinjiang,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000321229",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000310843",
+      "name": "涪陵页岩气田",
+      "nativeName": "Fuling Shale Gas Field (Chongqing, China)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        107.6,
+        29.74
+      ],
+      "region": "中国·四川盆地",
+      "kind": "油气田",
+      "note": "2025 年天然气产量：9125 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Fuling_Shale_Gas_Field_(Chongqing,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000310843",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000310877",
+      "name": "普光气田",
+      "nativeName": "Puguang Gas Field (Sichuan, China)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        107.7584,
+        31.5147
+      ],
+      "region": "中国·四川盆地",
+      "kind": "油气田",
+      "note": "2022 年天然气产量：8460 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Puguang_Gas_Field_(Sichuan,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000310877",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000310836",
+      "name": "安岳气田",
+      "nativeName": "Anyue Gas Field (Sichuan, China)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        105.6639,
+        30.2745
+      ],
+      "region": "中国·四川盆地",
+      "kind": "油气田",
+      "note": "2024 年天然气产量：6470 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Anyue_Gas_Field_(Sichuan,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000310836",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000310933",
+      "name": "榆林气田",
+      "nativeName": "Yulin Gas Field (Shaanxi, China)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        109.567,
+        38.581
+      ],
+      "region": "中国·鄂尔多斯盆地",
+      "kind": "油气田",
+      "note": "2024 年天然气产量：9271 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Yulin_Gas_Field_(Shaanxi,_China)",
+      "coordinateSource": "GOGET 2026-03 · L100000310933",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312987",
+      "name": "普鲁德霍湾油气田",
+      "nativeName": "Prudhoe Bay Oil and Gas Field (Alaska, United States)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        -148.6707,
+        70.3091
+      ],
+      "region": "美国·阿拉斯加北坡",
+      "kind": "油气田",
+      "note": "2022 年原油产量：78.512 百万桶",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Prudhoe_Bay_Oil_and_Gas_Field_(Alaska,_United_States)",
+      "coordinateSource": "GOGET 2026-03 · L100000312987",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311606",
+      "name": "希伯尼亚油气田",
+      "nativeName": "Hibernia Oil and Gas Field (Newfoundland & Labrador, Canada)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        -48.665,
+        47.342
+      ],
+      "region": "加拿大·纽芬兰近海",
+      "kind": "油气田",
+      "note": "2022 年原油产量：25.45 百万桶；2022 年天然气产量：2242.99 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Hibernia_Oil_and_Gas_Field_(Newfoundland_&_Labrador,_Canada)",
+      "coordinateSource": "GOGET 2026-03 · L100000311606",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000300452",
+      "name": "图皮油气田",
+      "nativeName": "Tupi Oil and Gas Field (Rio de Janeiro, Brazil)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        -42.839,
+        -25.398
+      ],
+      "region": "巴西·桑托斯盆地",
+      "kind": "油气田",
+      "note": "2024 年原油产量：299.178 百万桶；2024 年天然气产量：15008.8 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Tupi_Oil_and_Gas_Field_(Rio_de_Janeiro,_Brazil)",
+      "coordinateSource": "GOGET 2026-03 · L100000300452",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000300072",
+      "name": "布济乌斯油气田",
+      "nativeName": "Buzios Oil and Gas Field (Rio de Janeiro, Brazil)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        -42.498,
+        -24.657
+      ],
+      "region": "巴西·桑托斯盆地",
+      "kind": "油气田",
+      "note": "2024 年原油产量：245.328 百万桶；2024 年天然气产量：10351.4 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Buzios_Oil_and_Gas_Field_(Rio_de_Janeiro,_Brazil)",
+      "coordinateSource": "GOGET 2026-03 · L100000300072",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000300279",
+      "name": "梅罗油气田",
+      "nativeName": "Mero Oil and Gas Field (Rio de Janeiro, Brazil)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        -42.22,
+        -24.612
+      ],
+      "region": "巴西·桑托斯盆地",
+      "kind": "油气田",
+      "note": "2024 年原油产量：113.86 百万桶；2024 年天然气产量：7537.25 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Mero_Oil_and_Gas_Field_(Rio_de_Janeiro,_Brazil)",
+      "coordinateSource": "GOGET 2026-03 · L100000300279",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000304500",
+      "name": "特罗尔油气田",
+      "nativeName": "Troll Oil and Gas Field (Norway)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        3.6186,
+        60.7873
+      ],
+      "region": "挪威·北海",
+      "kind": "油气田",
+      "note": "2024 年原油产量：11.888 百万桶；2024 年天然气产量：43750 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Troll_Oil_and_Gas_Field_(Norway)",
+      "coordinateSource": "GOGET 2026-03 · L100000304500",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000301427",
+      "name": "约翰斯韦德鲁普油气田",
+      "nativeName": "Johan Sverdrup Oil and Gas Field (Norway)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        2.6177,
+        58.8013
+      ],
+      "region": "挪威·北海",
+      "kind": "油气田",
+      "note": "2024 年原油产量：5.283 百万桶；2024 年天然气产量：1340 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Johan_Sverdrup_Oil_and_Gas_Field_(Norway)",
+      "coordinateSource": "GOGET 2026-03 · L100000301427",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000304504",
+      "name": "奥瑟贝格油气田",
+      "nativeName": "Oseberg Oil and Gas Field (Norway)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        2.7471,
+        60.525
+      ],
+      "region": "挪威·北海",
+      "kind": "油气田",
+      "note": "2024 年原油产量：10.567 百万桶；2024 年天然气产量：8370 百万立方米",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Oseberg_Oil_and_Gas_Field_(Norway)",
+      "coordinateSource": "GOGET 2026-03 · L100000304504",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000310011",
+      "name": "戈尔贡油气田",
+      "nativeName": "Gorgon Oil and Gas Field (Western Australia, Australia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        114.8629,
+        -20.3832
+      ],
+      "region": "澳大利亚·西北大陆架",
+      "kind": "油气田",
+      "note": "已收录的具名油气田。",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Gorgon_Oil_and_Gas_Field_(Western_Australia,_Australia)",
+      "coordinateSource": "GOGET 2026-03 · L100000310011",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311577",
+      "name": "邦加西北油气田",
+      "nativeName": "Bonga Northwest Oil and Gas Field (Nigeria)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        4.6131,
+        4.5935
+      ],
+      "region": "尼日利亚·尼日尔三角洲近海",
+      "kind": "油气田",
+      "note": "已收录的具名油气田。",
+      "accuracy": "数据源标为精确的田区代表点",
+      "source": "https://www.gem.wiki/Bonga_Northwest_Oil_and_Gas_Field_(Nigeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000311577",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "site-khouribga",
+      "name": "胡里卜盖磷矿区",
+      "nativeName": "",
+      "resources": [
+        "phosphate"
+      ],
+      "coordinates": [
+        -6.8,
+        32.9
+      ],
+      "region": "摩洛哥·乌拉德阿卜敦盆地",
+      "kind": "矿区",
+      "note": "摩洛哥的重要磷矿产区，用于制造磷肥。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.ocpgroup.ma/en/what-we-do/industrial-operations",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-benguerir",
+      "name": "本盖里尔磷矿",
+      "nativeName": "",
+      "resources": [
+        "phosphate"
+      ],
+      "coordinates": [
+        -7.9,
+        32.2
+      ],
+      "region": "摩洛哥·甘图尔盆地",
+      "kind": "矿山",
+      "note": "与优素菲耶同属甘图尔磷矿区。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.ocpgroup.ma/en/what-we-do/industrial-operations",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-youssoufia",
+      "name": "优素菲耶磷矿",
+      "nativeName": "",
+      "resources": [
+        "phosphate"
+      ],
+      "coordinates": [
+        -8.5,
+        32.3
+      ],
+      "region": "摩洛哥·甘图尔盆地",
+      "kind": "矿山",
+      "note": "甘图尔盆地内的磷矿采掘地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.ocpgroup.ma/en/what-we-do/industrial-operations",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-kaiyang",
+      "name": "开阳磷矿区",
+      "nativeName": "",
+      "resources": [
+        "phosphate"
+      ],
+      "coordinates": [
+        107.0,
+        27.1
+      ],
+      "region": "中国·贵州磷矿区",
+      "kind": "矿区",
+      "note": "中国重要的优质磷矿产区。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.kaiyang.gov.cn/zwgk/zfxxgk/fdzdgk/ghjh/zxgh/202308/t20230815_81770813.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-jalamid",
+      "name": "贾拉米德磷矿",
+      "nativeName": "",
+      "resources": [
+        "phosphate"
+      ],
+      "coordinates": [
+        39.9,
+        31.5
+      ],
+      "region": "沙特阿拉伯北部",
+      "kind": "矿山",
+      "note": "沙特磷矿开发的重要地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.maaden.com.sa/download/IPO-English.pdf",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-rocanville",
+      "name": "罗坎维尔钾盐矿",
+      "nativeName": "",
+      "resources": [
+        "potash"
+      ],
+      "coordinates": [
+        -101.6,
+        50.5
+      ],
+      "region": "加拿大·萨斯喀彻温钾盐带",
+      "kind": "矿山",
+      "note": "从地下钾盐层开采制作钾肥的原料。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.nutrien.com/about/our-business/locations?tab=potash",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-lanigan",
+      "name": "拉尼根钾盐矿",
+      "nativeName": "",
+      "resources": [
+        "potash"
+      ],
+      "coordinates": [
+        -105.0,
+        51.8
+      ],
+      "region": "加拿大·萨斯喀彻温钾盐带",
+      "kind": "矿山",
+      "note": "萨斯喀彻温的重要钾盐矿之一。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.nutrien.com/about/our-business/locations?tab=potash",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-allan",
+      "name": "艾伦钾盐矿",
+      "nativeName": "",
+      "resources": [
+        "potash"
+      ],
+      "coordinates": [
+        -106.1,
+        51.9
+      ],
+      "region": "加拿大·萨斯喀彻温钾盐带",
+      "kind": "矿山",
+      "note": "与附近钾盐矿共同展现加拿大草原钾盐分布。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.nutrien.com/about/our-business/locations?tab=potash",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-berezniki",
+      "name": "别列兹尼基钾盐矿区",
+      "nativeName": "",
+      "resources": [
+        "potash"
+      ],
+      "coordinates": [
+        56.8,
+        59.4
+      ],
+      "region": "俄罗斯·上卡马钾镁盐矿床",
+      "kind": "矿区",
+      "note": "地下蒸发岩盐层中富集钾盐。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://pda.uralkali.com/upload/content/products/Products_catalogue_en_full.pdf",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-solikamsk",
+      "name": "索利卡姆斯克钾盐矿区",
+      "nativeName": "",
+      "resources": [
+        "potash"
+      ],
+      "coordinates": [
+        56.8,
+        59.7
+      ],
+      "region": "俄罗斯·上卡马钾镁盐矿床",
+      "kind": "矿区",
+      "note": "与别列兹尼基同属上卡马钾镁盐矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://pda.uralkali.com/upload/content/products/Products_catalogue_en_full.pdf",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-qarhan",
+      "name": "察尔汗盐湖",
+      "nativeName": "",
+      "resources": [
+        "potash",
+        "lithium"
+      ],
+      "coordinates": [
+        95.2,
+        36.9
+      ],
+      "region": "中国·柴达木盆地",
+      "kind": "盐湖",
+      "note": "盐湖卤水可提取钾盐和锂，是中国重要的钾肥原料基地。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://jtyst.qinghai.gov.cn/jtyst/2020-08/20/article_2022121414515748242.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-atacama",
+      "name": "阿塔卡马盐湖",
+      "nativeName": "",
+      "resources": [
+        "lithium",
+        "potash"
+      ],
+      "coordinates": [
+        -68.3,
+        -23.5
+      ],
+      "region": "智利·安第斯高原盐湖区",
+      "kind": "盐湖",
+      "note": "卤水富含锂和钾，与硬岩锂矿的开采方式不同。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://ir.sqm.com/static-files/2fdd5e70-8c11-49c0-9aaa-718e5198c094",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-carajas",
+      "name": "卡拉加斯铁矿区",
+      "nativeName": "",
+      "resources": [
+        "iron"
+      ],
+      "coordinates": [
+        -50.2,
+        -6.0
+      ],
+      "region": "巴西·卡拉加斯矿产带",
+      "kind": "矿区",
+      "note": "巴西重要的铁矿石产区。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.vale.com/documents/d/guest/vale_20f_2017_i",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-pilbara",
+      "name": "皮尔巴拉铁矿区",
+      "nativeName": "",
+      "resources": [
+        "iron"
+      ],
+      "coordinates": [
+        118.5,
+        -22.5
+      ],
+      "region": "澳大利亚·哈默斯利铁矿带",
+      "kind": "矿区",
+      "note": "西澳大利亚集中了多座大型铁矿山；此点表示矿区概略位置。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.riotinto.com/operations",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-bayan-obo",
+      "name": "白云鄂博矿区",
+      "nativeName": "",
+      "resources": [
+        "rareearth",
+        "iron"
+      ],
+      "coordinates": [
+        109.9,
+        41.8
+      ],
+      "region": "中国·内蒙古北部",
+      "kind": "矿区",
+      "note": "以轻稀土和铁矿闻名的共伴生矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.cgs.gov.cn/ywdt/dwdt/202404/t20240423_838294.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-qidashan",
+      "name": "齐大山铁矿",
+      "nativeName": "",
+      "resources": [
+        "iron"
+      ],
+      "coordinates": [
+        123.1,
+        41.2
+      ],
+      "region": "中国·鞍本铁矿区",
+      "kind": "矿山",
+      "note": "鞍山铁矿区的具名铁矿山。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://bid.ansteel.cn/zbjjxx/001001/20250331/4f2f9890-dca9-485e-aa27-df69c2bb6603.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-escondida",
+      "name": "埃斯康迪达铜矿",
+      "nativeName": "",
+      "resources": [
+        "copper"
+      ],
+      "coordinates": [
+        -69.1,
+        -24.3
+      ],
+      "region": "智利·安第斯铜矿带",
+      "kind": "矿山",
+      "note": "智利北部的大型露天铜矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.bhp.com/about/our-businesses",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-olympic-dam",
+      "name": "奥林匹克坝矿床",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "gold"
+      ],
+      "coordinates": [
+        136.9,
+        -30.4
+      ],
+      "region": "澳大利亚·南澳",
+      "kind": "矿山",
+      "note": "铜、金等多种资源共生的矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.bhp.com/what-we-do/global-locations/australia/south-australia/south-australia-olympic-dam",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-oyu-tolgoi",
+      "name": "奥尤陶勒盖铜金矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "gold"
+      ],
+      "coordinates": [
+        106.9,
+        43.0
+      ],
+      "region": "蒙古国·南戈壁",
+      "kind": "矿山",
+      "note": "南戈壁的大型铜金矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.riotinto.com/operations/asia/oyu-tolgoi",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-kennecott",
+      "name": "宾厄姆峡谷铜矿",
+      "nativeName": "",
+      "resources": [
+        "copper"
+      ],
+      "coordinates": [
+        -112.2,
+        40.5
+      ],
+      "region": "美国·犹他州",
+      "kind": "矿山",
+      "note": "肯尼科特矿业的露天铜矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.riotinto.com/operations",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-dexing",
+      "name": "德兴铜矿",
+      "nativeName": "",
+      "resources": [
+        "copper"
+      ],
+      "coordinates": [
+        117.7,
+        29.0
+      ],
+      "region": "中国·江西铜矿区",
+      "kind": "矿山",
+      "note": "中国大型露天铜矿之一。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.jxcc.com/recruitmentAnnouncement/details_475_7088.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-salobo",
+      "name": "萨洛博铜矿",
+      "nativeName": "",
+      "resources": [
+        "copper"
+      ],
+      "coordinates": [
+        -50.5,
+        -5.8
+      ],
+      "region": "巴西·卡拉加斯矿产带",
+      "kind": "矿山",
+      "note": "卡拉加斯地区的重要铜矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.vale.com/documents/d/guest/vale_20f_2017_i",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-greenbushes",
+      "name": "格林布什锂矿",
+      "nativeName": "",
+      "resources": [
+        "lithium"
+      ],
+      "coordinates": [
+        116.1,
+        -33.9
+      ],
+      "region": "澳大利亚·西澳",
+      "kind": "矿山",
+      "note": "以锂辉石为原料的硬岩锂矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.talisonlithium.com/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-pilgangoora",
+      "name": "皮尔甘古拉锂矿",
+      "nativeName": "",
+      "resources": [
+        "lithium"
+      ],
+      "coordinates": [
+        118.9,
+        -21.0
+      ],
+      "region": "澳大利亚·皮尔巴拉",
+      "kind": "矿山",
+      "note": "皮尔巴拉地区的重要硬岩锂矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://pilbaraminerals.com.au/work-with-us/life-on-site/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-maoniuping",
+      "name": "牦牛坪稀土矿",
+      "nativeName": "",
+      "resources": [
+        "rareearth"
+      ],
+      "coordinates": [
+        102.0,
+        28.4
+      ],
+      "region": "中国·四川冕宁",
+      "kind": "矿区",
+      "note": "中国重要的轻稀土矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.cgs.gov.cn/ddzt/jqthd_13721/zktpdtl/zktpxw/202501/t20250117_845139.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-mountain-pass",
+      "name": "芒廷帕斯稀土矿",
+      "nativeName": "",
+      "resources": [
+        "rareearth"
+      ],
+      "coordinates": [
+        -115.5,
+        35.5
+      ],
+      "region": "美国·加利福尼亚州",
+      "kind": "矿山",
+      "note": "美国的重要稀土矿山。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.mpmaterials.com/mountain-pass",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-mt-weld",
+      "name": "韦尔德山稀土矿",
+      "nativeName": "",
+      "resources": [
+        "rareearth"
+      ],
+      "coordinates": [
+        122.5,
+        -28.9
+      ],
+      "region": "澳大利亚·西澳",
+      "kind": "矿山",
+      "note": "澳大利亚重要的稀土原料产地。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://lynasrareearths.com/mt-weld-western-australia/mt-weld-resources-reserves/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-talnakh",
+      "name": "塔尔纳赫铜镍矿区",
+      "nativeName": "",
+      "resources": [
+        "nickel",
+        "copper"
+      ],
+      "coordinates": [
+        88.5,
+        69.5
+      ],
+      "region": "俄罗斯·诺里尔斯克矿产带",
+      "kind": "矿区",
+      "note": "硫化铜镍矿富集区。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://ar2021.nornickel.com/en/business-overview/mineral-base/existing-deposits.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-norilsk-one",
+      "name": "诺里尔斯克一号矿床",
+      "nativeName": "",
+      "resources": [
+        "nickel",
+        "copper"
+      ],
+      "coordinates": [
+        88.1,
+        69.3
+      ],
+      "region": "俄罗斯·诺里尔斯克矿产带",
+      "kind": "矿区",
+      "note": "诺里尔斯克地区的另一处具名铜镍矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://ar2021.nornickel.com/en/business-overview/mineral-base/existing-deposits.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-sudbury",
+      "name": "萨德伯里镍铜矿区",
+      "nativeName": "",
+      "resources": [
+        "nickel",
+        "copper"
+      ],
+      "coordinates": [
+        -81.0,
+        46.6
+      ],
+      "region": "加拿大·萨德伯里盆地",
+      "kind": "矿区",
+      "note": "多座镍铜矿山分布于盆地周缘。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://vale.com/in/canada/-/categories",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-voiseys-bay",
+      "name": "沃伊西湾镍矿",
+      "nativeName": "",
+      "resources": [
+        "nickel",
+        "copper",
+        "cobalt"
+      ],
+      "coordinates": [
+        -62.1,
+        56.3
+      ],
+      "region": "加拿大·拉布拉多",
+      "kind": "矿山",
+      "note": "镍矿同时提供铜、钴原料。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://vale.com/in/canada/-/categories",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-jinchuan",
+      "name": "金川白家嘴子铜镍矿",
+      "nativeName": "",
+      "resources": [
+        "nickel",
+        "copper"
+      ],
+      "coordinates": [
+        102.2,
+        38.5
+      ],
+      "region": "中国·甘肃金昌",
+      "kind": "矿山",
+      "note": "中国重要的硫化铜镍矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.jnmc.com/index.php/index/detail/ywly?id=171",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-tenke",
+      "name": "腾科丰古鲁梅铜钴矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "cobalt"
+      ],
+      "coordinates": [
+        26.3,
+        -10.6
+      ],
+      "region": "刚果（金）·中非铜钴矿带",
+      "kind": "矿区",
+      "note": "中非铜钴矿带的重要矿区。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://en.cmoc.com/uploadfile/2025/0529/20250529103755357.pdf",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-mutanda",
+      "name": "穆坦达铜钴矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "cobalt"
+      ],
+      "coordinates": [
+        25.8,
+        -10.8
+      ],
+      "region": "刚果（金）·中非铜钴矿带",
+      "kind": "矿山",
+      "note": "加丹加地区的铜钴矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.glencore.com/media-and-insights/insights/2025-04-gencores-kamoto-copper-company-and-mumi-receive-the-copper-mark",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-kamoto",
+      "name": "卡莫托铜钴矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "cobalt"
+      ],
+      "coordinates": [
+        25.4,
+        -10.7
+      ],
+      "region": "刚果（金）·中非铜钴矿带",
+      "kind": "矿山",
+      "note": "科卢韦齐附近的铜钴采矿地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.glencore.com/media-and-insights/insights/2025-04-gencores-kamoto-copper-company-and-mumi-receive-the-copper-mark",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-boddington",
+      "name": "博丁顿金铜矿",
+      "nativeName": "",
+      "resources": [
+        "gold",
+        "copper"
+      ],
+      "coordinates": [
+        116.4,
+        -32.7
+      ],
+      "region": "澳大利亚·萨德尔巴克绿岩带",
+      "kind": "矿山",
+      "note": "西澳大利亚的大型金铜矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://operations.newmont.com/australia/boddington/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-ahafo",
+      "name": "阿哈福金矿",
+      "nativeName": "",
+      "resources": [
+        "gold"
+      ],
+      "coordinates": [
+        -2.4,
+        7.0
+      ],
+      "region": "加纳·塞夫维火山岩带",
+      "kind": "矿区",
+      "note": "西非金矿带的重要采矿地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://newmont.com/operations-and-projects/global-presence/africa/ahafo-ghana/default.aspx",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-lihir",
+      "name": "利希尔金矿",
+      "nativeName": "",
+      "resources": [
+        "gold"
+      ],
+      "coordinates": [
+        152.6,
+        -3.1
+      ],
+      "region": "巴布亚新几内亚·阿尼奥拉姆岛",
+      "kind": "矿山",
+      "note": "位于火山岛上的大型金矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://operations.newmont.com/papua-new-guinea/lihir/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-fresnillo",
+      "name": "弗雷斯尼洛银矿",
+      "nativeName": "",
+      "resources": [
+        "silver"
+      ],
+      "coordinates": [
+        -102.9,
+        23.2
+      ],
+      "region": "墨西哥·弗雷斯尼洛银矿带",
+      "kind": "矿山",
+      "note": "墨西哥重要的银矿山。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.fresnilloplc.com/media/jwggz1pk/fresnillo-annual-report-2025-web.pdf",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-saucito",
+      "name": "绍西托银矿",
+      "nativeName": "",
+      "resources": [
+        "silver"
+      ],
+      "coordinates": [
+        -102.9,
+        23.1
+      ],
+      "region": "墨西哥·弗雷斯尼洛银矿带",
+      "kind": "矿山",
+      "note": "位于弗雷斯尼洛矿西南侧的银矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.fresnilloplc.com/portfolio/mines-in-operation/saucito/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-red-dog",
+      "name": "红狗锌矿",
+      "nativeName": "",
+      "resources": [
+        "zinc"
+      ],
+      "coordinates": [
+        -162.8,
+        68.1
+      ],
+      "region": "美国·阿拉斯加西北部",
+      "kind": "矿山",
+      "note": "阿拉斯加重要的锌矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.teck.com/news/news-releases/2025/teck-announces-2024-production-and-2025-guidance-update",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-antamina",
+      "name": "安塔米纳铜锌矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "zinc"
+      ],
+      "coordinates": [
+        -77.1,
+        -9.5
+      ],
+      "region": "秘鲁·安第斯矿产带",
+      "kind": "矿山",
+      "note": "铜锌共伴生矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.teck.com/news/news-releases/2025/teck-announces-2024-production-and-2025-guidance-update",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-mcarthur",
+      "name": "麦克阿瑟河锌矿",
+      "nativeName": "",
+      "resources": [
+        "zinc"
+      ],
+      "coordinates": [
+        136.1,
+        -16.4
+      ],
+      "region": "澳大利亚·北领地",
+      "kind": "矿山",
+      "note": "北领地的锌矿，区别于加拿大同名铀矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.glencore.com.au/operations-and-projects/metals/mcarthur-river-mine",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-jwaneng",
+      "name": "朱瓦能钻石矿",
+      "nativeName": "",
+      "resources": [
+        "diamond"
+      ],
+      "coordinates": [
+        24.7,
+        -24.5
+      ],
+      "region": "博茨瓦纳南部",
+      "kind": "矿山",
+      "note": "博茨瓦纳重要的钻石矿山。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.debeersgroup.com/our-business/exploration-and-mining",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-orapa",
+      "name": "奥拉帕钻石矿",
+      "nativeName": "",
+      "resources": [
+        "diamond"
+      ],
+      "coordinates": [
+        25.4,
+        -21.3
+      ],
+      "region": "博茨瓦纳中部",
+      "kind": "矿山",
+      "note": "博茨瓦纳另一处大型钻石矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.debeersgroup.com/our-business/exploration-and-mining",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-venetia",
+      "name": "威尼斯钻石矿",
+      "nativeName": "",
+      "resources": [
+        "diamond"
+      ],
+      "coordinates": [
+        29.3,
+        -22.4
+      ],
+      "region": "南非·林波波省",
+      "kind": "矿山",
+      "note": "南非北部的钻石矿山。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.debeersgroup.com/our-business/exploration-and-mining",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-gahcho-kue",
+      "name": "加乔奎钻石矿",
+      "nativeName": "",
+      "resources": [
+        "diamond"
+      ],
+      "coordinates": [
+        -109.2,
+        63.4
+      ],
+      "region": "加拿大·西北地区",
+      "kind": "矿山",
+      "note": "加拿大北部的重要钻石矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.debeersgroup.com/our-business/exploration-and-mining",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-balama",
+      "name": "巴拉马石墨矿",
+      "nativeName": "",
+      "resources": [
+        "graphite"
+      ],
+      "coordinates": [
+        38.7,
+        -13.4
+      ],
+      "region": "莫桑比克·德尔加杜角",
+      "kind": "矿山",
+      "note": "非洲重要的天然鳞片石墨矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.syrahresources.com.au/our-business/balama-graphite-operation",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-luobei",
+      "name": "萝北云山石墨矿区",
+      "nativeName": "",
+      "resources": [
+        "graphite"
+      ],
+      "coordinates": [
+        130.4,
+        47.7
+      ],
+      "region": "中国·黑龙江石墨矿带",
+      "kind": "矿区",
+      "note": "中国重要的鳞片石墨富集区。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.luobei.gov.cn/luobeixianrenminzhengfu/61f4b8b95b8047c6b65fe8fc7e5cee78/202304/33817.shtml",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-jixi",
+      "name": "鸡西石墨矿区",
+      "nativeName": "",
+      "resources": [
+        "graphite"
+      ],
+      "coordinates": [
+        130.9,
+        45.3
+      ],
+      "region": "中国·黑龙江石墨矿带",
+      "kind": "矿区",
+      "note": "以天然鳞片石墨资源闻名；此点表示矿区概略位置。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.jixi.gov.cn/jixi/c100028/202310/c06_272894.shtml",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-north-antelope",
+      "name": "北安特洛普—罗谢尔煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        -105.3,
+        43.5
+      ],
+      "region": "美国·粉河盆地",
+      "kind": "矿山",
+      "note": "大型露天动力煤矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.peabodyenergy.com/Operations/U-S-Mining/Powder-River-Basin-Mining/North-Antelope-Rochelle-Mine",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-peak-downs",
+      "name": "皮克唐斯煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        148.2,
+        -22.3
+      ],
+      "region": "澳大利亚·鲍恩盆地",
+      "kind": "矿山",
+      "note": "鲍恩盆地的重要炼焦煤矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.bhp.com/-/media/bhp/regulatory-information-media/coal/bma/peak-downs/peak-downs-mine-continuation-project/peak-downs-mine-continuation-project---initial-advice-statement.pdf",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-tutupan",
+      "name": "图图潘煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        115.5,
+        -2.2
+      ],
+      "region": "印度尼西亚·南加里曼丹",
+      "kind": "矿山",
+      "note": "南加里曼丹的具名露天煤矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.adaroindonesia.com/pages/view/Adaro_Mining.html",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-sentinel",
+      "name": "森蒂内尔铜矿",
+      "nativeName": "",
+      "resources": [
+        "copper"
+      ],
+      "coordinates": [
+        25.3,
+        -12.3
+      ],
+      "region": "赞比亚·中非铜矿带",
+      "kind": "矿山",
+      "note": "赞比亚西北部的大型露天铜矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.first-quantum.com/operations/sentinel/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-kansanshi",
+      "name": "坎桑希铜金矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "gold"
+      ],
+      "coordinates": [
+        26.4,
+        -12.1
+      ],
+      "region": "赞比亚·中非铜矿带",
+      "kind": "矿山",
+      "note": "索尔韦齐附近的重要铜金矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.first-quantum.com/wp-content/uploads/2025/08/240723-Kansanshi-Operations-Technical-Report_FINAL-reduced.pdf",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-south-deep",
+      "name": "南深金矿",
+      "nativeName": "",
+      "resources": [
+        "gold"
+      ],
+      "coordinates": [
+        27.7,
+        -26.4
+      ],
+      "region": "南非·威特沃特斯兰德盆地",
+      "kind": "矿山",
+      "note": "深部地下金矿，展现南非金矿带的位置。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.goldfields.com/south-africa-operations.php",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-olimpiada",
+      "name": "奥林匹亚达金矿",
+      "nativeName": "",
+      "resources": [
+        "gold"
+      ],
+      "coordinates": [
+        93.1,
+        59.7
+      ],
+      "region": "俄罗斯·叶尼塞岭金矿带",
+      "kind": "矿山",
+      "note": "俄罗斯的重要金矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://polyus.com/en/operations/reserves_and_resources/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-zijinshan",
+      "name": "紫金山铜金矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "gold"
+      ],
+      "coordinates": [
+        116.4,
+        25.2
+      ],
+      "region": "中国·福建上杭",
+      "kind": "矿山",
+      "note": "福建的铜金共伴生矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.zjky.cn/product/kuangshan-detail-21190.htm",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-four-corners",
+      "name": "四角磷矿",
+      "nativeName": "",
+      "resources": [
+        "phosphate"
+      ],
+      "coordinates": [
+        -82.0,
+        27.6
+      ],
+      "region": "美国·佛罗里达磷矿区",
+      "kind": "矿山",
+      "note": "佛罗里达磷矿开采地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://mosaicco.com/polk",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-metlaoui",
+      "name": "梅特拉维磷矿区",
+      "nativeName": "",
+      "resources": [
+        "phosphate"
+      ],
+      "coordinates": [
+        8.4,
+        34.3
+      ],
+      "region": "突尼斯·加夫萨磷矿盆地",
+      "kind": "矿区",
+      "note": "北非的重要磷矿产区。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.gct.com.tn/chaine-de-valeur/sites-miniers-de-phosphate/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-udachny",
+      "name": "乌达奇内钻石矿",
+      "nativeName": "",
+      "resources": [
+        "diamond"
+      ],
+      "coordinates": [
+        112.3,
+        66.4
+      ],
+      "region": "俄罗斯·西伯利亚地台",
+      "kind": "矿山",
+      "note": "雅库特地区的具名钻石矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://alrosa.ru/business/skhema-proizvodstva/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-aikhal",
+      "name": "艾哈尔钻石矿",
+      "nativeName": "",
+      "resources": [
+        "diamond"
+      ],
+      "coordinates": [
+        111.5,
+        66.0
+      ],
+      "region": "俄罗斯·西伯利亚地台",
+      "kind": "矿山",
+      "note": "西伯利亚钻石矿分布中的重要地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://alrosa.ru/business/skhema-proizvodstva/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "M0564",
+      "name": "库斯蒙达煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        82.666666,
+        22.332635
+      ],
+      "region": "印度·科尔巴煤田",
+      "kind": "矿山",
+      "note": "具名煤矿；分布点不代表整个煤田范围。",
+      "accuracy": "GEM 资料代表坐标；原始记录未注明精度",
+      "source": "https://www.gem.wiki/Kusmunda_coal_mine",
+      "coordinateSource": "GCMT 2026-08 · M0564",
+      "asOf": "2026-08",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "M0230",
+      "name": "哈尔乌素露天煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        111.258324,
+        39.731044
+      ],
+      "region": "中国·准格尔煤田",
+      "kind": "矿山",
+      "note": "具名煤矿；分布点不代表整个煤田范围。",
+      "accuracy": "GEM 资料代表坐标；原始记录未注明精度",
+      "source": "https://www.gem.wiki/%E4%B8%AD%E5%9B%BD%E7%A5%9E%E5%8D%8E%E8%83%BD%E6%BA%90%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8%E5%93%88%E5%B0%94%E4%B9%8C%E7%B4%A0%E5%88%86%E5%85%AC%E5%8F%B8%EF%BC%88%E5%93%88%E5%B0%94%E4%B9%8C%E7%B4%A0%E9%9C%B2%E5%A4%A9%E7%9F%BF%EF%BC%89",
+      "coordinateSource": "GCMT 2026-08 · M0230",
+      "asOf": "2026-08",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "M0340",
+      "name": "补连塔煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        110.168084,
+        39.354814
+      ],
+      "region": "中国·神东煤田",
+      "kind": "矿山",
+      "note": "具名煤矿；分布点不代表整个煤田范围。",
+      "accuracy": "GEM 资料代表坐标；原始记录未注明精度",
+      "source": "https://www.gem.wiki/%E4%B8%AD%E5%9B%BD%E7%A5%9E%E5%8D%8E%E8%83%BD%E6%BA%90%E8%82%A1%E4%BB%BD%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8%E8%A1%A5%E8%BF%9E%E5%A1%94%E7%85%A4%E7%9F%BF",
+      "coordinateSource": "GCMT 2026-08 · M0340",
+      "asOf": "2026-08",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "M0836",
+      "name": "拉斯帕德煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        88.082391,
+        53.784142
+      ],
+      "region": "俄罗斯·库兹涅茨克煤盆地",
+      "kind": "矿山",
+      "note": "具名煤矿；分布点不代表整个煤田范围。",
+      "accuracy": "GEM 资料代表坐标；原始记录未注明精度",
+      "source": "https://www.gem.wiki/Raspadskaya_coal_mine",
+      "coordinateSource": "GCMT 2026-08 · M0836",
+      "asOf": "2026-08",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "M0043",
+      "name": "古涅拉—河畔煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        147.962045,
+        -21.792321
+      ],
+      "region": "澳大利亚·鲍恩盆地",
+      "kind": "矿山",
+      "note": "具名煤矿；分布点不代表整个煤田范围。",
+      "accuracy": "GEM 资料代表坐标；原始记录未注明精度",
+      "source": "https://www.gem.wiki/Goonyella_Riverside_mine",
+      "coordinateSource": "GCMT 2026-08 · M0043",
+      "asOf": "2026-08",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000305049",
+      "name": "塞罗内格罗油田",
+      "nativeName": "Cerro Negro (Monagas) Oil Field (Venezuela)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        -63.1062,
+        8.6478
+      ],
+      "region": "委内瑞拉·奥里诺科重油带",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（概略位置）",
+      "source": "https://www.gem.wiki/Cerro_Negro_(Monagas)_Oil_Field_(Venezuela)",
+      "coordinateSource": "GOGET 2026-03 · L100000305049",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000305047",
+      "name": "苏阿塔油田",
+      "nativeName": "Zuata Principal Oil Field (Venezuela)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        -64.7396,
+        8.4187
+      ],
+      "region": "委内瑞拉·奥里诺科重油带",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（概略位置）",
+      "source": "https://www.gem.wiki/Zuata_Principal_Oil_Field_(Venezuela)",
+      "coordinateSource": "GOGET 2026-03 · L100000305047",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000322133",
+      "name": "斯普拉伯里油气区·先锋区块",
+      "nativeName": "Spraberry (Trend Area) - Pioneer Natural Res. Usa, (Unconventional) Oil and Gas Asset (Texas, United States)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        -101.8841,
+        31.9109
+      ],
+      "region": "美国·二叠纪盆地",
+      "kind": "油气区块",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Spraberry_(Trend_Area)_-_Pioneer_Natural_Res._Usa,_(Unconventional)_Oil_and_Gas_Asset_(Texas,_United_States)",
+      "coordinateSource": "GOGET 2026-03 · L100000322133",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000322548",
+      "name": "马塞勒斯页岩气·切萨皮克区块",
+      "nativeName": "Marcellus - Chesapeake Appalachia Oil and Gas Asset (Pennsylvania, United States)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        -76.3667,
+        41.6495
+      ],
+      "region": "美国·阿巴拉契亚盆地",
+      "kind": "油气区块",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Marcellus_-_Chesapeake_Appalachia_Oil_and_Gas_Asset_(Pennsylvania,_United_States)",
+      "coordinateSource": "GOGET 2026-03 · L100000322548",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311910",
+      "name": "赫里蒂奇油气田",
+      "nativeName": "Heritage Oil and Gas Field (British Columbia, Canada)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        -120.8415,
+        55.994
+      ],
+      "region": "加拿大·蒙特尼油气区",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（概略位置）",
+      "source": "https://www.gem.wiki/Heritage_Oil_and_Gas_Field_(British_Columbia,_Canada)",
+      "coordinateSource": "GOGET 2026-03 · L100000311910",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000309625",
+      "name": "阿萨巴斯卡油砂·9752I区块",
+      "nativeName": "Athabasca Area - Scheme 9752I Oil Sands Oil Asset (Alberta, Canada)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        -111.813,
+        57.35
+      ],
+      "region": "加拿大·阿尔伯塔油砂带",
+      "kind": "油气区块",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Athabasca_Area_-_Scheme_9752I_Oil_Sands_Oil_Asset_(Alberta,_Canada)",
+      "coordinateSource": "GOGET 2026-03 · L100000309625",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312795",
+      "name": "罗萨油田",
+      "nativeName": "Rosa Oil Field (Angola)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        11.5745,
+        -7.5267
+      ],
+      "region": "安哥拉·下刚果盆地近海",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Rosa_Oil_Field_(Angola)",
+      "coordinateSource": "GOGET 2026-03 · L100000312795",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312788",
+      "name": "努姆比油气田",
+      "nativeName": "Numbi Oil and Gas Field (Angola)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        11.949,
+        -5.341
+      ],
+      "region": "安哥拉·下刚果盆地近海",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Numbi_Oil_and_Gas_Field_(Angola)",
+      "coordinateSource": "GOGET 2026-03 · L100000312788",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312776",
+      "name": "洛比托油田",
+      "nativeName": "Lobito Oil Field (Angola)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        11.527,
+        -5.577
+      ],
+      "region": "安哥拉·下刚果盆地近海",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Lobito_Oil_Field_(Angola)",
+      "coordinateSource": "GOGET 2026-03 · L100000312776",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311023",
+      "name": "德尔塔油气田",
+      "nativeName": "Delta Oil and Gas Field (Nigeria)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        5.167,
+        5.65
+      ],
+      "region": "尼日利亚·尼日尔三角洲",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Delta_Oil_and_Gas_Field_(Nigeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000311023",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311015",
+      "name": "邦尼油田",
+      "nativeName": "Bonny Oil Field (Nigeria)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        7.1809,
+        4.4649
+      ],
+      "region": "尼日利亚·尼日尔三角洲",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Bonny_Oil_Field_(Nigeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000311015",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311065",
+      "name": "福卡多斯约克里油气田",
+      "nativeName": "Forcados Yokri Oil and Gas Field (Nigeria)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        5.3265,
+        5.3786
+      ],
+      "region": "尼日利亚·尼日尔三角洲",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Forcados_Yokri_Oil_and_Gas_Field_(Nigeria)",
+      "coordinateSource": "GOGET 2026-03 · L100000311065",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000301969",
+      "name": "卡尔津油气田",
+      "nativeName": "Culzean Oil and Gas Field (United Kingdom)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        1.9063,
+        57.1852
+      ],
+      "region": "英国·北海",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Culzean_Oil_and_Gas_Field_(United_Kingdom)",
+      "coordinateSource": "GOGET 2026-03 · L100000301969",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000301950",
+      "name": "克莱尔岭油气田",
+      "nativeName": "Clair Ridge Oil and Gas Field (United Kingdom)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        -2.5593,
+        60.6757
+      ],
+      "region": "英国·设得兰群岛西部近海",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Clair_Ridge_Oil_and_Gas_Field_(United_Kingdom)",
+      "coordinateSource": "GOGET 2026-03 · L100000301950",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000317038",
+      "name": "阿泽里油气田",
+      "nativeName": "Azeri Oil and Gas Field (Azerbaijan)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        51.0977,
+        40.2197
+      ],
+      "region": "阿塞拜疆·里海",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（概略位置）",
+      "source": "https://www.gem.wiki/Azeri_Oil_and_Gas_Field_(Azerbaijan)",
+      "coordinateSource": "GOGET 2026-03 · L100000317038",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000318296",
+      "name": "多夫列塔巴德气田",
+      "nativeName": "Dauletabad Gas Field (Turkmenistan)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        61.3205,
+        36.6052
+      ],
+      "region": "土库曼斯坦·阿姆河盆地",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Dauletabad_Gas_Field_(Turkmenistan)",
+      "coordinateSource": "GOGET 2026-03 · L100000318296",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000318046",
+      "name": "萨曼杰佩油气田",
+      "nativeName": "Samandepe Oil and Gas Field (Turkmenistan)",
+      "resources": [
+        "oil",
+        "gas"
+      ],
+      "coordinates": [
+        64.0562,
+        38.9914
+      ],
+      "region": "土库曼斯坦·阿姆河盆地",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Samandepe_Oil_and_Gas_Field_(Turkmenistan)",
+      "coordinateSource": "GOGET 2026-03 · L100000318046",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312824",
+      "name": "班尤乌里普油田",
+      "nativeName": "Banyu Urip Oil Field (Indonesia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        111.6952,
+        -7.1864
+      ],
+      "region": "印度尼西亚·爪哇岛",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Banyu_Urip_Oil_Field_(Indonesia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312824",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312847",
+      "name": "梅拉克斯气田",
+      "nativeName": "Merakes Gas Field (Indonesia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        117.72,
+        -1.545
+      ],
+      "region": "印度尼西亚·库泰盆地近海",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Merakes_Gas_Field_(Indonesia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312847",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312848",
+      "name": "米纳斯油田",
+      "nativeName": "Minas Oil Field (Indonesia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        101.164,
+        0.853
+      ],
+      "region": "印度尼西亚·中苏门答腊盆地",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Minas_Oil_Field_(Indonesia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312848",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000312020",
+      "name": "塔皮斯油田",
+      "nativeName": "Tapis EOR Oil Field (Malaysia)",
+      "resources": [
+        "oil"
+      ],
+      "coordinates": [
+        104.9893,
+        5.5083
+      ],
+      "region": "马来西亚·马来盆地",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Tapis_EOR_Oil_Field_(Malaysia)",
+      "coordinateSource": "GOGET 2026-03 · L100000312020",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "L100000311919",
+      "name": "杰伦气田",
+      "nativeName": "Jerun Gas Field (Malaysia)",
+      "resources": [
+        "gas"
+      ],
+      "coordinates": [
+        112.0985155188694,
+        4.633538295329127
+      ],
+      "region": "马来西亚·砂拉越近海",
+      "kind": "油气田",
+      "note": "具名开采地点；所在盆地或矿带不表示整片连续含矿。",
+      "accuracy": "GEM 田区代表点（原资料标为精确）",
+      "source": "https://www.gem.wiki/Jerun_Gas_Field_(Malaysia)",
+      "coordinateSource": "GOGET 2026-03 · L100000311919",
+      "asOf": "2026-03",
+      "status": "资料版本内标为运营中"
+    },
+    {
+      "id": "site-sorowako",
+      "name": "索罗阿科镍矿",
+      "nativeName": "",
+      "resources": [
+        "nickel"
+      ],
+      "coordinates": [
+        121.4,
+        -2.6
+      ],
+      "region": "印度尼西亚·苏拉威西红土镍矿区",
+      "kind": "矿山",
+      "note": "苏拉威西岛的重要镍矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.vale.com/in/indonesia/operasi-kami-di-sorowako",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-weda-bay",
+      "name": "韦达湾镍矿",
+      "nativeName": "",
+      "resources": [
+        "nickel"
+      ],
+      "coordinates": [
+        128.0,
+        0.5
+      ],
+      "region": "印度尼西亚·哈马黑拉岛",
+      "kind": "矿山",
+      "note": "哈马黑拉岛的大型红土镍矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.eramet.com/en/activities/products/nickel/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-rudna",
+      "name": "鲁德纳铜银矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "silver"
+      ],
+      "coordinates": [
+        16.2,
+        51.5
+      ],
+      "region": "波兰·下西里西亚铜矿带",
+      "kind": "矿山",
+      "note": "铜矿中伴生银，可共同回收。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://kghm.com/en/our-business/mining-and-enrichment",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-polkowice",
+      "name": "波尔科维采—谢罗舒维采铜银矿",
+      "nativeName": "",
+      "resources": [
+        "copper",
+        "silver"
+      ],
+      "coordinates": [
+        16.0,
+        51.5
+      ],
+      "region": "波兰·下西里西亚铜矿带",
+      "kind": "矿山",
+      "note": "下西里西亚的重要铜银采矿地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://kghm.com/en/our-business/mining-and-enrichment/polkowice-sieroszowice",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-huaron",
+      "name": "瓦龙银矿",
+      "nativeName": "",
+      "resources": [
+        "silver",
+        "zinc",
+        "copper"
+      ],
+      "coordinates": [
+        -76.4,
+        -11.0
+      ],
+      "region": "秘鲁·安第斯矿产带",
+      "kind": "矿山",
+      "note": "出产富银的锌、铅、铜精矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://panamericansilver.com/operations/silver-segment/huaron/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-olaroz",
+      "name": "奥拉罗斯盐湖",
+      "nativeName": "",
+      "resources": [
+        "lithium"
+      ],
+      "coordinates": [
+        -66.7,
+        -23.5
+      ],
+      "region": "阿根廷·安第斯高原盐湖区",
+      "kind": "盐湖",
+      "note": "阿根廷胡胡伊省的盐湖锂产地。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.riotinto.com/en/operations/south-america/olaroz",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-fenix",
+      "name": "翁布雷穆埃尔托盐湖·菲尼克斯",
+      "nativeName": "",
+      "resources": [
+        "lithium"
+      ],
+      "coordinates": [
+        -67.1,
+        -25.4
+      ],
+      "region": "阿根廷·安第斯高原盐湖区",
+      "kind": "盐湖",
+      "note": "从盐湖卤水提取锂的具名项目。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.sec.gov/Archives/edgar/data/887028/000086306426000002/ex05d04lithiumsupportinf.htm",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-zibulo",
+      "name": "齐布洛煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        29.0,
+        -26.1
+      ],
+      "region": "南非·姆普马兰加煤田",
+      "kind": "矿山",
+      "note": "南非重要煤田中的具名矿山。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.thungela.com/sites/default/files/2025-04/Thungela%20ESG%20Report%202024_Interactive_FA_1.pdf",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-cerrejon",
+      "name": "塞雷洪煤矿",
+      "nativeName": "",
+      "resources": [
+        "coal"
+      ],
+      "coordinates": [
+        -72.7,
+        11.1
+      ],
+      "region": "哥伦比亚·拉瓜希拉",
+      "kind": "矿山",
+      "note": "哥伦比亚北部的大型露天煤矿。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.cerrejon.com/en/que-hacemos",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-lebedinsky",
+      "name": "列别金斯基铁矿",
+      "nativeName": "",
+      "resources": [
+        "iron"
+      ],
+      "coordinates": [
+        37.7,
+        51.3
+      ],
+      "region": "俄罗斯·库尔斯克磁异常区",
+      "kind": "矿山",
+      "note": "库尔斯克铁矿带的重要磁铁矿床。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://products.metalloinvest.com/en/catalog/iron-ore-products/",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-kirandul",
+      "name": "拜拉迪拉·基兰杜尔铁矿区",
+      "nativeName": "",
+      "resources": [
+        "iron"
+      ],
+      "coordinates": [
+        81.2,
+        18.6
+      ],
+      "region": "印度·恰蒂斯加尔邦",
+      "kind": "矿区",
+      "note": "印度拜拉迪拉铁矿带的主要采矿地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.nmdc.co.in/locations",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-sishen",
+      "name": "西申铁矿",
+      "nativeName": "",
+      "resources": [
+        "iron"
+      ],
+      "coordinates": [
+        23.0,
+        -27.8
+      ],
+      "region": "南非·北开普省",
+      "kind": "矿山",
+      "note": "南非重要的铁矿石采矿地点。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.angloamericankumba.com/our-business/operations.aspx",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    },
+    {
+      "id": "site-gannan",
+      "name": "赣南稀土矿区",
+      "nativeName": "",
+      "resources": [
+        "rareearth"
+      ],
+      "coordinates": [
+        114.8,
+        25.0
+      ],
+      "region": "中国·南岭离子吸附型稀土带",
+      "kind": "矿区",
+      "note": "赣南以中重稀土闻名；此点代表矿区，不是单个矿坑。",
+      "accuracy": "所在地概略代表点（约 0.1°），非矿坑或矿体边界",
+      "source": "https://www.gov.cn/gzdt/2011-01/13/content_1783897.htm",
+      "coordinateSource": "编辑按具名所在地概略定位；矿种与所在地核对所列机构资料",
+      "asOf": "2026-09-30 核对；原始资料年份见来源",
+      "status": "具名资源地点；不据此判断实时开采状态"
+    }
+  ],
+  "coalSource": {
+    "citation": "Global Coal Mine Tracker, Global Energy Monitor, August 2026 Release",
+    "url": "https://globalenergymonitor.org/projects/global-coal-mine-tracker/",
+    "dataUrl": "https://publicgemdata.nyc3.cdn.digitaloceanspaces.com/Current_maps/gcmt-smp/gcmt-smp_map_2026-08.geojson",
+    "license": "CC BY 4.0",
+    "changes": "精选、翻译；仅采用具名矿山的 Point 记录，不重复纳入同 ID 的多边形或扩建记录。"
+  }
+}

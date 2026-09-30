@@ -1,0 +1,501 @@
+{
+  "schemaVersion": 1,
+  "id": "china-mountain-selection-v1",
+  "createdAt": "2026-09-30T00:00:00Z",
+  "updatedAt": "2026-09-30T00:00:00Z",
+  "license": "CC-BY-4.0",
+  "source": "https://www.earthenv.org/mountains",
+  "publication": "https://doi.org/10.1038/s41597-022-01256-y",
+  "dataset": "https://doi.org/10.48601/earthenv-t9k2-1407",
+  "notes": [
+    "GMBA 2022 Standard，精选自然山脉，中文名优先来自原始 Name_ZH。巫山、武陵山按 MapName 校正原译名。",
+    "台湾中央山脉采用 19421（11227 的细分），避免把同层单列的雪山、玉山重复当作中央山脉。",
+    "不引用上游 Countries 字段作为政治地位；中国台湾山脉属于中国视图。"
+  ],
+  "references": [
+    "https://unstats.un.org/unsd/methodology/m49/",
+    "https://education.nationalgeographic.org/resource/oceania-human-geography/",
+    "https://xadfz.xa.gov.cn/xadq/stxa/6257d106f8fd1c0bdc8eaf90.html",
+    "https://www.taiwan.nps.gov.tw/home/zh-tw/theme6"
+  ],
+  "ranges": [
+    {
+      "id": 11762,
+      "name": "秦岭",
+      "priority": 100,
+      "minZoom": 0,
+      "color": 0,
+      "note": "横贯中国中部，连接甘肃、陕西和河南；渭河以南、汉水以北的重要山地。"
+    },
+    {
+      "id": 19421,
+      "name": "台湾中央山脉",
+      "priority": 99,
+      "minZoom": 0,
+      "color": 1,
+      "note": "纵贯中国台湾中东部；采用 GMBA 中央山地的细分范围，雪山山脉与玉山山脉另列。"
+    },
+    {
+      "id": 11971,
+      "name": "太行山",
+      "priority": 95,
+      "minZoom": 0,
+      "color": 2
+    },
+    {
+      "id": 12188,
+      "name": "祁连山",
+      "priority": 94,
+      "minZoom": 0,
+      "color": 3
+    },
+    {
+      "id": 11558,
+      "name": "昆仑山脉",
+      "priority": 93,
+      "minZoom": 0,
+      "color": 4
+    },
+    {
+      "id": 12174,
+      "name": "天山山脉",
+      "priority": 92,
+      "minZoom": 0,
+      "color": 5
+    },
+    {
+      "id": 11394,
+      "name": "横断山脉",
+      "priority": 91,
+      "minZoom": 0,
+      "color": 6
+    },
+    {
+      "id": 11400,
+      "name": "喜马拉雅山脉",
+      "priority": 90,
+      "minZoom": 0,
+      "color": 0
+    },
+    {
+      "id": 12238,
+      "name": "大兴安岭",
+      "priority": 85,
+      "minZoom": 0,
+      "color": 1
+    },
+    {
+      "id": 12074,
+      "name": "小兴安岭",
+      "priority": 80,
+      "minZoom": 3.5,
+      "color": 2
+    },
+    {
+      "id": 11214,
+      "name": "长白山脉",
+      "priority": 80,
+      "minZoom": 3.5,
+      "color": 3
+    },
+    {
+      "id": 11123,
+      "name": "阿尔泰山脉",
+      "priority": 85,
+      "minZoom": 0,
+      "color": 4
+    },
+    {
+      "id": 11464,
+      "name": "喀喇昆仑山脉",
+      "priority": 85,
+      "minZoom": 0,
+      "color": 5
+    },
+    {
+      "id": 11979,
+      "name": "唐古拉山脉",
+      "priority": 85,
+      "minZoom": 0,
+      "color": 6
+    },
+    {
+      "id": 11681,
+      "name": "念青唐古拉山脉",
+      "priority": 82,
+      "minZoom": 0,
+      "color": 0
+    },
+    {
+      "id": 11344,
+      "name": "冈底斯山脉",
+      "priority": 82,
+      "minZoom": 0,
+      "color": 1
+    },
+    {
+      "id": 12235,
+      "name": "阿尔金山脉",
+      "priority": 80,
+      "minZoom": 3.5,
+      "color": 2
+    },
+    {
+      "id": 21067,
+      "name": "巴颜喀拉山脉",
+      "priority": 80,
+      "minZoom": 3.5,
+      "color": 3
+    },
+    {
+      "id": 11285,
+      "name": "阴山",
+      "priority": 80,
+      "minZoom": 3.5,
+      "color": 4
+    },
+    {
+      "id": 12082,
+      "name": "燕山",
+      "priority": 78,
+      "minZoom": 3.5,
+      "color": 5
+    },
+    {
+      "id": 11587,
+      "name": "吕梁山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 6
+    },
+    {
+      "id": 11392,
+      "name": "贺兰山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 0
+    },
+    {
+      "id": 11581,
+      "name": "六盘山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 1
+    },
+    {
+      "id": 11277,
+      "name": "大巴山",
+      "priority": 80,
+      "minZoom": 3.5,
+      "color": 2
+    },
+    {
+      "id": 11627,
+      "name": "岷山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 3
+    },
+    {
+      "id": 11765,
+      "name": "邛崃山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 4
+    },
+    {
+      "id": 15693,
+      "name": "龙门山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 5
+    },
+    {
+      "id": 12071,
+      "name": "武夷山",
+      "priority": 80,
+      "minZoom": 3.5,
+      "color": 6
+    },
+    {
+      "id": 11662,
+      "name": "南岭",
+      "priority": 80,
+      "minZoom": 3.5,
+      "color": 0
+    },
+    {
+      "id": 12243,
+      "name": "罗霄山脉",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 1
+    },
+    {
+      "id": 12241,
+      "name": "大别山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 2
+    },
+    {
+      "id": 12068,
+      "name": "武陵山脉",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 3
+    },
+    {
+      "id": 12064,
+      "name": "巫山",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 4
+    },
+    {
+      "id": 12079,
+      "name": "雪峰山脉",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 5
+    },
+    {
+      "id": 12069,
+      "name": "乌蒙山",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 6
+    },
+    {
+      "id": 11282,
+      "name": "大娄山",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 0
+    },
+    {
+      "id": 11345,
+      "name": "高黎贡山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 1
+    },
+    {
+      "id": 11680,
+      "name": "怒山",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 2
+    },
+    {
+      "id": 12234,
+      "name": "云岭",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 3
+    },
+    {
+      "id": 11879,
+      "name": "沙鲁里山",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 4
+    },
+    {
+      "id": 11289,
+      "name": "大雪山山脉",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 5
+    },
+    {
+      "id": 11106,
+      "name": "哀牢山",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 6
+    },
+    {
+      "id": 12067,
+      "name": "无量山",
+      "priority": 76,
+      "minZoom": 4.2,
+      "color": 0
+    },
+    {
+      "id": 11412,
+      "name": "台湾雪山山脉",
+      "priority": 85,
+      "minZoom": 4.5,
+      "color": 1
+    },
+    {
+      "id": 12308,
+      "name": "台湾玉山山脉",
+      "priority": 85,
+      "minZoom": 4.5,
+      "color": 2
+    },
+    {
+      "id": 11120,
+      "name": "台湾阿里山山脉",
+      "priority": 80,
+      "minZoom": 4.5,
+      "color": 3
+    },
+    {
+      "id": 11378,
+      "name": "台湾海岸山脉",
+      "priority": 80,
+      "minZoom": 4.5,
+      "color": 4
+    },
+    {
+      "id": 14496,
+      "name": "海南五指山",
+      "priority": 80,
+      "minZoom": 4.2,
+      "color": 5
+    },
+    {
+      "id": 20719,
+      "name": "海南黎母岭",
+      "priority": 75,
+      "minZoom": 4.5,
+      "color": 6
+    },
+    {
+      "id": 11338,
+      "name": "伏牛山",
+      "priority": 75,
+      "minZoom": 4.5,
+      "color": 0
+    },
+    {
+      "id": 11624,
+      "name": "米仓山",
+      "priority": 75,
+      "minZoom": 4.5,
+      "color": 1
+    },
+    {
+      "id": 12065,
+      "name": "武当山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 2
+    },
+    {
+      "id": 12246,
+      "name": "黄山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 3
+    },
+    {
+      "id": 12242,
+      "name": "泰山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 4
+    },
+    {
+      "id": 20706,
+      "name": "嵩山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 5
+    },
+    {
+      "id": 11393,
+      "name": "恒山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 6
+    },
+    {
+      "id": 12070,
+      "name": "五台山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 0
+    },
+    {
+      "id": 11321,
+      "name": "峨眉山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 1
+    },
+    {
+      "id": 12248,
+      "name": "苍山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 2
+    },
+    {
+      "id": 12672,
+      "name": "梅里雪山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 3
+    },
+    {
+      "id": 12255,
+      "name": "玉龙雪山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 4
+    },
+    {
+      "id": 13067,
+      "name": "哈巴雪山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 5
+    },
+    {
+      "id": 12236,
+      "name": "可可西里山",
+      "priority": 78,
+      "minZoom": 3.8,
+      "color": 6
+    },
+    {
+      "id": 11132,
+      "name": "阿尼玛卿山",
+      "priority": 75,
+      "minZoom": 4.2,
+      "color": 0
+    },
+    {
+      "id": 13069,
+      "name": "岗日嘎布山脉",
+      "priority": 75,
+      "minZoom": 4.2,
+      "color": 1
+    },
+    {
+      "id": 11995,
+      "name": "天目山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 2
+    },
+    {
+      "id": 18310,
+      "name": "雁荡山",
+      "priority": 75,
+      "minZoom": 4.8,
+      "color": 3
+    },
+    {
+      "id": 20717,
+      "name": "苗岭",
+      "priority": 75,
+      "minZoom": 4.2,
+      "color": 4
+    }
+  ]
+}

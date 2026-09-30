@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { speakLearningMoment, stopLearningSpeech } from "../../shared/experience/learning-speech";
-import { act, bestMousePlacement, cells, createGame, emptyStatistics, HEIGHT, KEY_BINDINGS, landing, levelFor, previewZoneFor, SHAPES, speedFor, tick, WIDTH, type Action, type Game, type Kind, type Settings, type TetrisStatistics } from "./logic";
+import { act, cells, createGame, emptyStatistics, HEIGHT, KEY_BINDINGS, landing, levelFor, mouseBaseline, mousePlacement, previewZoneFor, SHAPES, speedFor, tick, WIDTH, type Action, type Game, type Kind, type Settings, type TetrisStatistics } from "./logic";
 import { createPraisePicker, PraisePlayback, type PraiseEvent } from "./praise";
 import { TetrisHeldInput, type KeyBindings } from "./input";
 import { KeyboardSettings } from "./KeyboardSettings";
@@ -38,12 +38,6 @@ export function CrystalPiece({ kind }: { kind: Kind }) {
   </span>;
 }
 
-function mouseBaseline(clientX: number, bounds: Pick<DOMRect, "left" | "right" | "width">) {
-  if (clientX <= bounds.left) return 0;
-  if (clientX >= bounds.right) return WIDTH - 2;
-  const pointedColumn = Math.floor((clientX - bounds.left) / bounds.width * WIDTH);
-  return Math.min(WIDTH - 2, Math.max(0, pointedColumn - 1));
-}
 const totalAppearances = (statistics: TetrisStatistics) => KINDS.reduce((sum, kind) => sum + statistics.appearances[kind], 0);
 const overallRateLabel = (statistics: TetrisStatistics) => {
   const rate = perfectRate(statistics);
@@ -80,14 +74,15 @@ function StatisticsPanel({ game, history, onRequestClear }: { game: Game; histor
   </aside>;
 }
 
-function PlayerBoard({ game, index, phase, praise, move, resume, controls, connected, bindings, press, release, immersive, history, mouseMode, aimMouse, onRequestClearStatistics }: {
+function PlayerBoard({ game, index, phase, praise, move, resume, controls, connected, bindings, press, release, immersive, history, bestMatch, aimMouse, onRequestClearStatistics }: {
   game: Game; index: number; phase: Phase; praise?: PraiseEvent;
   controls: PlayerControls; connected: boolean; bindings: KeyBindings; immersive: boolean;
-  history: TetrisHistory; mouseMode: boolean; aimMouse: (index: number, baselineLeft: number) => void; onRequestClearStatistics: () => void;
+  history: TetrisHistory; bestMatch: boolean; aimMouse: (index: number, baselineLeft: number) => void; onRequestClearStatistics: () => void;
   press: (id: string, index: number, action: Action) => void; release: (id: string) => void;
   move: (index: number, action: Action) => void; resume: () => void;
 }) {
   const boardRef = useRef<HTMLDivElement>(null);
+  const pointerStageRef = useRef<HTMLDivElement>(null);
   const aimMouseRef = useRef(aimMouse);
   aimMouseRef.current = aimMouse;
   const active = new Set(cells(game.piece).map(([x, y]) => y * WIDTH + x));
@@ -97,29 +92,31 @@ function PlayerBoard({ game, index, phase, praise, move, resume, controls, conne
   const speed = speedFor(game.settings, game.lines);
   const previewZone = previewZoneFor(game.board);
   useEffect(() => {
-    if (!mouseMode || phase !== "playing") return;
+    if (phase !== "playing") return;
     const pointerMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") return;
       const bounds = boardRef.current?.getBoundingClientRect();
-      if (!bounds) return;
-      const cell = bounds.width / WIDTH;
-      if (event.clientX < bounds.left - cell * 2 || event.clientX > bounds.right + cell * 2 || event.clientY < bounds.top - cell * 2 || event.clientY > bounds.bottom + cell * 2) return;
+      const stage = pointerStageRef.current?.getBoundingClientRect();
+      if (!bounds || !stage || event.clientX < stage.left || event.clientX > stage.right || event.clientY < bounds.top || event.clientY > bounds.bottom) return;
       aimMouseRef.current(index, mouseBaseline(event.clientX, bounds));
     };
     window.addEventListener("pointermove", pointerMove);
     return () => window.removeEventListener("pointermove", pointerMove);
-  }, [index, mouseMode, phase]);
+  }, [index, phase]);
   return <section className={`tetris-player player-${index + 1}`} aria-label={`玩家 ${index + 1} 棋盘`}>
     <header className="tetris-player-heading"><span className="tetris-player-number">0{index + 1}</span><div><h2>玩家 {index + 1}</h2><span>{controls.mode === "gamepad" ? connected ? "✓ 手柄 + 键盘" : "手柄待连接 · 键盘可用" : "自选键盘控制"}</span></div><div className="tetris-score"><span>得分</span><strong>{game.score.toLocaleString()}</strong></div></header>
     <div className="tetris-playfield-layout">
-      <div className="tetris-board-frame">
-        <div ref={boardRef} className={`tetris-board ${mouseMode ? "is-mouse-mode" : ""}`} role="img" aria-label={`玩家 ${index + 1}，${game.lines} 行，${game.score} 分，${game.ended ? "本局完成" : `当前 ${game.piece.kind} 形方块`}`} onPointerDown={event => {
-          if (!mouseMode || event.pointerType !== "mouse" || event.button !== 0 || phase !== "playing") return;
+      <div ref={pointerStageRef} className={`tetris-pointer-stage ${bestMatch ? "is-best-match" : ""}`} onPointerDown={event => {
+          if (event.pointerType !== "mouse" || event.button !== 0 || phase !== "playing") return;
+          const bounds = boardRef.current?.getBoundingClientRect();
+          if (!bounds || event.clientY < bounds.top || event.clientY > bounds.bottom) return;
           event.preventDefault();
-          aimMouse(index, mouseBaseline(event.clientX, event.currentTarget.getBoundingClientRect()));
+          aimMouse(index, mouseBaseline(event.clientX, bounds));
           move(index, "drop");
         }}>
-          {(clearing?.board ?? game.board).flatMap((row, y) => row.map((cell, x) => {
+        <div className="tetris-board-frame">
+          <div ref={boardRef} className="tetris-board" role="img" aria-label={`玩家 ${index + 1}，${game.lines} 行，${game.score} 分，${game.ended ? "本局完成" : `当前 ${game.piece.kind} 形方块`}`}>
+            {(clearing?.board ?? game.board).flatMap((row, y) => row.map((cell, x) => {
             const id = y * WIDTH + x;
             const moving = !clearing && !game.ended && active.has(id);
             const kind = moving ? game.piece.kind : cell;
@@ -134,10 +131,11 @@ function PlayerBoard({ game, index, phase, praise, move, resume, controls, conne
               animationDelay: `${150 - elapsed}ms`,
               "--clear-distance": `calc(${shift * 100}% + ${shift}px)`,
             } as CSSProperties : {}) };
-            return <span key={id} style={style} className={`tetris-cell ${kind ? `tetris-crystal crystal-${kind}` : ""} ${moving ? "is-moving" : ""} ${isGhost ? "is-ghost" : ""} ${breaking ? "is-fracturing is-broken" : ""} ${shift ? "is-clearing-shift" : ""}`} />;
-          }))}
+              return <span key={id} style={style} className={`tetris-cell ${kind ? `tetris-crystal crystal-${kind}` : ""} ${moving ? "is-moving" : ""} ${isGhost ? "is-ghost" : ""} ${breaking ? "is-fracturing is-broken" : ""} ${shift ? "is-clearing-shift" : ""}`} />;
+            }))}
+          </div>
+          {covered && <div className="tetris-board-cover">{game.ended ? <><span aria-hidden="true">✧</span><h3>拼得很精彩</h3><p>消除 {game.lines} 行 · {game.score} 分</p>{phase !== "finished" && <p>另一位玩家还可以继续</p>}</> : <button type="button" className="tetris-resume" onClick={resume}><span aria-hidden="true">▶</span><strong>继续游戏</strong></button>}</div>}
         </div>
-        {covered && <div className="tetris-board-cover">{game.ended ? <><span aria-hidden="true">✧</span><h3>拼得很精彩</h3><p>消除 {game.lines} 行 · {game.score} 分</p>{phase !== "finished" && <p>另一位玩家还可以继续</p>}</> : <button type="button" className="tetris-resume" onClick={resume}><span aria-hidden="true">▶</span><strong>继续游戏</strong></button>}</div>}
       </div>
       <aside className={`tetris-player-info preview-zone-${previewZone}`} data-preview-zone={previewZone}>
         <div className="tetris-next"><h3>下一个</h3><div className="tetris-next-primary"><CrystalPiece kind={game.next[0]} /></div><div className="tetris-next-later"><span>之后</span>{game.next.slice(1).map((kind, i) => <CrystalPiece key={`${i}-${kind}`} kind={kind} />)}</div></div>
@@ -177,10 +175,9 @@ export function TetrisGame() {
   const [history, setHistory] = useState<TetrisHistory>(() => emptyTetrisHistory());
   const historyRef = useRef(history);
   const committedStatistics = useRef<TetrisStatistics[]>([]);
-  const [mouseMode, setMouseMode] = useState(false);
+  const [bestMatch, setBestMatch] = useState(false);
   const [blockTheme, setBlockTheme] = useState<TetrisBlockTheme>("default");
   const preferences = useRef<TetrisPreferences | null>(null);
-  const lastMouseAim = useRef<{ pieceId: number; baseline: number }[]>([]);
   const [initialSpeed, setInitialSpeed] = useState("0");
   const [increment, setIncrement] = useState("0");
   const [sound, setSound] = useState(false);
@@ -248,8 +245,8 @@ export function TetrisGame() {
     catch { setKeyboardNotice("暂时无法读取已存键位，先用默认设置；修改后可再次保存。"); }
     try { const saved = loadTetrisHistory(localStorage); historyRef.current = saved; setHistory(saved); }
     catch { setSessionNotice("累计统计暂时无法读取；本局仍可正常游戏。"); }
-    try { const saved = loadTetrisPreferences(localStorage); preferences.current = saved; setMouseMode(saved.mouseMode); setBlockTheme(saved.blockTheme); }
-    catch { setSessionNotice("鼠标设置暂时无法读取，已使用键盘模式。"); }
+    try { const saved = loadTetrisPreferences(localStorage); preferences.current = saved; setBestMatch(saved.bestMatch); setBlockTheme(saved.blockTheme); }
+    catch { setSessionNotice("鼠标最佳匹配设置暂时无法读取，已关闭自动匹配。"); }
     try {
       const saved = loadTetrisSession(localStorage);
       if (saved) {
@@ -355,15 +352,14 @@ export function TetrisGame() {
     if (act(current.games[index], action)) refresh();
     arena.current?.focus();
   }
-  function toggleMouseMode() {
-    const next = !mouseMode;
-    setMouseMode(next);
-    lastMouseAim.current = [];
+  function toggleBestMatch() {
+    const next = !bestMatch;
+    setBestMatch(next);
     const current = preferences.current ?? defaultTetrisPreferences();
-    const updated = { ...current, mouseMode: next, updatedAt: new Date().toISOString() };
+    const updated = { ...current, bestMatch: next, updatedAt: new Date().toISOString() };
     preferences.current = updated;
     try { saveTetrisPreferences(localStorage, updated); }
-    catch { setSessionNotice("鼠标模式已生效，但浏览器暂时无法保存这个设置。"); }
+    catch { setSessionNotice("最佳匹配已生效，但浏览器暂时无法保存这个设置。"); }
   }
   function chooseBlockTheme(next: TetrisBlockTheme) {
     setBlockTheme(next);
@@ -377,11 +373,10 @@ export function TetrisGame() {
   function aimMouse(index: number, baseline: number) {
     const game = model.current.games[index];
     if (!game || model.current.phase !== "playing" || game.clearing) return;
-    const previous = lastMouseAim.current[index];
-    if (previous?.pieceId === game.pieceId && previous.baseline === baseline) return;
-    lastMouseAim.current[index] = { pieceId: game.pieceId, baseline };
-    const target = bestMousePlacement(game, baseline);
+    const target = mousePlacement(game, baseline, bestMatch);
     if (!target) return;
+    const sameMatrix = target.matrix.length === game.piece.matrix.length && target.matrix.every((row, y) => row.every((value, x) => value === game.piece.matrix[y]?.[x]));
+    if (target.x === game.piece.x && sameMatrix) return;
     game.piece = target;
     persistSession();
     redraw(value => value + 1);
@@ -420,7 +415,6 @@ export function TetrisGame() {
     const seed = Date.now();
     model.current.games = Array.from({ length: players }, () => createGame(settings, seed));
     committedStatistics.current = model.current.games.map(() => emptyStatistics());
-    lastMouseAim.current = [];
     syncStatistics();
     setPraises([]);
     setConfirmReset(false);
@@ -532,7 +526,7 @@ export function TetrisGame() {
             if (phase === "finished") { playback.current?.setPaused(false); setSpeechPaused(false); }
             if (phase === "playing") arena.current?.focus();
           }}>{sound ? "✓ 中英表扬" : "表扬声音：关"}</button></>;
-  const mouseModeToggle = <label className="tetris-mouse-toggle"><input type="checkbox" checked={mouseMode} onChange={toggleMouseMode} /><span>鼠标模式</span></label>;
+  const bestMatchToggle = <label className="tetris-mouse-toggle"><input type="checkbox" checked={bestMatch} onChange={toggleBestMatch} /><span>最佳匹配</span></label>;
   const blockThemeSelect = <label className="tetris-theme-picker"><span>方块外观</span><select aria-label="选择方块外观" value={blockTheme} onChange={event => chooseBlockTheme(event.target.value as TetrisBlockTheme)}>{TETRIS_BLOCK_THEMES.map(theme => <option key={theme} value={theme}>{BLOCK_THEME_LABELS[theme]}</option>)}</select></label>;
   const canPause = model.current.games.some(game => speedFor(game.settings, game.lines) > 0);
   const settingsContents = <>
@@ -548,14 +542,14 @@ export function TetrisGame() {
       {fullscreen.focused && <header className="tetris-focusbar">
         <h1>俄罗斯方块</h1>
         {blockThemeSelect}
-        {mouseModeToggle}
+        {bestMatchToggle}
         {canPause && <button type="button" className="tetris-button" data-gamepad-pause disabled={phase === "finished" || confirmReset || showControllerSettings} onClick={() => changePhase(phase === "paused" ? "playing" : "paused")}>{phase === "paused" ? "继续" : "暂停"}</button>}
         <button type="button" className="tetris-button" disabled={confirmReset} onClick={openSettings}>游戏设置</button>
         <button type="button" className="tetris-button" data-fullscreen-exit disabled={fullscreen.switching} onClick={() => void fullscreen.leave()}>退出全屏</button>
       </header>}
       <GameTopBar title="俄罗斯方块" backHref="/#games" backLabel="游戏大厅" controls={<div className="tetris-toolbar">
           {blockThemeSelect}
-          {mouseModeToggle}
+          {bestMatchToggle}
           {audioControls}
           {phase !== "ready" && <button type="button" className="tetris-button" disabled={fullscreen.switching || confirmReset || showControllerSettings} onClick={() => void fullscreen.enter()}>全屏游戏</button>}
           {phase !== "ready" && canPause && <button type="button" className="tetris-button" data-gamepad-pause disabled={phase === "finished" || confirmReset || showControllerSettings} onClick={() => { changePhase(phase === "paused" ? "playing" : "paused"); arena.current?.focus(); }}>{phase === "paused" ? "继续游戏" : "暂停"}</button>}
@@ -593,7 +587,7 @@ export function TetrisGame() {
         </section>
       </div> : null}
       <div ref={arena} tabIndex={-1} className={`tetris-arena ${model.current.games.length === 2 ? "is-duo" : ""}`} aria-label="俄罗斯方块游戏区" hidden={phase === "ready"} onPointerDown={event => { if (!(event.target instanceof Element) || !event.target.closest("button, a")) arena.current?.focus(); }}>
-        {model.current.games.map((game, index) => <PlayerBoard key={index} game={game} index={index} phase={phase} praise={praises[index]} move={move} resume={() => changePhase("playing")} press={press} release={id => model.current.held.release(id)} bindings={bindings} immersive={fullscreen.focused} controls={controllers.profile.players[index]} connected={controllers.devices.some(d => sameDevice(d.device, controllers.profile.players[index]?.device ?? null))} history={history} mouseMode={mouseMode} aimMouse={aimMouse} onRequestClearStatistics={requestClearStatistics} />)}
+        {model.current.games.map((game, index) => <PlayerBoard key={index} game={game} index={index} phase={phase} praise={praises[index]} move={move} resume={() => changePhase("playing")} press={press} release={id => model.current.held.release(id)} bindings={bindings} immersive={fullscreen.focused} controls={controllers.profile.players[index]} connected={controllers.devices.some(d => sameDevice(d.device, controllers.profile.players[index]?.device ?? null))} history={history} bestMatch={bestMatch} aimMouse={aimMouse} onRequestClearStatistics={requestClearStatistics} />)}
       </div>
       {confirmClearStatistics && <div className="tetris-confirm" role="alert"><p>要清空累计、今日和本轮的全部落块统计吗？棋盘和分数会保留。</p><button type="button" className="tetris-button" onClick={cancelClearStatistics}>保留统计</button><button type="button" className="tetris-button" onClick={clearAllStatistics}>确认清空</button></div>}
       {confirmReset && <div className="tetris-confirm" role="alert"><p>重新设置会结束当前这一局。</p><button type="button" className="tetris-button" onClick={() => { setConfirmReset(false); changePhase("playing"); arena.current?.focus(); }}>继续这一局</button><button type="button" className="tetris-button" onClick={reset}>确认重新设置</button></div>}

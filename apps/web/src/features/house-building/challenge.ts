@@ -4,6 +4,7 @@ import {
   surfaceDistance,
   worldPoint,
   localPoint,
+  overlaps,
   type HousePart,
   type Point,
 } from "./model";
@@ -88,7 +89,60 @@ export function evaluateChallenge(
       );
     })
   )
-    reasons.push("有积木落在了限定地基之外");
+    reasons.push("贴地积木超出地基范围，请加宽地基或缩短积木");
+  for (const z of c.zones ?? []) {
+    if (!z.enabled) continue;
+    const intersects = (p: SimulationSnapshot["pieces"][number]) => {
+      const region: HousePart = {
+        ...geometry(p),
+        id: "zone",
+        shape: "block",
+        angle: 0,
+        x: (z.left + z.right) / 2 + s.ground.x,
+        y: (z.bottom + z.top) / 2 + s.ground.y,
+        width: z.right - z.left,
+        height: z.top - z.bottom,
+      };
+      if (!p.vertices) return overlaps(geometry(p), region, 0);
+      // Clip fractured convex pieces against the rectangle; a bounding box alone
+      // would falsely flag rotated pieces whose empty corner crosses the zone.
+      let vertices = p.vertices.map((v) => worldPoint(geometry(p), v));
+      const edges = [
+        { axis: "x" as const, value: z.left + s.ground.x, sign: 1 },
+        { axis: "x" as const, value: z.right + s.ground.x, sign: -1 },
+        { axis: "y" as const, value: z.bottom + s.ground.y, sign: 1 },
+        { axis: "y" as const, value: z.top + s.ground.y, sign: -1 },
+      ];
+      for (const edge of edges) {
+        const output: Point[] = [];
+        for (let i = 0; i < vertices.length; i++) {
+          const a = vertices[i],
+            b = vertices[(i + 1) % vertices.length];
+          const da = (a[edge.axis] - edge.value) * edge.sign,
+            db = (b[edge.axis] - edge.value) * edge.sign;
+          if (da >= 0) output.push(a);
+          if (da >= 0 !== db >= 0) {
+            const t = da / (da - db);
+            output.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+          }
+        }
+        vertices = output;
+      }
+      return (
+        vertices.length >= 3 &&
+        Math.abs(
+          vertices.reduce((sum, a, i) => {
+            const b = vertices[(i + 1) % vertices.length];
+            return sum + a.x * b.y - b.x * a.y;
+          }, 0),
+        ) > 1e-8
+      );
+    };
+    if (z.kind === "required" && !supported.some(intersects))
+      reasons.push("必经区域还没有稳定建筑");
+    if (z.kind === "forbidden" && s.pieces.some(intersects))
+      reasons.push("积木进入了禁入区域");
+  }
   return { ok: challengeActive(c) && reasons.length === 0, height, reasons };
 }
 export type ChallengeProgress = {

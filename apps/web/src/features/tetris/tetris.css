@@ -352,9 +352,9 @@
 /* Wide play layout: board, next pieces, and a calm statistics console. */
 .tetris-arena { grid-template-columns: minmax(0, 1720px); }
 .tetris-playfield-layout { grid-template-columns: minmax(220px, 310px) 190px minmax(360px, 1fr); gap: 18px; align-items: stretch; }
+.tetris-pointer-stage { display: grid; min-width: 0; align-self: stretch; place-items: start center; cursor: crosshair; touch-action: none; }
 .tetris-board-frame { align-self: start; }
-.tetris-board.is-mouse-mode { cursor: crosshair; touch-action: none; }
-.tetris-board.is-mouse-mode .is-ghost { border-style: solid; box-shadow: inset 0 0 7px color-mix(in srgb, var(--player-color) 34%, transparent); }
+.tetris-pointer-stage.is-best-match .is-ghost { border-style: solid; box-shadow: inset 0 0 7px color-mix(in srgb, var(--player-color) 34%, transparent); }
 .tetris-mouse-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 13px; border: 1px solid var(--line-glow); border-radius: 16px; color: var(--ink-primary); background: var(--glass-500); cursor: pointer; font-weight: 800; white-space: nowrap; }
 .tetris-mouse-toggle:hover { border-color: var(--cyan-300); background: color-mix(in srgb, var(--cyan-300) 9%, var(--space-850)); }
 .tetris-mouse-toggle input { width: 22px; height: 22px; margin: 0; accent-color: var(--cyan-300); }
@@ -423,6 +423,7 @@
     width: min(100%, clamp(380px, 29vw, 520px));
     align-self: center;
   }
+  .tetris-shell:not(.tetris-immersive) .tetris-pointer-stage { place-items: center; }
   .tetris-shell:not(.tetris-immersive) .tetris-player-stats {
     height: 100%;
     max-height: 100%;
@@ -465,6 +466,7 @@
 
 .tetris-immersive .tetris-arena { grid-template-columns: minmax(0, 1720px); }
 .tetris-immersive .tetris-playfield-layout { grid-template-columns: minmax(300px, 1fr) 280px minmax(500px, 590px); gap: 14px; align-items: stretch; }
+.tetris-immersive .tetris-pointer-stage { place-items: center; }
 .tetris-immersive .tetris-board-frame { align-self: center; }
 .tetris-immersive .tetris-next { display: grid; grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; padding: 10px; }
 .tetris-immersive .tetris-next h3 { grid-column: auto; }
@@ -548,5 +550,16 @@
   [data-block-theme="dimensional"],
   [data-block-theme="orb"]
 ) :is(.tetris-board, .tetris-mini) {
-  gap: 0;
+  gap: 1px;
+}
+
+.tetris-shell:is(
+  [data-block-theme="clear-glass"],
+  [data-block-theme="random-crystal"],
+  [data-block-theme="random-gem"],
+  [data-block-theme="smile"],
+  [data-block-theme="dimensional"],
+  [data-block-theme="orb"]
+) .tetris-next-primary .tetris-mini {
+  gap: 2px;
 }

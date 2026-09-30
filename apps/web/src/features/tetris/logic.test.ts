@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { act, cells, createGame, fits, HEIGHT, intervalFor, KEY_BINDINGS, landing, levelFor, previewZoneFor, SHAPES, speedFor, tick, WIDTH, type Game, type Kind } from "./logic";
+import { act, cells, createGame, fits, HEIGHT, intervalFor, KEY_BINDINGS, landing, levelFor, mouseBaseline, mousePlacement, previewZoneFor, SHAPES, speedFor, tick, WIDTH, type Game, type Kind } from "./logic";
 
 const manual = { initialSpeed: 0, speedIncrement: 0 };
 function verticalLine(game: Game) {
@@ -44,6 +44,33 @@ test("下一块预览按已落定积木的最高行锁定在下中上三区", ()
   assert.equal(previewZoneFor(game.board), "middle");
   game.board[6][4] = "J";
   assert.equal(previewZoneFor(game.board), "top");
+});
+
+test("鼠标左右扩展区锁定边缘，直接跟随不改变形状", () => {
+  const bounds = { left: 100, right: 300, width: 200 };
+  assert.equal(mouseBaseline(-500, bounds), 0);
+  assert.equal(mouseBaseline(100, bounds), 0);
+  assert.equal(mouseBaseline(300, bounds), WIDTH - 2);
+  assert.equal(mouseBaseline(900, bounds), WIDTH - 2);
+
+  const game = createGame(manual, 43);
+  game.piece = { kind: "T", matrix: SHAPES.T, x: 4, y: 0 };
+  const left = mousePlacement(game, 0, false)!;
+  const right = mousePlacement(game, WIDTH - 2, false)!;
+  assert.deepEqual(left.matrix, SHAPES.T);
+  assert.deepEqual(right.matrix, SHAPES.T);
+  assert.equal(Math.min(...cells(left).map(([x]) => x)), 0);
+  assert.equal(Math.max(...cells(right).map(([x]) => x)), WIDTH - 1);
+});
+
+test("最佳匹配沿用自动旋转与堆叠微调，直接跟随只接受当前形状的合法位置", () => {
+  const game = createGame(manual, 44);
+  game.piece = { kind: "I", matrix: SHAPES.I, x: 3, y: 0 };
+  game.board[1][0] = "O";
+  assert.equal(mousePlacement(game, 0, false), undefined);
+  const matched = mousePlacement(game, 0, true);
+  assert.ok(matched);
+  assert.ok(fits(game, matched));
 });
 
 test("每二十行升级，增量为零不加速，速度封顶100", () => {

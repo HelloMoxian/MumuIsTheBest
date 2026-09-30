@@ -1,3 +1,4 @@
+import { parseHouseLevels, mergeHouseLevels, type HouseLevels } from "./house-building-levels.js";
 import { randomUUID } from "node:crypto";
 import { chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
@@ -20,6 +21,7 @@ const stateIdSchema = z.enum([
   "physics-house",
   "physics-house-workspace",
   "physics-house-history",
+  "physics-house-levels",
   "audio-preferences",
   "game-controller-preferences",
   "chemistry-reaction-furnace",
@@ -328,6 +330,12 @@ const definitions: Record<StateId, { relativePath: string; payloadSchema: z.ZodT
       .custom<HouseWorkspace>((value) => parseWorkspace(value) !== undefined)
       .transform((value) => parseWorkspace(value)!),
   },
+  "physics-house-levels": {
+    relativePath: "learning/physics/house-levels.json",
+    payloadSchema: z
+      .custom<HouseLevels>((value) => parseHouseLevels(value) !== undefined)
+      .transform((value) => parseHouseLevels(value)!),
+  },
   "physics-house-history": {
     relativePath: "learning/physics/house-history.json",
     payloadSchema: z
@@ -421,6 +429,8 @@ export function registerPersistentUserDataApi(
         },
       } : stableId === "physics-house-history"
         ? mergeHouseHistory(current?.payload as HouseHistory | undefined, payload as HouseHistory)
+        : stableId === "physics-house-levels"
+          ? mergeHouseLevels(current?.payload as HouseLevels | undefined, payload as HouseLevels)
         : stableId === "math-2048"
           ? merge2048Best(current?.payload as State2048 | undefined, payload as State2048)
           : payload;
@@ -473,6 +483,13 @@ export function registerPersistentUserDataApi(
         code: "INVALID_PERSISTENT_DATA",
         message: "这次本机记录不符合玩法规则，因此没有保存。",
       });
+    }
+    const incomingDesigns: HouseDesign[] =
+      params.data.stableId === "physics-house-workspace" ? [(payload.data as HouseWorkspace).design] :
+      params.data.stableId === "physics-house-levels" ? (payload.data as HouseLevels).levels.map(level => level.workspace.design) :
+      params.data.stableId === "physics-house-history" ? (payload.data as HouseHistory).records.map(record => record.workspace.design) : [];
+    if (incomingDesigns.some(design => !parseHouseDesign(design))) {
+      return reply.code(400).send({code:"HOUSE_OVERLAP",message:"积木存在重叠，请先调整至边缘贴合再保存。原记录没有被覆盖。"});
     }
     try {
       return { state: await updateState(params.data.stableId, payload.data) };

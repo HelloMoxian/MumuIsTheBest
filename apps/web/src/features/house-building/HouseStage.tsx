@@ -1,4 +1,4 @@
-import { useRef, type PointerEvent, type KeyboardEvent } from "react";
+import { useRef, useState, type PointerEvent, type KeyboardEvent } from "react";
 import {
   MATERIALS,
   localVertices,
@@ -11,6 +11,8 @@ import {
 } from "./model";
 import type { HouseWorkspace } from "./challenge";
 import type { SimulationSnapshot } from "./engine";
+import { moveTaskGoal, addTaskArea, type TaskDrawKind } from "./task-layout";
+import type { HouseChallenge } from "./challenge";
 import { renderPieces } from "./render-pieces";
 export const sx = (x: number) => (x + 8) * 62.5,
   sy = (y: number) => 575 - y * 62.5;
@@ -21,6 +23,11 @@ export function HouseStage({
   ghost,
   tool,
   onSelect,
+  onDeselect,
+  editingTask,
+  drawTask,
+  onTaskDrawn,
+  onTaskChange,
   onMove,
   onView,
   onKey,
@@ -31,14 +38,29 @@ export function HouseStage({
   ghost?: HousePart;
   tool: string;
   onSelect: (id: string) => void;
+  onDeselect: () => void;
+  editingTask?: boolean;
+  drawTask?: TaskDrawKind;
+  onTaskDrawn: (success: boolean) => void;
+  onTaskChange: (challenge: HouseChallenge) => void;
   onMove: (p: HousePart, commit: boolean) => void;
   onView: (patch: Partial<HouseWorkspace["view"]>) => void;
   onKey: (e: KeyboardEvent<SVGSVGElement>) => void;
 }) {
   const { design, view, challenge } = workspace;
+  const [drawing, setDrawing] = useState<{ a: Point; b: Point }>();
   const stage = useRef<SVGSVGElement>(null);
   const drag = useRef<
-    | { start: Point; part?: HousePart; view: typeof view; next?: HousePart }
+    | {
+        start: Point;
+        part?: HousePart;
+        view: typeof view;
+        next?: HousePart;
+        task?: string;
+        area?: TaskDrawKind;
+        end?: Point;
+        originalTask?: HouseChallenge;
+      }
     | undefined
   >(undefined);
   const point = (e: PointerEvent<SVGSVGElement>): Point => {
@@ -52,6 +74,19 @@ export function HouseStage({
   const finish = (cancel = false) => {
     const d = drag.current;
     drag.current = undefined;
+    setDrawing(undefined);
+    if (d?.area && !cancel) {
+      const next = addTaskArea(
+        challenge,
+        d.area,
+        d.start,
+        d.end ?? d.start,
+        crypto.randomUUID(),
+      );
+      if (next !== challenge) onTaskChange(next);
+      onTaskDrawn(next !== challenge);
+    }
+    if (cancel && d?.originalTask) onTaskChange(d.originalTask);
     if (d?.part) onMove(cancel ? d.part : (d.next ?? d.part), true);
   };
   const pieces: SimulationSnapshot["pieces"] =
@@ -140,10 +175,42 @@ export function HouseStage({
       onKeyDown={onKey}
       onPointerDown={(e) => {
         if (e.button !== 0 && e.button !== 1) return;
+        const taskGoal = (e.target as Element)
+          .closest("[data-task-goal]")
+          ?.getAttribute("data-task-goal");
+        if (editingTask && drawTask) {
+          const p = point(e);
+          drag.current = {
+            start: p,
+            end: p,
+            view: { ...view },
+            area: drawTask,
+          };
+          setDrawing({ a: p, b: p });
+          e.currentTarget.setPointerCapture(e.pointerId);
+          return;
+        }
+        if (editingTask && taskGoal) {
+          drag.current = {
+            start: point(e),
+            view: { ...view },
+            task: taskGoal,
+            originalTask: challenge,
+          };
+          e.currentTarget.setPointerCapture(e.pointerId);
+          return;
+        }
+        if (editingTask) {
+          drag.current = { start: point(e), view: { ...view } };
+          e.currentTarget.setPointerCapture(e.pointerId);
+          return;
+        }
+
         const id = (e.target as Element)
           .closest("[data-part-id]")
           ?.getAttribute("data-part-id");
         const p = design.parts.find((p) => p.id === id);
+        if (!id) onDeselect();
         if (id && tool !== "pan") {
           onSelect(id);
           if (snapshot || tool !== "move") return;
@@ -159,6 +226,15 @@ export function HouseStage({
         const d = drag.current;
         if (!d) return;
         const p = point(e);
+        if (d.area) {
+          d.end = p;
+          setDrawing({ a: d.start, b: p });
+          return;
+        }
+        if (d.task) {
+          onTaskChange(moveTaskGoal(challenge, d.task, p));
+          return;
+        }
         if (d.part) {
           d.next = {
             ...d.part,
@@ -242,8 +318,8 @@ export function HouseStage({
           />
           {challenge.flags.foundation && (
             <text
-              x={sx((r.left + r.right) / 2)}
-              y={sy(-0.55)}
+              x={sx((r.left + r.right) / 2 + ground.x)}
+              y={sy(ground.y - 0.55)}
               textAnchor="middle"
               fontSize={labelSize}
               className="house-ruler"
@@ -289,6 +365,53 @@ export function HouseStage({
             ({challenge.target.x}, {challenge.target.y})
           </text>
         </g>
+      )}
+      {(challenge.zones ?? [])
+        .filter((z) => z.enabled)
+        .map((z, i) => (
+          <g key={z.id} pointerEvents="none">
+            <rect
+              x={sx(z.left + ground.x)}
+              y={sy(z.top + ground.y)}
+              width={(z.right - z.left) * 62.5}
+              height={(z.top - z.bottom) * 62.5}
+              fill={
+                z.kind === "forbidden" ? "var(--pink-400)" : "var(--cyan-300)"
+              }
+              fillOpacity=".12"
+              stroke={
+                z.kind === "forbidden" ? "var(--pink-400)" : "var(--cyan-300)"
+              }
+              strokeWidth="2"
+              strokeDasharray="8 5"
+            />
+            <text
+              x={sx(z.left + ground.x) + 6}
+              y={sy(z.top + ground.y) + labelSize}
+              fontSize={labelSize}
+              className="house-goal-text"
+            >
+              {z.kind === "forbidden" ? "禁入" : "必经"} {i + 1}
+            </text>
+          </g>
+        ))}
+      {drawing && (
+        <rect
+          x={sx(Math.min(drawing.a.x, drawing.b.x))}
+          y={sy(
+            drawTask === "foundation" ? 0 : Math.max(drawing.a.y, drawing.b.y),
+          )}
+          width={Math.abs(drawing.b.x - drawing.a.x) * 62.5}
+          height={
+            drawTask === "foundation"
+              ? 28
+              : Math.abs(drawing.b.y - drawing.a.y) * 62.5
+          }
+          fill="var(--cyan-300)"
+          fillOpacity=".2"
+          stroke="var(--cyan-300)"
+          pointerEvents="none"
+        />
       )}
       {visiblePieces.map((p) => (
         <g
@@ -415,6 +538,99 @@ export function HouseStage({
           </text>
         </g>
       )}
+      {editingTask &&
+        !snapshot &&
+        [
+          ...(challenge.zones ?? []).map((z) => ({
+            id: "zone:" + z.id,
+            x: (z.left + z.right) / 2,
+            y: (z.bottom + z.top) / 2,
+            label: "拖动" + (z.kind === "forbidden" ? "禁入区域" : "必经区域"),
+          })),
+          ...(challenge.flags.height
+            ? [
+                {
+                  id: "height",
+                  x: view.x,
+                  y: challenge.height,
+                  label: "拖动任务高度",
+                },
+              ]
+            : []),
+          ...(challenge.flags.target
+            ? [{ id: "target", ...challenge.target, label: "拖动目标点" }]
+            : []),
+          ...(challenge.flags.foundation
+            ? challenge.regions.map((r, i) => ({
+                id: "foundation:" + i,
+                x: (r.left + r.right) / 2,
+                y: 0,
+                label: "拖动地基 " + (i + 1),
+              }))
+            : []),
+        ].map((handle) => (
+          <g
+            key={handle.id}
+            data-task-goal={handle.id}
+            className="house-task-handle"
+            role="button"
+            tabIndex={0}
+            aria-label={handle.label}
+            onKeyDown={(e) => {
+              const delta = {
+                ArrowLeft: [-0.1, 0],
+                ArrowRight: [0.1, 0],
+                ArrowUp: [0, 0.1],
+                ArrowDown: [0, -0.1],
+              }[e.key];
+              if (delta) {
+                e.preventDefault();
+                e.stopPropagation();
+                onTaskChange(
+                  moveTaskGoal(challenge, handle.id, {
+                    x: handle.x + delta[0],
+                    y: handle.y + delta[1],
+                  }),
+                );
+              }
+            }}
+          >
+            {handle.id === "height" && (
+              <line
+                x1={sx(view.x - view.span / 2)}
+                x2={sx(view.x + view.span / 2)}
+                y1={sy(handle.y)}
+                y2={sy(handle.y)}
+                stroke="transparent"
+                strokeWidth={labelSize * 1.5}
+              />
+            )}
+            <rect
+              x={sx(handle.x) - labelSize}
+              y={sy(handle.y) - labelSize * 0.65}
+              width={labelSize * 2}
+              height={labelSize * 1.3}
+              rx={labelSize * 0.3}
+              fill="var(--space-850)"
+              stroke="var(--cyan-300)"
+              strokeWidth="2"
+            />
+            <text
+              x={sx(handle.x)}
+              y={sy(handle.y) + labelSize * 0.3}
+              textAnchor="middle"
+              fill="var(--cyan-300)"
+              fontSize={labelSize}
+            >
+              {handle.id === "height"
+                ? "↕"
+                : handle.id === "target" || handle.id.startsWith("zone:")
+                  ? "✛"
+                  : "↔"}
+            </text>
+            <title>{handle.label}，也可用方向键微调</title>
+          </g>
+        ))}
     </svg>
   );
 }

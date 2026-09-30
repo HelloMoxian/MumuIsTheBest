@@ -7,6 +7,7 @@ import type { FastifyInstance } from "fastify";
 import sharp from "sharp";
 import { z } from "zod";
 import { maskTerrainToLand } from "./nature-terrain.js";
+import { registerNatureDemApi } from "./nature-dem.js";
 
 const unzip = promisify(gunzip);
 const scalar = z.union([z.string(), z.number().finite(), z.boolean(), z.null()]);
@@ -53,6 +54,7 @@ type Pack = z.infer<typeof mapPackSchema>;
 class ApiError extends Error { constructor(public status: number, message: string) { super(message); } }
 
 export function registerNatureGeographyApi(app: FastifyInstance, appDataDir: string) {
+  registerNatureDemApi(app, appDataDir);
   const statePath = resolve(appDataDir, "learning/nature/geography.json");
   const photoDir = resolve(appDataDir, "media/nature-footprints");
   const packs = new Map<string, Promise<Pack>>();
@@ -80,19 +82,20 @@ export function registerNatureGeographyApi(app: FastifyInstance, appDataDir: str
     await atomic(statePath, JSON.stringify(geographyStateSchema.parse(state)));
     return state;
   }
-  async function pack(id: "world" | "china") {
+  async function pack(id: "world" | "china" | "physical" | "climate") {
     if (!packs.has(id)) {
       const promise = (async () => {
         const bytes = await readFile(resolve(appDataDir, `cache/nature-maps/${id}.json.gz`));
         const data = mapPackSchema.parse(JSON.parse((await unzip(bytes, { maxOutputLength: 512 * 1024 * 1024 })).toString()));
         if (data.coordinateSystem !== (id === "china" ? "GCJ-02" : "WGS84")) throw new Error("Coordinate system mismatch");
+        if (id === "climate" && (data.id !== "climate-v1" || !data.datasets.climatev2?.features.length)) throw new Error("Invalid climate pack");
         return data;
       })();
       packs.set(id, promise);
       promise.catch(() => { packs.delete(id); });
     }
     try { return await packs.get(id)!; }
-    catch { throw new ApiError(503, "本机地图包尚未准备好，请在项目中运行地图安装脚本后重试。"); }
+    catch { throw new ApiError(503, id === "physical" ? "大洲与中国山脉资料尚未准备好，请运行自然地理补充资料安装脚本后重试。" : "本机地图包尚未准备好，请在项目中运行地图安装脚本后重试。"); }
   }
   // All failures are sanitized: file paths, uploaded content and parser errors never reach the client.
   app.register(async (api) => {
@@ -109,6 +112,15 @@ export function registerNatureGeographyApi(app: FastifyInstance, appDataDir: str
     });
     api.get("/maps/:scope/:layer", async (req, reply) => {
       const { scope, layer } = z.object({ scope: z.enum(["world", "china"]), layer: z.string().regex(/^[a-z0-9]+$/) }).parse(req.params);
+      if (scope === "world" && layer === "climatev2") {
+        const supplement = await pack("climate");
+        return reply.header("Cache-Control", "private, max-age=3600").send(supplement.datasets.climatev2);
+      }
+      if (scope === "world" && (layer === "continentsv2" || layer === "chinamountains")) {
+        const supplement = await pack("physical");
+        if (!supplement.datasets[layer]?.features.length) throw new ApiError(503, "这层地理资料不完整，请重新安装补充资料后重试。");
+        return reply.header("Cache-Control", "private, max-age=3600").send(supplement.datasets[layer]);
+      }
       const data = await pack(scope);
       if (scope === "world" && layer === "terrainlandv1" && data.terrainDataUrl && data.datasets.land) {
         if (!landTerrain) {

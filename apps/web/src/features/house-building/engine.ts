@@ -4,6 +4,7 @@ import {
   Box,
   Circle,
   Polygon,
+  Settings,
   WeldJoint,
   RevoluteJoint,
   type Body,
@@ -98,6 +99,42 @@ export function beamStiffness(p: HousePart, length: number) {
     length
   );
 }
+/** Inset polygon cores so Planck's collision skin fits inside the drawn outline. */
+function collisionPolygon(vertices: Point[]) {
+  const radius = Settings.polygonRadius;
+  const center = {
+    x: vertices.reduce((s, p) => s + p.x, 0) / vertices.length,
+    y: vertices.reduce((s, p) => s + p.y, 0) / vertices.length,
+  };
+  const planes = vertices.map((p, i) => {
+    const q = vertices[(i + 1) % vertices.length],
+      length = Math.hypot(q.x - p.x, q.y - p.y);
+    const nx = -(q.y - p.y) / length,
+      ny = (q.x - p.x) / length;
+    return { nx, ny, d: nx * p.x + ny * p.y };
+  });
+  const inset = Math.min(
+    radius,
+    ...planes.map((p) => (p.nx * center.x + p.ny * center.y - p.d) * 0.8),
+  );
+  let core = vertices.map((p) => ({ ...p }));
+  for (const plane of planes) {
+    const next: Point[] = [];
+    for (let i = 0; i < core.length; i++) {
+      const a = core[i],
+        b = core[(i + 1) % core.length];
+      const da = plane.nx * a.x + plane.ny * a.y - plane.d - inset,
+        db = plane.nx * b.x + plane.ny * b.y - plane.d - inset;
+      if (da >= 0) next.push(a);
+      if (da >= 0 !== db >= 0) {
+        const t = da / (da - db);
+        next.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+      }
+    }
+    core = next;
+  }
+  return new Polygon(core);
+}
 export class HouseSimulation {
   readonly world = new World({
     gravity: new Vec2(0, -9.81),
@@ -139,8 +176,8 @@ export class HouseSimulation {
     ])
       this.ground.createFixture(
         new Box(
-          (r.right - r.left) / 2,
-          0.25,
+          (r.right - r.left) / 2 - Settings.polygonRadius,
+          0.25 - Settings.polygonRadius,
           new Vec2((r.left + r.right) / 2, 0),
         ),
         { friction: 0.7 },
@@ -322,18 +359,29 @@ export class HouseSimulation {
         ? Math.PI * (width / 2) ** 2
         : width * height;
     const mat = MATERIALS[source.material];
-    body.createFixture(
-      vertices
-        ? new Polygon(vertices)
-        : circle
-          ? new Circle(width / 2)
-          : new Box(width / 2, height / 2),
-      {
-        density: mass / area,
-        friction: mat.friction,
-        restitution: mat.restitution,
-      },
-    );
+    const outline = vertices
+      ? new Polygon(vertices)
+      : circle
+        ? new Circle(width / 2)
+        : new Box(width / 2, height / 2);
+    const collider = circle
+      ? outline
+      : vertices
+        ? collisionPolygon(vertices)
+        : new Box(
+            width / 2 - Settings.polygonRadius,
+            height / 2 - Settings.polygonRadius,
+          );
+    body.createFixture(collider, {
+      density: mass / area,
+      friction: mat.friction,
+      restitution: mat.restitution,
+    });
+    // Collision skin is numerical, not missing material. Preserve original mass,
+    // centroid and inertia for beam mechanics and fracture conservation.
+    const massData = { mass: 0, center: new Vec2(), I: 0 };
+    outline.computeMass(massData, mass / area);
+    body.setMassData(massData);
     const piece = {
       key,
       source,

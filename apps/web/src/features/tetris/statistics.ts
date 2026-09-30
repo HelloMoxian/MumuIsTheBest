@@ -10,7 +10,7 @@ export type TetrisHistory = {
   createdAt: string;
   updatedAt: string;
 };
-export type TetrisPreferences = { mouseMode: boolean; blockTheme: TetrisBlockTheme; createdAt: string; updatedAt: string };
+export type TetrisPreferences = { bestMatch: boolean; blockTheme: TetrisBlockTheme; createdAt: string; updatedAt: string };
 
 const KINDS = Object.keys(SHAPES) as Kind[];
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value);
@@ -102,18 +102,20 @@ export function clearTetrisHistory(storage: Pick<Storage, "setItem">, now = new 
 }
 export function defaultTetrisPreferences(now = new Date()): TetrisPreferences {
   const timestamp = now.toISOString();
-  return { mouseMode: false, blockTheme: "default", createdAt: timestamp, updatedAt: timestamp };
+  return { bestMatch: false, blockTheme: "default", createdAt: timestamp, updatedAt: timestamp };
 }
 export function loadTetrisPreferences(storage: Pick<Storage, "getItem">): TetrisPreferences {
   const raw = storage.getItem(TETRIS_PREFERENCES_STORAGE);
   if (!raw) return defaultTetrisPreferences();
   const value = JSON.parse(raw) as unknown;
-  if (!object(value) || value.schemaVersion !== 1 || value.stableId !== "tetris-preferences" || typeof value.mouseMode !== "boolean"
+  if (!object(value) || ![1, 2].includes(value.schemaVersion as number) || value.stableId !== "tetris-preferences"
     || !Number.isFinite(Date.parse(value.createdAt as string)) || !Number.isFinite(Date.parse(value.updatedAt as string))) throw new Error("俄罗斯方块设置不可用");
+  const bestMatch = typeof value.bestMatch === "boolean" ? value.bestMatch : typeof value.mouseMode === "boolean" ? value.mouseMode : undefined;
+  if (bestMatch === undefined) throw new Error("俄罗斯方块设置不可用");
   const blockTheme = value.blockTheme === undefined ? "default" : value.blockTheme;
   if (!TETRIS_BLOCK_THEMES.includes(blockTheme as TetrisBlockTheme)) throw new Error("俄罗斯方块设置不可用");
-  return { mouseMode: value.mouseMode, blockTheme: blockTheme as TetrisBlockTheme, createdAt: value.createdAt as string, updatedAt: value.updatedAt as string };
+  return { bestMatch, blockTheme: blockTheme as TetrisBlockTheme, createdAt: value.createdAt as string, updatedAt: value.updatedAt as string };
 }
 export function saveTetrisPreferences(storage: Pick<Storage, "setItem">, preferences: TetrisPreferences) {
-  storage.setItem(TETRIS_PREFERENCES_STORAGE, JSON.stringify({ schemaVersion: 1, stableId: "tetris-preferences", ...preferences, updatedAt: new Date().toISOString() }));
+  storage.setItem(TETRIS_PREFERENCES_STORAGE, JSON.stringify({ schemaVersion: 2, stableId: "tetris-preferences", ...preferences, updatedAt: new Date().toISOString() }));
 }

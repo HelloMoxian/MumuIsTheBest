@@ -167,6 +167,11 @@ const SymmetryDrawingPage = lazy(async () => {
   return { default: module.SymmetryDrawingPage };
 });
 
+const MetronomePage = lazy(async () => {
+  const module = await import("./features/metronome/MetronomePage");
+  return { default: module.MetronomePage };
+});
+
 const RockMineralGame = lazy(async () => {
   const module = await import("./features/rock-minerals/RockMineralGame");
   return { default: module.RockMineralGame };
@@ -332,6 +337,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     id: "art",
     title: "艺术",
     games: [
+      { title: "节拍器", mark: "♫", description: "跟着节拍，用不同乐器组成自己的小乐队", shape: "wide", href: "/art/metronome" },
       {
         title: "画图",
         mark: "✎",
@@ -551,6 +557,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
 ];
 
 const HOME_GAME_CARD_IMAGES: Record<string, string> = {
+  "/art/metronome": "metronome",
   "/games/sudoku": "sudoku",
   "/games/tetris": "tetris",
   "/games/super-blocks": "super-blocks",
@@ -1172,6 +1179,9 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/games/drawing-studio") {
     return <Suspense fallback={<ChemistryLoading label="星空画图舱" />}><DrawingStudioPage /></Suspense>;
+  }
+  if (window.location.pathname === "/art/metronome") {
+    return <Suspense fallback={<ChemistryLoading label="节拍器" />}><MetronomePage /></Suspense>;
   }
   if (window.location.pathname === "/games/symmetry-drawing") {
     return <Suspense fallback={<ChemistryLoading label="对称画创作舱" />}><SymmetryDrawingPage /></Suspense>;

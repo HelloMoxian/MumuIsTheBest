@@ -188,7 +188,7 @@ export function surfaceDistance(part: HousePart, point: Point) {
 export function overlaps(
   a: HousePart,
   b: HousePart,
-  tolerance = 0.012,
+  tolerance = 1e-9,
 ): boolean {
   if (a.shape === "circle" && b.shape === "circle")
     return (
@@ -228,14 +228,20 @@ export function overlaps(
   }
   return true;
 }
-export function validPlacement(part: HousePart, parts: HousePart[]) {
+export function validPlacement(
+  part: HousePart,
+  parts: HousePart[],
+  tolerance = 1e-9,
+) {
   const b = bounds(part);
   return (
-    b.left >= WORLD.left &&
-    b.right <= WORLD.right &&
-    b.bottom >= -0.001 &&
-    b.top <= WORLD.top &&
-    !parts.some((other) => other.id !== part.id && overlaps(part, other))
+    b.left >= WORLD.left - 1e-9 &&
+    b.right <= WORLD.right + 1e-9 &&
+    b.bottom >= -1e-9 &&
+    b.top <= WORLD.top + 1e-9 &&
+    !parts.some(
+      (other) => other.id !== part.id && overlaps(part, other, tolerance),
+    )
   );
 }
 function record(v: unknown): v is Record<string, unknown> {
@@ -249,7 +255,10 @@ function id(v: unknown): v is string {
     typeof v === "string" && /^[a-zA-Z0-9_-]{1,80}$/.test(v) && v !== "ground"
   );
 }
-export function parseHouseDesign(value: unknown): HouseDesign | undefined {
+export function parseHouseDesign(
+  value: unknown,
+  options: { legacyOverlap?: boolean } = {},
+): HouseDesign | undefined {
   if (
     !record(value) ||
     value.schemaVersion !== 1 ||
@@ -308,7 +317,8 @@ export function parseHouseDesign(value: unknown): HouseDesign | undefined {
       stiffness: p.stiffness,
       loadMass: p.loadMass,
     } as HousePart;
-    if (!validPlacement(part, parts)) return;
+    if (!validPlacement(part, parts, options.legacyOverlap ? 0.012 : 1e-9))
+      return;
     parts.push(part);
   }
   const connections: HouseConnection[] = [];

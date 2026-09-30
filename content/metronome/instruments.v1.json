@@ -1,0 +1,369 @@
+{
+  "schemaVersion": 1,
+  "instruments": [
+    {
+      "id": "piano",
+      "name": "钢琴",
+      "family": "键盘",
+      "program": 0,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "electric-piano",
+      "name": "电钢琴",
+      "family": "键盘",
+      "program": 4,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "organ",
+      "name": "管风琴",
+      "family": "键盘",
+      "program": 19,
+      "base": 60,
+      "sustain": true
+    },
+    {
+      "id": "accordion",
+      "name": "手风琴",
+      "family": "键盘",
+      "program": 21,
+      "base": 60,
+      "sustain": true
+    },
+    {
+      "id": "guitar",
+      "name": "木吉他",
+      "family": "拨弦",
+      "program": 24,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "steel-guitar",
+      "name": "钢弦吉他",
+      "family": "拨弦",
+      "program": 25,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "electric-guitar",
+      "name": "电吉他",
+      "family": "拨弦",
+      "program": 27,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "harp",
+      "name": "竖琴",
+      "family": "拨弦",
+      "program": 46,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "banjo",
+      "name": "班卓琴",
+      "family": "拨弦",
+      "program": 105,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "violin",
+      "name": "小提琴",
+      "family": "拉弦",
+      "program": 40,
+      "base": 72,
+      "sustain": true
+    },
+    {
+      "id": "viola",
+      "name": "中提琴",
+      "family": "拉弦",
+      "program": 41,
+      "base": 60,
+      "sustain": true
+    },
+    {
+      "id": "cello",
+      "name": "大提琴",
+      "family": "拉弦",
+      "program": 42,
+      "base": 48,
+      "sustain": true
+    },
+    {
+      "id": "pizzicato",
+      "name": "拨奏弦乐",
+      "family": "拉弦",
+      "program": 45,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "flute",
+      "name": "长笛",
+      "family": "管乐",
+      "program": 73,
+      "base": 72,
+      "sustain": true
+    },
+    {
+      "id": "recorder",
+      "name": "竖笛",
+      "family": "管乐",
+      "program": 74,
+      "base": 72,
+      "sustain": true
+    },
+    {
+      "id": "clarinet",
+      "name": "单簧管",
+      "family": "管乐",
+      "program": 71,
+      "base": 60,
+      "sustain": true
+    },
+    {
+      "id": "oboe",
+      "name": "双簧管",
+      "family": "管乐",
+      "program": 68,
+      "base": 60,
+      "sustain": true
+    },
+    {
+      "id": "bassoon",
+      "name": "巴松管",
+      "family": "管乐",
+      "program": 70,
+      "base": 48,
+      "sustain": true
+    },
+    {
+      "id": "sax",
+      "name": "萨克斯",
+      "family": "管乐",
+      "program": 65,
+      "base": 60,
+      "sustain": true
+    },
+    {
+      "id": "trumpet",
+      "name": "小号",
+      "family": "管乐",
+      "program": 56,
+      "base": 60,
+      "sustain": true
+    },
+    {
+      "id": "trombone",
+      "name": "长号",
+      "family": "管乐",
+      "program": 57,
+      "base": 48,
+      "sustain": true
+    },
+    {
+      "id": "horn",
+      "name": "圆号",
+      "family": "管乐",
+      "program": 60,
+      "base": 48,
+      "sustain": true
+    },
+    {
+      "id": "bass",
+      "name": "贝斯",
+      "family": "低音",
+      "program": 33,
+      "base": 36,
+      "sustain": false
+    },
+    {
+      "id": "acoustic-bass",
+      "name": "低音提琴",
+      "family": "低音",
+      "program": 32,
+      "base": 36,
+      "sustain": false
+    },
+    {
+      "id": "xylophone",
+      "name": "木琴",
+      "family": "打击乐",
+      "program": 13,
+      "base": 72,
+      "sustain": false
+    },
+    {
+      "id": "marimba",
+      "name": "马林巴",
+      "family": "打击乐",
+      "program": 12,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "vibraphone",
+      "name": "颤音琴",
+      "family": "打击乐",
+      "program": 11,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "glockenspiel",
+      "name": "钟琴",
+      "family": "打击乐",
+      "program": 9,
+      "base": 72,
+      "sustain": false
+    },
+    {
+      "id": "steel-drums",
+      "name": "钢鼓",
+      "family": "打击乐",
+      "program": 114,
+      "base": 60,
+      "sustain": false
+    },
+    {
+      "id": "music-box",
+      "name": "音乐盒",
+      "family": "打击乐",
+      "program": 10,
+      "base": 72,
+      "sustain": false
+    },
+    {
+      "id": "taiko",
+      "name": "太鼓",
+      "family": "鼓",
+      "program": 116,
+      "base": 48,
+      "sustain": false
+    },
+    {
+      "id": "timpani",
+      "name": "定音鼓",
+      "family": "鼓",
+      "program": 47,
+      "base": 48,
+      "sustain": false
+    },
+    {
+      "id": "drum-kit",
+      "name": "架子鼓",
+      "family": "鼓",
+      "program": null,
+      "base": 0,
+      "sustain": false,
+      "drums": [
+        36,
+        38,
+        42,
+        46,
+        45,
+        47,
+        50,
+        49,
+        51,
+        39
+      ]
+    },
+    {
+      "id": "hand-drums",
+      "name": "手鼓",
+      "family": "鼓",
+      "program": null,
+      "base": 0,
+      "sustain": false,
+      "drums": [
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69
+      ]
+    },
+    {
+      "id": "shakers",
+      "name": "沙锤与铃鼓",
+      "family": "打击乐",
+      "program": null,
+      "base": 0,
+      "sustain": false,
+      "drums": [
+        70,
+        69,
+        54,
+        56,
+        75,
+        76,
+        77,
+        80,
+        81,
+        39
+      ]
+    },
+    {
+      "id": "cymbals",
+      "name": "镲与三角铁",
+      "family": "打击乐",
+      "program": null,
+      "base": 0,
+      "sustain": false,
+      "drums": [
+        49,
+        57,
+        51,
+        59,
+        52,
+        55,
+        53,
+        80,
+        81,
+        54
+      ]
+    },
+    {
+      "id": "wood",
+      "name": "木块与响棒",
+      "family": "打击乐",
+      "program": null,
+      "base": 0,
+      "sustain": false,
+      "drums": [
+        75,
+        76,
+        77,
+        73,
+        74,
+        67,
+        68,
+        56,
+        58,
+        39
+      ]
+    },
+    {
+      "id": "woodblock",
+      "name": "木块",
+      "family": "打击乐",
+      "program": 115,
+      "base": 60,
+      "sustain": false
+    }
+  ]
+}

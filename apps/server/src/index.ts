@@ -26,6 +26,7 @@ import { registerBejeweledApi } from "./bejeweled.js";
 import { registerMathKnowledgeTowerApi } from "./math-knowledge-tower.js";
 import { registerMultiplicationHistoryApi } from "./multiplication-history.js";
 import { registerPersistentUserDataApi } from "./persistent-user-data.js";
+import { registerMetronomeApi } from "./metronome.js";
 import { registerWorldTowerApi } from "./world-tower.js";
 
 const defaultEndpoint =
@@ -549,6 +550,7 @@ async function main() {
   registerMultiplicationHistoryApi(app, appDataDir);
   registerCommonCharacterProgressApi(app, appDataDir);
   registerPersistentUserDataApi(app, appDataDir);
+  registerMetronomeApi(app, appDataDir);
   registerDrawingStudioWorksApi(app, appDataDir);
   registerNatureGeographyApi(app, appDataDir);
   const energyWallet = registerFruitSliceHistoryApi(app, appDataDir);

@@ -1,0 +1,1255 @@
+{
+  "schemaVersion": 1,
+  "generator": "built-in image_gen",
+  "sourceGrid": {
+    "columns": 4,
+    "rows": 4,
+    "indexOrder": "row-major-zero-based"
+  },
+  "sources": [
+    {
+      "file": "atlas-a.png",
+      "sha256": "72561875dc229786d99ce7293d73b9cdccd3c3983622f6c24a6d1b5efd1008b8"
+    },
+    {
+      "file": "atlas-b.png",
+      "sha256": "f6e8937040d9d6deaa1c88b3e615f46d737e4eb9b7a43f4938f0ad175d0fce75"
+    },
+    {
+      "file": "atlas-c.png",
+      "sha256": "c19a655ca2056a16c68e91384e0533eea8dcbfa91da6d92a50c81941b39e5479"
+    }
+  ],
+  "unusedCells": {
+    "c": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "items": [
+    {
+      "id": "piano",
+      "name": "钢琴",
+      "sheet": "a",
+      "row": 0,
+      "column": 0,
+      "sourceBox": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "trimBox": [
+        26,
+        20,
+        298,
+        307
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.390778,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/piano.webp",
+      "sha256": "4b162af4e11812a59add492db215ab69cca7d2aca906b3eb16b3a20aad586e11"
+    },
+    {
+      "id": "electric-piano",
+      "name": "电钢琴",
+      "sheet": "a",
+      "row": 0,
+      "column": 1,
+      "sourceBox": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "trimBox": [
+        23,
+        103,
+        307,
+        237
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.224915,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/electric-piano.webp",
+      "sha256": "c832fbb054d9cb133e1f449fca5f589aa9da17b859c37bf2a5a86acc481a25ea"
+    },
+    {
+      "id": "organ",
+      "name": "管风琴",
+      "sheet": "a",
+      "row": 0,
+      "column": 2,
+      "sourceBox": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "trimBox": [
+        42,
+        14,
+        271,
+        294
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.548523,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/organ.webp",
+      "sha256": "fa6193dfb036960b3345f8fdee369260d0749d9ba28c92409c5621170f50c0d3"
+    },
+    {
+      "id": "accordion",
+      "name": "手风琴",
+      "sheet": "a",
+      "row": 0,
+      "column": 3,
+      "sourceBox": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "trimBox": [
+        28,
+        68,
+        288,
+        258
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.492447,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/accordion.webp",
+      "sha256": "73bdc7c4bd63c4f0e0fccae47cd7400178137e145dfa5a898a41f740af83d3e0"
+    },
+    {
+      "id": "guitar",
+      "name": "木吉他",
+      "sheet": "a",
+      "row": 1,
+      "column": 0,
+      "sourceBox": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "trimBox": [
+        33,
+        9,
+        292,
+        286
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.25267,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/guitar.webp",
+      "sha256": "288ba342b147ba4981f147e7e189fe90ce4d37950caa6d41075cadb3b9fa2597"
+    },
+    {
+      "id": "steel-guitar",
+      "name": "钢弦吉他",
+      "sheet": "a",
+      "row": 1,
+      "column": 1,
+      "sourceBox": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "trimBox": [
+        29,
+        14,
+        283,
+        288
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.280777,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/steel-guitar.webp",
+      "sha256": "6decc783be227fef161727c596c19c0a0ef4fae27bc1a1672bb12c8c9ded740b"
+    },
+    {
+      "id": "electric-guitar",
+      "name": "电吉他",
+      "sheet": "a",
+      "row": 1,
+      "column": 2,
+      "sourceBox": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "trimBox": [
+        30,
+        16,
+        290,
+        287
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.238266,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/electric-guitar.webp",
+      "sha256": "eb888238893e5be7d090607e2a3d688236dfe62a7512f2ff33cb3c18828d6776"
+    },
+    {
+      "id": "harp",
+      "name": "竖琴",
+      "sheet": "a",
+      "row": 1,
+      "column": 3,
+      "sourceBox": [
+        940,
+        314,
+        1254,
+        624
+      ],
+      "trimBox": [
+        67,
+        3,
+        256,
+        293
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.3125,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/harp.webp",
+      "sha256": "4a04688b173c67d0ae172fbb41aba4b88e45442a72775738b4353bb659466df5"
+    },
+    {
+      "id": "banjo",
+      "name": "班卓琴",
+      "sheet": "a",
+      "row": 2,
+      "column": 0,
+      "sourceBox": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "trimBox": [
+        40,
+        1,
+        282,
+        287
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.217346,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/banjo.webp",
+      "sha256": "ef8eaa38e68f7e7c91d3e9b1536d63f5b673367e4f2753ce939305f02ddb1ee8"
+    },
+    {
+      "id": "violin",
+      "name": "小提琴",
+      "sheet": "a",
+      "row": 2,
+      "column": 1,
+      "sourceBox": [
+        314,
+        627,
+        627,
+        940
+      ],
+      "trimBox": [
+        51,
+        13,
+        273,
+        286
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.232208,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/violin.webp",
+      "sha256": "6e858ed243dbe0555565f63fb772fe8978bc7ff55a05f60b2c6db4b207f3feb2"
+    },
+    {
+      "id": "viola",
+      "name": "中提琴",
+      "sheet": "a",
+      "row": 2,
+      "column": 2,
+      "sourceBox": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "trimBox": [
+        48,
+        3,
+        275,
+        286
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.264893,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/viola.webp",
+      "sha256": "c3576970a94f6be4134b2845ac970d4fbd57bfcd7b438b262a0eb51f0d98be8f"
+    },
+    {
+      "id": "cello",
+      "name": "大提琴",
+      "sheet": "a",
+      "row": 2,
+      "column": 3,
+      "sourceBox": [
+        940,
+        624,
+        1254,
+        940
+      ],
+      "trimBox": [
+        71,
+        0,
+        244,
+        301
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.195816,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/cello.webp",
+      "sha256": "7f4392274212b70635210e587667079ccc2e7757d669193499046960fc3d9864"
+    },
+    {
+      "id": "pizzicato",
+      "name": "拨奏弦乐",
+      "sheet": "a",
+      "row": 3,
+      "column": 0,
+      "sourceBox": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "trimBox": [
+        61,
+        4,
+        273,
+        270
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.241577,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/pizzicato.webp",
+      "sha256": "c0b4fa55c87cc8fb4545d60ee1018e8eb32e5141b6e14a4adec732cae81130a2"
+    },
+    {
+      "id": "flute",
+      "name": "长笛",
+      "sheet": "a",
+      "row": 3,
+      "column": 1,
+      "sourceBox": [
+        314,
+        940,
+        627,
+        1254
+      ],
+      "trimBox": [
+        23,
+        12,
+        291,
+        263
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.094894,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/flute.webp",
+      "sha256": "4967b6afea62d2601e8fc710a31fb014179c91987b930a46e0d3ed5e713a5923"
+    },
+    {
+      "id": "recorder",
+      "name": "竖笛",
+      "sheet": "a",
+      "row": 3,
+      "column": 2,
+      "sourceBox": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "trimBox": [
+        48,
+        15,
+        256,
+        263
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.112991,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/recorder.webp",
+      "sha256": "ae1156b8c858b4f6baf929a060789545a389c35f3f93728c3135e4dfcdf283d2"
+    },
+    {
+      "id": "clarinet",
+      "name": "单簧管",
+      "sheet": "a",
+      "row": 3,
+      "column": 3,
+      "sourceBox": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "trimBox": [
+        41,
+        1,
+        263,
+        272
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.111023,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/clarinet.webp",
+      "sha256": "b5943663392ce54d2c601bda036a50e6a1a1363385f9032b0719af693df350d6"
+    },
+    {
+      "id": "oboe",
+      "name": "双簧管",
+      "sheet": "b",
+      "row": 0,
+      "column": 0,
+      "sourceBox": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "trimBox": [
+        62,
+        27,
+        266,
+        296
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.088211,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/oboe.webp",
+      "sha256": "571186a9ef30f1315031818897b2cc222b5c575fc93d1e136704c536a20a7b88"
+    },
+    {
+      "id": "bassoon",
+      "name": "巴松管",
+      "sheet": "b",
+      "row": 0,
+      "column": 1,
+      "sourceBox": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "trimBox": [
+        64,
+        16,
+        273,
+        306
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.101151,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/bassoon.webp",
+      "sha256": "09b08be4138d29f005cb3257c4daafd3d43e719a451d635515077eca299d5527"
+    },
+    {
+      "id": "sax",
+      "name": "萨克斯",
+      "sheet": "b",
+      "row": 0,
+      "column": 2,
+      "sourceBox": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "trimBox": [
+        59,
+        20,
+        252,
+        296
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.194931,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/sax.webp",
+      "sha256": "8f42bc6d6cbfc7870dc995f59688f9ef9bf6855179f337ba5a6509e8413fd8c4"
+    },
+    {
+      "id": "trumpet",
+      "name": "小号",
+      "sheet": "b",
+      "row": 0,
+      "column": 3,
+      "sourceBox": [
+        940,
+        0,
+        1254,
+        313
+      ],
+      "trimBox": [
+        19,
+        68,
+        294,
+        240
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.168503,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/trumpet.webp",
+      "sha256": "a8821a9a706b266f5aee49eb60fb3a5a17e83a3974c4818829ef4f7ef025102b"
+    },
+    {
+      "id": "trombone",
+      "name": "长号",
+      "sheet": "b",
+      "row": 1,
+      "column": 0,
+      "sourceBox": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "trimBox": [
+        31,
+        55,
+        297,
+        272
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.157455,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/trombone.webp",
+      "sha256": "dbfae33086d680cdd1ffa7081b34b456a7d25e3f44e9419061f1d5c51885a9b9"
+    },
+    {
+      "id": "horn",
+      "name": "圆号",
+      "sheet": "b",
+      "row": 1,
+      "column": 1,
+      "sourceBox": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "trimBox": [
+        24,
+        38,
+        287,
+        248
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.364395,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/horn.webp",
+      "sha256": "ff22deb99fed70056941bad6f2d21de7a73d592459c473c54850723450da069b"
+    },
+    {
+      "id": "bass",
+      "name": "贝斯",
+      "sheet": "b",
+      "row": 1,
+      "column": 2,
+      "sourceBox": [
+        627,
+        314,
+        940,
+        627
+      ],
+      "trimBox": [
+        24,
+        7,
+        291,
+        295
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.182526,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/bass.webp",
+      "sha256": "065ee0e07437dbe38797655b602bdcbaf8e986babbee22d5407eee4edd7c5288"
+    },
+    {
+      "id": "acoustic-bass",
+      "name": "低音提琴",
+      "sheet": "b",
+      "row": 1,
+      "column": 3,
+      "sourceBox": [
+        940,
+        313,
+        1254,
+        627
+      ],
+      "trimBox": [
+        98,
+        1,
+        233,
+        313
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.179977,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/acoustic-bass.webp",
+      "sha256": "27ba20406160b7f3c7d82ae87f88a4bfadc2065a63ede8a3a0c133256453d49f"
+    },
+    {
+      "id": "xylophone",
+      "name": "木琴",
+      "sheet": "b",
+      "row": 2,
+      "column": 0,
+      "sourceBox": [
+        0,
+        627,
+        314,
+        940
+      ],
+      "trimBox": [
+        19,
+        69,
+        298,
+        239
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.288849,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/xylophone.webp",
+      "sha256": "2b450bd24eb05433ae7dda9f34fc9d6baafec2736385d0a4364de8b1f187e024"
+    },
+    {
+      "id": "marimba",
+      "name": "马林巴",
+      "sheet": "b",
+      "row": 2,
+      "column": 1,
+      "sourceBox": [
+        314,
+        627,
+        627,
+        927
+      ],
+      "trimBox": [
+        15,
+        41,
+        291,
+        252
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.359177,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/marimba.webp",
+      "sha256": "04b3a4b0dc059bd2ce17f5742cdb261d9281c4be8765dbb325189f9b95b5a255"
+    },
+    {
+      "id": "vibraphone",
+      "name": "颤音琴",
+      "sheet": "b",
+      "row": 2,
+      "column": 2,
+      "sourceBox": [
+        627,
+        627,
+        940,
+        940
+      ],
+      "trimBox": [
+        17,
+        44,
+        299,
+        256
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.349625,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/vibraphone.webp",
+      "sha256": "778876461fada52f5f5df7d538c098218f3d752efa9d4d4fd0f5895ba2539b63"
+    },
+    {
+      "id": "glockenspiel",
+      "name": "钟琴",
+      "sheet": "b",
+      "row": 2,
+      "column": 3,
+      "sourceBox": [
+        940,
+        627,
+        1254,
+        940
+      ],
+      "trimBox": [
+        16,
+        42,
+        294,
+        274
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.481277,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/glockenspiel.webp",
+      "sha256": "33df665f995aff6d1d3dd1085495378acde8ec0cb7a980ff664e30662e33d04f"
+    },
+    {
+      "id": "steel-drums",
+      "name": "钢鼓",
+      "sheet": "b",
+      "row": 3,
+      "column": 0,
+      "sourceBox": [
+        0,
+        940,
+        314,
+        1254
+      ],
+      "trimBox": [
+        31,
+        22,
+        293,
+        250
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.582306,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/steel-drums.webp",
+      "sha256": "8b1047aeaf37a7eb58cb473016ab784be4b69bb39580b448901c46d426cd2d66"
+    },
+    {
+      "id": "music-box",
+      "name": "音乐盒",
+      "sheet": "b",
+      "row": 3,
+      "column": 1,
+      "sourceBox": [
+        314,
+        927,
+        627,
+        1254
+      ],
+      "trimBox": [
+        29,
+        0,
+        297,
+        282
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.476715,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/music-box.webp",
+      "sha256": "764c1f17a732204c173ceeec4cb66db7135427fef6a697d961c4655f50a787bf"
+    },
+    {
+      "id": "taiko",
+      "name": "太鼓",
+      "sheet": "b",
+      "row": 3,
+      "column": 2,
+      "sourceBox": [
+        627,
+        940,
+        940,
+        1254
+      ],
+      "trimBox": [
+        29,
+        0,
+        298,
+        277
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.592041,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/taiko.webp",
+      "sha256": "2f860e97fb4b5f23af503febd2ec86008fc9b1fdd94623df3af0a73fc0d52ee4"
+    },
+    {
+      "id": "timpani",
+      "name": "定音鼓",
+      "sheet": "b",
+      "row": 3,
+      "column": 3,
+      "sourceBox": [
+        940,
+        940,
+        1254,
+        1254
+      ],
+      "trimBox": [
+        27,
+        8,
+        285,
+        271
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.546539,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/timpani.webp",
+      "sha256": "afa82a694d3aabe464377cfcdcf1e54da62df78acf75c3f6d64d88cef8a91830"
+    },
+    {
+      "id": "drum-kit",
+      "name": "架子鼓",
+      "sheet": "c",
+      "row": 0,
+      "column": 0,
+      "sourceBox": [
+        0,
+        0,
+        314,
+        314
+      ],
+      "trimBox": [
+        25,
+        58,
+        295,
+        304
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.421158,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/drum-kit.webp",
+      "sha256": "ea64572033477218b69edd500b4caa950ea535998d8aed6a2819e256c22b1ef5"
+    },
+    {
+      "id": "hand-drums",
+      "name": "手鼓",
+      "sheet": "c",
+      "row": 0,
+      "column": 1,
+      "sourceBox": [
+        314,
+        0,
+        627,
+        314
+      ],
+      "trimBox": [
+        28,
+        52,
+        292,
+        295
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.458588,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/hand-drums.webp",
+      "sha256": "0748293d145688362de5aeaf4f0af0f3c48a8ffa95394112e6112d22498f9a80"
+    },
+    {
+      "id": "shakers",
+      "name": "沙锤与铃鼓",
+      "sheet": "c",
+      "row": 0,
+      "column": 2,
+      "sourceBox": [
+        627,
+        0,
+        940,
+        314
+      ],
+      "trimBox": [
+        30,
+        72,
+        287,
+        292
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.398209,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/shakers.webp",
+      "sha256": "9e2cfc642f95fba5a89bd26aa9e2f48e6e3c7a807c1753af4aa2b986d64d6bb6"
+    },
+    {
+      "id": "cymbals",
+      "name": "镲与三角铁",
+      "sheet": "c",
+      "row": 0,
+      "column": 3,
+      "sourceBox": [
+        940,
+        0,
+        1254,
+        314
+      ],
+      "trimBox": [
+        19,
+        59,
+        287,
+        287
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.276138,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/cymbals.webp",
+      "sha256": "36ee17ef3dd394e9fb1eaa66d84818f345af3840b1e692ac8e9540545b9a5923"
+    },
+    {
+      "id": "wood",
+      "name": "木块与响棒",
+      "sheet": "c",
+      "row": 1,
+      "column": 0,
+      "sourceBox": [
+        0,
+        314,
+        314,
+        627
+      ],
+      "trimBox": [
+        34,
+        70,
+        289,
+        285
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.420959,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/wood.webp",
+      "sha256": "1703314fcc7cdf5a3f44bb1c58366719eaf92486d06f8a25e62c6f5d7c611ba4"
+    },
+    {
+      "id": "woodblock",
+      "name": "木块",
+      "sheet": "c",
+      "row": 1,
+      "column": 1,
+      "sourceBox": [
+        314,
+        314,
+        627,
+        627
+      ],
+      "trimBox": [
+        24,
+        95,
+        280,
+        269
+      ],
+      "nativeAlpha": true,
+      "alphaNoiseFloor": 8,
+      "outputWidth": 256,
+      "outputHeight": 256,
+      "opaqueCoverage": 0.317978,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "file": "/images/metronome/instruments/v1/woodblock.webp",
+      "sha256": "1efacaf7cff0fc9970516cc5b99b035e893f88b8f5b6ff6cf6701a2f1a985e2e"
+    }
+  ]
+}

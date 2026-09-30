@@ -1,3 +1,9 @@
+import {
+  parseHouseLevels,
+  mergeHouseLevels,
+  levelName,
+  type HouseLevel,
+} from "./house-building-levels.js";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { mkdtemp, readFile, writeFile, rm, stat } from "node:fs/promises";
@@ -209,6 +215,11 @@ test("house v2 files: failed writes retry and corrupt or future files refuse ove
       migrateHouseWorkspace(payload())!,
     ],
     [
+      "physics-house-levels",
+      "house-levels.json",
+      { schemaVersion: 1, levels: [savedLevel("failure-retry")] },
+    ],
+    [
       "physics-house-history",
       "house-history.json",
       { schemaVersion: 1, records: [completion("first")] },
@@ -401,6 +412,169 @@ test("house: serialized concurrent writes leave a complete latest design", async
       (await app.inject({ method: "GET", url })).json().state.payload.settings
         .windSpeed,
       7,
+    );
+  });
+});
+
+test("custom task layout and environment save and reload with a completion record", async () => {
+  await fixture(async (app) => {
+    const record = completion("custom-layout-report");
+    record.modelVersion = 3;
+    record.result.cost = 2;
+    record.workspace.challenge = {
+      ...record.workspace.challenge,
+      layoutVersion: 2,
+      height: 18.3,
+      target: { x: 12.2, y: 8.5 },
+    };
+    record.workspace.design.settings.windSpeed = 32;
+    record.workspace.design.settings.quakeAcceleration = 4.2;
+    record.workspace.view.wind = true;
+    record.workspace.view.quake = true;
+    const url = "/api/persistent-data/physics-house-history";
+    assert.equal(
+      (
+        await app.inject({
+          method: "PUT",
+          url,
+          payload: { payload: { schemaVersion: 1, records: [record] } },
+        })
+      ).statusCode,
+      200,
+    );
+    assert.deepEqual(
+      (await app.inject({ method: "GET", url })).json().state.payload.records,
+      [record],
+    );
+  });
+});
+
+function savedLevel(id: string): HouseLevel {
+  const workspace = migrateHouseWorkspace(payload())!;
+  workspace.challenge = {
+    ...workspace.challenge,
+    layoutVersion: 3,
+    zones: [
+      {
+        id: "zone",
+        kind: "required",
+        enabled: true,
+        left: -1,
+        right: 1,
+        bottom: 0,
+        top: 2,
+      },
+    ],
+  };
+  workspace.design.settings.windSpeed = 32;
+  workspace.design.settings.quakeAcceleration = 4.2;
+  workspace.view.wind = true;
+  workspace.view.quake = true;
+  return {
+    id,
+    name: "关卡一",
+    revision: 1,
+    createdAt: "2026-10-01T00:00:00.000Z",
+    updatedAt: "2026-10-01T00:00:00.000Z",
+    workspace,
+  };
+}
+test("levels: empty library, concurrent append, retry, rename and exact workspace reload", async () => {
+  await fixture(async (app) => {
+    const url = "/api/persistent-data/physics-house-levels";
+    assert.equal((await app.inject({ method: "GET", url })).json().state, null);
+    const put = (level: HouseLevel) =>
+      app.inject({
+        method: "PUT",
+        url,
+        payload: { payload: { schemaVersion: 1, levels: [level] } },
+      });
+    const a = savedLevel("a"),
+      b = savedLevel("b");
+    assert.ok(
+      (await Promise.all([put(a), put(b)])).every((r) => r.statusCode === 200),
+    );
+    assert.equal((await put(b)).statusCode, 200);
+    let library = (await app.inject({ method: "GET", url })).json().state
+      .payload;
+    assert.equal(library.levels.length, 2);
+    assert.deepEqual(library.levels[0].workspace, a.workspace);
+    assert.equal(library.levels[1].name, "关卡二");
+    const renamed = {
+      ...a,
+      name: "跨河大桥",
+      revision: 2,
+      updatedAt: "2026-10-01T01:00:00.000Z",
+    };
+    assert.equal((await put(renamed)).statusCode, 200);
+    assert.equal((await put(renamed)).statusCode, 200);
+    assert.notEqual(
+      (await put({ ...renamed, name: "旧页面修改" })).statusCode,
+      200,
+    );
+    library = (await app.inject({ method: "GET", url })).json().state.payload;
+    assert.equal(library.levels[0].name, "跨河大桥");
+    assert.deepEqual(library.levels[0].workspace, a.workspace);
+    assert.equal(library.levels.length, 2);
+  });
+});
+test("levels: strict names, versions, workspaces and migration preserve legacy workspace", () => {
+  const a = savedLevel("a"),
+    valid = { schemaVersion: 1 as const, levels: [a] };
+  assert.deepEqual(parseHouseLevels(valid), valid);
+  assert.deepEqual(parseHouseLevels({ schemaVersion: 1, levels: [] }), {
+    schemaVersion: 1,
+    levels: [],
+  });
+  for (const bad of [
+    { ...valid, schemaVersion: 99 },
+    { ...valid, levels: [a, a] },
+    { ...valid, levels: [{ ...a, name: " " }] },
+    { ...valid, levels: [{ ...a, workspace: {} }] },
+    { ...valid, levels: [{ ...a, revision: 0 }] },
+  ])
+    assert.equal(parseHouseLevels(bad), undefined);
+  const legacy = savedLevel("legacy");
+  legacy.workspace = migrateHouseWorkspace(payload())!;
+  assert.ok(parseHouseLevels({ schemaVersion: 1, levels: [legacy] }));
+  assert.throws(() =>
+    mergeHouseLevels(valid, {
+      schemaVersion: 1,
+      levels: [{ ...a, revision: 3 }],
+    }),
+  );
+  assert.equal(levelName(10), "关卡十");
+  assert.equal(levelName(21), "关卡二十一");
+});
+
+test("legacy tiny overlaps remain readable but cannot enter new persisted layouts", async () => {
+  await fixture(async (app, dir) => {
+    const w = migrateHouseWorkspace(payload())!;
+    w.design.parts.push({ ...w.design.parts[0], id: "block-2", x: 0.795 });
+    assert.equal(parseHouseDesign(w.design), undefined);
+    assert.ok(parseHouseDesign(w.design, { legacyOverlap: true }));
+    const url = "/api/persistent-data/physics-house-workspace";
+    assert.equal(
+      (await app.inject({ method: "PUT", url, payload: { payload: w } }))
+        .statusCode,
+      400,
+    );
+    const good = migrateHouseWorkspace(payload())!;
+    assert.equal(
+      (await app.inject({ method: "PUT", url, payload: { payload: good } }))
+        .statusCode,
+      200,
+    );
+    const path = resolve(dir, "learning/physics/house-workspace.v2.json");
+    const envelope = JSON.parse(await readFile(path, "utf8"));
+    envelope.payload = w;
+    await writeFile(path, JSON.stringify(envelope));
+    assert.equal((await app.inject({ method: "GET", url })).statusCode, 200);
+    w.design.parts[1].x = 0.8;
+    assert.equal(
+      (await app.inject({ method: "PUT", url, payload: { payload: w } }))
+        .statusCode,
+      200,
     );
   });
 });

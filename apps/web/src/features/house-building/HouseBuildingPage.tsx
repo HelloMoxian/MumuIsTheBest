@@ -6,6 +6,9 @@ import {
   queuePersistentDataWrite,
 } from "../../shared/persistent-data";
 import { HouseSimulation, STEP, type SimulationSnapshot } from "./engine";
+import { TaskAreasPanel } from "./TaskAreasPanel";
+import type { TaskDrawKind } from "./task-layout";
+import { HouseLevelsPanel } from "./HouseLevelsPanel";
 import { HouseStage } from "./HouseStage";
 import {
   MATERIALS,
@@ -21,6 +24,7 @@ import {
   partMass,
   partCost,
   placeAbove,
+  placeCopy,
   placeNear,
   snapPart,
   validPlacement,
@@ -47,7 +51,9 @@ import {
   type ChallengeProgress,
 } from "./challenge";
 import "./house-building.css";
+import { moveTaskGoal, taskCamera } from "./task-layout";
 
+const STRENGTH_LABELS = ["很弱", "弱", "中", "强", "超强"];
 const uid = () => crypto.randomUUID();
 const seed = () => crypto.getRandomValues(new Uint32Array(1))[0];
 const fmt = (v: number, d = 1) =>
@@ -167,7 +173,13 @@ function MaterialSelect({
                     className="button house-tier"
                     aria-pressed={value === id}
                     aria-label={
-                      m.name +
+                      {
+                        wood: "木头",
+                        stone: "石头",
+                        metal: "金属",
+                        elastic: "弹性",
+                      }[group] +
+                      STRENGTH_LABELS[m.tier - 1] +
                       "，抗弯 " +
                       fmt(m.bendingStrength / 1e6) +
                       " MPa，造价 " +
@@ -182,7 +194,7 @@ function MaterialSelect({
                         ✓
                       </span>
                     )}
-                    <b>{m.tier}</b>
+                    <b>{STRENGTH_LABELS[m.tier - 1]}</b>
                   </button>
                   <span
                     className="house-material-tooltip"
@@ -304,6 +316,9 @@ export function HouseBuildingPage() {
     dirty = useRef(false);
   const [loadAttempt, setLoadAttempt] = useState(0),
     [saveAttempt, setSaveAttempt] = useState(0);
+  const [taskPanel, setTaskPanel] = useState(false);
+  const [levelsPanel, setLevelsPanel] = useState(false);
+  const [drawingTask, setDrawingTask] = useState<TaskDrawKind>();
   const [mode, setMode] = useState<"build" | "running" | "paused">("build");
   const [selected, setSelected] = useState<string>(),
     [material, setMaterial] = useState<MaterialId>("wood_t3");
@@ -354,6 +369,7 @@ export function HouseBuildingPage() {
   const { design, view, challenge } = workspace;
   const building = mode === "build",
     active = challengeActive(challenge);
+  const addAnchor = useRef<string | undefined>(undefined);
   const chosen = design.parts.find((p) => p.id === selected);
   const mass = design.parts.reduce((sum, p) => sum + partMass(p), 0);
   const cost = design.parts.reduce((sum, p) => sum + partCost(p), 0);
@@ -586,12 +602,23 @@ export function HouseBuildingPage() {
     setGhost(undefined);
   };
   const start = () => {
+    setTaskPanel(false);
+    setLevelsPanel(false);
+    setDrawingTask(undefined);
     if (!design.parts.length) {
       setNotice("先放一块积木，再开始运行。");
       return;
     }
     if (!groundPlacementAllowed(design, challenge)) {
-      setNotice("先把贴地的积木移入亮色地基范围；其他地面不能搭建。");
+      setNotice(
+        "贴地积木必须完整放在一段亮色地基内；请加宽地基、缩短积木或调整位置。",
+      );
+      return;
+    }
+    if (!parseHouseDesign(design)) {
+      setNotice(
+        "方案中有积木重叠，请移动重叠积木使边缘贴合后再运行。原方案已保留。",
+      );
       return;
     }
     const engine = new HouseSimulation(design, {
@@ -616,6 +643,19 @@ export function HouseBuildingPage() {
         : "观察风、地震、压力与倾倒。返回搭建可恢复原方案。",
     );
   };
+  const refreshRunParameters = () => {
+    if (!sim.current || !runWorkspace.current || progressRef.current.done)
+      return;
+    runWorkspace.current.design.settings = {
+      ...current.current.design.settings,
+    };
+    runWorkspace.current.view = { ...current.current.view };
+    if (active) {
+      progressRef.current = initialProgress();
+      setProgress(initialProgress());
+      setNotice("参数已调整，按新条件重新保持 10 秒。");
+    }
+  };
   const setting = (patch: Partial<ExperimentSettings>) => {
     const next = {
       ...current.current,
@@ -624,12 +664,15 @@ export function HouseBuildingPage() {
         settings: { ...current.current.design.settings, ...patch },
       },
     };
-    if (change(next, false) && sim.current)
+    if (change(next, false) && sim.current) {
       Object.assign(sim.current.settings, patch);
+      refreshRunParameters();
+    }
   };
   const toggleForce = (key: "wind" | "quake", value: boolean) => {
     changeView({ [key]: value });
     if (sim.current) sim.current[key] = value;
+    refreshRunParameters();
   };
   const updatePart = (part: HousePart) => {
     const old = design.parts.find((p) => p.id === part.id);
@@ -654,7 +697,7 @@ export function HouseBuildingPage() {
       return;
     }
     if (!groundPlacementAllowed({ ...next, parts: [part] }, challenge)) {
-      setNotice("贴地的积木必须完整落在亮色地基里。");
+      setNotice("贴地积木不能比地基宽，请加宽地基、缩短积木或调整位置。");
       return;
     }
     if (change({ ...workspace, design: next }))
@@ -672,7 +715,10 @@ export function HouseBuildingPage() {
     const cx = challenge.flags.foundation
       ? (challenge.regions[0].left + challenge.regions[0].right) / 2
       : view.x;
-    const reference = chosen ?? design.parts.at(-1);
+    const reference =
+      chosen ??
+      design.parts.find((p) => p.id === addAnchor.current) ??
+      design.parts.at(-1);
     const created = makePart(
       uid(),
       shape,
@@ -682,11 +728,14 @@ export function HouseBuildingPage() {
     );
     const p = reference
       ? placeAbove(created, reference, design.parts)
-      : placeNear(created, design.parts);
+      : placeNear(
+          { ...created, y: created.y - bounds(created).bottom },
+          design.parts,
+        );
     if (!p) {
       setNotice(
         reference
-          ? "这块积木正上方放不下了，请选另一块积木或先移开上方的积木。"
+          ? "这条竖线已没有足够空间，请选另一块积木作为起点。"
           : "附近空间不足，拖动画布到空白处再放一块。",
       );
       return;
@@ -701,7 +750,8 @@ export function HouseBuildingPage() {
         design: { ...design, parts: [...design.parts, p] },
       })
     ) {
-      setSelected(p.id);
+      addAnchor.current = p.id;
+      setSelected(undefined);
       setTool("move");
       setNotice(
         reference
@@ -710,6 +760,85 @@ export function HouseBuildingPage() {
       );
     }
   };
+  const copySelected = () => {
+    if (!chosen) return;
+    if (design.parts.length >= MAX_PARTS) {
+      setNotice("搭建台最多放 160 块积木。");
+      return;
+    }
+    const p = placeCopy(
+      { ...chosen, id: uid() },
+      chosen,
+      design.parts,
+      (candidate) =>
+        groundPlacementAllowed({ ...design, parts: [candidate] }, challenge),
+    );
+    if (!p) {
+      setNotice("搭建台里没有足够的空位，请移走一些积木或缩小尺寸后再复制。");
+      return;
+    }
+    if (
+      change({
+        ...workspace,
+        design: { ...design, parts: [...design.parts, p] },
+      })
+    ) {
+      addAnchor.current = p.id;
+      setSelected(p.id);
+      setTool("move");
+      setConnectFrom(undefined);
+      setNotice("已复制相同形状、材质和尺寸，放到可操作的空位。");
+      const b = bounds(p);
+      if (
+        b.left < view.x - view.span / 2 ||
+        b.right > view.x + view.span / 2 ||
+        b.bottom < view.y - view.span * 0.3 ||
+        b.top > view.y + view.span * 0.3
+      )
+        changeView({
+          x: Math.max(-40, Math.min(40, p.x)),
+          y: Math.max(-2, Math.min(40, p.y)),
+          span: Math.min(
+            84,
+            Math.max(
+              view.span,
+              b.right - b.left + 2,
+              (b.top - b.bottom + 2) / 0.6,
+            ),
+          ),
+        });
+    }
+  };
+  useEffect(() => {
+    const handleCopyShortcut = (event: globalThis.KeyboardEvent) => {
+      if (
+        event.defaultPrevented ||
+        !event.ctrlKey ||
+        event.altKey ||
+        event.shiftKey ||
+        event.metaKey ||
+        event.key.toLowerCase() !== "v" ||
+        event.isComposing ||
+        !building ||
+        loaded !== "ready" ||
+        !chosen ||
+        taskPanel ||
+        levelsPanel
+      )
+        return;
+      const target = event.target;
+      if (
+        target instanceof Element &&
+        (target.closest("input, textarea, select, [role='textbox']") ||
+          (target instanceof HTMLElement && target.isContentEditable))
+      )
+        return;
+      event.preventDefault();
+      if (!event.repeat) copySelected();
+    };
+    document.addEventListener("keydown", handleCopyShortcut);
+    return () => document.removeEventListener("keydown", handleCopyShortcut);
+  });
   const remove = () => {
     if (!chosen) return;
     change({
@@ -725,6 +854,10 @@ export function HouseBuildingPage() {
     setSelected(undefined);
   };
   const select = (id: string) => {
+    setTaskPanel(false);
+    setLevelsPanel(false);
+    setDrawingTask(undefined);
+    addAnchor.current = id;
     setSelected(id);
     if (!building || !["fixed", "hinge"].includes(tool)) return;
     if (!connectFrom) {
@@ -906,6 +1039,38 @@ export function HouseBuildingPage() {
         }
       />
       <div className="house-toolbar">
+        <button
+          className="button button-secondary"
+          disabled={loaded !== "ready"}
+          aria-pressed={levelsPanel}
+          onClick={() => {
+            setLevelsPanel(!levelsPanel);
+            setTaskPanel(false);
+            setDrawingTask(undefined);
+            setHidePanel(false);
+          }}
+        >
+          {levelsPanel ? "返回搭建" : "关卡"}
+        </button>
+        <button
+          className="button button-secondary"
+          disabled={!building || loaded !== "ready"}
+          aria-pressed={taskPanel}
+          onClick={() => {
+            setLevelsPanel(false);
+            if (!taskPanel) {
+              changeView(taskCamera(challenge));
+              setHidePanel(false);
+            }
+            setTaskPanel(!taskPanel);
+            setDrawingTask(undefined);
+            setSelected(undefined);
+            setTool("move");
+            setConnectFrom(undefined);
+          }}
+        >
+          {taskPanel ? "返回搭建" : "配置任务"}
+        </button>
         {building ? (
           <button
             className="button button-primary"
@@ -928,6 +1093,7 @@ export function HouseBuildingPage() {
             </button>
           </>
         )}
+
         <button
           className="button button-ghost"
           disabled={!building || !undo.length || loaded !== "ready"}
@@ -1016,6 +1182,24 @@ export function HouseBuildingPage() {
               ghost={ghost}
               tool={loaded === "ready" ? tool : "pan"}
               onSelect={select}
+              editingTask={building && taskPanel}
+              drawTask={drawingTask}
+              onTaskDrawn={(success) => {
+                setDrawingTask(undefined);
+                setNotice(
+                  success
+                    ? "已添加任务区域，可以拖动中心或在面板调整边界。"
+                    : "未能添加：地基不能重叠，最多 12 段地基和 24 个区域。",
+                );
+              }}
+              onTaskChange={(c) =>
+                change({ ...current.current, challenge: c }, false)
+              }
+              onDeselect={() => {
+                setSelected(undefined);
+                setConnectFrom(undefined);
+                setTool("move");
+              }}
               onMove={(p, commit) => {
                 if (!building || loaded !== "ready") return;
                 if (commit) {
@@ -1023,19 +1207,19 @@ export function HouseBuildingPage() {
                   const old = design.parts.find((x) => x.id === p.id);
                   if (old && (p.x !== old.x || p.y !== old.y))
                     updatePart(snapPart(p, design.parts));
-                } else setGhost(p);
+                } else setGhost(snapPart(p, design.parts));
               }}
               onView={changeView}
               onKey={key}
             />
-            {!design.parts.length && (
+            {!design.parts.length && !taskPanel && (
               <div className="house-empty">
                 从工具面板添加第一块积木
                 <br />
                 <small>80 × 40 米，尽情搭建</small>
               </div>
             )}
-            {active && (
+            {active && !taskPanel && (
               <div
                 className={
                   "house-countdown" + (progress.done ? " is-success" : "")
@@ -1127,534 +1311,724 @@ export function HouseBuildingPage() {
         </main>
         {!hidePanel && (
           <aside className="house-panel" aria-label="搭建工具与任务">
-            <fieldset
-              disabled={!building || loaded !== "ready"}
-              className="house-controls"
-            >
-              <h2>添加积木</h2>
-              <MaterialSelect
-                value={chosen?.material ?? material}
-                label={chosen ? "选中积木的材质（也用于新积木）" : "新积木材质"}
-                onChange={(v) => {
-                  setMaterial(v);
-                  if (chosen) updatePart({ ...chosen, material: v });
+            {levelsPanel ? (
+              <HouseLevelsPanel
+                workspace={workspace}
+                onLoad={(saved, name) => {
+                  returnToBuild();
+                  change(saved);
+                  setSelected(undefined);
+                  addAnchor.current = undefined;
+                  setTaskPanel(false);
+                  setLevelsPanel(false);
+                  setTool("move");
+                  setConnectFrom(undefined);
+                  setNotice(`已载入「${name}」，可以继续搭建或开始运行。`);
                 }}
               />
-              <div className="house-shapes">
-                {(Object.keys(SHAPE_NAMES) as ShapeId[]).map((shape) => (
-                  <button
-                    className="button button-secondary"
-                    key={shape}
-                    onClick={() => add(shape)}
-                  >
-                    <ShapeIcon shape={shape} />＋ {SHAPE_NAMES[shape]}
-                  </button>
-                ))}
-              </div>
-              <div className="house-tools">
-                {[
-                  ["move", "移动"],
-                  ["pan", "平移"],
-                  ["fixed", "固定连接"],
-                  ["hinge", "铰链连接"],
-                ].map(([id, name]) => (
-                  <button
-                    key={id}
-                    className="button button-ghost"
-                    aria-pressed={tool === id}
-                    onClick={() => {
-                      setTool(id);
-                      setConnectFrom(undefined);
-                      setNotice(
-                        id === "fixed" || id === "hinge"
-                          ? "依次点选两块相邻的积木。"
-                          : "拖动积木调整位置；拖动空白处移动视角。",
-                      );
-                    }}
-                  >
-                    {name}
-                  </button>
-                ))}
-              </div>
-              <section className="house-inspector">
-                <h2>{chosen ? "编辑这块积木" : "点击积木即可编辑"}</h2>
-                {chosen ? (
-                  <>
-                    <div
-                      className="house-shapes"
-                      role="group"
-                      aria-label="这块积木的形状"
-                    >
-                      {Object.entries(SHAPE_NAMES).map(([id, name]) => (
-                        <button
-                          className="button button-ghost"
-                          key={id}
-                          aria-pressed={chosen.shape === id}
-                          onClick={() => changeShape(id as ShapeId)}
-                        >
-                          <ShapeIcon shape={id as ShapeId} />
-                          {name}
-                        </button>
-                      ))}
-                    </div>
-                    <p className="house-material-facts">
-                      <b>{fmt(partMass(chosen))} kg</b> ·{" "}
-                      {fmt(partCost(chosen), 2)} 造价点 ·{" "}
-                      {MATERIALS[chosen.material].grade}
-                      <br />
-                      抗压{" "}
-                      {fmt(
-                        MATERIALS[chosen.material].compressiveStrength / 1e6,
-                      )}{" "}
-                      MPa · 抗弯{" "}
-                      {fmt(MATERIALS[chosen.material].bendingStrength / 1e6)}{" "}
-                      MPa
-                      <br />
-                      密度 {MATERIALS[chosen.material].density} kg/m³
-                    </p>
-                    <p className="house-hint">
-                      {MATERIALS[chosen.material].note}
-                    </p>
-                    {(chosen.shape === "bar" ||
-                      chosen.shape === "rectangle") && (
-                      <p className="house-hint">
-                        相同材料、支撑和载荷下，板越长越容易弯；加厚能显著增强抗弯。能否站稳还取决于底座与重心。
-                      </p>
-                    )}
-                    <Range
-                      label={
-                        ["bar", "rectangle", "triangle"].includes(chosen.shape)
-                          ? "长度 / 底边"
-                          : "大小"
-                      }
-                      value={chosen.width}
-                      min={
-                        chosen.shape === "bar"
-                          ? Math.max(0.4, chosen.height * 2)
-                          : 0.4
-                      }
-                      max={
-                        ["bar", "rectangle", "triangle"].includes(chosen.shape)
-                          ? 10
-                          : 6
-                      }
-                      step={0.1}
-                      unit="m"
-                      onChange={(v) => {
-                        const p = {
-                          ...chosen,
-                          width: v,
-                          height: ["bar", "rectangle", "triangle"].includes(
-                            chosen.shape,
-                          )
-                            ? chosen.height
-                            : v,
-                        };
-                        p.y += bounds(chosen).bottom - bounds(p).bottom;
-                        updatePart(p);
-                      }}
+            ) : (
+              <>
+                {building && taskPanel && (
+                  <section className="house-task-panel">
+                    <h2>配置任务</h2>
+                    <TaskAreasPanel
+                      challenge={challenge}
+                      onChange={(c) => change({ ...workspace, challenge: c })}
+                      drawing={drawingTask}
+                      onDraw={setDrawingTask}
                     />
-                    {["bar", "rectangle", "triangle"].includes(
-                      chosen.shape,
-                    ) && (
-                      <Range
-                        label={chosen.shape === "bar" ? "厚度" : "高度"}
-                        value={chosen.height}
-                        min={chosen.shape === "bar" ? 0.05 : 0.2}
-                        max={
-                          chosen.shape === "bar"
-                            ? Math.min(3, chosen.width / 2)
-                            : 6
-                        }
-                        step={0.05}
-                        unit="m"
-                        onChange={(v) => {
-                          const p = { ...chosen, height: v };
-                          p.y += bounds(chosen).bottom - bounds(p).bottom;
-                          updatePart(p);
-                        }}
-                      />
-                    )}
-                    <Range
-                      label="旋转"
-                      value={(chosen.angle * 180) / Math.PI}
-                      min={-180}
-                      max={180}
-                      step={5}
-                      unit="°"
-                      onChange={(v) => {
-                        const p = { ...chosen, angle: (v * Math.PI) / 180 };
-                        p.y = Math.max(p.y, p.y - bounds(p).bottom);
-                        updatePart(p);
-                      }}
-                    />
-                    {chosen.shape === "weight" && (
-                      <Range
-                        label="配重质量"
-                        value={chosen.loadMass}
-                        min={10}
-                        max={1500}
-                        step={1}
-                        unit="kg"
-                        onChange={(v) => updatePart({ ...chosen, loadMass: v })}
-                      />
-                    )}
-                    <div className="house-tools">
-                      <button
-                        className="button button-secondary"
-                        onClick={anchor}
-                      >
-                        固定到地基
-                      </button>
-                      <button
-                        className="button button-ghost"
-                        onClick={() =>
-                          change({
-                            ...workspace,
-                            design: {
-                              ...design,
-                              connections: design.connections.filter(
-                                (c) => c.a !== chosen.id && c.b !== chosen.id,
-                              ),
-                            },
-                          })
-                        }
-                      >
-                        解除连接
-                      </button>
-                      <button
-                        className="button button-ghost"
-                        onClick={() => {
-                          const p = placeAbove(
-                            {
-                              ...chosen,
-                              id: uid(),
-                            },
-                            chosen,
-                            design.parts,
+                    <button
+                      className="button button-primary"
+                      onClick={() => {
+                        const nextSeed = seed(),
+                          c = generateChallenge(
+                            Object.values(challenge.flags).some(Boolean)
+                              ? challenge.flags
+                              : {
+                                  height: true,
+                                  target: true,
+                                  foundation: true,
+                                },
+                            nextSeed,
                           );
-                          if (
-                            p &&
-                            design.parts.length < MAX_PARTS &&
-                            groundPlacementAllowed(
-                              { ...design, parts: [p] },
-                              challenge,
-                            )
-                          ) {
+                        change({
+                          ...workspace,
+                          challenge: c,
+                          view: {
+                            ...view,
+                            ...taskCamera(c),
+                            wind: true,
+                            quake: true,
+                          },
+                          design: {
+                            ...design,
+                            settings: {
+                              ...design.settings,
+                              windSpeed: 10 + (nextSeed % 26),
+                              quakeAcceleration:
+                                Math.round((1 + (nextSeed % 21) / 5) * 5) / 5,
+                            },
+                          },
+                        });
+                      }}
+                    >
+                      随机任务
+                    </button>
+                    <p className="house-hint">
+                      随机任务会重新生成条件。也可以手动添加区域，拖动位置或修改边界。
+                    </p>
+                    {(["height", "target", "foundation"] as const).map((k) => (
+                      <label className="house-check" key={k}>
+                        <input
+                          type="checkbox"
+                          checked={challenge.flags[k]}
+                          onChange={(e) =>
                             change({
                               ...workspace,
-                              design: {
-                                ...design,
-                                parts: [...design.parts, p],
+                              challenge: {
+                                ...challenge,
+                                layoutVersion: challenge.layoutVersion ?? 2,
+                                regions:
+                                  k === "foundation" &&
+                                  e.target.checked &&
+                                  !challenge.regions.length
+                                    ? [{ left: -2.5, right: 2.5 }]
+                                    : challenge.regions,
+                                flags: {
+                                  ...challenge.flags,
+                                  [k]: e.target.checked,
+                                },
                               },
-                            });
-                            setSelected(p.id);
-                          } else
-                            setNotice(
-                              "这块积木正上方放不下了，请先腾出空间再复制。",
-                            );
-                        }}
-                      >
-                        复制一块
-                      </button>
-                      <button className="button button-ghost" onClick={remove}>
-                        移走这块
-                      </button>
-                    </div>
-                    <details>
-                      <summary>家长：自定义材料倍率</summary>
-                      <p className="house-hint">
-                        1 倍对应材料表。改变倍率是对照实验，不代表真实材料等级。
-                      </p>
+                            })
+                          }
+                        />
+                        {
+                          {
+                            height: "达到指定高度",
+                            target: "碰触目标点",
+                            foundation: "限定地基",
+                          }[k]
+                        }
+                      </label>
+                    ))}
+                    {challenge.flags.height && (
                       <Range
-                        label="强度倍率"
-                        value={chosen.strength}
-                        min={0.1}
-                        max={10}
+                        label="任务高度"
+                        value={challenge.height}
+                        min={0.5}
+                        max={40}
                         step={0.1}
-                        onChange={(v) => updatePart({ ...chosen, strength: v })}
-                      />
-                      <Range
-                        label="刚度倍率"
-                        value={chosen.stiffness}
-                        min={0.1}
-                        max={10}
-                        step={0.1}
+                        unit="m"
                         onChange={(v) =>
-                          updatePart({ ...chosen, stiffness: v })
+                          change({
+                            ...workspace,
+                            challenge: moveTaskGoal(challenge, "height", {
+                              x: 0,
+                              y: v,
+                            }),
+                          })
                         }
                       />
-                    </details>
-                  </>
-                ) : (
-                  <p className="house-hint">
-                    直接点击搭建台上的积木，修改形状、材质、大小和角度。
-                  </p>
-                )}
-              </section>
-            </fieldset>
-            <section className="house-section">
-              <h2>
-                随机任务 <small>可自由组合</small>
-              </h2>
-              <fieldset
-                className="house-controls"
-                disabled={!building || loaded !== "ready"}
-              >
-                {(
-                  [
-                    ["height", "达到指定高度"],
-                    ["target", "覆盖指定坐标"],
-                    ["foundation", "只从指定地基搭建"],
-                  ] as const
-                ).map(([k, label]) => (
-                  <label key={k} className="house-check">
-                    <input
-                      type="checkbox"
-                      checked={challenge.flags[k]}
-                      onChange={(e) =>
-                        change({
-                          ...workspace,
-                          challenge: generateChallenge(
-                            { ...challenge.flags, [k]: e.target.checked },
-                            challenge.seed,
-                          ),
+                    )}
+                    {challenge.flags.target && (
+                      <>
+                        <Range
+                          label="目标点横坐标"
+                          value={challenge.target.x}
+                          min={-40}
+                          max={40}
+                          step={0.1}
+                          unit="m"
+                          onChange={(v) =>
+                            change({
+                              ...workspace,
+                              challenge: moveTaskGoal(challenge, "target", {
+                                ...challenge.target,
+                                x: v,
+                              }),
+                            })
+                          }
+                        />
+                        <Range
+                          label="目标点高度"
+                          value={challenge.target.y}
+                          min={0.1}
+                          max={40}
+                          step={0.1}
+                          unit="m"
+                          onChange={(v) =>
+                            change({
+                              ...workspace,
+                              challenge: moveTaskGoal(challenge, "target", {
+                                ...challenge.target,
+                                y: v,
+                              }),
+                            })
+                          }
+                        />
+                      </>
+                    )}
+                    <label className="house-check">
+                      <input
+                        type="checkbox"
+                        checked={view.wind}
+                        onChange={(e) => toggleForce("wind", e.target.checked)}
+                      />
+                      开启风
+                    </label>
+                    <Range
+                      label="任务风速"
+                      value={design.settings.windSpeed}
+                      min={0}
+                      max={60}
+                      unit="m/s"
+                      onChange={(v) => setting({ windSpeed: v })}
+                    />
+                    <button
+                      className="button button-ghost"
+                      onClick={() =>
+                        setting({
+                          windDirection:
+                            design.settings.windDirection === 1 ? -1 : 1,
                         })
+                      }
+                    >
+                      风向{" "}
+                      {design.settings.windDirection === 1
+                        ? "向右 →"
+                        : "← 向左"}
+                    </button>
+                    <label className="house-check">
+                      <input
+                        type="checkbox"
+                        checked={view.quake}
+                        onChange={(e) => toggleForce("quake", e.target.checked)}
+                      />
+                      开启地震
+                    </label>
+                    <Range
+                      label="任务震动强度"
+                      value={design.settings.quakeAcceleration}
+                      min={0}
+                      max={10}
+                      step={0.2}
+                      unit="m/s²"
+                      onChange={(v) => setting({ quakeAcceleration: v })}
+                    />
+                  </section>
+                )}
+
+                {!building && (
+                  <section className="house-running-panel">
+                    <h2>运行调节</h2>{" "}
+                    <fieldset
+                      className="house-live-controls"
+                      disabled={loaded !== "ready" || progress.done}
+                    >
+                      <div className="house-live-force">
+                        <div className="house-live-heading">
+                          <label>
+                            <input
+                              type="checkbox"
+                              aria-label="开启风"
+                              checked={view.wind}
+                              onChange={(e) =>
+                                toggleForce("wind", e.target.checked)
+                              }
+                            />
+                            风力
+                          </label>
+                          <button
+                            className="button button-ghost"
+                            aria-label="切换风向"
+                            onClick={() =>
+                              setting({
+                                windDirection:
+                                  design.settings.windDirection === 1 ? -1 : 1,
+                              })
+                            }
+                          >
+                            {design.settings.windDirection === 1
+                              ? "向右 →"
+                              : "← 向左"}
+                          </button>
+                        </div>
+                        <Range
+                          label="风速"
+                          value={design.settings.windSpeed}
+                          min={0}
+                          max={60}
+                          unit="m/s"
+                          onChange={(v) => setting({ windSpeed: v })}
+                        />
+                      </div>
+                      <div className="house-live-force">
+                        <div className="house-live-heading">
+                          <label>
+                            <input
+                              type="checkbox"
+                              aria-label="开启地震"
+                              checked={view.quake}
+                              onChange={(e) =>
+                                toggleForce("quake", e.target.checked)
+                              }
+                            />
+                            震动
+                          </label>
+                          <details className="house-force-options">
+                            <summary aria-label="阵风和振动频率设置">
+                              设置
+                            </summary>
+                            <div>
+                              <label className="house-check">
+                                <input
+                                  type="checkbox"
+                                  checked={design.settings.gusts}
+                                  onChange={(e) =>
+                                    setting({ gusts: e.target.checked })
+                                  }
+                                />
+                                阵风
+                              </label>
+                              <Range
+                                label="振动频率"
+                                value={design.settings.quakeFrequency}
+                                min={0.5}
+                                max={4}
+                                step={0.1}
+                                unit="Hz"
+                                onChange={(v) => setting({ quakeFrequency: v })}
+                              />
+                            </div>
+                          </details>
+                        </div>
+                        <Range
+                          label="地震加速度"
+                          value={design.settings.quakeAcceleration}
+                          min={0}
+                          max={10}
+                          step={0.2}
+                          unit="m/s²"
+                          onChange={(v) => setting({ quakeAcceleration: v })}
+                        />
+                      </div>
+                    </fieldset>
+                    <p className="house-hint">
+                      勾选开启，拖动调整。
+                      {active ? "调整后重新保持 10 秒。" : ""}
+                    </p>
+                  </section>
+                )}
+                {building && !taskPanel && (
+                  <>
+                    <fieldset
+                      disabled={!building || loaded !== "ready"}
+                      className="house-controls"
+                    >
+                      <div className="house-panel-heading">
+                        <h2>{chosen ? "选中积木" : "添加积木"}</h2>
+                        {chosen && (
+                          <button
+                            className="button button-secondary"
+                            onClick={copySelected}
+                            title="复制选中的积木（Ctrl + V）"
+                            aria-keyshortcuts="Control+V"
+                          >
+                            复制
+                          </button>
+                        )}
+                        {chosen && (
+                          <button
+                            className="button button-ghost"
+                            onClick={() => {
+                              addAnchor.current = chosen.id;
+                              setSelected(undefined);
+                              setTool("move");
+                              setConnectFrom(undefined);
+                            }}
+                          >
+                            ＋ 添加积木
+                          </button>
+                        )}
+                      </div>
+                      <MaterialSelect
+                        value={chosen?.material ?? material}
+                        label={
+                          chosen
+                            ? "选中积木的材质（也用于新积木）"
+                            : "新积木材质"
+                        }
+                        onChange={(v) => {
+                          setMaterial(v);
+                          if (chosen) updatePart({ ...chosen, material: v });
+                        }}
+                      />
+                      {!chosen && (
+                        <div className="house-shapes">
+                          {(Object.keys(SHAPE_NAMES) as ShapeId[]).map(
+                            (shape) => (
+                              <button
+                                className="button button-secondary"
+                                key={shape}
+                                onClick={() => add(shape)}
+                              >
+                                <ShapeIcon shape={shape} />＋{" "}
+                                {shape === "bar" ? "木板" : SHAPE_NAMES[shape]}
+                              </button>
+                            ),
+                          )}
+                        </div>
+                      )}
+                      {chosen && (
+                        <div className="house-tools house-edit-tools">
+                          {[
+                            ["move", "移动"],
+                            ["pan", "平移"],
+                            ["fixed", "固定连接"],
+                            ["hinge", "铰链连接"],
+                          ].map(([id, name]) => (
+                            <button
+                              key={id}
+                              className="button button-ghost"
+                              aria-pressed={tool === id}
+                              onClick={() => {
+                                setTool(id);
+                                setConnectFrom(undefined);
+                                setNotice(
+                                  id === "fixed" || id === "hinge"
+                                    ? "依次点选两块相邻的积木。"
+                                    : "拖动积木调整位置；拖动空白处移动视角。",
+                                );
+                              }}
+                            >
+                              {id === "bar" ? "木板" : name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <section className="house-inspector">
+                        {chosen ? (
+                          <>
+                            <div className="house-replace-frame">
+                              <h3>更换形状</h3>
+                              <div
+                                className="house-shapes house-replace-shapes"
+                                role="group"
+                                aria-label="这块积木的形状"
+                              >
+                                {Object.entries(SHAPE_NAMES).map(
+                                  ([id, name]) => (
+                                    <button
+                                      className="button button-ghost"
+                                      key={id}
+                                      aria-pressed={chosen.shape === id}
+                                      onClick={() => changeShape(id as ShapeId)}
+                                    >
+                                      <ShapeIcon shape={id as ShapeId} />
+                                      {name}
+                                    </button>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                            <p className="house-material-facts">
+                              <b>{fmt(partMass(chosen))} kg</b> ·{" "}
+                              {fmt(partCost(chosen), 2)} 造价点 ·{" "}
+                              {MATERIALS[chosen.material].grade}
+                              <br />
+                              抗压{" "}
+                              {fmt(
+                                MATERIALS[chosen.material].compressiveStrength /
+                                  1e6,
+                              )}{" "}
+                              MPa · 抗弯{" "}
+                              {fmt(
+                                MATERIALS[chosen.material].bendingStrength /
+                                  1e6,
+                              )}{" "}
+                              MPa
+                              <br />
+                              密度 {MATERIALS[chosen.material].density} kg/m³
+                            </p>
+                            <Range
+                              label={
+                                ["bar", "rectangle", "triangle"].includes(
+                                  chosen.shape,
+                                )
+                                  ? "长度 / 底边"
+                                  : "大小"
+                              }
+                              value={chosen.width}
+                              min={
+                                chosen.shape === "bar"
+                                  ? Math.max(0.4, chosen.height * 2)
+                                  : 0.4
+                              }
+                              max={
+                                ["bar", "rectangle", "triangle"].includes(
+                                  chosen.shape,
+                                )
+                                  ? 10
+                                  : 6
+                              }
+                              step={0.1}
+                              unit="m"
+                              onChange={(v) => {
+                                const p = {
+                                  ...chosen,
+                                  width: v,
+                                  height: [
+                                    "bar",
+                                    "rectangle",
+                                    "triangle",
+                                  ].includes(chosen.shape)
+                                    ? chosen.height
+                                    : v,
+                                };
+                                p.y += bounds(chosen).bottom - bounds(p).bottom;
+                                updatePart(p);
+                              }}
+                            />
+                            {["bar", "rectangle", "triangle"].includes(
+                              chosen.shape,
+                            ) && (
+                              <Range
+                                label={chosen.shape === "bar" ? "厚度" : "高度"}
+                                value={chosen.height}
+                                min={chosen.shape === "bar" ? 0.05 : 0.2}
+                                max={
+                                  chosen.shape === "bar"
+                                    ? Math.min(3, chosen.width / 2)
+                                    : 6
+                                }
+                                step={0.05}
+                                unit="m"
+                                onChange={(v) => {
+                                  const p = { ...chosen, height: v };
+                                  p.y +=
+                                    bounds(chosen).bottom - bounds(p).bottom;
+                                  updatePart(p);
+                                }}
+                              />
+                            )}
+                            <Range
+                              label="旋转"
+                              value={(chosen.angle * 180) / Math.PI}
+                              min={-180}
+                              max={180}
+                              step={5}
+                              unit="°"
+                              onChange={(v) => {
+                                const p = {
+                                  ...chosen,
+                                  angle: (v * Math.PI) / 180,
+                                };
+                                p.y = Math.max(p.y, p.y - bounds(p).bottom);
+                                updatePart(p);
+                              }}
+                            />
+                            {chosen.shape === "weight" && (
+                              <Range
+                                label="配重质量"
+                                value={chosen.loadMass}
+                                min={10}
+                                max={1500}
+                                step={1}
+                                unit="kg"
+                                onChange={(v) =>
+                                  updatePart({ ...chosen, loadMass: v })
+                                }
+                              />
+                            )}
+                            <div className="house-tools">
+                              <button
+                                className="button button-secondary"
+                                onClick={anchor}
+                              >
+                                固定到地基
+                              </button>
+                              <button
+                                className="button button-ghost"
+                                onClick={() =>
+                                  change({
+                                    ...workspace,
+                                    design: {
+                                      ...design,
+                                      connections: design.connections.filter(
+                                        (c) =>
+                                          c.a !== chosen.id &&
+                                          c.b !== chosen.id,
+                                      ),
+                                    },
+                                  })
+                                }
+                              >
+                                解除连接
+                              </button>
+                              <button
+                                className="button button-ghost"
+                                onClick={remove}
+                              >
+                                移走这块
+                              </button>
+                            </div>
+                            <details>
+                              <summary>家长：自定义材料倍率</summary>
+                              <p className="house-hint">
+                                1
+                                倍对应材料表。改变倍率是对照实验，不代表真实材料等级。
+                              </p>
+                              <Range
+                                label="强度倍率"
+                                value={chosen.strength}
+                                min={0.1}
+                                max={10}
+                                step={0.1}
+                                onChange={(v) =>
+                                  updatePart({ ...chosen, strength: v })
+                                }
+                              />
+                              <Range
+                                label="刚度倍率"
+                                value={chosen.stiffness}
+                                min={0.1}
+                                max={10}
+                                step={0.1}
+                                onChange={(v) =>
+                                  updatePart({ ...chosen, stiffness: v })
+                                }
+                              />
+                            </details>
+                          </>
+                        ) : null}
+                      </section>
+                    </fieldset>
+                  </>
+                )}
+                <details className="house-section">
+                  <summary>承载设置</summary>
+                  <fieldset
+                    className="house-controls"
+                    disabled={loaded !== "ready" || (!building && active)}
+                  >
+                    <Range
+                      label="地基承载上限"
+                      value={design.settings.groundCapacity / 1000}
+                      min={0.1}
+                      max={100000}
+                      step={0.1}
+                      logarithmic
+                      unit="kN"
+                      onChange={(v) => setting({ groundCapacity: v * 1000 })}
+                    />
+                    <Range
+                      label="新连接承载上限"
+                      value={design.settings.connectionStrength / 1000}
+                      min={0.1}
+                      max={10000}
+                      step={0.1}
+                      logarithmic
+                      unit="kN"
+                      onChange={(v) =>
+                        setting({ connectionStrength: v * 1000 })
                       }
                     />
-                    {label}
-                  </label>
-                ))}
-                {active && (
-                  <>
-                    <ul className="house-goals">
-                      {challenge.flags.height && (
-                        <li>高度至少 {challenge.height} 米</li>
-                      )}
-                      {challenge.flags.target && (
-                        <li>
-                          建筑覆盖坐标 ({challenge.target.x},{" "}
-                          {challenge.target.y}) 米
-                        </li>
-                      )}
-                      {challenge.flags.foundation && (
-                        <li>
-                          可用地基：
-                          {challenge.regions
-                            .map((r) => r.left + " ～ " + r.right + " 米")
-                            .join("、")}
-                          ；其他地面没有支撑
-                        </li>
-                      )}
-                    </ul>
+                  </fieldset>
+                </details>
+                <details className="house-section">
+                  <summary>示例建筑</summary>
+                  <fieldset
+                    className="house-controls house-tools"
+                    disabled={!building || loaded !== "ready"}
+                  >
+                    {EXAMPLES.map((ex) => (
+                      <button
+                        className="button button-ghost"
+                        key={ex.id}
+                        onClick={() => {
+                          change({
+                            ...workspace,
+                            design: exampleDesign(ex.id),
+                            view: {
+                              ...view,
+                              ...DEFAULT_VIEW,
+                              showMass: view.showMass,
+                              showCenter: view.showCenter,
+                            },
+                          });
+                          setSelected(undefined);
+                          setNotice("示例已加载，可撤销恢复上一份搭建。");
+                        }}
+                      >
+                        {ex.name}
+                      </button>
+                    ))}
+                  </fieldset>
+                </details>
+                <details className="house-section">
+                  <summary>通关记录（{records.length}）</summary>
+                  {historyStatus && <p>{historyStatus}</p>}
+                  {historyStatus.includes("失败") && (
+                    <button
+                      className="button button-ghost"
+                      onClick={() => setHistoryAttempt((n) => n + 1)}
+                    >
+                      重试读取记录
+                    </button>
+                  )}
+                  {recordStatus && <p role="status">{recordStatus}</p>}
+                  {pendingCount > 0 && (
                     <button
                       className="button button-secondary"
+                      disabled={recordBusy}
                       onClick={() =>
-                        change({
-                          ...workspace,
-                          challenge: generateChallenge(challenge.flags, seed()),
-                        })
+                        void (async () => {
+                          for (const r of pendingRecords.current.values())
+                            await saveRecord(r);
+                        })()
                       }
                     >
-                      换一组任务
+                      重试保存 {pendingCount} 条记录
                     </button>
+                  )}
+                  {!records.length && !historyStatus && (
                     <p className="house-hint">
-                      所有勾选条件连续保持 10
-                      秒即通关。中途不满足会重新计时；暂停与慢动作也会同步计时。
+                      打开任意随机任务并通关，记录就会出现在这里。
                     </p>
-                  </>
-                )}
-              </fieldset>
-            </section>
-            <section className="house-section">
-              <h2>风与地震</h2>
-              <fieldset
-                className="house-controls"
-                disabled={loaded !== "ready" || (!building && active)}
-              >
-                <label className="house-check">
-                  <input
-                    type="checkbox"
-                    checked={view.wind}
-                    onChange={(e) => toggleForce("wind", e.target.checked)}
-                  />
-                  开启风
-                </label>
-                <Range
-                  label="风速"
-                  value={design.settings.windSpeed}
-                  min={0}
-                  max={60}
-                  unit="m/s"
-                  onChange={(v) => setting({ windSpeed: v })}
-                />
-                <label>
-                  风向
-                  <select
-                    value={design.settings.windDirection}
-                    onChange={(e) =>
-                      setting({
-                        windDirection: Number(e.target.value) as -1 | 1,
-                      })
-                    }
-                  >
-                    <option value={1}>从左向右 →</option>
-                    <option value={-1}>从右向左 ←</option>
-                  </select>
-                </label>
-                <label className="house-check">
-                  <input
-                    type="checkbox"
-                    checked={design.settings.gusts}
-                    onChange={(e) => setting({ gusts: e.target.checked })}
-                  />
-                  阵风
-                </label>
-                <label className="house-check">
-                  <input
-                    type="checkbox"
-                    checked={view.quake}
-                    onChange={(e) => toggleForce("quake", e.target.checked)}
-                  />
-                  开启地震
-                </label>
-                <Range
-                  label="地震加速度"
-                  value={design.settings.quakeAcceleration}
-                  min={0}
-                  max={10}
-                  step={0.2}
-                  unit="m/s²"
-                  onChange={(v) => setting({ quakeAcceleration: v })}
-                />
-                <Range
-                  label="振动频率"
-                  value={design.settings.quakeFrequency}
-                  min={0.5}
-                  max={4}
-                  step={0.1}
-                  unit="Hz"
-                  onChange={(v) => setting({ quakeFrequency: v })}
-                />
-                <Range
-                  label="地基承载上限"
-                  value={design.settings.groundCapacity / 1000}
-                  min={0.1}
-                  max={100000}
-                  step={0.1}
-                  logarithmic
-                  unit="kN"
-                  onChange={(v) => setting({ groundCapacity: v * 1000 })}
-                />
-                <Range
-                  label="新连接承载上限"
-                  value={design.settings.connectionStrength / 1000}
-                  min={0.1}
-                  max={10000}
-                  step={0.1}
-                  logarithmic
-                  unit="kN"
-                  onChange={(v) => setting({ connectionStrength: v * 1000 })}
-                />
-              </fieldset>
-              {!building && active && (
-                <p className="house-hint">
-                  本次验收参数已锁定。回到搭建后可调整再挑战。
-                </p>
-              )}
-            </section>
-            <details className="house-section">
-              <summary>示例建筑</summary>
-              <fieldset
-                className="house-controls house-tools"
-                disabled={!building || loaded !== "ready"}
-              >
-                {EXAMPLES.map((ex) => (
-                  <button
-                    className="button button-ghost"
-                    key={ex.id}
-                    onClick={() => {
-                      change({
-                        ...workspace,
-                        design: exampleDesign(ex.id),
-                        view: {
-                          ...view,
-                          ...DEFAULT_VIEW,
-                          showMass: view.showMass,
-                          showCenter: view.showCenter,
-                        },
-                      });
-                      setSelected(undefined);
-                      setNotice("示例已加载，可撤销恢复上一份搭建。");
-                    }}
-                  >
-                    {ex.name}
-                  </button>
-                ))}
-              </fieldset>
-            </details>
-            <details className="house-section">
-              <summary>通关记录（{records.length}）</summary>
-              {historyStatus && <p>{historyStatus}</p>}
-              {historyStatus.includes("失败") && (
-                <button
-                  className="button button-ghost"
-                  onClick={() => setHistoryAttempt((n) => n + 1)}
-                >
-                  重试读取记录
-                </button>
-              )}
-              {recordStatus && <p role="status">{recordStatus}</p>}
-              {pendingCount > 0 && (
-                <button
-                  className="button button-secondary"
-                  disabled={recordBusy}
-                  onClick={() =>
-                    void (async () => {
-                      for (const r of pendingRecords.current.values())
-                        await saveRecord(r);
-                    })()
-                  }
-                >
-                  重试保存 {pendingCount} 条记录
-                </button>
-              )}
-              {!records.length && !historyStatus && (
-                <p className="house-hint">
-                  打开任意随机任务并通关，记录就会出现在这里。
-                </p>
-              )}
-              {[...records]
-                .reverse()
-                .slice(0, recordLimit)
-                .map((r) => (
-                  <details key={r.id} className="house-record">
-                    <summary>
-                      {new Date(r.createdAt).toLocaleString("zh-CN")} ·{" "}
-                      {fmt(r.result.maxHeight, 1)} 米
-                    </summary>
-                    <Report record={r} />
+                  )}
+                  {[...records]
+                    .reverse()
+                    .slice(0, recordLimit)
+                    .map((r) => (
+                      <details key={r.id} className="house-record">
+                        <summary>
+                          {new Date(r.createdAt).toLocaleString("zh-CN")} ·{" "}
+                          {fmt(r.result.maxHeight, 1)} 米
+                        </summary>
+                        <Report record={r} />
+                        <button
+                          className="button button-secondary"
+                          disabled={loaded !== "ready"}
+                          onClick={() => restore(r)}
+                        >
+                          加载方案继续编辑
+                        </button>
+                      </details>
+                    ))}
+                  {records.length > recordLimit && (
                     <button
-                      className="button button-secondary"
-                      disabled={loaded !== "ready"}
-                      onClick={() => restore(r)}
+                      className="button button-ghost"
+                      onClick={() => setRecordLimit((n) => n + 20)}
                     >
-                      加载方案继续编辑
+                      查看更多记录
                     </button>
-                  </details>
-                ))}
-              {records.length > recordLimit && (
-                <button
-                  className="button button-ghost"
-                  onClick={() => setRecordLimit((n) => n + 20)}
-                >
-                  查看更多记录
-                </button>
-              )}
-            </details>
-            <p className="house-hint house-section">
-              材料参数参考真实材料的量级。二维模型简化了裂纹、钢材屈服与气流，适合做对照实验，不用于工程设计。
-            </p>
+                  )}
+                </details>
+                <p className="house-hint house-section">
+                  材料参数参考真实材料的量级。二维模型简化了裂纹、钢材屈服与气流，适合做对照实验，不用于工程设计。
+                </p>
+              </>
+            )}
           </aside>
         )}
       </div>

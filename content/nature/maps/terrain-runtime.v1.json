@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "id": "china-terrain",
+  "createdAt": "2026-09-30T08:49:13.859880Z",
+  "updatedAt": "2026-09-30T08:49:13.859880Z",
+  "coordinateSystem": "WGS84",
+  "encoding": "terrarium",
+  "bounds": [
+    73,
+    18,
+    136,
+    54
+  ],
+  "minZoom": 0,
+  "nationalZoom": 9,
+  "maxZoom": 12,
+  "passes": [
+    {
+      "id": "tanggula",
+      "name": "唐古拉山口",
+      "longitude": 91.663753,
+      "latitude": 33.010958,
+      "source": "https://en.wikipedia.org/wiki/Tanggula_Pass",
+      "elevation": 5080
+    },
+    {
+      "id": "pingxing",
+      "name": "平型关",
+      "longitude": 113.923575,
+      "latitude": 39.320883,
+      "source": "https://www.wikidata.org/wiki/Q7195851",
+      "elevation": 1520
+    },
+    {
+      "id": "juyong",
+      "name": "居庸关",
+      "longitude": 116.068611,
+      "latitude": 40.287778,
+      "source": "https://www.wikidata.org/wiki/Q1330063",
+      "elevation": 280
+    },
+    {
+      "id": "shanhai",
+      "name": "山海关",
+      "longitude": 119.75357,
+      "latitude": 40.00916,
+      "source": "https://www.wikidata.org/wiki/Q1048381",
+      "elevation": 20
+    },
+    {
+      "id": "yanmen",
+      "name": "雁门关",
+      "longitude": 112.870306,
+      "latitude": 39.193503,
+      "source": "https://www.wikidata.org/wiki/Q1275915",
+      "elevation": 1700
+    },
+    {
+      "id": "jianmen",
+      "name": "剑门关",
+      "longitude": 105.563333,
+      "latitude": 32.215,
+      "source": "https://www.wikidata.org/wiki/Q6191827",
+      "elevation": 840
+    },
+    {
+      "id": "tong",
+      "name": "潼关",
+      "longitude": 110.286111,
+      "latitude": 34.606111,
+      "source": "https://www.wikidata.org/wiki/Q6757995",
+      "elevation": 400
+    },
+    {
+      "id": "kunlun",
+      "name": "昆仑山口",
+      "longitude": 94.06859,
+      "latitude": 35.64049,
+      "source": "https://www.wikidata.org/wiki/Q1771024",
+      "elevation": 4780
+    },
+    {
+      "id": "tongla",
+      "name": "聂拉木通拉山口",
+      "longitude": 86.167417,
+      "latitude": 28.516767,
+      "source": "https://www.wikidata.org/wiki/Q2441653",
+      "elevation": 5130
+    },
+    {
+      "id": "jiayu",
+      "name": "嘉峪关",
+      "longitude": 98.21583,
+      "latitude": 39.80139,
+      "source": "https://en.wikipedia.org/wiki/Jiayu_Pass",
+      "elevation": 1740
+    }
+  ],
+  "attribution": "Mapzen / Tilezen; SRTM and GMTED2010 courtesy of USGS; ETOPO1 courtesy of NOAA. Coordinates: Wikidata (CC0).",
+  "source": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png",
+  "bytes": 647430108,
+  "sha256": "da3aa066469aba07edfe785a4b66b0bc078543a948a1bbc72d5f88a1c2e0882c",
+  "tileCounts": {
+    "0": 1,
+    "1": 4,
+    "2": 16,
+    "3": 64,
+    "4": 256,
+    "5": 35,
+    "6": 117,
+    "7": 408,
+    "8": 1518,
+    "9": 6006,
+    "10": 40,
+    "11": 90,
+    "12": 250
+  },
+  "tileCount": 8805,
+  "licenseUrl": "https://github.com/tilezen/joerd/blob/master/docs/attribution.md"
+}

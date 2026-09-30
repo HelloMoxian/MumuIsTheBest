@@ -1,0 +1,1118 @@
+{
+  "schemaVersion": 1,
+  "id": "mineral-atlas",
+  "createdAt": "2026-09-30T00:00:00Z",
+  "updatedAt": "2026-09-30T00:00:00Z",
+  "selectionPolicy": "精选原表中前五左右的主要国家，数量并列时保留并列项；不是完整排名。国界仅作统计定位，不绘制推测的矿体范围。",
+  "attribution": "统计事实整理自 Natural Resources Canada、Canadian Centre for Energy Information、USGS 与 EIA。中文用途说明为本项目编写。历史矿点来自独立 USGS MRDS，不作为储量或产量排名依据。",
+  "resources": [
+    {
+      "id": "oil",
+      "name": "石油",
+      "group": "能源",
+      "color": "#d8a261",
+      "codes": [],
+      "use": "既是燃料来源，也能用来制造塑料等材料。",
+      "production": {
+        "year": "2023",
+        "basis": "石油及其他液体产量",
+        "unit": "百万桶/日",
+        "source": "https://www.eia.gov/tools/faqs/faq.php?id=709&t=6",
+        "entries": [
+          {
+            "code": "US",
+            "value": 21.91
+          },
+          {
+            "code": "SA",
+            "value": 11.13
+          },
+          {
+            "code": "RU",
+            "value": 10.75
+          },
+          {
+            "code": "CA",
+            "value": 5.76
+          },
+          {
+            "code": "CN",
+            "value": 5.26
+          },
+          {
+            "code": "IQ",
+            "value": 4.42
+          },
+          {
+            "code": "BR",
+            "value": 4.28
+          },
+          {
+            "code": "AE",
+            "value": 4.16
+          },
+          {
+            "code": "IR",
+            "value": 3.99
+          },
+          {
+            "code": "KW",
+            "value": 2.91
+          }
+        ],
+        "note": "EIA 2024-04-11 发布的 2023 年前十产国；口径包含原油、其他石油液体、生物燃料及炼厂加工增益，不是单纯原油产量。"
+      },
+      "reserves": {
+        "year": "2023",
+        "basis": "全球已探明石油储量占比",
+        "unit": "%",
+        "source": "https://energy-information.canada.ca/sites/default/files/2026-05/energy-fact-book-spring-2026-section-6.pdf#page=15",
+        "entries": [
+          {
+            "code": "VE",
+            "value": 17
+          },
+          {
+            "code": "SA",
+            "value": 15
+          },
+          {
+            "code": "IR",
+            "value": 12
+          },
+          {
+            "code": "CA",
+            "value": 10
+          },
+          {
+            "code": "IQ",
+            "value": 8
+          }
+        ],
+        "note": "CCEI 2026 春季版，统计至 2023 年末；占比取整。包含加拿大油砂，沙特口径包含沙特—科威特中立区的一部分。"
+      }
+    },
+    {
+      "id": "gas",
+      "name": "天然气",
+      "group": "能源",
+      "color": "#5bd9ef",
+      "codes": [],
+      "use": "可以供暖、发电，也是一些化工产品的原料。",
+      "production": {
+        "year": "2024",
+        "basis": "全球天然气产量占比",
+        "unit": "%",
+        "source": "https://energy-information.canada.ca/sites/default/files/2026-05/energy-fact-book-spring-2026-section-6.pdf#page=28",
+        "entries": [
+          {
+            "code": "US",
+            "value": 25
+          },
+          {
+            "code": "RU",
+            "value": 16
+          },
+          {
+            "code": "IR",
+            "value": 7
+          },
+          {
+            "code": "CN",
+            "value": 6
+          },
+          {
+            "code": "CA",
+            "value": 5
+          }
+        ],
+        "note": "CCEI 2026 春季版引用 IEA；2024 年初步数，占比取整。"
+      },
+      "reserves": {
+        "year": "2024",
+        "basis": "全球已探明天然气储量占比",
+        "unit": "%",
+        "source": "https://energy-information.canada.ca/sites/default/files/2026-05/energy-fact-book-spring-2026-section-6.pdf#page=29",
+        "entries": [
+          {
+            "code": "RU",
+            "value": 22
+          },
+          {
+            "code": "IR",
+            "value": 16
+          },
+          {
+            "code": "QA",
+            "value": 11
+          },
+          {
+            "code": "US",
+            "value": 8
+          },
+          {
+            "code": "TM",
+            "value": 5
+          }
+        ],
+        "note": "CCEI 2026 春季版；2024 年初已探明储量，占比取整。"
+      }
+    },
+    {
+      "id": "coal",
+      "name": "煤",
+      "group": "能源",
+      "color": "#a4abbc",
+      "codes": [
+        "COA"
+      ],
+      "use": "可以发电；有些煤还能炼成焦炭，帮助炼钢。",
+      "production": {
+        "year": "2024",
+        "basis": "煤矿产量",
+        "unit": "百万吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/coal-facts",
+        "entries": [
+          {
+            "code": "CN",
+            "value": 4403
+          },
+          {
+            "code": "IN",
+            "value": 1083
+          },
+          {
+            "code": "ID",
+            "value": 836
+          },
+          {
+            "code": "AU",
+            "value": 468
+          },
+          {
+            "code": "US",
+            "value": 461
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      },
+      "reserves": {
+        "year": "2023",
+        "basis": "全球已探明煤储量占比",
+        "unit": "%",
+        "source": "https://energy-information.canada.ca/sites/default/files/2026-05/energy-fact-book-spring-2026-section-6.pdf#page=46",
+        "entries": [
+          {
+            "code": "US",
+            "value": 21
+          },
+          {
+            "code": "RU",
+            "value": 14
+          },
+          {
+            "code": "CN",
+            "value": 13
+          },
+          {
+            "code": "AU",
+            "value": 13
+          },
+          {
+            "code": "IN",
+            "value": 11
+          }
+        ],
+        "note": "CCEI 2026 春季版，引用 EIA 2023 年储量；占比取整。"
+      }
+    },
+    {
+      "id": "phosphate",
+      "name": "磷矿（磷肥原料）",
+      "group": "肥料原料",
+      "color": "#ffc26d",
+      "codes": [
+        "P"
+      ],
+      "use": "磷矿可以制成磷肥，给植物补充生长需要的磷。",
+      "production": {
+        "year": "2025",
+        "basis": "磷矿产量",
+        "unit": "千吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=147",
+        "entries": [
+          {
+            "code": "CN",
+            "value": 110000
+          },
+          {
+            "code": "MA",
+            "value": 36000
+          },
+          {
+            "code": "US",
+            "value": 20000
+          },
+          {
+            "code": "RU",
+            "value": 14000
+          },
+          {
+            "code": "JO",
+            "value": 12000
+          },
+          {
+            "code": "SA",
+            "value": 10000
+          }
+        ],
+        "note": "USGS 2026 磷矿表；2025 年估算产量。中国数值为原表所列大型矿山口径。"
+      },
+      "reserves": {
+        "year": "2026",
+        "basis": "报告所列磷矿储量",
+        "unit": "千吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=147",
+        "entries": [
+          {
+            "code": "MA",
+            "value": 50000000
+          },
+          {
+            "code": "CN",
+            "value": 3400000
+          },
+          {
+            "code": "EG",
+            "value": 2800000
+          },
+          {
+            "code": "TN",
+            "value": 2500000
+          },
+          {
+            "code": "RU",
+            "value": 2400000
+          },
+          {
+            "code": "DZ",
+            "value": 2200000
+          }
+        ],
+        "note": "USGS 2026 报告的储量统计项；摩洛哥按原表列示，不将全国数值分配到单个矿区或争议地区。"
+      }
+    },
+    {
+      "id": "potash",
+      "name": "钾盐（钾肥原料）",
+      "group": "肥料原料",
+      "color": "#d69ce7",
+      "codes": [
+        "K"
+      ],
+      "use": "钾盐是制造钾肥的重要原料，帮助植物生长。",
+      "production": {
+        "year": "2024",
+        "basis": "钾盐产量（氯化钾）",
+        "unit": "千吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/potash-facts",
+        "entries": [
+          {
+            "code": "CA",
+            "value": 24962
+          },
+          {
+            "code": "RU",
+            "value": 16600
+          },
+          {
+            "code": "BY",
+            "value": 12100
+          },
+          {
+            "code": "CN",
+            "value": 6508
+          },
+          {
+            "code": "IL",
+            "value": 3707
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      },
+      "reserves": {
+        "year": "2024",
+        "basis": "钾盐储量（氧化钾当量）",
+        "unit": "百万吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/potash-facts",
+        "entries": [
+          {
+            "code": "CA",
+            "value": 1100
+          },
+          {
+            "code": "LA",
+            "value": 1000
+          },
+          {
+            "code": "RU",
+            "value": 920
+          },
+          {
+            "code": "BY",
+            "value": 750
+          },
+          {
+            "code": "US",
+            "value": 220
+          }
+        ],
+        "note": "2024 年储量按氧化钾当量统计，不能与氯化钾产量直接相除。"
+      }
+    },
+    {
+      "id": "iron",
+      "name": "铁矿",
+      "group": "金属",
+      "color": "#e9886b",
+      "codes": [
+        "FE"
+      ],
+      "use": "铁矿用来炼铁、炼钢，制造桥梁、机器和工具。",
+      "production": {
+        "year": "2024",
+        "basis": "铁矿石矿山产量",
+        "unit": "百万吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/iron-ore-facts",
+        "entries": [
+          {
+            "code": "AU",
+            "value": 930
+          },
+          {
+            "code": "BR",
+            "value": 440
+          },
+          {
+            "code": "CN",
+            "value": 270
+          },
+          {
+            "code": "IN",
+            "value": 270
+          },
+          {
+            "code": "RU",
+            "value": 91
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      },
+      "reserves": {
+        "year": "2024",
+        "basis": "原铁矿石储量",
+        "unit": "百万吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/iron-ore-facts",
+        "entries": [
+          {
+            "code": "AU",
+            "value": 58000
+          },
+          {
+            "code": "RU",
+            "value": 35000
+          },
+          {
+            "code": "BR",
+            "value": 34000
+          },
+          {
+            "code": "CN",
+            "value": 20000
+          },
+          {
+            "code": "UA",
+            "value": 6500
+          }
+        ],
+        "note": "2024 年原矿石储量，不是纯铁重量。"
+      }
+    },
+    {
+      "id": "copper",
+      "name": "铜",
+      "group": "金属",
+      "color": "#e5a080",
+      "codes": [
+        "CU"
+      ],
+      "use": "铜很擅长导电，常用于电线、电机和电子设备。",
+      "production": {
+        "year": "2024",
+        "basis": "铜矿山产量（金属量）",
+        "unit": "千吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/copper-facts",
+        "entries": [
+          {
+            "code": "CL",
+            "value": 5300
+          },
+          {
+            "code": "CD",
+            "value": 3300
+          },
+          {
+            "code": "PE",
+            "value": 2600
+          },
+          {
+            "code": "CN",
+            "value": 1800
+          },
+          {
+            "code": "US",
+            "value": 1100
+          },
+          {
+            "code": "ID",
+            "value": 1100
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      },
+      "reserves": {
+        "year": "2024",
+        "basis": "全球铜储量占比",
+        "unit": "%",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/copper-facts",
+        "entries": [
+          {
+            "code": "CL",
+            "value": 19
+          },
+          {
+            "code": "PE",
+            "value": 10
+          },
+          {
+            "code": "AU",
+            "value": 10
+          },
+          {
+            "code": "RU",
+            "value": 8
+          },
+          {
+            "code": "CD",
+            "value": 8
+          }
+        ],
+        "note": "2024 年储量图，占比取整；刚果指刚果民主共和国。"
+      }
+    },
+    {
+      "id": "lithium",
+      "name": "锂",
+      "group": "金属",
+      "color": "#b29cff",
+      "codes": [
+        "LI"
+      ],
+      "use": "锂是许多可充电电池的重要材料，例如手机和电动汽车电池。",
+      "production": {
+        "year": "2024",
+        "basis": "锂矿山产量（金属量）",
+        "unit": "吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/lithium-facts",
+        "entries": [
+          {
+            "code": "AU",
+            "value": 88000
+          },
+          {
+            "code": "CL",
+            "value": 49000
+          },
+          {
+            "code": "CN",
+            "value": 41000
+          },
+          {
+            "code": "ZW",
+            "value": 22000
+          },
+          {
+            "code": "AR",
+            "value": 18000
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      },
+      "reserves": {
+        "year": "2024",
+        "basis": "锂储量（金属量）",
+        "unit": "吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/lithium-facts",
+        "entries": [
+          {
+            "code": "CL",
+            "value": 9300000
+          },
+          {
+            "code": "AU",
+            "value": 7000000
+          },
+          {
+            "code": "AR",
+            "value": 4000000
+          },
+          {
+            "code": "CN",
+            "value": 3000000
+          },
+          {
+            "code": "US",
+            "value": 1800000
+          }
+        ],
+        "note": "2024 年储量。玻利维亚拥有丰富锂资源，但不能把资源量直接放入储量排名。"
+      }
+    },
+    {
+      "id": "rareearth",
+      "name": "稀土",
+      "group": "金属",
+      "color": "#fa8fb4",
+      "codes": [
+        "REE",
+        "RE",
+        "Y",
+        "CE",
+        "LA",
+        "REE_Y",
+        "REE_CE"
+      ],
+      "use": "稀土是一组元素，有些能帮助制造强磁铁、风力发电机和电子设备。",
+      "production": {
+        "year": "2025",
+        "basis": "稀土矿山产量（氧化物当量）",
+        "unit": "吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=157",
+        "entries": [
+          {
+            "code": "CN",
+            "value": 270000
+          },
+          {
+            "code": "US",
+            "value": 51000
+          },
+          {
+            "code": "AU",
+            "value": 29000
+          },
+          {
+            "code": "MM",
+            "value": 22000
+          },
+          {
+            "code": "TH",
+            "value": 4800
+          }
+        ],
+        "note": "USGS Mineral Commodity Summaries 2026（2026 年 2 月版）；产量为估算值，储量沿用原报告口径，资源量不等于储量。"
+      },
+      "reserves": {
+        "year": "2026",
+        "basis": "报告所列稀土储量（氧化物当量）",
+        "unit": "吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=157",
+        "entries": [
+          {
+            "code": "CN",
+            "value": 44000000
+          },
+          {
+            "code": "BR",
+            "value": 11000000
+          },
+          {
+            "code": "AU",
+            "value": 6300000
+          },
+          {
+            "code": "RU",
+            "value": 3800000
+          },
+          {
+            "code": "VN",
+            "value": 3500000
+          }
+        ],
+        "note": "USGS 2026 报告；镧系元素和钇口径，不含大部分钪。澳大利亚数据口径见原表脚注，不等同于其 JORC 储量。"
+      }
+    },
+    {
+      "id": "nickel",
+      "name": "镍",
+      "group": "金属",
+      "color": "#8cccaf",
+      "codes": [
+        "NI"
+      ],
+      "use": "镍可以制造不锈钢，也用于部分可充电电池。",
+      "production": {
+        "year": "2024",
+        "basis": "镍矿山产量（金属量）",
+        "unit": "千吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/nickel-facts",
+        "entries": [
+          {
+            "code": "ID",
+            "value": 2200
+          },
+          {
+            "code": "PH",
+            "value": 330
+          },
+          {
+            "code": "RU",
+            "value": 210
+          },
+          {
+            "code": "CA",
+            "value": 125
+          },
+          {
+            "code": "CN",
+            "value": 120
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      },
+      "reserves": {
+        "year": "2024",
+        "basis": "镍储量（金属量）",
+        "unit": "百万吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/nickel-facts",
+        "entries": [
+          {
+            "code": "ID",
+            "value": 55
+          },
+          {
+            "code": "AU",
+            "value": 24
+          },
+          {
+            "code": "BR",
+            "value": 16
+          },
+          {
+            "code": "RU",
+            "value": 8.3
+          },
+          {
+            "code": "NC",
+            "value": 7.1
+          }
+        ],
+        "note": "2024 年储量；新喀里多尼亚单独列示，不把该项涂到法国本土。"
+      }
+    },
+    {
+      "id": "cobalt",
+      "name": "钴",
+      "group": "金属",
+      "color": "#77a6ff",
+      "codes": [
+        "CO"
+      ],
+      "use": "钴用于部分电池，也能制造耐高温的合金。",
+      "production": {
+        "year": "2025",
+        "basis": "钴矿山产量（金属量）",
+        "unit": "吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=75",
+        "entries": [
+          {
+            "code": "CD",
+            "value": 230000
+          },
+          {
+            "code": "ID",
+            "value": 44000
+          },
+          {
+            "code": "RU",
+            "value": 7700
+          },
+          {
+            "code": "MG",
+            "value": 3900
+          },
+          {
+            "code": "AU",
+            "value": 3700
+          },
+          {
+            "code": "PH",
+            "value": 3700
+          }
+        ],
+        "note": "USGS Mineral Commodity Summaries 2026（2026 年 2 月版）；产量为估算值，储量沿用原报告口径，资源量不等于储量。"
+      },
+      "reserves": {
+        "year": "2026",
+        "basis": "报告所列钴储量（金属量）",
+        "unit": "吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=75",
+        "entries": [
+          {
+            "code": "CD",
+            "value": 6000000
+          },
+          {
+            "code": "AU",
+            "value": 1700000
+          },
+          {
+            "code": "RU",
+            "value": 800000
+          },
+          {
+            "code": "ID",
+            "value": 760000
+          },
+          {
+            "code": "CU",
+            "value": 500000
+          }
+        ],
+        "note": "USGS 2026 报告；澳大利亚按原表总储量口径，不等同于 JORC 储量；刚果指刚果民主共和国。"
+      }
+    },
+    {
+      "id": "gold",
+      "name": "金",
+      "group": "金属",
+      "color": "#f2d56f",
+      "codes": [
+        "AU"
+      ],
+      "use": "黄金可以制作首饰，也会少量用于电子设备。",
+      "production": {
+        "year": "2024",
+        "basis": "金矿山产量（金属量）",
+        "unit": "吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/gold-facts",
+        "entries": [
+          {
+            "code": "CN",
+            "value": 380
+          },
+          {
+            "code": "RU",
+            "value": 310
+          },
+          {
+            "code": "AU",
+            "value": 290
+          },
+          {
+            "code": "CA",
+            "value": 200
+          },
+          {
+            "code": "US",
+            "value": 160
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      },
+      "reserves": {
+        "year": "2024",
+        "basis": "金储量（金属量）",
+        "unit": "千吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/gold-facts",
+        "entries": [
+          {
+            "code": "AU",
+            "value": 12
+          },
+          {
+            "code": "RU",
+            "value": 12
+          },
+          {
+            "code": "ZA",
+            "value": 5
+          },
+          {
+            "code": "ID",
+            "value": 3.6
+          },
+          {
+            "code": "CA",
+            "value": 3.2
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      }
+    },
+    {
+      "id": "silver",
+      "name": "银",
+      "group": "金属",
+      "color": "#dce5f5",
+      "codes": [
+        "AG"
+      ],
+      "use": "银用于首饰、电子设备和一些太阳能电池。",
+      "production": {
+        "year": "2025",
+        "basis": "银矿山产量（金属量）",
+        "unit": "吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=177",
+        "entries": [
+          {
+            "code": "MX",
+            "value": 6300
+          },
+          {
+            "code": "PE",
+            "value": 3600
+          },
+          {
+            "code": "CN",
+            "value": 3400
+          },
+          {
+            "code": "BO",
+            "value": 1500
+          },
+          {
+            "code": "CL",
+            "value": 1400
+          }
+        ],
+        "note": "USGS Mineral Commodity Summaries 2026（2026 年 2 月版）；产量为估算值，储量沿用原报告口径，资源量不等于储量。"
+      },
+      "reserves": {
+        "year": "2026",
+        "basis": "报告所列银储量（金属量）",
+        "unit": "吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=177",
+        "entries": [
+          {
+            "code": "PE",
+            "value": 110000
+          },
+          {
+            "code": "RU",
+            "value": 92000
+          },
+          {
+            "code": "AU",
+            "value": 91000
+          },
+          {
+            "code": "CN",
+            "value": 67000
+          },
+          {
+            "code": "PL",
+            "value": 59000
+          }
+        ],
+        "note": "USGS 2026 报告；澳大利亚按原表总储量列示，JORC 口径不同。"
+      }
+    },
+    {
+      "id": "zinc",
+      "name": "锌",
+      "group": "金属",
+      "color": "#91c9e7",
+      "codes": [
+        "ZN"
+      ],
+      "use": "锌常用来保护钢铁表面，帮助防锈。",
+      "production": {
+        "year": "2025",
+        "basis": "锌矿山产量（金属量）",
+        "unit": "千吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=217",
+        "note": "USGS 2026 年 2 月报告；产量为 2025 年估算。储量沿用原表口径，澳大利亚 JORC 口径另见脚注。",
+        "entries": [
+          {
+            "code": "CN",
+            "value": 4100
+          },
+          {
+            "code": "PE",
+            "value": 1500
+          },
+          {
+            "code": "AU",
+            "value": 1100
+          },
+          {
+            "code": "IN",
+            "value": 870
+          },
+          {
+            "code": "MX",
+            "value": 780
+          }
+        ]
+      },
+      "reserves": {
+        "year": "2026",
+        "basis": "报告所列锌储量（金属量）",
+        "unit": "千吨",
+        "source": "https://pubs.usgs.gov/periodicals/mcs2026/mcs2026.pdf#page=217",
+        "note": "USGS 2026 年 2 月报告；产量为 2025 年估算。储量沿用原表口径，澳大利亚 JORC 口径另见脚注。",
+        "entries": [
+          {
+            "code": "AU",
+            "value": 64000
+          },
+          {
+            "code": "CN",
+            "value": 60000
+          },
+          {
+            "code": "RU",
+            "value": 29000
+          },
+          {
+            "code": "PE",
+            "value": 18000
+          },
+          {
+            "code": "MX",
+            "value": 14000
+          }
+        ]
+      }
+    },
+    {
+      "id": "diamond",
+      "name": "钻石",
+      "group": "宝石与其他",
+      "color": "#a6eee4",
+      "codes": [],
+      "use": "钻石是非常坚硬的矿物；天然钻石可以作宝石，工业上也广泛使用人造钻石。",
+      "production": {
+        "year": "2024",
+        "basis": "全球天然毛坯钻石产量占比（克拉）",
+        "unit": "%",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/diamond-facts",
+        "entries": [
+          {
+            "code": "RU",
+            "value": 34.6
+          },
+          {
+            "code": "BW",
+            "value": 16.8
+          },
+          {
+            "code": "AO",
+            "value": 13
+          },
+          {
+            "code": "CA",
+            "value": 12.3
+          },
+          {
+            "code": "CD",
+            "value": 9.1
+          },
+          {
+            "code": "ZA",
+            "value": 4.9
+          },
+          {
+            "code": "ZW",
+            "value": 4.9
+          }
+        ],
+        "note": "2024 年天然毛坯钻石的克拉数量口径，不是销售额，不含人造钻石。"
+      },
+      "reserves": null
+    },
+    {
+      "id": "graphite",
+      "name": "天然石墨",
+      "group": "宝石与其他",
+      "color": "#a0bd8c",
+      "codes": [
+        "GRF"
+      ],
+      "use": "石墨可用于铅笔芯、电极和电池。这里展示天然石墨，不包括人造石墨。",
+      "production": {
+        "year": "2024",
+        "basis": "天然石墨矿山产量",
+        "unit": "千吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/graphite-facts",
+        "entries": [
+          {
+            "code": "CN",
+            "value": 1270
+          },
+          {
+            "code": "MG",
+            "value": 89
+          },
+          {
+            "code": "MZ",
+            "value": 75
+          },
+          {
+            "code": "BR",
+            "value": 68
+          },
+          {
+            "code": "IN",
+            "value": 30
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      },
+      "reserves": {
+        "year": "2024",
+        "basis": "天然石墨储量",
+        "unit": "百万吨",
+        "source": "https://natural-resources.canada.ca/minerals-mining/mining-data-statistics-analysis/minerals-metals-facts/graphite-facts",
+        "entries": [
+          {
+            "code": "CN",
+            "value": 81
+          },
+          {
+            "code": "BR",
+            "value": 74
+          },
+          {
+            "code": "MG",
+            "value": 27
+          },
+          {
+            "code": "MZ",
+            "value": 25
+          },
+          {
+            "code": "TZ",
+            "value": 18
+          },
+          {
+            "code": "TR",
+            "value": 18
+          }
+        ],
+        "note": "精选原表中数量较大的国家/地区；不是完整清单。初步值可能修订，各国统计口径可能不同。"
+      }
+    }
+  ]
+}
