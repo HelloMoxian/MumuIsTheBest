@@ -71,6 +71,7 @@ export type ExperimentSettings = {
   windDirection: -1 | 1;
   gusts: boolean;
   quakeAcceleration: number;
+  quakeAmplitude?: number;
   quakeFrequency: number;
   groundCapacity: number;
   connectionStrength: number;
@@ -275,6 +276,7 @@ export function parseHouseDesign(
     ![-1, 1].includes(s.windDirection as number) ||
     typeof s.gusts !== "boolean" ||
     !num(s.quakeAcceleration, 0, 10) ||
+    (s.quakeAmplitude !== undefined && !num(s.quakeAmplitude, 0, 2)) ||
     !num(s.quakeFrequency, 0.5, 4) ||
     !num(s.groundCapacity, 100, 100000000) ||
     !num(s.connectionStrength, 100, 10000000)
@@ -365,9 +367,20 @@ export function parseHouseDesign(
       windDirection: s.windDirection as -1 | 1,
       gusts: s.gusts,
       quakeAcceleration: s.quakeAcceleration,
+      ...(s.quakeAmplitude !== undefined
+        ? { quakeAmplitude: s.quakeAmplitude as number }
+        : {}),
       quakeFrequency: s.quakeFrequency,
       groundCapacity: s.groundCapacity,
       connectionStrength: s.connectionStrength,
     },
   };
+}
+
+/** Legacy acceleration presets retain their initial displacement until explicitly edited. */
+export function quakeAmplitude(settings: ExperimentSettings) {
+  return (
+    settings.quakeAmplitude ??
+    settings.quakeAcceleration / (2 * Math.PI * settings.quakeFrequency) ** 2
+  );
 }

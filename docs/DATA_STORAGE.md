@@ -119,3 +119,5 @@
 盖房子手调任务使用嵌套 challenge.layoutVersion=2，验证高度、目标坐标、1/2 段互不重叠的地基范围；未标记版本的旧 seed 任务按旧校验读取，不改写历史。外层工作区 v2、记录 v3、存储路径与备份格式不变，任务风震复用已有 settings/view 字段。
 
 - 物理自建关卡独立保存到仓库外 `learning/physics/house-levels.json`（稳定 ID `physics-house-levels`，外壳 v1，载荷 schemaVersion=1），包含布局、连接、任务区域、风震配置和视角；最多 500 个，按 ID 合并新增、revision 控制重命名、防止旧页面覆盖。默认空库，无预置关卡；不迁移或改写原缓存/通关历史，未来备份需包含此文件。任务布局 v3 新增独立区域并兼容旧布局。
+
+- 物理组合预制件独立保存至 `learning/physics/house-prefabs.json`（`physics-house-prefabs`，载荷 v1），最多 100 条，保存独立积木阵列及组内已有连接；新 ID 幂等追加，损坏/未来版本和同 ID 冲突拒绝覆盖。备份应包含该文件，系统组合不写个人库。物理设置新增可选 quakeAmplitude（米），旧加速度配置仍可读取。

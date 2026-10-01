@@ -1,3 +1,5 @@
+import { PrefabPanel } from "./PrefabPanel";
+import { selectionDesign, insertAssembly } from "./prefabs";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { GameTopBar } from "../../shared/GameTopBar";
 import { useGameFullscreen } from "../../shared/useGameFullscreen";
@@ -12,6 +14,7 @@ import { HouseLevelsPanel } from "./HouseLevelsPanel";
 import { HouseStage } from "./HouseStage";
 import {
   MATERIALS,
+  quakeAmplitude,
   PRESET_MATERIAL_IDS,
   MAX_PARTS,
   EXAMPLES,
@@ -29,6 +32,7 @@ import {
   snapPart,
   validPlacement,
   type HousePart,
+  type HouseDesign,
   type MaterialId,
   type ShapeId,
   type ExperimentSettings,
@@ -265,8 +269,11 @@ function Report({ record }: { record: HouseRecord }) {
           峰值风力<b>{fmt(r.windForcePeak)} N</b>
         </p>
         <p>
-          地震设定
-          <b>{w.view.quake ? w.design.settings.quakeAcceleration : 0} m/s²</b>
+          地震振幅
+          <b>
+            {w.view.quake ? fmt(quakeAmplitude(w.design.settings) * 100, 2) : 0}{" "}
+            cm
+          </b>
         </p>
         <p>
           实测峰值加速度<b>{fmt(r.quakeAccelerationPeak, 2)} m/s²</b>
@@ -320,8 +327,13 @@ export function HouseBuildingPage() {
   const [levelsPanel, setLevelsPanel] = useState(false);
   const [drawingTask, setDrawingTask] = useState<TaskDrawKind>();
   const [mode, setMode] = useState<"build" | "running" | "paused">("build");
-  const [selected, setSelected] = useState<string>(),
+  const [selected, rawSetSelected] = useState<string>(),
     [material, setMaterial] = useState<MaterialId>("wood_t3");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const setSelected = (id: string | undefined) => {
+    rawSetSelected(id);
+    setSelectedIds(id ? [id] : []);
+  };
   const [tool, setTool] = useState("move"),
     [connectFrom, setConnectFrom] = useState<string>(),
     [ghost, setGhost] = useState<HousePart>();
@@ -760,7 +772,53 @@ export function HouseBuildingPage() {
       );
     }
   };
+  const insertPrefab = (source: HouseDesign, anchor = chosen) => {
+    if (!building || loaded !== "ready") return;
+    const result = insertAssembly(source, design, challenge, anchor, view.x);
+    if (!result) {
+      setNotice(
+        "没有足够的合法空间放入整组积木，请腾出空间或调整地基（最多 160 块）。",
+      );
+      return;
+    }
+    if (change({ ...workspace, design: result.design })) {
+      setSelectedIds(result.ids);
+      rawSetSelected(result.ids.at(-1));
+      addAnchor.current = result.ids.at(-1);
+      setTool("move");
+      setConnectFrom(undefined);
+      changeView({
+        ...result.center,
+        span: Math.min(
+          84,
+          Math.max(view.span, result.width + 3, (result.height + 3) / 0.6),
+        ),
+      });
+      setNotice(
+        "已放入 " + result.ids.length + " 块，保持原有排列；每块仍可单独拖动。",
+      );
+    }
+  };
   const copySelected = () => {
+    if (selectedIds.length > 1) {
+      const source = selectionDesign(design, selectedIds);
+      const parts = design.parts.filter((p) => selectedIds.includes(p.id)),
+        bs = parts.map(bounds);
+      if (!source || !chosen) return;
+      const left = Math.min(...bs.map((b) => b.left)),
+        right = Math.max(...bs.map((b) => b.right)),
+        bottom = Math.min(...bs.map((b) => b.bottom)),
+        top = Math.max(...bs.map((b) => b.top));
+      insertPrefab(source, {
+        ...chosen,
+        shape: "rectangle",
+        x: (left + right) / 2,
+        y: (bottom + top) / 2,
+        width: right - left,
+        height: top - bottom,
+      });
+      return;
+    }
     if (!chosen) return;
     if (design.parts.length >= MAX_PARTS) {
       setNotice("搭建台最多放 160 块积木。");
@@ -853,7 +911,16 @@ export function HouseBuildingPage() {
     });
     setSelected(undefined);
   };
-  const select = (id: string) => {
+  const select = (id: string, additive = false) => {
+    if (building && additive) {
+      const ids = selectedIds.includes(id)
+        ? selectedIds.filter((x) => x !== id)
+        : [...selectedIds, id];
+      setSelectedIds(ids);
+      rawSetSelected(ids.at(-1));
+      addAnchor.current = id;
+      return;
+    }
     setTaskPanel(false);
     setLevelsPanel(false);
     setDrawingTask(undefined);
@@ -1041,6 +1108,23 @@ export function HouseBuildingPage() {
       <div className="house-toolbar">
         <button
           className="button button-secondary"
+          disabled={!building || loaded !== "ready"}
+          aria-pressed={tool === "select"}
+          onClick={() => {
+            setTool(tool === "select" ? "move" : "select");
+            setTaskPanel(false);
+            setLevelsPanel(false);
+            setDrawingTask(undefined);
+            setHidePanel(false);
+            setNotice(
+              "多选：拖动空白处框选，或点选积木增减选择；也可 Shift 点选。",
+            );
+          }}
+        >
+          {tool === "select" ? "结束多选" : "多选"}
+        </button>
+        <button
+          className="button button-secondary"
           disabled={loaded !== "ready"}
           aria-pressed={levelsPanel}
           onClick={() => {
@@ -1179,6 +1263,11 @@ export function HouseBuildingPage() {
               workspace={workspace}
               snapshot={snapshot}
               selected={selected}
+              selectedIds={selectedIds}
+              onSelection={(ids) => {
+                setSelectedIds(ids);
+                rawSetSelected(ids.at(-1));
+              }}
               ghost={ghost}
               tool={loaded === "ready" ? tool : "pan"}
               onSelect={select}
@@ -1367,6 +1456,7 @@ export function HouseBuildingPage() {
                               windSpeed: 10 + (nextSeed % 26),
                               quakeAcceleration:
                                 Math.round((1 + (nextSeed % 21) / 5) * 5) / 5,
+                              quakeAmplitude: (1 + (nextSeed % 6)) / 100,
                             },
                           },
                         });
@@ -1507,13 +1597,30 @@ export function HouseBuildingPage() {
                       开启地震
                     </label>
                     <Range
-                      label="任务震动强度"
-                      value={design.settings.quakeAcceleration}
+                      label="任务振幅"
+                      value={quakeAmplitude(design.settings) * 100}
                       min={0}
-                      max={10}
-                      step={0.2}
-                      unit="m/s²"
-                      onChange={(v) => setting({ quakeAcceleration: v })}
+                      max={Math.max(
+                        50,
+                        Math.ceil(quakeAmplitude(design.settings) * 100),
+                      )}
+                      step={0.1}
+                      unit="cm"
+                      onChange={(v) => setting({ quakeAmplitude: v / 100 })}
+                    />
+                    <Range
+                      label="振动频率"
+                      value={design.settings.quakeFrequency}
+                      min={0.5}
+                      max={4}
+                      step={0.1}
+                      unit="Hz"
+                      onChange={(v) =>
+                        setting({
+                          quakeFrequency: v,
+                          quakeAmplitude: quakeAmplitude(design.settings),
+                        })
+                      }
                     />
                   </section>
                 )}
@@ -1576,9 +1683,7 @@ export function HouseBuildingPage() {
                             震动
                           </label>
                           <details className="house-force-options">
-                            <summary aria-label="阵风和振动频率设置">
-                              设置
-                            </summary>
+                            <summary aria-label="阵风设置">设置</summary>
                             <div>
                               <label className="house-check">
                                 <input
@@ -1590,26 +1695,34 @@ export function HouseBuildingPage() {
                                 />
                                 阵风
                               </label>
-                              <Range
-                                label="振动频率"
-                                value={design.settings.quakeFrequency}
-                                min={0.5}
-                                max={4}
-                                step={0.1}
-                                unit="Hz"
-                                onChange={(v) => setting({ quakeFrequency: v })}
-                              />
                             </div>
                           </details>
                         </div>
                         <Range
-                          label="地震加速度"
-                          value={design.settings.quakeAcceleration}
+                          label="振幅"
+                          value={quakeAmplitude(design.settings) * 100}
                           min={0}
-                          max={10}
-                          step={0.2}
-                          unit="m/s²"
-                          onChange={(v) => setting({ quakeAcceleration: v })}
+                          max={Math.max(
+                            50,
+                            Math.ceil(quakeAmplitude(design.settings) * 100),
+                          )}
+                          step={0.1}
+                          unit="cm"
+                          onChange={(v) => setting({ quakeAmplitude: v / 100 })}
+                        />
+                        <Range
+                          label="振动频率"
+                          value={design.settings.quakeFrequency}
+                          min={0.5}
+                          max={4}
+                          step={0.1}
+                          unit="Hz"
+                          onChange={(v) =>
+                            setting({
+                              quakeFrequency: v,
+                              quakeAmplitude: quakeAmplitude(design.settings),
+                            })
+                          }
                         />
                       </div>
                     </fieldset>
@@ -1621,12 +1734,37 @@ export function HouseBuildingPage() {
                 )}
                 {building && !taskPanel && (
                   <>
+                    <details className="house-section">
+                      <summary>组合预制件</summary>
+                      <fieldset
+                        className="house-controls"
+                        disabled={loaded !== "ready"}
+                      >
+                        <PrefabPanel
+                          selection={selectionDesign(design, selectedIds)}
+                          material={material}
+                          onInsert={insertPrefab}
+                        />
+                      </fieldset>
+                    </details>
+                    {selectedIds.length > 1 && (
+                      <p className="house-hint">
+                        已选 {selectedIds.length}{" "}
+                        块。复制将保留整组排列；下方属性只修改最后点选的积木。
+                      </p>
+                    )}
                     <fieldset
                       disabled={!building || loaded !== "ready"}
                       className="house-controls"
                     >
                       <div className="house-panel-heading">
-                        <h2>{chosen ? "选中积木" : "添加积木"}</h2>
+                        <h2>
+                          {selectedIds.length > 1
+                            ? "选中 " + selectedIds.length + " 块"
+                            : chosen
+                              ? "选中积木"
+                              : "添加积木"}
+                        </h2>
                         {chosen && (
                           <button
                             className="button button-secondary"
@@ -1634,7 +1772,7 @@ export function HouseBuildingPage() {
                             title="复制选中的积木（Ctrl + V）"
                             aria-keyshortcuts="Control+V"
                           >
-                            复制
+                            {selectedIds.length > 1 ? "复制整组" : "复制"}
                           </button>
                         )}
                         {chosen && (

@@ -154,3 +154,5 @@
 - “星页数独”正式入口已接入游戏大厅；六档唯一解随机题、图案候选排除、固定格金色内框、动态故事、每档双币 30/50/70/90/110/130 奖励与补发契约见 `docs/SUDOKU.md`。正式代码与资产不得运行时依赖临时原型，试玩余额不自动导入。
 
 - 盖房子自建关卡：顶部关卡入口保存/重命名/载入，仓库外 learning/physics/house-levels.json（physics-house-levels，payload v1），按 ID 幂等追加、revision 控制重命名，无预置关卡。任务布局 v3 支持独立必经/禁入矩形及最多 12 段可手动添加地基，兼容旧任务。贴地积木必须完整在一段地基内，禁止放宽为仅部分接触；细节见 docs/HOUSE_BUILDING.md。
+
+- 盖房子地震以可选 quakeAmplitude（米）保存显式振幅；旧加速度字段不能直接改解释为位移，调频应保持当前振幅。地基摩擦增强但不粘接。多选支持拖框/Shift 点选，组合复制保留相对位置及组内已有连接、不新增焊接。预制件库 physics-house-prefabs 位于仓库外 learning/physics/house-prefabs.json，v1 幂等追加，详细约定见 docs/HOUSE_BUILDING.md。

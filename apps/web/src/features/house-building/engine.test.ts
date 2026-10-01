@@ -428,3 +428,39 @@ test("crushed disk keeps curved-sector geometry and total mass", () => {
   assert.ok(fragments.every((p) => p.vertices?.length === 8));
   assert.ok(Math.abs(sim.snapshot().mass - mass) < 1e-6);
 });
+
+test("equal displacement amplitude stays equal at low and high frequency while acceleration increases", () => {
+  const measure = (frequency: number) => {
+    const d = emptyDesign();
+    d.parts = [makePart("block", "block", "wood_t3", 0, 0.4)];
+    d.settings.quakeAmplitude = 0.02;
+    d.settings.quakeFrequency = frequency;
+    const sim = new HouseSimulation(d, { warmup: 0 });
+    sim.quake = true;
+    sim.step(720);
+    let displacement = 0,
+      acceleration = 0;
+    for (let i = 0; i < 960; i++) {
+      sim.step();
+      const s = sim.snapshot();
+      displacement = Math.max(displacement, Math.abs(s.ground.x));
+      acceleration = Math.max(acceleration, Math.abs(s.groundAcceleration));
+    }
+    return { displacement, acceleration };
+  };
+  const low = measure(0.5),
+    high = measure(2);
+  assert.ok(Math.abs(low.displacement - 0.02) < 0.0002);
+  assert.ok(Math.abs(high.displacement - 0.02) < 0.0002);
+  assert.ok(
+    high.acceleration / low.acceleration > 15 &&
+      high.acceleration / low.acceleration < 17,
+  );
+});
+test("ground has stronger dry contact friction without welding blocks", () => {
+  const d = emptyDesign();
+  d.parts = [makePart("block", "block", "wood_t3", 0, 0.4)];
+  const sim = new HouseSimulation(d);
+  assert.equal(sim.ground.getFixtureList()!.getFriction(), 1.4);
+  assert.equal(sim.links.length, 0);
+});

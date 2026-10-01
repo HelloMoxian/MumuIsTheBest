@@ -1,3 +1,4 @@
+import { parseHousePrefabs, mergeHousePrefabs, type HousePrefabs } from "./house-building-prefabs.js";
 import { parseHouseLevels, mergeHouseLevels, type HouseLevels } from "./house-building-levels.js";
 import { randomUUID } from "node:crypto";
 import { chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises";
@@ -22,6 +23,7 @@ const stateIdSchema = z.enum([
   "physics-house-workspace",
   "physics-house-history",
   "physics-house-levels",
+  "physics-house-prefabs",
   "audio-preferences",
   "game-controller-preferences",
   "chemistry-reaction-furnace",
@@ -330,6 +332,12 @@ const definitions: Record<StateId, { relativePath: string; payloadSchema: z.ZodT
       .custom<HouseWorkspace>((value) => parseWorkspace(value) !== undefined)
       .transform((value) => parseWorkspace(value)!),
   },
+  "physics-house-prefabs": {
+    relativePath: "learning/physics/house-prefabs.json",
+    payloadSchema: z
+      .custom<HousePrefabs>((value) => parseHousePrefabs(value) !== undefined)
+      .transform((value) => parseHousePrefabs(value)!),
+  },
   "physics-house-levels": {
     relativePath: "learning/physics/house-levels.json",
     payloadSchema: z
@@ -429,6 +437,8 @@ export function registerPersistentUserDataApi(
         },
       } : stableId === "physics-house-history"
         ? mergeHouseHistory(current?.payload as HouseHistory | undefined, payload as HouseHistory)
+        : stableId === "physics-house-prefabs"
+          ? mergeHousePrefabs(current?.payload as HousePrefabs | undefined, payload as HousePrefabs)
         : stableId === "physics-house-levels"
           ? mergeHouseLevels(current?.payload as HouseLevels | undefined, payload as HouseLevels)
         : stableId === "math-2048"

@@ -6,6 +6,7 @@ import {
   SHAPE_NAMES,
   WORLD,
   validPlacement,
+  bounds,
   type HousePart,
   type Point,
 } from "./model";
@@ -13,6 +14,7 @@ import type { HouseWorkspace } from "./challenge";
 import type { SimulationSnapshot } from "./engine";
 import { moveTaskGoal, addTaskArea, type TaskDrawKind } from "./task-layout";
 import type { HouseChallenge } from "./challenge";
+import { windStreaks } from "./wind-visual";
 import { renderPieces } from "./render-pieces";
 export const sx = (x: number) => (x + 8) * 62.5,
   sy = (y: number) => 575 - y * 62.5;
@@ -20,6 +22,8 @@ export function HouseStage({
   workspace,
   snapshot,
   selected,
+  selectedIds,
+  onSelection,
   ghost,
   tool,
   onSelect,
@@ -35,9 +39,11 @@ export function HouseStage({
   workspace: HouseWorkspace;
   snapshot?: SimulationSnapshot;
   selected?: string;
+  selectedIds: string[];
+  onSelection: (ids: string[]) => void;
   ghost?: HousePart;
   tool: string;
-  onSelect: (id: string) => void;
+  onSelect: (id: string, additive?: boolean) => void;
   onDeselect: () => void;
   editingTask?: boolean;
   drawTask?: TaskDrawKind;
@@ -49,6 +55,7 @@ export function HouseStage({
 }) {
   const { design, view, challenge } = workspace;
   const [drawing, setDrawing] = useState<{ a: Point; b: Point }>();
+  const [selectionBox, setSelectionBox] = useState<{ a: Point; b: Point }>();
   const stage = useRef<SVGSVGElement>(null);
   const drag = useRef<
     | {
@@ -58,6 +65,7 @@ export function HouseStage({
         next?: HousePart;
         task?: string;
         area?: TaskDrawKind;
+        selecting?: boolean;
         end?: Point;
         originalTask?: HouseChallenge;
       }
@@ -75,6 +83,27 @@ export function HouseStage({
     const d = drag.current;
     drag.current = undefined;
     setDrawing(undefined);
+    setSelectionBox(undefined);
+    if (d?.selecting && !cancel) {
+      const end = d.end ?? d.start,
+        left = Math.min(d.start.x, end.x),
+        right = Math.max(d.start.x, end.x),
+        bottom = Math.min(d.start.y, end.y),
+        top = Math.max(d.start.y, end.y);
+      onSelection(
+        design.parts
+          .filter((p) => {
+            const b = bounds(p);
+            return (
+              b.right >= left &&
+              b.left <= right &&
+              b.top >= bottom &&
+              b.bottom <= top
+            );
+          })
+          .map((p) => p.id),
+      );
+    }
     if (d?.area && !cancel) {
       const next = addTaskArea(
         challenge,
@@ -165,6 +194,45 @@ export function HouseStage({
     );
   };
   const labelSize = (18 * view.span) / 16;
+  const windSpeed =
+    snapshot && view.wind ? (snapshot.ambientWindSpeed ?? 0) : 0;
+  const windLines = windStreaks(
+    windSpeed,
+    snapshot?.windTravel ?? 0,
+    view.span,
+  );
+  const stillWindLines = windStreaks(windSpeed, 0, view.span);
+  const stripeSize = (view.span * 62.5) / 65;
+  const drawWind = (
+    lines: ReturnType<typeof windStreaks>,
+    className: string,
+  ) => (
+    <g
+      className={className}
+      pointerEvents="none"
+      aria-hidden="true"
+      stroke="var(--cyan-300)"
+      strokeLinecap="round"
+    >
+      {lines.map((line, i) => (
+        <line
+          key={i}
+          x1={sx(view.x - view.span / 2 + line.x * view.span)}
+          x2={sx(
+            view.x -
+              view.span / 2 +
+              (line.x - line.length * design.settings.windDirection) *
+                view.span,
+          )}
+          y1={sy(view.y + view.span * 0.3 - line.y * view.span * 0.6)}
+          y2={sy(view.y + view.span * 0.3 - line.y * view.span * 0.6)}
+          opacity={line.opacity}
+          strokeWidth="1.2"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+    </g>
+  );
   return (
     <svg
       ref={stage}
@@ -210,9 +278,22 @@ export function HouseStage({
           .closest("[data-part-id]")
           ?.getAttribute("data-part-id");
         const p = design.parts.find((p) => p.id === id);
+        if (!snapshot && !id && (tool === "select" || e.shiftKey)) {
+          const p = point(e);
+          drag.current = {
+            start: p,
+            end: p,
+            view: { ...view },
+            selecting: true,
+          };
+          setSelectionBox({ a: p, b: p });
+          e.currentTarget.setPointerCapture(e.pointerId);
+          return;
+        }
         if (!id) onDeselect();
         if (id && tool !== "pan") {
-          onSelect(id);
+          onSelect(id, !snapshot && (e.shiftKey || tool === "select"));
+          if (e.shiftKey || tool === "select") return;
           if (snapshot || tool !== "move") return;
         }
         drag.current = {
@@ -226,6 +307,11 @@ export function HouseStage({
         const d = drag.current;
         if (!d) return;
         const p = point(e);
+        if (d.selecting) {
+          d.end = p;
+          setSelectionBox({ a: d.start, b: p });
+          return;
+        }
         if (d.area) {
           d.end = p;
           setDrawing({ a: d.start, b: p });
@@ -259,6 +345,20 @@ export function HouseStage({
       }}
     >
       <defs>
+        <pattern
+          id="house-foundation-stripes"
+          patternUnits="userSpaceOnUse"
+          width={stripeSize}
+          height={stripeSize}
+          patternTransform={`translate(${ground.x * 62.5} ${-ground.y * 62.5})`}
+        >
+          <path
+            d={`M${-stripeSize / 2} ${stripeSize}L${stripeSize / 2} 0M0 ${stripeSize}L${stripeSize} 0M${stripeSize / 2} ${stripeSize}L${stripeSize * 1.5} 0`}
+            stroke="var(--cyan-300)"
+            strokeWidth={stripeSize * 0.16}
+            opacity=".8"
+          />
+        </pattern>
         <pattern
           id="house-grid"
           width="62.5"
@@ -304,9 +404,17 @@ export function HouseStage({
             x={sx(r.left + ground.x)}
             y={sy(ground.y)}
             width={(r.right - r.left) * 62.5}
-            height="28"
+            height={labelSize * 1.15}
             fill="var(--cyan-300)"
             opacity=".3"
+          />
+          <rect
+            x={sx(r.left + ground.x)}
+            y={sy(ground.y)}
+            width={(r.right - r.left) * 62.5}
+            height={labelSize * 1.15}
+            fill="url(#house-foundation-stripes)"
+            pointerEvents="none"
           />
           <line
             x1={sx(r.left + ground.x)}
@@ -418,7 +526,7 @@ export function HouseStage({
           key={p.key}
           data-part-id={p.id}
           transform={`translate(${sx(p.x)},${sy(p.y)}) rotate(${(-p.angle * 180) / Math.PI})`}
-          className={`house-piece ${selected === p.id ? "is-selected" : ""}`}
+          className={`house-piece ${selectedIds.includes(p.id) || selected === p.id ? "is-selected" : ""}`}
           role="button"
           tabIndex={
             p.key === visiblePieces.find((b) => b.id === p.id)?.key ? 0 : -1
@@ -427,7 +535,7 @@ export function HouseStage({
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
-              onSelect(p.id);
+              onSelect(p.id, !snapshot && (e.shiftKey || tool === "select"));
             }
           }}
         >
@@ -538,6 +646,22 @@ export function HouseStage({
           </text>
         </g>
       )}
+      {selectionBox && (
+        <rect
+          x={sx(Math.min(selectionBox.a.x, selectionBox.b.x))}
+          y={sy(Math.max(selectionBox.a.y, selectionBox.b.y))}
+          width={Math.abs(selectionBox.a.x - selectionBox.b.x) * 62.5}
+          height={Math.abs(selectionBox.a.y - selectionBox.b.y) * 62.5}
+          fill="var(--cyan-300)"
+          fillOpacity=".12"
+          stroke="var(--cyan-300)"
+          strokeWidth="2"
+          strokeDasharray="8 5"
+          pointerEvents="none"
+        />
+      )}
+      {drawWind(windLines, "house-wind-motion")}
+      {drawWind(stillWindLines, "house-wind-still")}
       {editingTask &&
         !snapshot &&
         [

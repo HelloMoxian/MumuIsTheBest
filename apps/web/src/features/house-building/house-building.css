@@ -849,3 +849,29 @@
   width: 110px;
   min-height: 48px;
 }
+
+.house-wind-still {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .house-wind-motion {
+    display: none;
+  }
+  .house-wind-still {
+    display: inline;
+  }
+}
+
+.house-prefabs {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.house-prefabs input {
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+.house-prefabs h3 {
+  margin: 0;
+}

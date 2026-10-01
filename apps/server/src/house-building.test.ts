@@ -1,3 +1,4 @@
+import { parseHousePrefabs } from "./house-building-prefabs.js";
 import {
   parseHouseLevels,
   mergeHouseLevels,
@@ -213,6 +214,22 @@ test("house v2 files: failed writes retry and corrupt or future files refuse ove
       "physics-house-workspace",
       "house-workspace.v2.json",
       migrateHouseWorkspace(payload())!,
+    ],
+    [
+      "physics-house-prefabs",
+      "house-prefabs.json",
+      {
+        schemaVersion: 1,
+        prefabs: [
+          {
+            id: "prefab",
+            name: "测试组合",
+            createdAt: "2026-10-01T00:00:00.000Z",
+            updatedAt: "2026-10-01T00:00:00.000Z",
+            design: payload(),
+          },
+        ],
+      },
     ],
     [
       "physics-house-levels",
@@ -577,4 +594,56 @@ test("legacy tiny overlaps remain readable but cannot enter new persisted layout
       200,
     );
   });
+});
+
+test("prefab library is empty by default and append is persistent, concurrent and idempotent", async () => {
+  await fixture(async (app) => {
+    const url = "/api/persistent-data/physics-house-prefabs";
+    assert.equal((await app.inject({ method: "GET", url })).json().state, null);
+    const p = {
+      id: "one",
+      name: "我的组合",
+      createdAt: "2026-10-01T00:00:00.000Z",
+      updatedAt: "2026-10-01T00:00:00.000Z",
+      design: payload(),
+    };
+    const put = (item: typeof p) =>
+      app.inject({
+        method: "PUT",
+        url,
+        payload: { payload: { schemaVersion: 1, prefabs: [item] } },
+      });
+    assert.ok(
+      (await Promise.all([put(p), put({ ...p, id: "two" })])).every(
+        (r) => r.statusCode === 200,
+      ),
+    );
+    assert.equal((await put(p)).statusCode, 200);
+    const library = (await app.inject({ method: "GET", url })).json().state
+      .payload;
+    assert.equal(library.prefabs.length, 2);
+    assert.deepEqual(library.prefabs[0].design, p.design);
+    assert.equal(
+      parseHousePrefabs({ ...library, schemaVersion: 99 }),
+      undefined,
+    );
+    assert.equal(
+      parseHousePrefabs({ schemaVersion: 1, prefabs: [{ ...p, name: "" }] }),
+      undefined,
+    );
+    assert.equal((await put({ ...p, name: "冲突" })).statusCode, 500);
+  });
+});
+test("explicit quake displacement round trips while old acceleration-only settings retain their fields", () => {
+  const d = payload();
+  const amplitude = { ...d, settings: { ...d.settings, quakeAmplitude: 0.02 } };
+  assert.equal(parseHouseDesign(amplitude)?.settings.quakeAmplitude, 0.02);
+  assert.equal(parseHouseDesign(d)?.settings.quakeAmplitude, undefined);
+  assert.equal(
+    parseHouseDesign({
+      ...amplitude,
+      settings: { ...amplitude.settings, quakeAmplitude: -1 },
+    }),
+    undefined,
+  );
 });

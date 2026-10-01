@@ -16,6 +16,7 @@ import {
   partMass,
   parseHouseDesign,
   WORLD,
+  quakeAmplitude,
   isBeam,
   localVertices,
   type HouseDesign,
@@ -87,6 +88,8 @@ export type SimulationSnapshot = {
   windForce: number;
   events: string[];
   groundAcceleration: number;
+  ambientWindSpeed?: number;
+  windTravel?: number;
 };
 export function dragForce(speed: number, area: number, coefficient = 1.2) {
   return 0.5 * 1.225 * coefficient * area * speed * Math.abs(speed);
@@ -160,6 +163,8 @@ export class HouseSimulation {
   private groundDepth = 0;
   private warmup = 1.5;
   groundAcceleration = 0;
+  ambientWindSpeed = 0;
+  windTravel = 0;
   constructor(
     design: HouseDesign,
     options: { regions?: GroundRegion[]; warmup?: number } = {},
@@ -180,7 +185,7 @@ export class HouseSimulation {
           0.25 - Settings.polygonRadius,
           new Vec2((r.left + r.right) / 2, 0),
         ),
-        { friction: 0.7 },
+        { friction: 1.4 },
       );
     const groups = new Map<string, RuntimePart[]>();
     for (const original of parsed.parts) {
@@ -502,11 +507,7 @@ export class HouseSimulation {
       this.groundLoad = 0;
       this.windForce = 0;
       const ready = this.time >= this.warmup;
-      const amplitude =
-        this.quake && ready
-          ? this.settings.quakeAcceleration /
-            (2 * Math.PI * this.settings.quakeFrequency) ** 2
-          : 0;
+      const amplitude = this.quake && ready ? quakeAmplitude(this.settings) : 0;
       this.amplitude += (amplitude - this.amplitude) * Math.min(1, STEP / 0.8);
       this.frequency +=
         (this.settings.quakeFrequency - this.frequency) *
@@ -524,7 +525,14 @@ export class HouseSimulation {
       );
       this.groundAcceleration =
         (this.ground.getLinearVelocity().x - previousVelocity) / STEP;
-      if (this.wind && ready && this.settings.windSpeed > 0) this.applyWind();
+      this.ambientWindSpeed =
+        this.wind && ready
+          ? this.settings.windSpeed *
+            (this.settings.gusts ? 0.75 + 0.25 * Math.sin(this.time * 2.1) : 1)
+          : 0;
+      this.windTravel +=
+        this.ambientWindSpeed * this.settings.windDirection * STEP;
+      if (this.ambientWindSpeed > 0) this.applyWind();
       const hasBeams = this.links.some((link) => link.internal && !link.broken);
       this.world.step(STEP, hasBeams ? 48 : 24, hasBeams ? 24 : 12);
       this.time += STEP;
@@ -625,9 +633,7 @@ export class HouseSimulation {
   }
   private applyWind() {
     const direction = this.settings.windDirection;
-    const speed =
-      this.settings.windSpeed *
-      (this.settings.gusts ? 0.75 + 0.25 * Math.sin(this.time * 2.1) : 1);
+    const speed = this.ambientWindSpeed;
     // Horizontal ray strips: only the first surface receives wind pressure. No hidden-body double loading.
     const strip = 0.1;
     const top = Math.min(
@@ -739,6 +745,8 @@ export class HouseSimulation {
       windForce: this.windForce,
       events: [...this.events],
       groundAcceleration: this.groundAcceleration,
+      ambientWindSpeed: this.ambientWindSpeed,
+      windTravel: this.windTravel,
     };
   }
 }
