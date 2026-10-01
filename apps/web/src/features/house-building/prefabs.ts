@@ -1,3 +1,4 @@
+import prefabCatalog from "../../../../../content/physics-house/system-prefabs.v1.json";
 import {
   bounds,
   validPlacement,
@@ -6,7 +7,6 @@ import {
   MAX_PARTS,
   emptyDesign,
   makePart,
-  exampleDesign,
   type HouseDesign,
   type HousePart,
   type MaterialId,
@@ -130,57 +130,214 @@ export function insertAssembly(
     };
   }
 }
-export const SYSTEM_PREFABS = [
-  { id: "house", name: "小房子" },
-  { id: "tower", name: "大高楼" },
-  { id: "triangles", name: "三角阵列" },
-  { id: "pyramid", name: "锥形" },
-] as const;
+export const SYSTEM_PREFABS = prefabCatalog.prefabs;
 export function systemPrefab(id: string, material: MaterialId): HouseDesign {
+  if (!SYSTEM_PREFABS.some((p) => p.id === id))
+    throw new Error("未知的系统预制件");
   const d = emptyDesign();
+  const part = (
+    shape: HousePart["shape"],
+    x: number,
+    bottom: number,
+    width: number,
+    height: number,
+  ) => {
+    const p = {
+      ...makePart(
+        "part" + d.parts.length,
+        shape,
+        material,
+        x,
+        bottom + (shape === "triangle" ? height / 3 : height / 2),
+      ),
+      width,
+      height,
+    };
+    d.parts.push(p);
+    return p;
+  };
+  const join = (
+    a: HousePart,
+    b: HousePart,
+    x: number,
+    y: number,
+    kind: "fixed" | "hinge" = "fixed",
+  ) => {
+    d.connections.push({
+      id: "joint" + d.connections.length,
+      a: a.id,
+      b: b.id,
+      kind,
+      anchor: { x, y },
+      strength: 2000000,
+    });
+  };
+  const post = (x: number, height: number, bottom = 0, width = 0.8) => {
+    let previous: HousePart | undefined;
+    const count = Math.ceil(height / 4),
+      h = height / count;
+    for (let i = 0; i < count; i++) {
+      const p = part("rectangle", x, bottom + i * h, width, h);
+      if (previous) join(previous, p, x, bottom + i * h);
+      previous = p;
+    }
+    return previous!;
+  };
+  const frame = (x: number, width: number, levels: number, h = 3) => {
+    let beam: HousePart | undefined;
+    for (let level = 0; level < levels; level++) {
+      const bottom = level * (h + 0.4);
+      const a = post(x - width / 2 + 0.4, h, bottom),
+        b = post(x + width / 2 - 0.4, h, bottom);
+      if (beam) {
+        join(beam, a, a.x, bottom);
+        join(beam, b, b.x, bottom);
+      }
+      beam = part("bar", x, bottom + h, width, 0.4);
+      join(a, beam, a.x, bottom + h);
+      join(b, beam, b.x, bottom + h);
+    }
+    return beam!;
+  };
+  const portal = (width = 8, height = 10) => {
+    const leftX = -width / 2 + 0.4,
+      rightX = width / 2 - 0.4;
+    const footA = part("rectangle", leftX, 0, 2, 0.4),
+      footB = part("rectangle", rightX, 0, 2, 0.4);
+    const before = d.parts.length,
+      a = post(leftX, height - 0.4, 0.4),
+      b = post(rightX, height - 0.4, 0.4);
+    join(footA, d.parts[before], leftX, 0.4);
+    join(footB, d.parts[before + Math.ceil((height - 0.4) / 4)], rightX, 0.4);
+    const roof = part("bar", 0, height, width, 0.4);
+    join(a, roof, leftX, height);
+    join(b, roof, rightX, height);
+    return { roof, a, b, height };
+  };
+  const chainDown = (
+    roof: HousePart,
+    x: number,
+    top: number,
+    count: number,
+    length = 1.2,
+  ) => {
+    let previous = roof;
+    for (let i = 0; i < count; i++) {
+      const p = part("rectangle", x, top - (i + 1) * length, 0.4, length);
+      join(previous, p, x, top - i * length, "hinge");
+      previous = p;
+    }
+    return previous;
+  };
   if (id === "house") {
-    const house = exampleDesign("house");
-    return selectionDesign(
-      house,
-      house.parts.map((p) => p.id),
-    )!;
-  }
-  if (id === "tower") {
-    for (let row = 0; row < 10; row++)
-      for (let col = 0; col < 3; col++)
-        d.parts.push(
-          makePart(
-            "t" + row + "_" + col,
-            "rectangle",
-            material,
-            (col - 1) * 1.6,
-            0.4 + row * 0.8,
-          ),
-        );
+    const roof = frame(0, 6, 2, 2.4);
+    const triangle = part("triangle", 0, bounds(roof).top, 6, 2);
+    join(roof, triangle, 0, bounds(roof).top);
+  } else if (id === "tower" || id === "lighthouse") {
+    const roof = frame(0, id === "tower" ? 6 : 4, id === "tower" ? 6 : 5, 3.2);
+    if (id === "lighthouse") {
+      const platform = part("bar", 0, bounds(roof).top, 7, 0.4);
+      join(roof, platform, 0, bounds(roof).top);
+      const cap = part("triangle", 0, bounds(platform).top, 3, 2);
+      join(platform, cap, 0, bounds(platform).top);
+    }
+  } else if (id === "twins") {
+    frame(-5, 4, 5);
+    frame(5, 4, 5);
+    const deck = part("bar", 0, 13.2, 6, 0.4);
+    for (const x of [-5, 5]) {
+      const support = d.parts.find(
+        (p) =>
+          p.shape === "bar" &&
+          p.x === x &&
+          Math.abs(bounds(p).bottom - 13.2) < 0.01,
+      )!;
+      join(support, deck, x < 0 ? -3 : 3, 13.4);
+    }
+  } else if (id === "terrace") {
+    frame(-6, 4, 3);
+    frame(0, 6, 5);
+    frame(6, 4, 3);
+  } else if (id === "gate") {
+    const { roof } = portal(10, 8);
+    for (let i = 0; i < 6; i++) {
+      const p = part("block", (i - 2.5) * 1.6, bounds(roof).top, 0.8, 0.8);
+      join(roof, p, p.x, bounds(roof).top);
+    }
+  } else if (id === "bridge" || id === "viaduct" || id === "skybridge") {
+    const h = id === "skybridge" ? 10 : 4;
+    for (let section = 0; section < 3; section++)
+      frame((section - 1) * 7.2, 7.2, id === "viaduct" ? 2 : 1, h);
+  } else if (id === "cantilever") {
+    const roof = frame(-2, 4, 3);
+    const deck = part("bar", 0, bounds(roof).top, 8, 0.5);
+    join(roof, deck, -2, bounds(roof).top);
+    for (let i = 0; i < 3; i++)
+      part("block", -2 + i * 2, bounds(deck).top, 0.8, 0.8);
+  } else if (id === "chain") {
+    const { a, b, height } = portal(8, 10),
+      y = height - 1.3;
+    let previous = a;
+    for (let i = 0; i < 8; i++) {
+      const p = part("bar", -2.8 + i * 0.8, y - 0.15, 0.8, 0.3);
+      join(previous, p, -3.2 + i * 0.8, y, "hinge");
+      previous = p;
+    }
+    join(previous, b, 3.2, y, "hinge");
+  } else if (id === "curtain") {
+    const { roof, height } = portal(8, 10);
+    for (let i = 0; i < 5; i++) chainDown(roof, (i - 2) * 1.2, height, 5);
+  } else if (id === "pendulum" || id === "double-pendulum") {
+    const { roof, height } = portal(8, 12);
+    for (const [x, count] of id === "pendulum"
+      ? [[0, 6]]
+      : [
+          [-1.6, 6],
+          [1.6, 4],
+        ]) {
+      const last = chainDown(roof, x, height, count);
+      const bob = part("circle", x, bounds(last).bottom - 1.2, 1.2, 1.2);
+      join(last, bob, x, bounds(last).bottom, "hinge");
+    }
+  } else if (id === "swing") {
+    const { roof, height } = portal(8, 10);
+    const a = chainDown(roof, -1.6, height, 5),
+      b = chainDown(roof, 1.6, height, 5);
+    const seat = part("bar", 0, bounds(a).bottom - 0.4, 4, 0.4);
+    join(a, seat, -1.6, bounds(a).bottom, "hinge");
+    join(b, seat, 1.6, bounds(b).bottom, "hinge");
+  } else if (id === "seesaw") {
+    const base = part("rectangle", 0, 0, 3, 0.5),
+      stand = part("rectangle", 0, 0.5, 0.8, 3);
+    join(base, stand, 0, 0.5);
+    const beam = part("bar", 0, 3.5, 8, 0.4);
+    join(stand, beam, 0, 3.5, "hinge");
+    part("block", -2.8, 3.9, 0.8, 0.8);
+    part("block", 2.8, 3.9, 0.8, 0.8);
   } else if (id === "triangles") {
-    for (let row = 0; row < 3; row++)
+    frame(0, 8, 3, 3);
+    const shelves = d.parts.filter((p) => p.shape === "bar");
+    for (const roof of shelves)
       for (let col = 0; col < 4; col++)
-        d.parts.push(
-          makePart(
-            "a" + row + "_" + col,
-            "triangle",
-            material,
-            (col - 1.5) * 1.2,
-            row + 1 / 3,
-          ),
-        );
-  } else {
-    for (let row = 0; row < 5; row++)
-      for (let col = 0; col < 5 - row; col++)
-        d.parts.push(
-          makePart(
-            "p" + row + "_" + col,
-            "block",
-            material,
-            (col - (4 - row) / 2) * 0.8,
-            0.4 + row * 0.8,
-          ),
-        );
+        part("triangle", (col - 1.5) * 1.6, bounds(roof).top, 1.6, 1.2);
+  } else if (id === "pyramid") {
+    for (let row = 0; row < 9; row++)
+      for (let col = 0; col < 9 - row; col++)
+        part("block", (col - (8 - row) / 2) * 1.2, row * 1.2, 1.2, 1.2);
+  } else if (id === "stairs" || id === "amphitheater") {
+    for (let side = 0; side < (id === "stairs" ? 1 : 2); side++)
+      for (let col = 0; col < (id === "stairs" ? 10 : 6); col++)
+        for (let row = 0; row <= col; row++)
+          part(
+            "rectangle",
+            id === "stairs"
+              ? (col - 4.5) * 1.2
+              : (side ? 1 : -1) * (1.2 + col * 1.2),
+            row * 0.8,
+            1.2,
+            0.8,
+          );
+    if (id === "amphitheater") part("bar", 0, 0, 1.2, 0.4);
   }
   return d;
 }

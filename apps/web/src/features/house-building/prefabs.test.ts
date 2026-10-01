@@ -1,3 +1,4 @@
+import { HouseSimulation } from "./engine";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -6,7 +7,14 @@ import {
   SYSTEM_PREFABS,
   systemPrefab,
 } from "./prefabs";
-import { makePart, emptyDesign, parseHouseDesign, bounds } from "./model";
+import {
+  makePart,
+  emptyDesign,
+  parseHouseDesign,
+  bounds,
+  PRESET_MATERIAL_IDS,
+  partMass,
+} from "./model";
 import { emptyChallenge } from "./challenge";
 test("all system assemblies contain independently editable non-overlapping parts", () => {
   for (const item of SYSTEM_PREFABS) {
@@ -74,4 +82,60 @@ test("assemblies find legal foundation space without replacing the existing desi
   assert.ok(bounds(result.design.parts[0]).right <= 14);
   const tooLarge = systemPrefab("tower", "wood_t3");
   assert.equal(insertAssembly(tooLarge, emptyDesign(), c), undefined);
+});
+
+test("catalogue has twenty distinct assemblies and every material tier preserves legal geometry", () => {
+  assert.equal(SYSTEM_PREFABS.length, 20);
+  assert.equal(new Set(SYSTEM_PREFABS.map((p) => p.id)).size, 20);
+  for (const material of PRESET_MATERIAL_IDS)
+    for (const item of SYSTEM_PREFABS)
+      assert.ok(
+        parseHouseDesign(systemPrefab(item.id, material)),
+        item.id + " " + material,
+      );
+  const heights = SYSTEM_PREFABS.map((p) =>
+    Math.max(...systemPrefab(p.id, "wood_t3").parts.map((b) => bounds(b).top)),
+  );
+  assert.ok(heights.filter((h) => h >= 10).length >= 10);
+  assert.ok(heights.some((h) => h > 20));
+  assert.throws(() => systemPrefab("unknown", "wood_t3"));
+});
+test("hinged mechanisms retain working joints after insertion with no hidden ground attachment", () => {
+  for (const id of [
+    "chain",
+    "curtain",
+    "pendulum",
+    "double-pendulum",
+    "swing",
+    "seesaw",
+  ]) {
+    const original = systemPrefab(id, "wood_t3"),
+      placed = insertAssembly(original, emptyDesign(), emptyChallenge())!;
+    assert.ok(
+      original.connections.some((c) => c.kind === "hinge"),
+      id,
+    );
+    assert.equal(placed.design.connections.length, original.connections.length);
+    assert.ok(placed.design.connections.every((c) => c.b !== "ground"));
+    const sim = new HouseSimulation(placed.design);
+    assert.ok(
+      sim.links.some((l) => l.kind === "hinge"),
+      id,
+    );
+  }
+});
+test("all twenty default wooden assemblies remain finite and conserve mass during a five-second run", () => {
+  for (const item of SYSTEM_PREFABS) {
+    const d = systemPrefab(item.id, "wood_t3"),
+      sim = new HouseSimulation(d);
+    sim.step(1200);
+    const s = sim.snapshot(),
+      mass = d.parts.reduce((n, p) => n + partMass(p), 0);
+    assert.ok(
+      s.pieces.every((p) => Number.isFinite(p.x + p.y + p.angle)),
+      item.id,
+    );
+    assert.ok(Math.abs(s.mass - mass) < 1e-6 * mass, item.id);
+    assert.equal(s.events.length, 0, item.id + ": " + s.events.join(","));
+  }
 });

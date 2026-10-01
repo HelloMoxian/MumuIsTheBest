@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "prefabs": [
+    {
+      "id": "house",
+      "name": "小房子",
+      "group": "高层建筑",
+      "description": "双层门廊与三角屋顶"
+    },
+    {
+      "id": "tower",
+      "name": "摩天大高楼",
+      "group": "高层建筑",
+      "description": "六层框架，观察高层摆动"
+    },
+    {
+      "id": "twins",
+      "name": "双子塔",
+      "group": "高层建筑",
+      "description": "左右高塔与高空连廊"
+    },
+    {
+      "id": "terrace",
+      "name": "阶梯城堡",
+      "group": "高层建筑",
+      "description": "两侧矮楼围绕中央高塔"
+    },
+    {
+      "id": "gate",
+      "name": "巨型城门",
+      "group": "高层建筑",
+      "description": "宽阔门洞和城垛"
+    },
+    {
+      "id": "lighthouse",
+      "name": "灯塔",
+      "group": "高层建筑",
+      "description": "高塔顶端的观测平台"
+    },
+    {
+      "id": "bridge",
+      "name": "长跨梁桥",
+      "group": "桥梁连廊",
+      "description": "桥墩、接缝和连续桥面"
+    },
+    {
+      "id": "viaduct",
+      "name": "双层高架桥",
+      "group": "桥梁连廊",
+      "description": "上下两层可通行空间"
+    },
+    {
+      "id": "cantilever",
+      "name": "悬臂观景台",
+      "group": "桥梁连廊",
+      "description": "固定连接承托外伸平台"
+    },
+    {
+      "id": "skybridge",
+      "name": "空中走廊",
+      "group": "桥梁连廊",
+      "description": "三座支塔托起高空横梁"
+    },
+    {
+      "id": "chain",
+      "name": "悬链桥",
+      "group": "铰链机械",
+      "description": "八节铰接桥板自然下垂"
+    },
+    {
+      "id": "curtain",
+      "name": "锁链幕墙",
+      "group": "铰链机械",
+      "description": "五串独立摆动的锁链"
+    },
+    {
+      "id": "pendulum",
+      "name": "大摆钟",
+      "group": "铰链机械",
+      "description": "长链悬挂圆形摆锤"
+    },
+    {
+      "id": "double-pendulum",
+      "name": "双摆实验架",
+      "group": "铰链机械",
+      "description": "两条不同长度的摆链"
+    },
+    {
+      "id": "swing",
+      "name": "悬吊秋千",
+      "group": "铰链机械",
+      "description": "两条锁链共同吊起座板"
+    },
+    {
+      "id": "seesaw",
+      "name": "天平跷跷板",
+      "group": "铰链机械",
+      "description": "中间铰链支点与两端配重"
+    },
+    {
+      "id": "triangles",
+      "name": "三角阵列",
+      "group": "阵列地形",
+      "description": "三层展台排列三角构件"
+    },
+    {
+      "id": "pyramid",
+      "name": "巨型锥形塔",
+      "group": "阵列地形",
+      "description": "九层收拢的积木金字塔"
+    },
+    {
+      "id": "stairs",
+      "name": "登高阶梯",
+      "group": "阵列地形",
+      "description": "十级错落平台向上攀登"
+    },
+    {
+      "id": "amphitheater",
+      "name": "山谷剧场",
+      "group": "阵列地形",
+      "description": "两侧阶梯包围中央舞台"
+    }
+  ]
+}

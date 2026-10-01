@@ -76,18 +76,34 @@ export function PrefabPanel({
   return (
     <section className="house-prefabs">
       <h3>组合预制件</h3>
-      <p className="house-hint">放入后每块可单独拖动，不会自动粘在一起。</p>
-      <div className="house-tools">
-        {SYSTEM_PREFABS.map((p) => (
-          <button
-            className="button button-secondary"
-            key={p.id}
-            onClick={() => onInsert(systemPrefab(p.id, material))}
-          >
-            {p.name}
-          </button>
-        ))}
-      </div>
+      <p className="house-hint">
+        20
+        个系统组合；部分带固定连接或铰链。放入后每块仍可单独拖动，移动会解除它原有的连接。
+      </p>
+      {[...new Set(SYSTEM_PREFABS.map((p) => p.group))].map((group) => (
+        <details
+          key={group}
+          className="house-section"
+          open={group === "高层建筑"}
+        >
+          <summary>
+            {group} · {SYSTEM_PREFABS.filter((p) => p.group === group).length}
+          </summary>
+          <div className="house-tools">
+            {SYSTEM_PREFABS.filter((p) => p.group === group).map((p) => (
+              <button
+                className="button button-secondary"
+                key={p.id}
+                title={p.description}
+                onClick={() => onInsert(systemPrefab(p.id, material))}
+              >
+                <span>{p.name}</span>
+                <small className="house-hint">{p.description}</small>
+              </button>
+            ))}
+          </div>
+        </details>
+      ))}
       <label>
         组合名称
         <input
