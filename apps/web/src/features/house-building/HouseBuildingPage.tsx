@@ -1,3 +1,10 @@
+import {
+  windLabel,
+  QUAKE_LEVELS,
+  quakeLevelAmplitude,
+  amplitudeLevel,
+  quakeStep,
+} from "./force-scale";
 import { PrefabPanel } from "./PrefabPanel";
 import { selectionDesign, insertAssembly } from "./prefabs";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
@@ -76,6 +83,7 @@ function Range({
   step = 1,
   unit = "",
   logarithmic = false,
+  displayValue,
   onChange,
 }: {
   label: string;
@@ -85,20 +93,19 @@ function Range({
   step?: number;
   unit?: string;
   logarithmic?: boolean;
+  displayValue?: string;
   onChange: (n: number) => void;
 }) {
   return (
     <label className="house-range">
       <span>
         {label}
-        <b>
-          {fmt(value, 2)} {unit}
-        </b>
+        <b>{displayValue ?? fmt(value, 2) + " " + unit}</b>
       </span>
       <input
         type="range"
         aria-label={label}
-        aria-valuetext={fmt(value, 2) + " " + unit}
+        aria-valuetext={displayValue ?? fmt(value, 2) + " " + unit}
         min={logarithmic ? Math.log10(min) : min}
         max={logarithmic ? Math.log10(max) : max}
         step={logarithmic ? 0.01 : step}
@@ -156,65 +163,78 @@ function MaterialSelect({
 }) {
   return (
     <section className="house-material-picker" aria-label={label}>
-      {(["wood", "stone", "metal", "elastic"] as const).map((group) => (
-        <div className="house-material-family" key={group}>
-          <strong>
-            {
-              { wood: "木头", stone: "石头", metal: "金属", elastic: "弹性" }[
-                group
-              ]
-            }
-          </strong>
-          <div className="house-material-tiers">
-            {PRESET_MATERIAL_IDS.filter(
-              (id) => MATERIALS[id].presetGroup === group,
-            ).map((id) => {
-              const m = MATERIALS[id];
-              return (
-                <div className="house-tier-option" key={id}>
-                  <button
-                    type="button"
-                    className="button house-tier"
-                    aria-pressed={value === id}
-                    aria-label={
-                      {
-                        wood: "木头",
-                        stone: "石头",
-                        metal: "金属",
-                        elastic: "弹性",
-                      }[group] +
-                      STRENGTH_LABELS[m.tier - 1] +
-                      "，抗弯 " +
-                      fmt(m.bendingStrength / 1e6) +
-                      " MPa，造价 " +
-                      fmt(m.pricePerKg, 3) +
-                      " 点每千克"
-                    }
-                    aria-describedby={`material-tip-${id}`}
-                    onClick={() => onChange(id)}
-                  >
-                    {value === id && (
-                      <span className="house-tier-check" aria-hidden="true">
-                        ✓
-                      </span>
-                    )}
-                    <b>{STRENGTH_LABELS[m.tier - 1]}</b>
-                  </button>
-                  <span
-                    className="house-material-tooltip"
-                    role="tooltip"
-                    id={`material-tip-${id}`}
-                  >
-                    {m.name} · 抗弯 {fmt(m.bendingStrength / 1e6)} MPa
-                    <br />
-                    造价 {fmt(m.pricePerKg, 3)} 点/kg（不扣学习币）
-                  </span>
-                </div>
-              );
-            })}
+      {(["wood", "stone", "metal", "elastic", "cushion"] as const).map(
+        (group) => (
+          <div className="house-material-family" key={group}>
+            <strong>
+              {
+                {
+                  wood: "木头",
+                  stone: "石头",
+                  metal: "金属",
+                  cushion: "减震",
+                  elastic: "弹性",
+                }[group]
+              }
+            </strong>
+            <div className="house-material-tiers">
+              {PRESET_MATERIAL_IDS.filter(
+                (id) => MATERIALS[id].presetGroup === group,
+              ).map((id) => {
+                const m = MATERIALS[id];
+                return (
+                  <div className="house-tier-option" key={id}>
+                    <button
+                      type="button"
+                      className="button house-tier"
+                      aria-pressed={value === id}
+                      aria-label={
+                        {
+                          wood: "木头",
+                          stone: "石头",
+                          metal: "金属",
+                          cushion: "减震",
+                          elastic: "弹性",
+                        }[group] +
+                        STRENGTH_LABELS[m.tier - 1] +
+                        "，抗弯 " +
+                        fmt(m.bendingStrength / 1e6) +
+                        " MPa，造价 " +
+                        fmt(m.pricePerKg, 3) +
+                        " 点每千克"
+                      }
+                      aria-describedby={`material-tip-${id}`}
+                      onClick={() => onChange(id)}
+                    >
+                      {value === id && (
+                        <span className="house-tier-check" aria-hidden="true">
+                          ✓
+                        </span>
+                      )}
+                      <b>{STRENGTH_LABELS[m.tier - 1]}</b>
+                    </button>
+                    <span
+                      className="house-material-tooltip"
+                      role="tooltip"
+                      id={`material-tip-${id}`}
+                    >
+                      {m.name} · 抗弯 {fmt(m.bendingStrength / 1e6)} MPa
+                      <br />
+                      造价 {fmt(m.pricePerKg, 3)} 点/kg（不扣学习币）
+                      {group === "cushion" && (
+                        <>
+                          <br />
+                          {m.note}
+                        </>
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        ),
+      )}
       {MATERIALS[value].tier === 0 && (
         <p className="house-hint">当前：{MATERIALS[value].name}</p>
       )}
@@ -263,7 +283,8 @@ function Report({ record }: { record: HouseRecord }) {
           </p>
         )}
         <p>
-          承受风速<b>{w.view.wind ? w.design.settings.windSpeed : 0} m/s</b>
+          承受风力
+          <b>{windLabel(w.view.wind ? w.design.settings.windSpeed : 0)}</b>
         </p>
         <p>
           峰值风力<b>{fmt(r.windForcePeak)} N</b>
@@ -926,16 +947,21 @@ export function HouseBuildingPage() {
     setDrawingTask(undefined);
     addAnchor.current = id;
     setSelected(id);
-    if (!building || !["fixed", "hinge"].includes(tool)) return;
+    if (!building || !["fixed", "hinge", "chain"].includes(tool)) return;
     if (!connectFrom) {
       setConnectFrom(id);
-      setNotice("再点紧挨着的另一块积木，完成连接。");
+      setNotice(
+        tool === "chain"
+          ? "再点另一块积木，连接两个节点。"
+          : "再点紧挨着的另一块积木，完成连接。",
+      );
       return;
     }
     if (connectFrom === id) return;
     const a = design.parts.find((p) => p.id === connectFrom)!,
       b = design.parts.find((p) => p.id === id)!;
-    const anchor = connectionAnchor(a, b);
+    const anchor =
+      tool === "chain" ? { x: a.x, y: a.y } : connectionAnchor(a, b);
     if (!anchor) {
       setNotice("两块积木要先靠在一起，才能连接。");
       setConnectFrom(id);
@@ -952,14 +978,18 @@ export function HouseBuildingPage() {
           id: uid(),
           a: a.id,
           b: b.id,
-          kind: tool as "fixed" | "hinge",
+          kind: tool as "fixed" | "hinge" | "chain",
           anchor,
           strength: design.settings.connectionStrength,
         },
       ],
     };
     if (change({ ...workspace, design: next }))
-      setNotice("连接完成。固定连接保持夹角，铰链可以转动。");
+      setNotice(
+        tool === "chain"
+          ? "锁链已连接：可转动、可松弛，超过承载上限会断开。"
+          : "连接完成。固定连接保持夹角，铰链可以转动。",
+      );
     setConnectFrom(undefined);
   };
   const anchor = () => {
@@ -1567,10 +1597,11 @@ export function HouseBuildingPage() {
                       开启风
                     </label>
                     <Range
-                      label="任务风速"
+                      label="任务风力"
                       value={design.settings.windSpeed}
+                      displayValue={windLabel(design.settings.windSpeed)}
                       min={0}
-                      max={60}
+                      max={100}
                       unit="m/s"
                       onChange={(v) => setting({ windSpeed: v })}
                     />
@@ -1597,16 +1628,18 @@ export function HouseBuildingPage() {
                       开启地震
                     </label>
                     <Range
-                      label="任务振幅"
-                      value={quakeAmplitude(design.settings) * 100}
+                      label="模拟地震等级"
+                      value={quakeStep(quakeAmplitude(design.settings))}
+                      displayValue={`${fmt(amplitudeLevel(quakeAmplitude(design.settings)), 1)} 级 · ${fmt(quakeAmplitude(design.settings) * 100, 1)} cm`}
                       min={0}
-                      max={Math.max(
-                        50,
-                        Math.ceil(quakeAmplitude(design.settings) * 100),
-                      )}
-                      step={0.1}
-                      unit="cm"
-                      onChange={(v) => setting({ quakeAmplitude: v / 100 })}
+                      max={19}
+                      step={1}
+                      unit=""
+                      onChange={(v) =>
+                        setting({
+                          quakeAmplitude: quakeLevelAmplitude(QUAKE_LEVELS[v]),
+                        })
+                      }
                     />
                     <Range
                       label="振动频率"
@@ -1661,10 +1694,11 @@ export function HouseBuildingPage() {
                           </button>
                         </div>
                         <Range
-                          label="风速"
+                          label="风力"
                           value={design.settings.windSpeed}
+                          displayValue={windLabel(design.settings.windSpeed)}
                           min={0}
-                          max={60}
+                          max={100}
                           unit="m/s"
                           onChange={(v) => setting({ windSpeed: v })}
                         />
@@ -1699,16 +1733,20 @@ export function HouseBuildingPage() {
                           </details>
                         </div>
                         <Range
-                          label="振幅"
-                          value={quakeAmplitude(design.settings) * 100}
+                          label="模拟地震等级"
+                          value={quakeStep(quakeAmplitude(design.settings))}
+                          displayValue={`${fmt(amplitudeLevel(quakeAmplitude(design.settings)), 1)} 级 · ${fmt(quakeAmplitude(design.settings) * 100, 1)} cm`}
                           min={0}
-                          max={Math.max(
-                            50,
-                            Math.ceil(quakeAmplitude(design.settings) * 100),
-                          )}
-                          step={0.1}
-                          unit="cm"
-                          onChange={(v) => setting({ quakeAmplitude: v / 100 })}
+                          max={19}
+                          step={1}
+                          unit=""
+                          onChange={(v) =>
+                            setting({
+                              quakeAmplitude: quakeLevelAmplitude(
+                                QUAKE_LEVELS[v],
+                              ),
+                            })
+                          }
                         />
                         <Range
                           label="振动频率"
@@ -1824,6 +1862,7 @@ export function HouseBuildingPage() {
                             ["pan", "平移"],
                             ["fixed", "固定连接"],
                             ["hinge", "铰链连接"],
+                            ["chain", "锁链连接"],
                           ].map(([id, name]) => (
                             <button
                               key={id}
@@ -1833,9 +1872,11 @@ export function HouseBuildingPage() {
                                 setTool(id);
                                 setConnectFrom(undefined);
                                 setNotice(
-                                  id === "fixed" || id === "hinge"
-                                    ? "依次点选两块相邻的积木。"
-                                    : "拖动积木调整位置；拖动空白处移动视角。",
+                                  id === "chain"
+                                    ? "依次点选两个物件作为锁链节点。"
+                                    : id === "fixed" || id === "hinge"
+                                      ? "依次点选两块相邻的积木。"
+                                      : "拖动积木调整位置；拖动空白处移动视角。",
                                 );
                               }}
                             >

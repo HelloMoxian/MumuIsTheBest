@@ -69,7 +69,7 @@ test("legacy design migrates with all positions, settings and material IDs prese
   );
 });
 test("real material grades preserve separate density, compression, bending and stiffness", () => {
-  assert.equal(MATERIAL_IDS.length, 36); // 20 presets plus 16 immutable legacy materials.
+  assert.equal(MATERIAL_IDS.length, 41); // 25 presets plus 16 immutable legacy materials.
   assert.equal(MATERIALS.wood.bendingStrength, 24e6);
   assert.equal(MATERIALS.wood.youngModulus, 11e9);
   assert.ok(

@@ -6,7 +6,10 @@ import {
   Polygon,
   Settings,
   WeldJoint,
+  PrismaticJoint,
+  DistanceJoint,
   RevoluteJoint,
+  RopeJoint,
   type Body,
   type Joint,
 } from "planck";
@@ -49,7 +52,7 @@ type Link = {
   overload: number;
   broken: boolean;
   utilization: number;
-  kind: "fixed" | "hinge";
+  kind: "fixed" | "hinge" | "chain";
 };
 export type SimulationSnapshot = {
   time: number;
@@ -190,8 +193,17 @@ export class HouseSimulation {
     const groups = new Map<string, RuntimePart[]>();
     for (const original of parsed.parts) {
       // Segment rectangles along their long axis, preserving the same world outline.
-      const p =
-        original.shape === "rectangle" && original.height > original.width
+      const cushion =
+        original.material.startsWith("cushion_") &&
+        ["block", "rectangle", "bar"].includes(original.shape);
+      const p = cushion
+        ? {
+            ...original,
+            width: original.height,
+            height: original.width,
+            angle: original.angle + Math.PI / 2,
+          }
+        : original.shape === "rectangle" && original.height > original.width
           ? {
               ...original,
               width: original.height,
@@ -199,9 +211,11 @@ export class HouseSimulation {
               angle: original.angle + Math.PI / 2,
             }
           : original;
-      const n = isBeam(p)
-        ? Math.min(12, Math.max(3, Math.ceil(p.width / 0.5)))
-        : 1;
+      const n = cushion
+        ? 2
+        : isBeam(p)
+          ? Math.min(12, Math.max(3, Math.ceil(p.width / 0.5)))
+          : 1;
       const group: RuntimePart[] = [];
       for (let i = 0; i < n; i++) {
         const dx = -p.width / 2 + ((i + 0.5) * p.width) / n;
@@ -232,29 +246,69 @@ export class HouseSimulation {
             1 / (1 / a.body.getInertia() + 1 / b.body.getInertia());
           const hz =
             Math.sqrt(beamStiffness(p, p.width / n) / inertia) / (2 * Math.PI);
+          if (cushion) {
+            this.world.createJoint(
+              new PrismaticJoint(
+                {
+                  enableLimit: true,
+                  lowerTranslation: -original.height * 0.35,
+                  upperTranslation: 0,
+                  collideConnected: false,
+                },
+                a.body,
+                b.body,
+                new Vec2(p.x, p.y),
+                new Vec2(Math.cos(p.angle), Math.sin(p.angle)),
+              ),
+            );
+          }
+          const springHz =
+            Math.sqrt(
+              (MATERIALS[p.material].youngModulus *
+                p.stiffness *
+                DEPTH *
+                original.width) /
+                original.height /
+                (partMass(p) / 4),
+            ) /
+            (2 * Math.PI);
           const joint = this.world.createJoint(
-            new BeamJoint(
-              { frequencyHz: hz, dampingRatio: 0.2 },
-              a.body,
-              b.body,
-              anchor,
-            ),
+            cushion
+              ? new DistanceJoint(
+                  {
+                    frequencyHz: springHz,
+                    dampingRatio: 1,
+                    collideConnected: false,
+                  },
+                  a.body,
+                  b.body,
+                  a.body.getPosition(),
+                  b.body.getPosition(),
+                )
+              : new BeamJoint(
+                  { frequencyHz: hz, dampingRatio: 0.2 },
+                  a.body,
+                  b.body,
+                  anchor,
+                ),
           )!;
           this.links.push({
             id: p.id + ":beam:" + i,
             joint,
             internal: true,
-            limitForce:
-              MATERIALS[p.material].compressiveStrength *
-              p.strength *
-              DEPTH *
-              p.height,
-            limitMoment:
-              (MATERIALS[p.material].bendingStrength *
+            limitForce: cushion
+              ? Infinity
+              : MATERIALS[p.material].compressiveStrength *
                 p.strength *
                 DEPTH *
-                p.height ** 2) /
-              6,
+                p.height,
+            limitMoment: cushion
+              ? Infinity
+              : (MATERIALS[p.material].bendingStrength *
+                  p.strength *
+                  DEPTH *
+                  p.height ** 2) /
+                6,
             a,
             b,
             overload: 0,
@@ -277,32 +331,56 @@ export class HouseSimulation {
         );
     for (const c of parsed.connections) {
       const a = closest(c.a, c.anchor),
-        b = c.b === "ground" ? undefined : closest(c.b, c.anchor);
+        b =
+          c.b === "ground"
+            ? undefined
+            : closest(
+                c.b,
+                c.kind === "chain"
+                  ? parsed.parts.find((p) => p.id === c.b)!
+                  : c.anchor,
+              );
       const other = b?.body ?? this.ground;
       const joint =
-        c.kind === "hinge"
+        c.kind === "chain"
           ? this.world.createJoint(
-              new RevoluteJoint(
-                { collideConnected: false },
-                a.body,
-                other,
-                c.anchor,
-              ),
+              new RopeJoint({
+                bodyA: a.body,
+                bodyB: other,
+                collideConnected: true,
+                localAnchorA: a.body.getLocalPoint(c.anchor),
+                localAnchorB: other.getLocalPoint(
+                  parsed.parts.find((p) => p.id === c.b)!,
+                ),
+                maxLength: Vec2.distance(
+                  c.anchor,
+                  parsed.parts.find((p) => p.id === c.b)!,
+                ),
+              }),
             )!
-          : this.world.createJoint(
-              new WeldJoint(
-                { frequencyHz: 0, collideConnected: false },
-                a.body,
-                other,
-                c.anchor,
-              ),
-            )!;
+          : c.kind === "hinge"
+            ? this.world.createJoint(
+                new RevoluteJoint(
+                  { collideConnected: false },
+                  a.body,
+                  other,
+                  c.anchor,
+                ),
+              )!
+            : this.world.createJoint(
+                new WeldJoint(
+                  { frequencyHz: 0, collideConnected: false },
+                  a.body,
+                  other,
+                  c.anchor,
+                ),
+              )!;
       this.links.push({
         id: c.id,
         joint,
         internal: false,
         limitForce: c.strength,
-        limitMoment: c.strength * 0.2,
+        limitMoment: c.kind === "chain" ? Infinity : c.strength * 0.2,
         a,
         b,
         overload: 0,
@@ -311,6 +389,21 @@ export class HouseSimulation {
         kind: c.kind,
       });
     }
+    // Planck mixes restitution using max: a buffer must also absorb contact
+    // with a bouncy object, not inherit the other fixture's rebound.
+    this.world.on("pre-solve", (contact) => {
+      const bodies = [
+        contact.getFixtureA().getBody(),
+        contact.getFixtureB().getBody(),
+      ];
+      if (
+        this.pieces.some(
+          (p) =>
+            p.source.material.startsWith("cushion_") && bodies.includes(p.body),
+        )
+      )
+        contact.setRestitution(0);
+    });
     this.world.on("post-solve", (contact, impulse) => {
       const m = contact.getWorldManifold(null);
       if (!m) return;
@@ -579,7 +672,9 @@ export class HouseSimulation {
           list[local.y >= 0 ? 2 : 3] += Math.abs(local.y);
           this.loads.set(piece.body, list);
         }
-        if (link.overload >= 0.08)
+        if (
+          link.kind === "chain" ? link.utilization > 1 : link.overload >= 0.08
+        )
           this.breakLink(
             link,
             link.internal

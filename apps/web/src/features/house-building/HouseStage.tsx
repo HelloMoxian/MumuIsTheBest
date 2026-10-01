@@ -1,4 +1,12 @@
-import { useRef, useState, type PointerEvent, type KeyboardEvent } from "react";
+import { MaterialTextures } from "./MaterialTextures";
+import { zoomView } from "./viewport";
+import {
+  useRef,
+  useState,
+  useEffect,
+  type PointerEvent,
+  type KeyboardEvent,
+} from "react";
 import {
   MATERIALS,
   localVertices,
@@ -57,6 +65,37 @@ export function HouseStage({
   const [drawing, setDrawing] = useState<{ a: Point; b: Point }>();
   const [selectionBox, setSelectionBox] = useState<{ a: Point; b: Point }>();
   const stage = useRef<SVGSVGElement>(null);
+  const latest = useRef({ view, onView });
+  latest.current = { view, onView };
+  const [pixelWidth, setPixelWidth] = useState(1000);
+  useEffect(() => {
+    const svg = stage.current;
+    if (!svg) return;
+    const observer = new ResizeObserver(() =>
+      setPixelWidth(Math.max(1, svg.getBoundingClientRect().width)),
+    );
+    observer.observe(svg);
+    const wheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const matrix = svg.getScreenCTM();
+      if (!matrix) return;
+      const p = new DOMPoint(e.clientX, e.clientY).matrixTransform(
+        matrix.inverse(),
+      );
+      latest.current.onView(
+        zoomView(
+          latest.current.view,
+          { x: p.x / 62.5 - 8, y: (575 - p.y) / 62.5 },
+          e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 600 : 1),
+        ),
+      );
+    };
+    svg.addEventListener("wheel", wheel, { passive: false });
+    return () => {
+      observer.disconnect();
+      svg.removeEventListener("wheel", wheel);
+    };
+  }, []);
   const drag = useRef<
     | {
         start: Point;
@@ -239,7 +278,7 @@ export function HouseStage({
       className="house-stage"
       viewBox={`${sx(view.x - view.span / 2)} ${sy(view.y + view.span * 0.3)} ${view.span * 62.5} ${view.span * 0.6 * 62.5}`}
       tabIndex={0}
-      aria-label="大搭建台，空白处拖动平移；点击积木选择，方向键微调，R旋转，Delete移走"
+      aria-label="大搭建台，鼠标滚轮缩放，空白处拖动平移；点击积木选择，方向键微调，R旋转，Delete移走"
       onKeyDown={onKey}
       onPointerDown={(e) => {
         if (e.button !== 0 && e.button !== 1) return;
@@ -373,12 +412,7 @@ export function HouseStage({
             strokeWidth="1"
           />
         </pattern>
-        {Object.entries(MATERIALS).map(([id, m]) => (
-          <linearGradient id={"house-" + id} key={id} x2=".7" y2="1">
-            <stop stopColor={`var(${m.token})`} />
-            <stop offset="1" stopColor={`var(${m.token})`} stopOpacity=".45" />
-          </linearGradient>
-        ))}
+        <MaterialTextures />
       </defs>
       <rect
         x={sx(-40)}
@@ -424,6 +458,50 @@ export function HouseStage({
             stroke="var(--cyan-300)"
             strokeWidth="4"
           />
+          <g pointerEvents="none" stroke="var(--ink-primary)" opacity=".85">
+            {Array.from(
+              {
+                length:
+                  Math.ceil(
+                    (r.right - r.left) / ((view.span * 100) / pixelWidth),
+                  ) + 2,
+              },
+              (_, j) => {
+                const step = (view.span * 100) / pixelWidth;
+                const index = Math.ceil(r.left / step) + j;
+                const x = index * step;
+                if (x > r.right) return null;
+                const unit = (view.span * 62.5) / pixelWidth;
+                return (
+                  <g key={index}>
+                    <path
+                      d={`M${sx(x + ground.x)} ${sy(ground.y)}v${(index % 5 === 0 ? 30 : 21) * unit}`}
+                      strokeWidth={1.5 * unit}
+                    />
+                    <text
+                      x={sx(x + ground.x) + 3 * unit}
+                      y={sy(ground.y) + 31 * unit}
+                      fontSize={11 * unit}
+                      stroke="none"
+                      fill="var(--ink-primary)"
+                    >
+                      {x.toFixed(1)}
+                    </text>
+                    {[1, 2, 3, 4].map(
+                      (k) =>
+                        x + (k * step) / 5 <= r.right && (
+                          <path
+                            key={k}
+                            d={`M${sx(x + (k * step) / 5 + ground.x)} ${sy(ground.y)}v${(k % 2 ? 6 : 11) * unit}`}
+                            strokeWidth={unit}
+                          />
+                        ),
+                    )}
+                  </g>
+                );
+              },
+            )}
+          </g>
           {challenge.flags.foundation && (
             <text
               x={sx((r.left + r.right) / 2 + ground.x)}
@@ -540,6 +618,12 @@ export function HouseStage({
           }}
         >
           {shape(p, `url(#house-${p.material})`)}
+          {!p.material.startsWith("elastic") &&
+            !p.material.startsWith("cushion") && (
+              <g stroke="none" pointerEvents="none">
+                {shape(p, `url(#grain-${p.material})`)}
+              </g>
+            )}
           {p.shape === "circle" && (
             <path
               d={`M0 0L${p.width * 26} 0`}
@@ -566,7 +650,10 @@ export function HouseStage({
           id: c.id,
           kind: c.kind,
           a: c.anchor,
-          b: c.anchor,
+          b:
+            c.kind === "chain"
+              ? design.parts.find((p) => p.id === c.b)!
+              : c.anchor,
         }))
       ).map((c) => (
         <g key={c.id} pointerEvents="none">
@@ -577,8 +664,18 @@ export function HouseStage({
             y2={sy(c.b.y)}
             stroke="var(--ink-primary)"
             strokeWidth="3"
+            strokeDasharray={c.kind === "chain" ? "6 3" : undefined}
           />
-          {c.kind === "hinge" ? (
+          {c.kind === "chain" ? (
+            <g
+              fill="var(--space-950)"
+              stroke="var(--ink-primary)"
+              strokeWidth="2"
+            >
+              <circle cx={sx(c.a.x)} cy={sy(c.a.y)} r="6" />
+              <circle cx={sx(c.b.x)} cy={sy(c.b.y)} r="6" />
+            </g>
+          ) : c.kind === "hinge" ? (
             <circle
               cx={sx(c.a.x)}
               cy={sy(c.a.y)}

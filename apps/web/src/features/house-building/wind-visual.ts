@@ -1,7 +1,7 @@
 /** Deterministic normalized streaks: density follows wind, travel follows simulated time. */
 export function windStreaks(speed: number, travel: number, span: number) {
   if (speed <= 0) return [];
-  const strength = Math.min(1, speed / 60);
+  const strength = Math.min(1, speed / 100);
   const count = Math.round(24 + strength * 216);
   const phase = (travel * 0.18) / span;
   const fraction = (n: number) => ((n % 1) + 1) % 1;

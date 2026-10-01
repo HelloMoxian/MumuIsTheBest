@@ -93,9 +93,9 @@ test("a tall rectangle segments along its long axis with its original outline an
   );
   assert.ok(Math.abs(s.snapshot().mass - partMass(p)) < 1e-7);
 });
-test("four visible families each have five increasingly strong and costly tiers; legacy properties stay unchanged", () => {
-  assert.equal(PRESET_MATERIAL_IDS.length, 20);
-  for (const family of ["wood", "stone", "metal", "elastic"]) {
+test("five visible families each have five increasingly strong and costly tiers; legacy properties stay unchanged", () => {
+  assert.equal(PRESET_MATERIAL_IDS.length, 25);
+  for (const family of ["wood", "stone", "metal", "elastic", "cushion"]) {
     const materials = PRESET_MATERIAL_IDS.filter(
       (id) => MATERIALS[id].presetGroup === family,
     ).map((id) => MATERIALS[id]);

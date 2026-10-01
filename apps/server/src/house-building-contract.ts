@@ -3,6 +3,11 @@ export const HOUSE_SCHEMA_VERSION = 1;
 export const MAX_PARTS = 160;
 export const WORLD = { left: -40, right: 40, top: 40 } as const;
 export const PRESET_MATERIAL_IDS = [
+  "cushion_t1",
+  "cushion_t2",
+  "cushion_t3",
+  "cushion_t4",
+  "cushion_t5",
   "wood_t1",
   "wood_t2",
   "wood_t3",
@@ -62,7 +67,7 @@ export type HouseConnection = {
   id: string;
   a: string;
   b: string | "ground";
-  kind: "fixed" | "hinge";
+  kind: "fixed" | "hinge" | "chain";
   anchor: Point;
   strength: number;
 };
@@ -272,7 +277,7 @@ export function parseHouseDesign(
     return;
   const s = value.settings;
   if (
-    !num(s.windSpeed, 0, 60) ||
+    !num(s.windSpeed, 0, 100) ||
     ![-1, 1].includes(s.windDirection as number) ||
     typeof s.gusts !== "boolean" ||
     !num(s.quakeAcceleration, 0, 10) ||
@@ -331,7 +336,7 @@ export function parseHouseDesign(
       !id(c.id) ||
       !id(c.a) ||
       !(id(c.b) || c.b === "ground") ||
-      !["fixed", "hinge"].includes(c.kind as string) ||
+      !["fixed", "hinge", "chain"].includes(c.kind as string) ||
       !record(c.anchor) ||
       !num(c.anchor.x, WORLD.left, WORLD.right) ||
       !num(c.anchor.y, -0.1, WORLD.top) ||
@@ -347,7 +352,10 @@ export function parseHouseDesign(
     if (!a || surfaceDistance(a, anchor) > 0.13 || pairs.has(pair)) return;
     if (c.b === "ground") {
       if (Math.abs(anchor.y) > 0.03 || bounds(a).bottom > 0.13) return;
-    } else if (!b || surfaceDistance(b, anchor) > 0.13) return;
+    } else if (!b || (c.kind !== "chain" && surfaceDistance(b, anchor) > 0.13))
+      return;
+    if (c.kind === "chain" && (!b || Math.hypot(a.x - b.x, a.y - b.y) < 0.02))
+      return;
     pairs.add(pair);
     connections.push({
       id: c.id,
