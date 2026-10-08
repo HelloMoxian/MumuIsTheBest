@@ -40,6 +40,8 @@
 .db-board-heading { display: flex; justify-content: space-between; color: var(--ink-secondary); font-size: 18px; padding: 0 8px 10px; }
 .db-board-heading i { display: inline-block; width: 8px; height: 8px; margin-right: 9px; border-radius: 50%; background: var(--cyan-300); }
 .db-board-area { width: 100%; display: grid; place-items: center; min-height: 0; }
+.db-board-stage { display: contents; }
+.db-next-dock { display: none; }
 .db-board {
   position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
   aspect-ratio: var(--cols) / var(--rows); width: min(100%, calc((100dvh - 290px) * var(--ratio)));
@@ -226,8 +228,8 @@
   position: fixed; inset: 0; z-index: 1100; width: 100%; height: 100dvh; min-height: 0;
   padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
   display: grid; grid-template-columns: minmax(0, 1fr) clamp(184px, 19vw, 240px);
-  grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
-  grid-template-areas: "board tools" "board preview" "board stats" "board feedback" "board touch" "notices notices";
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  grid-template-areas: "board tools" "board stats" "board feedback" "board touch" "notices notices";
   gap: 10px 16px; overflow: hidden;
 }
 .db-fullscreen :is(.db-main, .db-play) { display: contents; }
@@ -237,12 +239,20 @@
 .db-fullscreen .game-topbar__controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; min-height: 0; margin: 0; overflow: visible; max-width: none; }
 .db-fullscreen .game-topbar__controls button { width: 100%; min-width: 48px; padding: 6px; font-size: 18px; }
 .db-fullscreen .db-board-area { grid-area: board; min-width: 0; min-height: 0; width: 100%; height: 100%; container-type: size; }
-.db-fullscreen .db-board { width: min(100cqw, calc(100cqh * var(--ratio))); min-width: 0; max-width: 100%; max-height: 100%; padding: 4px; border-radius: 10px; box-shadow: 0 0 22px color-mix(in srgb, var(--cyan-300) 8%, transparent); }
+.db-fullscreen .db-board-stage {
+  /* Fit the board plus one preview column; allow 64px for its short label. */
+  --db-board-size: min(calc(100cqh * var(--ratio)), calc((100cqw - 16px) * var(--cols) / (var(--cols) + 1)), calc(100cqw - 80px));
+  --db-cell-size: calc((var(--db-board-size) - 10px - (var(--cols) - 1) * 1px) / var(--cols));
+  display: grid; grid-template-columns: var(--db-board-size) max(64px, var(--db-cell-size)); gap: 16px;
+  align-items: start; width: max-content; max-width: 100%;
+}
+.db-fullscreen .db-board { width: var(--db-board-size); min-width: 0; max-width: 100%; max-height: 100%; padding: 4px; border-radius: 10px; box-shadow: 0 0 22px color-mix(in srgb, var(--cyan-300) 8%, transparent); }
 .db-fullscreen .db-panel { align-self: stretch; min-width: 0; border-radius: 16px; padding: 12px; }
-.db-fullscreen .db-preview { grid-area: preview; display: flex; flex-direction: row; justify-content: space-between; gap: 8px; text-align: left; }
-.db-fullscreen .db-preview > .db-eyebrow { font-size: 18px; letter-spacing: 0; flex-shrink: 0; }
-.db-fullscreen .db-next { display: flex; width: auto; padding: 0; gap: 2px; border: 0; background: none; box-shadow: none; }
-.db-fullscreen .db-next > div { width: clamp(28px, 3vw, 42px); height: auto; flex-shrink: 0; }
+.db-fullscreen .db-preview { display: none; }
+.db-fullscreen .db-next-dock { display: flex; flex-direction: column; align-items: center; gap: 10px; padding-top: 5px; min-width: 0; text-align: center; }
+.db-fullscreen .db-next-dock > .db-eyebrow { font-size: 18px; line-height: 1.4; letter-spacing: 0; overflow-wrap: anywhere; }
+.db-fullscreen .db-next-dock .db-next { display: grid; grid-template-columns: var(--db-cell-size); width: auto; padding: 0; gap: 1px; border: 0; border-radius: 0; background: none; box-shadow: none; }
+.db-fullscreen .db-next-dock .db-next > div { width: var(--db-cell-size); height: var(--db-cell-size); }
 .db-fullscreen .db-stats { grid-area: stats; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; }
 .db-fullscreen .db-score { min-width: 0; }
 .db-fullscreen .db-score > .db-eyebrow { font-size: 18px; letter-spacing: 0; }
@@ -266,15 +276,13 @@
   .diamond-blocks.db-fullscreen {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-rows: auto auto minmax(0, 1fr) 28px auto auto;
-    grid-template-areas: "tools tools" "preview stats" "board board" "feedback feedback" "touch touch" "notices notices";
+    grid-template-areas: "tools tools" "stats stats" "board board" "feedback feedback" "touch touch" "notices notices";
     gap: 6px;
   }
   .db-fullscreen .game-topbar__controls { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
   .db-fullscreen .game-topbar__controls button { font-size: 16px; padding-inline: 2px; }
   .db-fullscreen .db-panel { padding: 6px 8px; }
-  .db-fullscreen .db-preview { gap: 4px; }
-  .db-fullscreen .db-next > div { width: clamp(24px, 6.5vw, 38px); }
-  .db-fullscreen .db-preview > .db-eyebrow { font-size: 16px; }
+  .db-fullscreen .db-next-dock > .db-eyebrow { font-size: 16px; }
   .db-fullscreen .db-stats { gap: 6px; }
   .db-fullscreen .db-score > .db-eyebrow, .db-fullscreen .db-level strong::before { font-size: 16px; }
   .db-fullscreen .db-score strong, .db-fullscreen .db-level strong { font-size: 22px; }
@@ -287,7 +295,6 @@
 @media (orientation: landscape) and (max-height: 540px) {
   .diamond-blocks.db-fullscreen { grid-template-columns: minmax(0, 1fr) 204px; gap: 6px 10px; }
   .db-fullscreen .db-panel { padding: 4px 8px; }
-  .db-fullscreen .db-next > div { width: 30px; }
   .db-fullscreen .db-stats { gap: 4px; }
   .db-fullscreen .db-score { display: flex; align-items: center; gap: 6px; }
   .db-fullscreen .db-score strong { margin: 0; font-size: 22px; }

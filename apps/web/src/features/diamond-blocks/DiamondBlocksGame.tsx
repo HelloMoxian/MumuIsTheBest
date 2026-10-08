@@ -231,6 +231,8 @@ export function DiamondBlocksGame() {
   const prism = isPrism(game.active), target = prism && game.phase === "falling" ? prismTarget(game, landing) : null;
   const targetCount = target === null ? 0 : game.board.filter(kind => kind === target).length;
   const preview = game.pendingPrisms > 0 ? [PRISM] : game.next;
+  const previewLabel = game.pendingPrisms > 0 ? `全消奖励${game.pendingPrisms > 1 ? ` ×${game.pendingPrisms}` : ""}` : "下一组";
+  const previewGems = <div className="db-next" aria-label={game.pendingPrisms > 0 ? "下一枚是全消方块，落点决定消除的颜色" : "下一组三连元素"}>{preview.map((kind, i) => <div key={i}><Gem kind={kind} skin={game.config.skin} /></div>)}</div>;
   const remaining = game.config.target - progress;
   const status = game.phase === "over" ? "这一盘装满了，再来一次吧" : paused ? "休息一下，灵感马上回来" : game.phase === "clearing" ? (game.clearColor !== null ? `同色全消！点亮 ${game.matches.length} 颗` : game.chain > 1 ? `漂亮！${game.chain} 连锁 · ${game.matches.length} 颗` : `连成啦！消除 ${game.matches.length} 颗`) : game.phase === "settling" ? "星光归位中…" : prism ? (target === null ? "全消方块：移到元素上，空列会消耗奖励" : `全消方块：落下清除 ${targetCount} 颗同类元素`) : speed(game) === 0 ? "慢慢想，按 ↓ 或「直落」放下" : "横、竖、斜线，三个相同就消除";
   const occupied = game.board.filter(v => v !== null).length;
@@ -243,32 +245,38 @@ export function DiamondBlocksGame() {
     </>} />
     <main className="db-main">
       <aside className="db-preview db-panel">
-        <span className="db-eyebrow">{game.pendingPrisms > 0 ? `全消奖励${game.pendingPrisms > 1 ? ` ×${game.pendingPrisms}` : ""}` : fullscreen.focused ? "下一组" : "NEXT / 下一组"}</span>
-        <div className="db-next" aria-label={game.pendingPrisms > 0 ? "下一枚是全消方块，落点决定消除的颜色" : "下一组三连元素"}>{preview.map((kind, i) => <div key={i}><Gem kind={kind} skin={game.config.skin} /></div>)}</div>
+        <span className="db-eyebrow">{game.pendingPrisms > 0 ? previewLabel : "NEXT / 下一组"}</span>
+        {previewGems}
         <div className="db-preview-copy"><strong>三颗一组<br />无限灵感</strong><p>换个顺序<br />就有新发现</p></div>
         <div className="db-palette" aria-label={`已启用 ${game.config.kinds.length} 种元素`}>{game.config.kinds.map(kind => <Gem key={kind} kind={kind} skin={game.config.skin} />)}</div>
         <span className="db-muted">{game.config.kinds.length} 种 · {SKIN_NAMES[game.config.skin]}</span>
       </aside>
       <section className="db-play">
         <div className="db-board-heading"><span><i />{game.config.width} × {game.config.height}</span><span>{speed(game) === 0 ? "自在模式" : `${speed(game).toFixed(2)} 格 / 秒`}</span></div>
-        <div className="db-board-area">
-          <div ref={board} tabIndex={0} className="db-board" style={{ "--cols": game.config.width, "--rows": game.config.height, "--ratio": game.config.width / game.config.height } as CSSProperties} role="img" aria-label={`${game.config.width} 列 ${game.config.height} 行，已消除 ${game.cleared} 颗；${prism ? `全消方块，可清除 ${targetCount} 颗，左右选择落点` : "左右移动，上键换序"}，空格直落`}>
-            {game.board.map((kind, i) => {
-              const x = i % game.config.width, y = Math.floor(i / game.config.width);
-              const active = game.active && x === game.active.x && y >= game.active.y && y < game.active.y + game.active.gems.length;
-              const shadow = !active && landing && x === landing.x && y >= landing.y && y < landing.y + landing.gems.length;
-              const value = active ? game.active!.gems[y - game.active!.y] : kind;
-              const drop = game.phase === "settling" && !active ? fallDistances[i] ?? 0 : 0;
-              return <div key={i} style={drop ? { "--drop-rows": drop } as CSSProperties : undefined} className={`db-cell ${active ? "is-active" : ""} ${shadow ? "is-ghost" : ""} ${target !== null && kind === target ? "is-prism-target" : ""} ${game.matches.includes(i) ? "is-clearing" : ""} ${drop ? "is-dropping" : ""}`}>
-                {value !== null ? <span className="db-piece"><Gem kind={value} skin={game.config.skin} /></span> : shadow ? <span className="db-ghost-symbol">{prism ? "✧" : SYMBOLS[landing!.gems[y - landing!.y]]}</span> : null}
-              </div>;
-            })}
-            {(paused || game.phase === "over") && !settingsOpen && !confirm && <div className="db-overlay">
-              <span className="db-overlay-mark">{game.phase === "over" ? "✧" : "Ⅱ"}</span>
-              <h2>{game.phase === "over" ? "星舱装满啦" : "休息一下"}</h2>
-              <p>{game.phase === "over" ? `点亮了 ${game.cleared} 颗，收获 ${game.score} 分` : "这一盘已经为你留好"}</p>
-              <button className="db-primary" onClick={() => { if (game.phase === "over") requestConfirm("restart"); else { pause(false); audio.current?.unlock(); board.current?.focus(); } }}>{game.phase === "over" ? "再来一盘" : "继续探索"}</button>
-            </div>}
+        <div className="db-board-area" style={{ "--cols": game.config.width, "--rows": game.config.height, "--ratio": game.config.width / game.config.height } as CSSProperties}>
+          <div className="db-board-stage">
+            <div ref={board} tabIndex={0} className="db-board" style={{ "--cols": game.config.width, "--rows": game.config.height, "--ratio": game.config.width / game.config.height } as CSSProperties} role="img" aria-label={`${game.config.width} 列 ${game.config.height} 行，已消除 ${game.cleared} 颗；${prism ? `全消方块，可清除 ${targetCount} 颗，左右选择落点` : "左右移动，上键换序"}，空格直落`}>
+              {game.board.map((kind, i) => {
+                const x = i % game.config.width, y = Math.floor(i / game.config.width);
+                const active = game.active && x === game.active.x && y >= game.active.y && y < game.active.y + game.active.gems.length;
+                const shadow = !active && landing && x === landing.x && y >= landing.y && y < landing.y + landing.gems.length;
+                const value = active ? game.active!.gems[y - game.active!.y] : kind;
+                const drop = game.phase === "settling" && !active ? fallDistances[i] ?? 0 : 0;
+                return <div key={i} style={drop ? { "--drop-rows": drop } as CSSProperties : undefined} className={`db-cell ${active ? "is-active" : ""} ${shadow ? "is-ghost" : ""} ${target !== null && kind === target ? "is-prism-target" : ""} ${game.matches.includes(i) ? "is-clearing" : ""} ${drop ? "is-dropping" : ""}`}>
+                  {value !== null ? <span className="db-piece"><Gem kind={value} skin={game.config.skin} /></span> : shadow ? <span className="db-ghost-symbol">{prism ? "✧" : SYMBOLS[landing!.gems[y - landing!.y]]}</span> : null}
+                </div>;
+              })}
+              {(paused || game.phase === "over") && !settingsOpen && !confirm && <div className="db-overlay">
+                <span className="db-overlay-mark">{game.phase === "over" ? "✧" : "Ⅱ"}</span>
+                <h2>{game.phase === "over" ? "星舱装满啦" : "休息一下"}</h2>
+                <p>{game.phase === "over" ? `点亮了 ${game.cleared} 颗，收获 ${game.score} 分` : "这一盘已经为你留好"}</p>
+                <button className="db-primary" onClick={() => { if (game.phase === "over") requestConfirm("restart"); else { pause(false); audio.current?.unlock(); board.current?.focus(); } }}>{game.phase === "over" ? "再来一盘" : "继续探索"}</button>
+              </div>}
+            </div>
+            {fullscreen.focused && <aside className="db-next-dock" aria-label="下一组预告">
+              <span className="db-eyebrow">{previewLabel}</span>
+              {previewGems}
+            </aside>}
           </div>
         </div>
         <div className={`db-feedback ${game.phase === "clearing" ? "is-success" : ""}`} role="status">{status}</div>
