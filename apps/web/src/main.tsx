@@ -29,6 +29,11 @@ const GeographyPage = lazy(async () => {
   return { default: module.GeographyPage };
 });
 
+const DiamondBlocksGame = lazy(async () => {
+  const module = await import("./features/diamond-blocks/DiamondBlocksGame");
+  return { default: module.DiamondBlocksGame };
+});
+
 const TetrisGame = lazy(async () => {
   const module = await import("./features/tetris/TetrisGame");
   return { default: module.TetrisGame };
@@ -286,6 +291,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     id: "games",
     title: "游戏",
     games: [
+      { title: "钻石方块", mark: "◆", description: "三颗一组，横竖斜连锁消除，五套皮肤自由变换", shape: "wide", href: "/games/diamond-blocks" },
       { title: "五子棋", mark: "●", description: "黑白轮流落子，先连成五子就获胜", shape: "wide", href: "/games/gomoku" },
       { title: "星页数独", mark: "▦", description: "用精美图案拼故事，六档推理挑战赢取知识币和能量币", shape: "wide", href: "/games/sudoku" },
       {
@@ -606,6 +612,7 @@ const HOME_GAME_CARD_IMAGES: Record<string, string> = {
 };
 
 function gameCardStyle(href?: string) {
+  if (href === "/games/diamond-blocks") return { "--game-card-image": "url(/images/diamond-blocks-card.svg)" } as React.CSSProperties;
   if (href === "/games/gomoku") return { "--game-card-image": "url(/images/gomoku-card.svg)" } as React.CSSProperties;
   const geographyPage = GEOGRAPHY_PAGES.find(page => href === `/nature/${page.id}`);
   if (geographyPage) {
@@ -1162,6 +1169,9 @@ function CurrentPage() {
   if (window.location.pathname === "/tools/asr-lab") return <AsrLabPage />;
   if (window.location.pathname === "/physics/house-building") {
     return <Suspense fallback={<ChemistryLoading label="盖房子实验台" />}><HouseBuildingPage /></Suspense>;
+  }
+  if (window.location.pathname === "/games/diamond-blocks") {
+    return <Suspense fallback={<ChemistryLoading label="钻石方块" />}><DiamondBlocksGame /></Suspense>;
   }
   if (window.location.pathname === "/games/tetris") {
     return <Suspense fallback={<ChemistryLoading label="水晶俄罗斯方块" />}><TetrisGame /></Suspense>;

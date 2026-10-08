@@ -31,6 +31,7 @@ export function NumericKeypadLayer({ children }: { children: ReactNode }) {
     "/math/sliding-puzzle",
     "/physics/house-building",
     "/games/sudoku",
+    "/games/diamond-blocks",
     "/games/gomoku",
     "/games/tetris",
     "/games/super-blocks",

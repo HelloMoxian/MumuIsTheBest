@@ -19,7 +19,7 @@ export function GlobalMusicLayer({ children }: { children: ReactNode }) {
   const launcher = useRef<HTMLButtonElement>(null);
   const musicOpener = useRef<HTMLElement | null>(null);
   const isStargazing = window.location.pathname === "/nature/stargazing";
-  const isMusicStudio = window.location.pathname === "/art/metronome";
+  const isMusicStudio = ["/art/metronome", "/games/diamond-blocks"].includes(window.location.pathname);
   const isGomoku = window.location.pathname === "/games/gomoku";
   const openPanel = useCallback(() => {
     musicOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
