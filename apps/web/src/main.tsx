@@ -34,6 +34,11 @@ const TetrisGame = lazy(async () => {
   return { default: module.TetrisGame };
 });
 
+const GomokuGame = lazy(async () => {
+  const module = await import("./features/gomoku/GomokuGame");
+  return { default: module.GomokuGame };
+});
+
 const SlidingPuzzleGame = lazy(async () => {
   const module = await import("./features/sliding-puzzle/SlidingPuzzleGame");
   return { default: module.SlidingPuzzleGame };
@@ -281,6 +286,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     id: "games",
     title: "游戏",
     games: [
+      { title: "五子棋", mark: "●", description: "黑白轮流落子，先连成五子就获胜", shape: "wide", href: "/games/gomoku" },
       { title: "星页数独", mark: "▦", description: "用精美图案拼故事，六档推理挑战赢取知识币和能量币", shape: "wide", href: "/games/sudoku" },
       {
         title: "俄罗斯方块",
@@ -600,6 +606,7 @@ const HOME_GAME_CARD_IMAGES: Record<string, string> = {
 };
 
 function gameCardStyle(href?: string) {
+  if (href === "/games/gomoku") return { "--game-card-image": "url(/images/gomoku-card.svg)" } as React.CSSProperties;
   const geographyPage = GEOGRAPHY_PAGES.find(page => href === `/nature/${page.id}`);
   if (geographyPage) {
     return { "--game-card-image": `url(/images/nature/geography/${geographyPage.id}.webp)` } as React.CSSProperties;
@@ -1158,6 +1165,9 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/games/tetris") {
     return <Suspense fallback={<ChemistryLoading label="水晶俄罗斯方块" />}><TetrisGame /></Suspense>;
+  }
+  if (window.location.pathname === "/games/gomoku") {
+    return <Suspense fallback={<ChemistryLoading label="五子棋" />}><GomokuGame /></Suspense>;
   }
   if (window.location.pathname === "/games/super-blocks") {
     return <Suspense fallback={<ChemistryLoading label="超级积木" />}><SuperBlocksGame /></Suspense>;

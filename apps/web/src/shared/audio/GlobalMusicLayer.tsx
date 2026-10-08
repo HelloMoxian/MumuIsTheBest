@@ -20,6 +20,7 @@ export function GlobalMusicLayer({ children }: { children: ReactNode }) {
   const musicOpener = useRef<HTMLElement | null>(null);
   const isStargazing = window.location.pathname === "/nature/stargazing";
   const isMusicStudio = window.location.pathname === "/art/metronome";
+  const isGomoku = window.location.pathname === "/games/gomoku";
   const openPanel = useCallback(() => {
     musicOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     panel.current?.showModal();
@@ -34,7 +35,7 @@ export function GlobalMusicLayer({ children }: { children: ReactNode }) {
     const environment = () => {
       const tts = browserTts.getSnapshot().status;
       const speech = getExperienceSnapshot().speechStatus;
-      music.setEnvironment(document.hidden, audioFocus.isMicrophoneActive() || audioFocus.isCreativeActive(),
+      music.setEnvironment(document.hidden, isGomoku || audioFocus.isMicrophoneActive() || audioFocus.isCreativeActive(),
         tts === "speaking" || tts === "loading" || speech.startsWith("speaking"));
     };
     const gesture = (event: Event) => { if (event.isTrusted) music.retry(); };
@@ -60,7 +61,7 @@ export function GlobalMusicLayer({ children }: { children: ReactNode }) {
     setAudioPreferences(patch); player.current?.retry();
   };
   return <GlobalMusicPanelContext.Provider value={openPanel}>{children}
-    {!isStargazing && !isMusicStudio && <button ref={launcher} className="global-music-launcher" type="button" data-skip-startup-greeting
+    {!isStargazing && !isMusicStudio && !isGomoku && <button ref={launcher} className="global-music-launcher" type="button" data-skip-startup-greeting
       onClick={openPanel} aria-haspopup="dialog" aria-label={"背景音乐：" + STATUS[status]}>
       <span aria-hidden="true">♫</span> 背景音乐
     </button>}
