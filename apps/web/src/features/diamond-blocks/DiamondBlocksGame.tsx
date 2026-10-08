@@ -33,6 +33,7 @@ export function DiamondBlocksGame() {
   const [scoreAward, setScoreAward] = useState<ScoreAward | null>(null);
   const awardSequence = useRef(0);
   const live = useRef(boot.game), store = useRef(boot.store);
+  const heldDown = useRef(new Map<string, number>());
   const [paused, setPaused] = useState(false), pausedRef = useRef(false);
   const [savedError, setSavedError] = useState(boot.error), errorRef = useRef(boot.error);
   const [audioNotice, setAudioNotice] = useState("");
@@ -59,6 +60,7 @@ export function DiamondBlocksGame() {
     }
   }
   function pause(value: boolean) {
+    if (value) heldDown.current.clear();
     pausedRef.current = value; setPaused(value);
     runningRef.current = !value && !settings.current?.open && !confirmation.current?.open && live.current.phase !== "over";
     audio.current?.configure(live.current.config, runningRef.current);
@@ -86,15 +88,28 @@ export function DiamondBlocksGame() {
     const next = act(live.current, value);
     if (next !== live.current) publish(next, value);
   }
+  function allowDown(source: string, pressed: boolean) {
+    const current = live.current;
+    const piece = current.phase === "falling" && current.active ? current.pieces : -1;
+    // A held input belongs to one triple; presses during clearing cannot target the next one.
+    if (pressed) heldDown.current.set(source, piece);
+    return piece >= 0 && heldDown.current.get(source) === piece;
+  }
   const handlers = useRef({ action, pause, save, publish });
   handlers.current = { action, pause, save, publish };
   useGameControllers(DIAMOND_CONTROLS, {
     enabled: running, editing: false,
     onDisconnect: () => pause(true),
     onActions: events => {
+      for (const event of events) {
+        if (event.action === "down" && event.type === "release") heldDown.current.delete(`pad:${event.player}`);
+      }
       const pressed = events.filter(e => e.type === "press" || e.type === "repeat");
       if (pressed.some(e => e.action === "pause" && e.type === "press")) { pause(true); return; }
-      for (const event of pressed) action(event.action as Action);
+      for (const event of pressed) {
+        if (event.action === "down" && !allowDown(`pad:${event.player}`, event.type === "press")) continue;
+        action(event.action as Action);
+      }
     },
   });
   useEffect(() => {
@@ -129,8 +144,10 @@ export function DiamondBlocksGame() {
       if (event.code === "Space" && event.target instanceof HTMLElement && event.target.closest("button, a")) return;
       event.preventDefault();
       if (event.repeat && ["drop", "rotate", "reverse"].includes(move)) return;
+      if (move === "down" && !allowDown(`key:${event.code}`, !event.repeat)) return;
       handlers.current.action(move);
     };
+    const release = (event: KeyboardEvent) => { heldDown.current.delete(`key:${event.code}`); };
     const externalSave = (event: StorageEvent) => {
       if (event.key !== STORAGE_KEY && event.key !== null) return;
       const error = "另一个页面更新了进度，已暂停。请重新读取，或确认保留这一盘";
@@ -138,17 +155,20 @@ export function DiamondBlocksGame() {
     };
     window.addEventListener("blur", hide); window.addEventListener("pagehide", hide);
     document.addEventListener("visibilitychange", visibility); window.addEventListener("keydown", keys);
+    window.addEventListener("keyup", release);
     window.addEventListener("storage", externalSave);
     handlers.current.save();
     return () => {
       clearInterval(timer); handlers.current.save();
       window.removeEventListener("blur", hide); window.removeEventListener("pagehide", hide);
       document.removeEventListener("visibilitychange", visibility); window.removeEventListener("keydown", keys);
+      window.removeEventListener("keyup", release); heldDown.current.clear();
       window.removeEventListener("storage", externalSave);
     };
   }, []);
 
   function openSettings() {
+    heldDown.current.clear();
     opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     resumeAfterSettings.current = !pausedRef.current;
     setDraft(live.current.config); setNumbers(numbersFor(live.current.config)); setFormError("");
@@ -245,7 +265,7 @@ export function DiamondBlocksGame() {
         </div>
         <div className={`db-feedback ${game.phase === "clearing" ? "is-success" : ""}`} role="status">{status}</div>
         <div className="db-touch" aria-label="方块操作">
-          {([["left", "←", "左移"], ["rotate", "↻", "换序"], ["right", "→", "右移"], ["down", "↓", "下移"], ["drop", "⤓", "直落"]] as const).map(([id, icon, label]) => <button key={id} className={id === "drop" ? "db-primary" : ""} disabled={!running || game.phase !== "falling"} onClick={event => { action(id); if (event.detail > 0) board.current?.focus({ preventScroll: true }); }}><b aria-hidden="true">{icon}</b>{label}</button>)}
+          {([["left", "←", "左移"], ["rotate", "↻", "换序"], ["right", "→", "右移"], ["down", "↓", "下移"], ["drop", "⤓", "直落"]] as const).map(([id, icon, label]) => <button key={id} className={id === "drop" ? "db-primary" : ""} disabled={!running || game.phase !== "falling"} onKeyDown={event => { if (event.repeat && (event.code === "Enter" || event.code === "Space")) event.preventDefault(); }} onClick={event => { action(id); if (event.detail > 0) board.current?.focus({ preventScroll: true }); }}><b aria-hidden="true">{icon}</b>{label}</button>)}
         </div>
         <p className="db-key-guide">← → 移动 · ↑ 换序 · ↓ 下移 · 空格直落 · P 暂停</p>
       </section>
