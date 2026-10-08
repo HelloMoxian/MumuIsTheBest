@@ -204,7 +204,7 @@ export function DiamondBlocksGame() {
     </>} />
     <main className="db-main">
       <aside className="db-preview db-panel">
-        <span className="db-eyebrow">NEXT / 下一组</span>
+        <span className="db-eyebrow">{fullscreen.focused ? "下一组" : "NEXT / 下一组"}</span>
         <div className="db-next">{game.next.map((kind, i) => <div key={i}><Gem kind={kind} skin={game.config.skin} /></div>)}</div>
         <div className="db-preview-copy"><strong>三颗一组<br />无限灵感</strong><p>换个顺序<br />就有新发现</p></div>
         <div className="db-palette" aria-label={`已启用 ${game.config.kinds.length} 种元素`}>{game.config.kinds.map(kind => <Gem key={kind} kind={kind} skin={game.config.skin} />)}</div>
@@ -238,7 +238,7 @@ export function DiamondBlocksGame() {
         <p className="db-key-guide">← → 移动 · ↑ 换序 · ↓ 下移 · 空格直落 · P 暂停</p>
       </section>
       <aside className="db-stats db-panel">
-        <div className="db-score"><span className="db-eyebrow">SCORE / 得分</span><strong>{game.score.toLocaleString()}</strong></div>
+        <div className="db-score"><span className="db-eyebrow">{fullscreen.focused ? "得分" : "SCORE / 得分"}</span><strong>{game.score.toLocaleString()}</strong></div>
         <div className="db-level"><span>LEVEL</span><strong>{String(level(game)).padStart(2, "0")}</strong><span>探索关卡</span></div>
         <div className="db-progress"><div><span>下一关</span><b>还差 {remaining} 颗</b></div><progress max={game.config.target} value={progress} /><span>{progress} / {game.config.target}</span></div>
         <dl><div><dt>累计消除</dt><dd>{game.cleared}<small> 颗</small></dd></div><div><dt>最高连锁</dt><dd>{game.bestChain}<small> 次</small></dd></div><div><dt>已落方块</dt><dd>{game.pieces}<small> 组</small></dd></div></dl>
@@ -247,8 +247,10 @@ export function DiamondBlocksGame() {
       </aside>
     </main>
     {!occupied && !game.pieces && <p className="db-intro">移动三连块，把相同的元素连在一起。试试「换序」！</p>}
-    {audioNotice && <p className="db-notice" role="status">{audioNotice}<button onClick={() => { setAudioNotice(""); audio.current?.unlock(); }}>重试声音</button></p>}
-    {savedError && <div className="db-notice db-error" role="alert"><p>{savedError}。当前盘面仍保留在页面中。</p><button onClick={retry}>重试保存</button><button onClick={reload}>读取已保存进度</button><button onClick={() => requestConfirm("replace")}>保留这一盘并替换缓存</button></div>}
+    <div className="db-notices">
+      {audioNotice && <p className="db-notice" role="status">{audioNotice}<button onClick={() => { setAudioNotice(""); audio.current?.unlock(); }}>重试声音</button></p>}
+      {savedError && <div className="db-notice db-error" role="alert"><p>{savedError}。当前盘面仍保留在页面中。</p><button onClick={retry}>重试保存</button><button onClick={reload}>读取已保存进度</button><button onClick={() => requestConfirm("replace")}>保留这一盘并替换缓存</button></div>}
+    </div>
     <dialog ref={settings} className="db-dialog" aria-labelledby="db-settings-title" onClose={closeSettings} onKeyDown={event => event.stopPropagation()}>
       <form onSubmit={event => { event.preventDefault(); applySettings(); }}>
         <header><div><span className="db-eyebrow">YOUR PLAYGROUND</span><h2 id="db-settings-title">玩法设置</h2></div><button type="button" onClick={() => settings.current?.close()}>取消</button></header>
