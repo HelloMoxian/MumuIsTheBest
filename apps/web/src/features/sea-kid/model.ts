@@ -1,0 +1,21 @@
+export const PHYSICS = { gravity: 1800, jump: 620, walk: 240, run: 380, maxSpeed: 520, acceleration: 2400, width: 28, height: 48, length: 15600, arena: 1280 } as const;
+export const SCENES = ['丛林', '大海', '洞穴'] as const;
+export type Scene = 0 | 1 | 2;
+export type PlatformKind = 'ground' | 'cloud' | 'ice' | 'fall' | 'rise' | 'sink';
+export type Platform = { id: number; x: number; y: number; w: number; kind: PlatformKind; amplitude: number; phase: number; period: number };
+export type PickupKind = 'hammer' | 'firewheel' | 'potion' | 'scooter' | 'ring' | 'apple' | 'banana' | 'grapes';
+export type Pickup = { id: string; kind: PickupKind; x: number; y: number; platform: number };
+export type EnemyKind = 'frog' | 'snail' | 'octopus' | 'bat' | 'lizard' | 'hedgehog';
+export type Enemy = { id: string; kind: EnemyKind; platform: number; x: number; y: number; phase: number; hp: number; shotAt: number };
+export type Trap = { kind: 'flame' | 'pusher' | 'boulder' | 'rock'; platform: number; x: number; phase: number; fired: number };
+export type Level = { generatorVersion: 1; seed: number; world: number; scene: Scene; length: number; platforms: Platform[]; pickups: Pickup[]; enemies: Enemy[]; traps: Trap[] };
+export type Player = { x: number; y: number; vx: number; vy: number; facing: number; grounded: number | null; coyote: number; jumpBuffer: number; jumpHeld: boolean; weapon: 'none' | 'hammer' | 'firewheel'; tier: 0 | 1 | 2; scooter: boolean; ring: boolean; invulnerable: number; hurt: number; attack: number; rescue: number; safeX: number; safeY: number };
+export type Shot = { x: number; y: number; vx: number; vy: number; kind: 'hammer' | 'firewheel' | 'water-shot' | 'ink-shot' | 'fire-shot' | 'boulder'; friendly: boolean; life: number; hit: string[] };
+export type Boss = { kind: number; hp: number; maxHp: number; x: number; y: number; hitAt: number; shotAt: number; active: boolean };
+export type Game = { schemaVersion: 1; id: string; createdAt: string; updatedAt: string; revision: number; level: Level; player: Player; time: number; score: number; completedDistance: number; farthest: number; deaths: number; claimed: string[]; collected: string[]; shots: Shot[]; fallen: Record<string, number>; boss: Boss; phase: 'playing' | 'dead' | 'settlement'; phaseTime: number; stageScore: number };
+export type Input = { left: boolean; right: boolean; jump: boolean; attack: boolean; run: boolean };
+export const EMPTY_INPUT: Input = { left: false, right: false, jump: false, attack: false, run: false };
+export const BOSSES = ['鼓腮蛙王', '岩壳蟹王', '墨海章鱼', '洞穴蝠王', '火山小龙', '滚石刺猬', '冰晶巨人', '熔岩巨人'];
+export const BOSS_SPRITES = ['boss-frog', 'boss-crab', 'boss-octopus', 'boss-bat', 'boss-dragon', 'boss-hedgehog', 'boss-ice', 'boss-volcano'];
+export function blankPlayer(): Player { return { x: 70, y: 390, vx: 0, vy: 0, facing: 1, grounded: 0, coyote: .1, jumpBuffer: 0, jumpHeld: false, weapon: 'none', tier: 0, scooter: false, ring: false, invulnerable: 0, hurt: 0, attack: 0, rescue: 0, safeX: 70, safeY: 390 }; }
+export const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));

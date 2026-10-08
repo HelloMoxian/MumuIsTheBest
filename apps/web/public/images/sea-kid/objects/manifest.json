@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 1,
+  "source": "assets/game/sea-kid/objects.png",
+  "sourceWidth": 1536,
+  "sourceHeight": 1024,
+  "columns": 6,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 1,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "boss-frog",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "boss-frog.png",
+      "sourceBox": [
+        1,
+        1,
+        255,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.653605,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boss-crab",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "boss-crab.png",
+      "sourceBox": [
+        257,
+        1,
+        511,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.587777,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boss-octopus",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "boss-octopus.png",
+      "sourceBox": [
+        513,
+        1,
+        767,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.56727,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boss-bat",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "boss-bat.png",
+      "sourceBox": [
+        769,
+        1,
+        1023,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.466086,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boss-dragon",
+      "index": 4,
+      "row": 0,
+      "column": 4,
+      "filename": "boss-dragon.png",
+      "sourceBox": [
+        1025,
+        1,
+        1279,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.585498,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boss-hedgehog",
+      "index": 5,
+      "row": 0,
+      "column": 5,
+      "filename": "boss-hedgehog.png",
+      "sourceBox": [
+        1281,
+        1,
+        1535,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.615134,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boss-ice",
+      "index": 6,
+      "row": 1,
+      "column": 0,
+      "filename": "boss-ice.png",
+      "sourceBox": [
+        1,
+        257,
+        255,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.668439,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boss-volcano",
+      "index": 7,
+      "row": 1,
+      "column": 1,
+      "filename": "boss-volcano.png",
+      "sourceBox": [
+        257,
+        257,
+        511,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.655775,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hammer",
+      "index": 8,
+      "row": 1,
+      "column": 2,
+      "filename": "hammer.png",
+      "sourceBox": [
+        513,
+        257,
+        767,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.379813,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "firewheel",
+      "index": 9,
+      "row": 1,
+      "column": 3,
+      "filename": "firewheel.png",
+      "sourceBox": [
+        769,
+        257,
+        1023,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.549182,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "potion",
+      "index": 10,
+      "row": 1,
+      "column": 4,
+      "filename": "potion.png",
+      "sourceBox": [
+        1025,
+        257,
+        1279,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.374744,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "scooter",
+      "index": 11,
+      "row": 1,
+      "column": 5,
+      "filename": "scooter.png",
+      "sourceBox": [
+        1281,
+        257,
+        1535,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.272289,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "ring",
+      "index": 12,
+      "row": 2,
+      "column": 0,
+      "filename": "ring.png",
+      "sourceBox": [
+        1,
+        513,
+        255,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.472921,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "apple",
+      "index": 13,
+      "row": 2,
+      "column": 1,
+      "filename": "apple.png",
+      "sourceBox": [
+        257,
+        513,
+        511,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.439627,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "banana",
+      "index": 14,
+      "row": 2,
+      "column": 2,
+      "filename": "banana.png",
+      "sourceBox": [
+        513,
+        513,
+        767,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.385098,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "grapes",
+      "index": 15,
+      "row": 2,
+      "column": 3,
+      "filename": "grapes.png",
+      "sourceBox": [
+        769,
+        513,
+        1023,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.445316,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "water-shot",
+      "index": 16,
+      "row": 2,
+      "column": 4,
+      "filename": "water-shot.png",
+      "sourceBox": [
+        1025,
+        513,
+        1279,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.381254,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "ink-shot",
+      "index": 17,
+      "row": 2,
+      "column": 5,
+      "filename": "ink-shot.png",
+      "sourceBox": [
+        1281,
+        513,
+        1535,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.40965,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "fire-shot",
+      "index": 18,
+      "row": 3,
+      "column": 0,
+      "filename": "fire-shot.png",
+      "sourceBox": [
+        1,
+        769,
+        255,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.438635,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "boulder",
+      "index": 19,
+      "row": 3,
+      "column": 1,
+      "filename": "boulder.png",
+      "sourceBox": [
+        257,
+        769,
+        511,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.600549,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "flame",
+      "index": 20,
+      "row": 3,
+      "column": 2,
+      "filename": "flame.png",
+      "sourceBox": [
+        513,
+        769,
+        767,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.341326,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "pusher",
+      "index": 21,
+      "row": 3,
+      "column": 3,
+      "filename": "pusher.png",
+      "sourceBox": [
+        769,
+        769,
+        1023,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.38981,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "torch",
+      "index": 22,
+      "row": 3,
+      "column": 4,
+      "filename": "torch.png",
+      "sourceBox": [
+        1025,
+        769,
+        1279,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.304436,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "rock",
+      "index": 23,
+      "row": 3,
+      "column": 5,
+      "filename": "rock.png",
+      "sourceBox": [
+        1281,
+        769,
+        1535,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.336165,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": [],
+  "alphaCleanup": "Small disconnected components removed; full cell coordinates retained."
+}

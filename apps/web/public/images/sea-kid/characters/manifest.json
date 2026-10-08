@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 1,
+  "source": "assets/game/sea-kid/characters.png",
+  "sourceWidth": 1536,
+  "sourceHeight": 1024,
+  "columns": 6,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 1,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "hero-0-idle",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "hero-0-idle.png",
+      "sourceBox": [
+        1,
+        1,
+        255,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.282442,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-0-walk-a",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "hero-0-walk-a.png",
+      "sourceBox": [
+        257,
+        1,
+        511,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.306699,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-0-walk-b",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "hero-0-walk-b.png",
+      "sourceBox": [
+        513,
+        1,
+        767,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.301724,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-0-jump",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "hero-0-jump.png",
+      "sourceBox": [
+        769,
+        1,
+        1023,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.28641,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-0-attack",
+      "index": 4,
+      "row": 0,
+      "column": 4,
+      "filename": "hero-0-attack.png",
+      "sourceBox": [
+        1025,
+        1,
+        1279,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.342597,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-0-hurt",
+      "index": 5,
+      "row": 0,
+      "column": 5,
+      "filename": "hero-0-hurt.png",
+      "sourceBox": [
+        1281,
+        1,
+        1535,
+        255
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.327128,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-1-idle",
+      "index": 6,
+      "row": 1,
+      "column": 0,
+      "filename": "hero-1-idle.png",
+      "sourceBox": [
+        1,
+        257,
+        255,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.356175,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-1-walk-a",
+      "index": 7,
+      "row": 1,
+      "column": 1,
+      "filename": "hero-1-walk-a.png",
+      "sourceBox": [
+        257,
+        257,
+        511,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.380851,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-1-walk-b",
+      "index": 8,
+      "row": 1,
+      "column": 2,
+      "filename": "hero-1-walk-b.png",
+      "sourceBox": [
+        513,
+        257,
+        767,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.371629,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-1-jump",
+      "index": 9,
+      "row": 1,
+      "column": 3,
+      "filename": "hero-1-jump.png",
+      "sourceBox": [
+        769,
+        257,
+        1023,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.329872,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-1-attack",
+      "index": 10,
+      "row": 1,
+      "column": 4,
+      "filename": "hero-1-attack.png",
+      "sourceBox": [
+        1025,
+        257,
+        1279,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.427863,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-1-hurt",
+      "index": 11,
+      "row": 1,
+      "column": 5,
+      "filename": "hero-1-hurt.png",
+      "sourceBox": [
+        1281,
+        257,
+        1535,
+        511
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.406597,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-2-idle",
+      "index": 12,
+      "row": 2,
+      "column": 0,
+      "filename": "hero-2-idle.png",
+      "sourceBox": [
+        1,
+        513,
+        255,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.400257,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-2-walk-a",
+      "index": 13,
+      "row": 2,
+      "column": 1,
+      "filename": "hero-2-walk-a.png",
+      "sourceBox": [
+        257,
+        513,
+        511,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.425383,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-2-walk-b",
+      "index": 14,
+      "row": 2,
+      "column": 2,
+      "filename": "hero-2-walk-b.png",
+      "sourceBox": [
+        513,
+        513,
+        767,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.410317,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-2-jump",
+      "index": 15,
+      "row": 2,
+      "column": 3,
+      "filename": "hero-2-jump.png",
+      "sourceBox": [
+        769,
+        513,
+        1023,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.388694,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-2-attack",
+      "index": 16,
+      "row": 2,
+      "column": 4,
+      "filename": "hero-2-attack.png",
+      "sourceBox": [
+        1025,
+        513,
+        1279,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.455608,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hero-2-hurt",
+      "index": 17,
+      "row": 2,
+      "column": 5,
+      "filename": "hero-2-hurt.png",
+      "sourceBox": [
+        1281,
+        513,
+        1535,
+        767
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.423554,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "frog",
+      "index": 18,
+      "row": 3,
+      "column": 0,
+      "filename": "frog.png",
+      "sourceBox": [
+        1,
+        769,
+        255,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.404597,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "snail",
+      "index": 19,
+      "row": 3,
+      "column": 1,
+      "filename": "snail.png",
+      "sourceBox": [
+        257,
+        769,
+        511,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.404148,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "octopus",
+      "index": 20,
+      "row": 3,
+      "column": 2,
+      "filename": "octopus.png",
+      "sourceBox": [
+        513,
+        769,
+        767,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.416563,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "bat",
+      "index": 21,
+      "row": 3,
+      "column": 3,
+      "filename": "bat.png",
+      "sourceBox": [
+        769,
+        769,
+        1023,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.41647,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lizard",
+      "index": 22,
+      "row": 3,
+      "column": 4,
+      "filename": "lizard.png",
+      "sourceBox": [
+        1025,
+        769,
+        1279,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.35213,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "hedgehog",
+      "index": 23,
+      "row": 3,
+      "column": 5,
+      "filename": "hedgehog.png",
+      "sourceBox": [
+        1281,
+        769,
+        1535,
+        1023
+      ],
+      "trimBox": null,
+      "outputWidth": 254,
+      "outputHeight": 254,
+      "opaqueCoverage": 0.425243,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": [],
+  "alphaCleanup": "Small disconnected components removed; full cell coordinates retained."
+}

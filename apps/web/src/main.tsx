@@ -138,6 +138,10 @@ const BejeweledGame = lazy(async () => {
   return { default: module.BejeweledGame };
 });
 
+const SeaKidGame = lazy(async () => {
+  const module = await import("./features/sea-kid/SeaKidGame");
+  return { default: module.SeaKidGame };
+});
 const SudokuGame = lazy(async () => {
   const module = await import("./features/sudoku/SudokuGame");
   return { default: module.SudokuGame };
@@ -291,6 +295,7 @@ const SUBJECT_BOARDS: SubjectBoard[] = [
     id: "games",
     title: "游戏",
     games: [
+      { title: "跳海小孩", mark: "↗", description: "穿过丛林、大海和洞穴，药水变身，挑战八种岛屿首领", shape: "wide", href: "/games/sea-kid" },
       { title: "钻石方块", mark: "◆", description: "三颗一组，横竖斜连锁消除，五套皮肤自由变换", shape: "wide", href: "/games/diamond-blocks" },
       { title: "五子棋", mark: "●", description: "黑白轮流落子，先连成五子就获胜", shape: "wide", href: "/games/gomoku" },
       { title: "星页数独", mark: "▦", description: "用精美图案拼故事，六档推理挑战赢取知识币和能量币", shape: "wide", href: "/games/sudoku" },
@@ -612,6 +617,7 @@ const HOME_GAME_CARD_IMAGES: Record<string, string> = {
 };
 
 function gameCardStyle(href?: string) {
+  if (href === "/games/sea-kid") return { "--game-card-image": "url(/images/sea-kid/characters/hero-2-jump.png)" } as React.CSSProperties;
   if (href === "/games/diamond-blocks") return { "--game-card-image": "url(/images/diamond-blocks-card.svg)" } as React.CSSProperties;
   if (href === "/games/gomoku") return { "--game-card-image": "url(/images/gomoku-card.svg)" } as React.CSSProperties;
   const geographyPage = GEOGRAPHY_PAGES.find(page => href === `/nature/${page.id}`);
@@ -1184,6 +1190,9 @@ function CurrentPage() {
   }
   if (window.location.pathname === "/games/sudoku") {
     return <Suspense fallback={<ChemistryLoading label="星页数独" />}><SudokuGame /></Suspense>;
+  }
+  if (window.location.pathname === "/games/sea-kid") {
+    return <Suspense fallback={<ChemistryLoading label="跳海小孩" />}><SeaKidGame /></Suspense>;
   }
   if (window.location.pathname === "/games/gem-connect") {
     return <Suspense fallback={<ChemistryLoading label="宝石连连看" />}><GemConnectGame /></Suspense>;

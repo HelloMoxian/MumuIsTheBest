@@ -1,0 +1,402 @@
+{
+  "schemaVersion": 1,
+  "source": "assets/game/sea-kid/environment.png",
+  "sourceWidth": 1254,
+  "sourceHeight": 1254,
+  "columns": 4,
+  "rows": 4,
+  "indexOrder": "row-major-zero-based",
+  "inset": 3,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "grass",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "grass.png",
+      "sourceBox": [
+        3,
+        3,
+        311,
+        311
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.999989,
+      "cornerAlphas": [
+        3,
+        16,
+        249,
+        247
+      ],
+      "warnings": []
+    },
+    {
+      "id": "earth",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "earth.png",
+      "sourceBox": [
+        317,
+        3,
+        624,
+        311
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 308,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        245,
+        252,
+        247,
+        247
+      ],
+      "warnings": []
+    },
+    {
+      "id": "cave",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "cave.png",
+      "sourceBox": [
+        630,
+        3,
+        937,
+        311
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 308,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        252,
+        252,
+        249,
+        246
+      ],
+      "warnings": []
+    },
+    {
+      "id": "ice",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "ice.png",
+      "sourceBox": [
+        943,
+        3,
+        1251,
+        311
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 308,
+      "opaqueCoverage": 1.0,
+      "cornerAlphas": [
+        252,
+        252,
+        249,
+        246
+      ],
+      "warnings": []
+    },
+    {
+      "id": "cloud-platform",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "cloud-platform.png",
+      "sourceBox": [
+        3,
+        317,
+        311,
+        624
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.31061,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "fall-platform",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "fall-platform.png",
+      "sourceBox": [
+        317,
+        317,
+        624,
+        624
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.193127,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lift-platform",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "lift-platform.png",
+      "sourceBox": [
+        630,
+        317,
+        937,
+        624
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.302051,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "water",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "water.png",
+      "sourceBox": [
+        943,
+        317,
+        1251,
+        624
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.478658,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "palm",
+      "index": 8,
+      "row": 2,
+      "column": 0,
+      "filename": "palm.png",
+      "sourceBox": [
+        3,
+        630,
+        311,
+        937
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.386861,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "tree",
+      "index": 9,
+      "row": 2,
+      "column": 1,
+      "filename": "tree.png",
+      "sourceBox": [
+        317,
+        630,
+        624,
+        937
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.61432,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "tree-slim",
+      "index": 10,
+      "row": 2,
+      "column": 2,
+      "filename": "tree-slim.png",
+      "sourceBox": [
+        630,
+        630,
+        937,
+        937
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.281404,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "fern",
+      "index": 11,
+      "row": 2,
+      "column": 3,
+      "filename": "fern.png",
+      "sourceBox": [
+        943,
+        630,
+        1251,
+        937
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 307,
+      "opaqueCoverage": 0.469849,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "cloud",
+      "index": 12,
+      "row": 3,
+      "column": 0,
+      "filename": "cloud.png",
+      "sourceBox": [
+        3,
+        943,
+        311,
+        1251
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.383781,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "island",
+      "index": 13,
+      "row": 3,
+      "column": 1,
+      "filename": "island.png",
+      "sourceBox": [
+        317,
+        943,
+        624,
+        1251
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.358824,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "relief",
+      "index": 14,
+      "row": 3,
+      "column": 2,
+      "filename": "relief.png",
+      "sourceBox": [
+        630,
+        943,
+        937,
+        1251
+      ],
+      "trimBox": null,
+      "outputWidth": 307,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.81006,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "stalactites",
+      "index": 15,
+      "row": 3,
+      "column": 3,
+      "filename": "stalactites.png",
+      "sourceBox": [
+        943,
+        943,
+        1251,
+        1251
+      ],
+      "trimBox": null,
+      "outputWidth": 308,
+      "outputHeight": 308,
+      "opaqueCoverage": 0.435982,
+      "cornerAlphas": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": [],
+  "alphaCleanup": "Small disconnected components removed; full cell coordinates retained."
+}

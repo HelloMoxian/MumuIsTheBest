@@ -1,0 +1,906 @@
+{
+  "bat": {
+    "url": "/images/sea-kid/characters/bat.png",
+    "bounds": [
+      13,
+      31,
+      254,
+      218
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "frog": {
+    "url": "/images/sea-kid/characters/frog.png",
+    "bounds": [
+      29,
+      46,
+      223,
+      226
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "hedgehog": {
+    "url": "/images/sea-kid/characters/hedgehog.png",
+    "bounds": [
+      27,
+      45,
+      229,
+      225
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "hero-0-attack": {
+    "url": "/images/sea-kid/characters/hero-0-attack.png",
+    "bounds": [
+      37,
+      30,
+      230,
+      240
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      119.5,
+      240
+    ]
+  },
+  "hero-0-hurt": {
+    "url": "/images/sea-kid/characters/hero-0-hurt.png",
+    "bounds": [
+      35,
+      26,
+      222,
+      240
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      112.5,
+      240
+    ]
+  },
+  "hero-0-idle": {
+    "url": "/images/sea-kid/characters/hero-0-idle.png",
+    "bounds": [
+      46,
+      25,
+      186,
+      240
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      116.5,
+      240
+    ]
+  },
+  "hero-0-jump": {
+    "url": "/images/sea-kid/characters/hero-0-jump.png",
+    "bounds": [
+      37,
+      8,
+      177,
+      207
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      107.0,
+      240
+    ]
+  },
+  "hero-0-walk-a": {
+    "url": "/images/sea-kid/characters/hero-0-walk-a.png",
+    "bounds": [
+      40,
+      26,
+      180,
+      240
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      110.5,
+      240
+    ]
+  },
+  "hero-0-walk-b": {
+    "url": "/images/sea-kid/characters/hero-0-walk-b.png",
+    "bounds": [
+      35,
+      26,
+      178,
+      240
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      106.5,
+      240
+    ]
+  },
+  "hero-1-attack": {
+    "url": "/images/sea-kid/characters/hero-1-attack.png",
+    "bounds": [
+      28,
+      10,
+      238,
+      248
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      129.5,
+      240
+    ]
+  },
+  "hero-1-hurt": {
+    "url": "/images/sea-kid/characters/hero-1-hurt.png",
+    "bounds": [
+      28,
+      9,
+      233,
+      248
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      130.0,
+      240
+    ]
+  },
+  "hero-1-idle": {
+    "url": "/images/sea-kid/characters/hero-1-idle.png",
+    "bounds": [
+      35,
+      7,
+      185,
+      249
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      110.5,
+      240
+    ]
+  },
+  "hero-1-jump": {
+    "url": "/images/sea-kid/characters/hero-1-jump.png",
+    "bounds": [
+      27,
+      0,
+      181,
+      203
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      104.0,
+      240
+    ]
+  },
+  "hero-1-walk-a": {
+    "url": "/images/sea-kid/characters/hero-1-walk-a.png",
+    "bounds": [
+      33,
+      7,
+      188,
+      248
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      109.5,
+      240
+    ]
+  },
+  "hero-1-walk-b": {
+    "url": "/images/sea-kid/characters/hero-1-walk-b.png",
+    "bounds": [
+      31,
+      7,
+      188,
+      248
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      107.0,
+      240
+    ]
+  },
+  "hero-2-attack": {
+    "url": "/images/sea-kid/characters/hero-2-attack.png",
+    "bounds": [
+      25,
+      22,
+      244,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      110.5,
+      240
+    ]
+  },
+  "hero-2-hurt": {
+    "url": "/images/sea-kid/characters/hero-2-hurt.png",
+    "bounds": [
+      24,
+      19,
+      234,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      108.5,
+      240
+    ]
+  },
+  "hero-2-idle": {
+    "url": "/images/sea-kid/characters/hero-2-idle.png",
+    "bounds": [
+      34,
+      14,
+      191,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      113.5,
+      240
+    ]
+  },
+  "hero-2-jump": {
+    "url": "/images/sea-kid/characters/hero-2-jump.png",
+    "bounds": [
+      22,
+      0,
+      183,
+      224
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      102.5,
+      240
+    ]
+  },
+  "hero-2-walk-a": {
+    "url": "/images/sea-kid/characters/hero-2-walk-a.png",
+    "bounds": [
+      29,
+      15,
+      198,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      109.5,
+      240
+    ]
+  },
+  "hero-2-walk-b": {
+    "url": "/images/sea-kid/characters/hero-2-walk-b.png",
+    "bounds": [
+      28,
+      15,
+      197,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ],
+    "anchor": [
+      107.5,
+      240
+    ]
+  },
+  "lizard": {
+    "url": "/images/sea-kid/characters/lizard.png",
+    "bounds": [
+      18,
+      52,
+      236,
+      226
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "octopus": {
+    "url": "/images/sea-kid/characters/octopus.png",
+    "bounds": [
+      9,
+      45,
+      233,
+      231
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "snail": {
+    "url": "/images/sea-kid/characters/snail.png",
+    "bounds": [
+      18,
+      47,
+      219,
+      224
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "apple": {
+    "url": "/images/sea-kid/objects/apple.png",
+    "bounds": [
+      57,
+      39,
+      238,
+      244
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "banana": {
+    "url": "/images/sea-kid/objects/banana.png",
+    "bounds": [
+      39,
+      48,
+      249,
+      243
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boss-bat": {
+    "url": "/images/sea-kid/objects/boss-bat.png",
+    "bounds": [
+      10,
+      38,
+      254,
+      245
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boss-crab": {
+    "url": "/images/sea-kid/objects/boss-crab.png",
+    "bounds": [
+      27,
+      21,
+      254,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boss-dragon": {
+    "url": "/images/sea-kid/objects/boss-dragon.png",
+    "bounds": [
+      6,
+      38,
+      249,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boss-frog": {
+    "url": "/images/sea-kid/objects/boss-frog.png",
+    "bounds": [
+      12,
+      39,
+      254,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boss-hedgehog": {
+    "url": "/images/sea-kid/objects/boss-hedgehog.png",
+    "bounds": [
+      11,
+      36,
+      244,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boss-ice": {
+    "url": "/images/sea-kid/objects/boss-ice.png",
+    "bounds": [
+      11,
+      18,
+      254,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boss-octopus": {
+    "url": "/images/sea-kid/objects/boss-octopus.png",
+    "bounds": [
+      27,
+      36,
+      254,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boss-volcano": {
+    "url": "/images/sea-kid/objects/boss-volcano.png",
+    "bounds": [
+      22,
+      19,
+      254,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "boulder": {
+    "url": "/images/sea-kid/objects/boulder.png",
+    "bounds": [
+      33,
+      9,
+      254,
+      234
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "fire-shot": {
+    "url": "/images/sea-kid/objects/fire-shot.png",
+    "bounds": [
+      43,
+      15,
+      232,
+      230
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "firewheel": {
+    "url": "/images/sea-kid/objects/firewheel.png",
+    "bounds": [
+      20,
+      24,
+      245,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "flame": {
+    "url": "/images/sea-kid/objects/flame.png",
+    "bounds": [
+      68,
+      2,
+      212,
+      238
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "grapes": {
+    "url": "/images/sea-kid/objects/grapes.png",
+    "bounds": [
+      41,
+      38,
+      236,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "hammer": {
+    "url": "/images/sea-kid/objects/hammer.png",
+    "bounds": [
+      31,
+      30,
+      251,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "ink-shot": {
+    "url": "/images/sea-kid/objects/ink-shot.png",
+    "bounds": [
+      34,
+      63,
+      217,
+      242
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "potion": {
+    "url": "/images/sea-kid/objects/potion.png",
+    "bounds": [
+      54,
+      45,
+      219,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "pusher": {
+    "url": "/images/sea-kid/objects/pusher.png",
+    "bounds": [
+      15,
+      57,
+      254,
+      191
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "ring": {
+    "url": "/images/sea-kid/objects/ring.png",
+    "bounds": [
+      33,
+      47,
+      241,
+      247
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "rock": {
+    "url": "/images/sea-kid/objects/rock.png",
+    "bounds": [
+      28,
+      58,
+      218,
+      214
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "scooter": {
+    "url": "/images/sea-kid/objects/scooter.png",
+    "bounds": [
+      51,
+      40,
+      240,
+      254
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "torch": {
+    "url": "/images/sea-kid/objects/torch.png",
+    "bounds": [
+      65,
+      0,
+      196,
+      235
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "water-shot": {
+    "url": "/images/sea-kid/objects/water-shot.png",
+    "bounds": [
+      44,
+      66,
+      220,
+      238
+    ],
+    "size": [
+      254,
+      254
+    ]
+  },
+  "cave": {
+    "url": "/images/sea-kid/environment/cave.png",
+    "bounds": [
+      0,
+      0,
+      307,
+      308
+    ],
+    "size": [
+      307,
+      308
+    ]
+  },
+  "cloud-platform": {
+    "url": "/images/sea-kid/environment/cloud-platform.png",
+    "bounds": [
+      4,
+      96,
+      303,
+      228
+    ],
+    "size": [
+      308,
+      307
+    ]
+  },
+  "cloud": {
+    "url": "/images/sea-kid/environment/cloud.png",
+    "bounds": [
+      8,
+      65,
+      300,
+      249
+    ],
+    "size": [
+      308,
+      308
+    ]
+  },
+  "earth": {
+    "url": "/images/sea-kid/environment/earth.png",
+    "bounds": [
+      0,
+      0,
+      307,
+      308
+    ],
+    "size": [
+      307,
+      308
+    ]
+  },
+  "fall-platform": {
+    "url": "/images/sea-kid/environment/fall-platform.png",
+    "bounds": [
+      8,
+      107,
+      298,
+      192
+    ],
+    "size": [
+      307,
+      307
+    ]
+  },
+  "fern": {
+    "url": "/images/sea-kid/environment/fern.png",
+    "bounds": [
+      7,
+      83,
+      301,
+      296
+    ],
+    "size": [
+      308,
+      307
+    ]
+  },
+  "grass": {
+    "url": "/images/sea-kid/environment/grass.png",
+    "bounds": [
+      0,
+      1,
+      308,
+      308
+    ],
+    "size": [
+      308,
+      308
+    ]
+  },
+  "ice": {
+    "url": "/images/sea-kid/environment/ice.png",
+    "bounds": [
+      0,
+      0,
+      308,
+      308
+    ],
+    "size": [
+      308,
+      308
+    ]
+  },
+  "island": {
+    "url": "/images/sea-kid/environment/island.png",
+    "bounds": [
+      7,
+      66,
+      299,
+      257
+    ],
+    "size": [
+      307,
+      308
+    ]
+  },
+  "lift-platform": {
+    "url": "/images/sea-kid/environment/lift-platform.png",
+    "bounds": [
+      9,
+      96,
+      298,
+      199
+    ],
+    "size": [
+      307,
+      307
+    ]
+  },
+  "palm": {
+    "url": "/images/sea-kid/environment/palm.png",
+    "bounds": [
+      38,
+      8,
+      285,
+      302
+    ],
+    "size": [
+      308,
+      307
+    ]
+  },
+  "relief": {
+    "url": "/images/sea-kid/environment/relief.png",
+    "bounds": [
+      18,
+      7,
+      289,
+      290
+    ],
+    "size": [
+      307,
+      308
+    ]
+  },
+  "stalactites": {
+    "url": "/images/sea-kid/environment/stalactites.png",
+    "bounds": [
+      15,
+      7,
+      293,
+      257
+    ],
+    "size": [
+      308,
+      308
+    ]
+  },
+  "tree-slim": {
+    "url": "/images/sea-kid/environment/tree-slim.png",
+    "bounds": [
+      70,
+      6,
+      235,
+      301
+    ],
+    "size": [
+      307,
+      307
+    ]
+  },
+  "tree": {
+    "url": "/images/sea-kid/environment/tree.png",
+    "bounds": [
+      5,
+      16,
+      295,
+      298
+    ],
+    "size": [
+      307,
+      307
+    ]
+  },
+  "water": {
+    "url": "/images/sea-kid/environment/water.png",
+    "bounds": [
+      1,
+      77,
+      306,
+      234
+    ],
+    "size": [
+      308,
+      307
+    ]
+  }
+}
