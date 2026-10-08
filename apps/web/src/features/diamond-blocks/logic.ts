@@ -16,6 +16,8 @@ export type Game = {
   score: number; cleared: number; chain: number; bestChain: number; pieces: number;
 };
 export type Action = "left" | "right" | "down" | "rotate" | "reverse" | "drop";
+export const CLEAR_DURATION = 720;
+export const SETTLE_DURATION = 300;
 export const level = (g: Game) => 1 + Math.floor(g.cleared / g.config.target);
 export const speed = (g: Game) => g.config.speed === 0 ? 0 : Math.min(20, g.config.speed + (level(g) - 1) * g.config.increment);
 const integer = (v: unknown, min: number, max: number): v is number => typeof v === "number" && Number.isSafeInteger(v) && v >= min && v <= max;
@@ -70,16 +72,26 @@ export function findMatches(board: (number | null)[], width: number, height: num
   }
   return [...found].sort((a, b) => a - b);
 }
-export function gravity(board: (number | null)[], width: number, height: number) {
+/** Logical destinations and visual travel share the same compaction pass. */
+export function gravityLayout(board: (number | null)[], width: number, height: number) {
   const next: (number | null)[] = Array(board.length).fill(null);
+  const distances: Record<number, number> = {};
   for (let x = 0; x < width; x++) {
     let to = height - 1;
     for (let y = height - 1; y >= 0; y--) {
       const gem = board[y * width + x];
-      if (gem !== null) next[to-- * width + x] = gem;
+      if (gem !== null) {
+        const destination = to * width + x;
+        next[destination] = gem;
+        if (to !== y) distances[destination] = to - y;
+        to--;
+      }
     }
   }
-  return next;
+  return { board: next, distances };
+}
+export function gravity(board: (number | null)[], width: number, height: number) {
+  return gravityLayout(board, width, height).board;
 }
 function resolve(g: Game): Game {
   g.matches = findMatches(g.board, g.config.width, g.config.height); g.wait = 0;
@@ -128,13 +140,13 @@ export function tick(game: Game, milliseconds: number): Game {
     const s = speed(g);
     if (s && g.wait >= 1000 / s) return act({ ...g, wait: 0 }, "down");
     if (!s) g.wait = 0;
-  } else if (g.phase === "clearing" && g.wait >= 320) {
+  } else if (g.phase === "clearing" && g.wait >= CLEAR_DURATION) {
     g.board = [...g.board];
     g.matches.forEach(i => { g.board[i] = null; });
     g.cleared += g.matches.length; g.score += g.matches.length * 10 * g.chain;
     g.matches = []; g.board = gravity(g.board, g.config.width, g.config.height);
     g.phase = "settling"; g.wait = 0;
-  } else if (g.phase === "settling" && g.wait >= 220) return resolve(g);
+  } else if (g.phase === "settling" && g.wait >= SETTLE_DURATION) return resolve(g);
   return g;
 }
 /** Resize without removing occupied cells. Left and bottom edges are the stable anchors. */

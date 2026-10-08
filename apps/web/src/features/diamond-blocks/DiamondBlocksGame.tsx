@@ -3,10 +3,11 @@ import { GameTopBar } from "../../shared/GameTopBar";
 import { useGameFullscreen } from "../../shared/useGameFullscreen";
 import { useGameControllers } from "../../shared/controllers/useGameControllers";
 import { DIAMOND_CONTROLS } from "./controls";
-import { act, createGame, DEFAULT_CONFIG, ghost, level, reconfigure, SKINS, speed, tick, TRACKS, validConfig, type Action, type Config, type Game } from "./logic";
+import { act, CLEAR_DURATION, createGame, DEFAULT_CONFIG, ghost, gravityLayout, level, reconfigure, SETTLE_DURATION, SKINS, speed, tick, TRACKS, validConfig, type Action, type Config, type Game } from "./logic";
 import { GameStore, STORAGE_KEY } from "./storage";
 import { DiamondAudio, TRACK_NAMES } from "./audio";
 import { Gem, SKIN_NAMES, SYMBOLS } from "./Gem";
+import { ScoreReadout, type ScoreAward } from "./ScoreReadout";
 import "./diamond-blocks.css";
 
 const message = (error: unknown) => error instanceof Error ? error.message : "浏览器未能保存，请检查可用空间后重试";
@@ -28,6 +29,9 @@ const numbersFor = (c: Config) => Object.fromEntries(fields.map(f => [f.key, Str
 export function DiamondBlocksGame() {
   const [boot] = useState(initial);
   const [game, setGame] = useState(boot.game);
+  const [fallDistances, setFallDistances] = useState<Record<number, number>>({});
+  const [scoreAward, setScoreAward] = useState<ScoreAward | null>(null);
+  const awardSequence = useRef(0);
   const live = useRef(boot.game), store = useRef(boot.store);
   const [paused, setPaused] = useState(false), pausedRef = useRef(false);
   const [savedError, setSavedError] = useState(boot.error), errorRef = useRef(boot.error);
@@ -62,6 +66,13 @@ export function DiamondBlocksGame() {
   }
   function publish(next: Game, action?: Action) {
     const prior = live.current;
+    if (prior.phase === "clearing" && next.phase === "settling" && next.cleared > prior.cleared) {
+      const removed = new Set(prior.matches);
+      const remaining = prior.board.map((gem, index) => removed.has(index) ? null : gem);
+      setFallDistances(gravityLayout(remaining, prior.config.width, prior.config.height).distances);
+    } else if (next.phase !== "settling") setFallDistances({});
+    if (next.score > prior.score) setScoreAward({ id: ++awardSequence.current, from: prior.score, to: next.score });
+    else if (next.score < prior.score) setScoreAward(null);
     live.current = next; setGame(next);
     if (action && next !== prior) audio.current?.play(action === "rotate" || action === "reverse" ? "rotate" : action === "drop" ? "drop" : "move");
     if (next.pieces > prior.pieces) audio.current?.play("lock");
@@ -182,7 +193,7 @@ export function DiamondBlocksGame() {
       const nextStore = new GameStore({ getItem: key => localStorage.getItem(key), setItem: (key, value) => localStorage.setItem(key, value) });
       const next = nextStore.read(); store.current = nextStore;
       errorRef.current = ""; setSavedError("");
-      if (next) { live.current = next.game; setGame(next.game); }
+      if (next) { live.current = next.game; setGame(next.game); setFallDistances({}); setScoreAward(null); }
       pause(true);
     } catch (error) { errorRef.current = message(error); setSavedError(message(error)); }
   }
@@ -195,7 +206,7 @@ export function DiamondBlocksGame() {
   const remaining = game.config.target - progress;
   const status = game.phase === "over" ? "这一盘装满了，再来一次吧" : paused ? "休息一下，灵感马上回来" : game.phase === "clearing" ? (game.chain > 1 ? `漂亮！${game.chain} 连锁 · ${game.matches.length} 颗` : `连成啦！消除 ${game.matches.length} 颗`) : game.phase === "settling" ? "星光归位中…" : speed(game) === 0 ? "慢慢想，按 ↓ 或「直落」放下" : "横、竖、斜线，三个相同就消除";
   const occupied = game.board.filter(v => v !== null).length;
-  return <div ref={root} className={`diamond-blocks ${fullscreen.focused ? "db-fullscreen" : ""}`} data-gamepad-native={running ? "playing" : undefined} data-skip-startup-greeting>
+  return <div ref={root} className={`diamond-blocks ${fullscreen.focused ? "db-fullscreen" : ""}`} style={{ "--db-clear-time": `${CLEAR_DURATION}ms`, "--db-settle-time": `${SETTLE_DURATION}ms` } as CSSProperties} data-motion-paused={!running || undefined} data-gamepad-native={running ? "playing" : undefined} data-skip-startup-greeting>
     <GameTopBar title="钻石方块" wallets={false} controls={<>
       <button onClick={openSettings}>设置</button>
       <button data-gamepad-pause disabled={game.phase === "over"} onClick={() => { pause(!paused); if (paused) { audio.current?.unlock(); audio.current?.play("resume"); board.current?.focus(); } }}>{paused ? "继续" : "暂停"}</button>
@@ -213,14 +224,15 @@ export function DiamondBlocksGame() {
       <section className="db-play">
         <div className="db-board-heading"><span><i />{game.config.width} × {game.config.height}</span><span>{speed(game) === 0 ? "自在模式" : `${speed(game).toFixed(2)} 格 / 秒`}</span></div>
         <div className="db-board-area">
-          <div ref={board} tabIndex={0} className={`db-board ${game.phase === "settling" ? "is-settling" : ""}`} style={{ "--cols": game.config.width, "--rows": game.config.height, "--ratio": game.config.width / game.config.height } as CSSProperties} role="img" aria-label={`${game.config.width} 列 ${game.config.height} 行，已消除 ${game.cleared} 颗；左右移动，上键换序，空格直落`}>
+          <div ref={board} tabIndex={0} className="db-board" style={{ "--cols": game.config.width, "--rows": game.config.height, "--ratio": game.config.width / game.config.height } as CSSProperties} role="img" aria-label={`${game.config.width} 列 ${game.config.height} 行，已消除 ${game.cleared} 颗；左右移动，上键换序，空格直落`}>
             {game.board.map((kind, i) => {
               const x = i % game.config.width, y = Math.floor(i / game.config.width);
               const active = game.active && x === game.active.x && y >= game.active.y && y < game.active.y + 3;
               const shadow = !active && landing && x === landing.x && y >= landing.y && y < landing.y + 3;
               const value = active ? game.active!.gems[y - game.active!.y] : kind;
-              return <div key={i} className={`db-cell ${active ? "is-active" : ""} ${shadow ? "is-ghost" : ""} ${game.matches.includes(i) ? "is-clearing" : ""}`}>
-                {value !== null ? <Gem kind={value} skin={game.config.skin} /> : shadow ? <span className="db-ghost-symbol">{SYMBOLS[landing!.gems[y - landing!.y]]}</span> : null}
+              const drop = game.phase === "settling" && !active ? fallDistances[i] ?? 0 : 0;
+              return <div key={i} style={drop ? { "--drop-rows": drop } as CSSProperties : undefined} className={`db-cell ${active ? "is-active" : ""} ${shadow ? "is-ghost" : ""} ${game.matches.includes(i) ? "is-clearing" : ""} ${drop ? "is-dropping" : ""}`}>
+                {value !== null ? <span className="db-piece"><Gem kind={value} skin={game.config.skin} /></span> : shadow ? <span className="db-ghost-symbol">{SYMBOLS[landing!.gems[y - landing!.y]]}</span> : null}
               </div>;
             })}
             {(paused || game.phase === "over") && !settingsOpen && !confirm && <div className="db-overlay">
@@ -238,7 +250,7 @@ export function DiamondBlocksGame() {
         <p className="db-key-guide">← → 移动 · ↑ 换序 · ↓ 下移 · 空格直落 · P 暂停</p>
       </section>
       <aside className="db-stats db-panel">
-        <div className="db-score"><span className="db-eyebrow">{fullscreen.focused ? "得分" : "SCORE / 得分"}</span><strong>{game.score.toLocaleString()}</strong></div>
+        <div className="db-score"><span className="db-eyebrow">{fullscreen.focused ? "得分" : "SCORE / 得分"}</span><ScoreReadout key={scoreAward?.id ?? "steady"} score={game.score} award={scoreAward} running={!paused && !settingsOpen && !confirm} /></div>
         <div className="db-level"><span>LEVEL</span><strong>{String(level(game)).padStart(2, "0")}</strong><span>探索关卡</span></div>
         <div className="db-progress"><div><span>下一关</span><b>还差 {remaining} 颗</b></div><progress max={game.config.target} value={progress} /><span>{progress} / {game.config.target}</span></div>
         <dl><div><dt>累计消除</dt><dd>{game.cleared}<small> 颗</small></dd></div><div><dt>最高连锁</dt><dd>{game.bestChain}<small> 次</small></dd></div><div><dt>已落方块</dt><dd>{game.pieces}<small> 组</small></dd></div></dl>

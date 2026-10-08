@@ -42,6 +42,7 @@
   box-shadow: 0 0 0 5px color-mix(in srgb, var(--violet-400) 7%, transparent), 0 22px 60px color-mix(in srgb, var(--space-950) 80%, transparent), inset 0 0 25px color-mix(in srgb, var(--cyan-300) 5%, transparent);
 }
 .db-cell { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; background: var(--space-950); border-radius: 3px; }
+.db-piece { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
 .db-gem { display: grid; place-items: center; width: 92%; height: 92%; position: relative; min-width: 0; min-height: 0; color: var(--gem-color); }
 .db-gem img, .db-gem svg { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; }
 .db-gem--image img { filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--space-950) 45%, transparent)); }
@@ -50,10 +51,15 @@
 .db-cell.is-active .db-gem { animation: db-breathe 1.8s ease-in-out infinite; }
 .db-cell.is-ghost { border: 1px dashed color-mix(in srgb, var(--cyan-300) 55%, transparent); background: color-mix(in srgb, var(--cyan-300) 6%, var(--space-950)); }
 .db-ghost-symbol { color: var(--cyan-300); opacity: .28; font-size: 16px; }
-.db-cell.is-clearing { z-index: 2; box-shadow: inset 0 0 0 2px var(--warning-300); }
-.db-cell.is-clearing .db-gem { animation: db-clear .32s ease-out both; }
-.db-cell.is-clearing::after { content: "✦"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-primary); font-size: 28px; animation: db-spark .32s ease-out both; pointer-events: none; }
-.db-board.is-settling .db-gem { animation: db-settle .22s ease-out both; }
+.db-cell.is-clearing { z-index: 3; box-shadow: inset 0 0 0 2px var(--warning-300); }
+.db-cell.is-clearing .db-gem { animation: db-clear var(--db-clear-time) ease-in-out both; }
+.db-cell.is-clearing::before { content: ""; position: absolute; inset: 12%; border: 2px solid var(--warning-300); border-radius: 18%; box-shadow: 0 0 8px color-mix(in srgb, var(--cyan-300) 45%, transparent); animation: db-clear-frame var(--db-clear-time) ease-in-out both; pointer-events: none; }
+.db-cell.is-clearing::after { content: "✦"; position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-primary); font-size: clamp(20px, 2.5vw, 36px); animation: db-spark var(--db-clear-time) ease-in-out both; pointer-events: none; }
+.db-cell.is-dropping { z-index: 2; }
+.db-cell.is-dropping > .db-piece { animation: db-settle var(--db-settle-time) cubic-bezier(.3, .02, .65, 1) both; }
+.diamond-blocks[data-motion-paused] :is(.db-gem, .db-piece),
+.diamond-blocks[data-motion-paused] .db-cell::before,
+.diamond-blocks[data-motion-paused] .db-cell::after { animation-play-state: paused; }
 .db-crystal { width: 88%; height: 88%; }
 .db-crystal b { position: relative; z-index: 1; color: color-mix(in srgb, var(--ink-primary) 85%, transparent); font-size: clamp(10px, 1.25vw, 20px); text-shadow: 0 1px 2px var(--space-950); }
 .db-voxel__top { fill: color-mix(in srgb, var(--gem-color) 65%, var(--ink-primary)); }
@@ -72,6 +78,9 @@
 .db-touch b { font-size: 24px; line-height: 1; }
 .db-key-guide { text-align: center; margin: 12px 0 0; font-size: 18px; }
 .db-score strong { display: block; margin: 9px 0 16px; font: 900 clamp(32px, 3vw, 48px)/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.db-score-readout { position: relative; display: block; min-width: 0; }
+.db-score-readout.is-crediting strong { color: var(--warning-300); text-shadow: 0 0 14px color-mix(in srgb, var(--warning-300) 35%, transparent); }
+.db-score-receipt { position: absolute; top: 0; left: 0; z-index: 45; white-space: nowrap; pointer-events: none; color: var(--warning-300); font: 900 clamp(22px, 2.5vw, 32px)/1 var(--font-display); padding: 4px 8px; border: 1px solid color-mix(in srgb, var(--warning-300) 55%, transparent); border-radius: 12px; background: var(--space-850); box-shadow: 0 0 14px color-mix(in srgb, var(--warning-300) 18%, transparent); will-change: transform, opacity; }
 .db-level { display: flex; flex-direction: column; align-items: center; position: relative; padding: 14px 0; margin: 0 0 14px; background: radial-gradient(ellipse, color-mix(in srgb, var(--violet-400) 20%, transparent), transparent 72%); }
 .db-level::before { content: ""; position: absolute; width: 132px; height: 132px; top: 8px; border: 1px solid var(--line-glow); border-radius: 50%; transform: rotate(-30deg); border-top-color: var(--violet-400); border-bottom-color: var(--cyan-300); }
 .db-level span { font-size: 18px; color: var(--ink-secondary); }
@@ -132,9 +141,28 @@
 .db-confirm > div { display: flex; justify-content: flex-end; gap: 12px; }
 .db-fullscreen { position: fixed; inset: 0; z-index: 1100; overflow: auto; }
 @keyframes db-breathe { 50% { filter: brightness(1.15); } }
-@keyframes db-clear { 45% { transform: scale(1.15); filter: brightness(1.6); } 100% { transform: scale(.35); opacity: .15; } }
-@keyframes db-spark { 0% { transform: scale(.3) rotate(-20deg); opacity: 0; } 55% { opacity: .9; } 100% { transform: scale(1.3) rotate(20deg); opacity: 0; } }
-@keyframes db-settle { from { transform: translateY(-30%); } to { transform: translateY(0); } }
+@keyframes db-clear {
+  0% { transform: scale(1) rotateY(0); filter: brightness(1); opacity: 1; }
+  18% { transform: scale(1.08) rotateY(0); filter: brightness(1.5); }
+  36% { transform: scale(1.03) rotateY(90deg) rotateZ(12deg); filter: brightness(1.05); }
+  52% { transform: scale(1.08) rotateY(180deg); filter: brightness(1.55); }
+  68% { transform: scale(1.03) rotateY(270deg) rotateZ(-12deg); filter: brightness(1.05); opacity: 1; }
+  82% { transform: scale(1.1) rotateY(360deg); filter: brightness(1.25); opacity: .95; }
+  100% { transform: scale(.12) rotateY(360deg) rotateZ(35deg); opacity: 0; }
+}
+@keyframes db-clear-frame {
+  0% { transform: rotate(0) scale(.8); opacity: 0; }
+  20% { opacity: .8; } 42% { transform: rotate(45deg) scale(1); opacity: .25; }
+  62% { opacity: .85; } 82% { transform: rotate(90deg) scale(1.15); opacity: .4; }
+  100% { transform: rotate(135deg) scale(.2); opacity: 0; }
+}
+@keyframes db-spark {
+  0%, 20% { transform: scale(.2) rotate(0); opacity: 0; }
+  38% { transform: scale(.8) rotate(90deg); opacity: .75; }
+  54% { opacity: .1; } 70% { transform: scale(1) rotate(180deg); opacity: .85; }
+  100% { transform: scale(.15) rotate(240deg); opacity: 0; }
+}
+@keyframes db-settle { from { transform: translateY(calc(-100% * var(--drop-rows) - 1px * var(--drop-rows))); } to { transform: translateY(0); } }
 @media (max-width: 1100px) {
   .diamond-blocks { padding-inline: 14px; }
   .db-main { grid-template-columns: 130px minmax(0, 1fr) 185px; gap: 14px; }
@@ -253,4 +281,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .diamond-blocks *, .diamond-blocks *::before, .diamond-blocks *::after { animation: none !important; transition: none !important; }
+  .db-cell.is-clearing::before, .db-cell.is-clearing::after { display: none; }
 }
