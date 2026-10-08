@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "source": "assets/game/diamond-blocks/elements-v1/source-atlas.png",
+  "sourceWidth": 1774,
+  "sourceHeight": 887,
+  "columns": 4,
+  "rows": 2,
+  "indexOrder": "row-major-zero-based",
+  "inset": 0,
+  "trimmed": false,
+  "backgroundRemoved": false,
+  "keyColor": null,
+  "keyColorMode": "none",
+  "items": [
+    {
+      "id": "h",
+      "index": 0,
+      "row": 0,
+      "column": 0,
+      "filename": "h.png",
+      "sourceBox": [
+        0,
+        0,
+        444,
+        444
+      ],
+      "trimBox": null,
+      "outputWidth": 444,
+      "outputHeight": 444,
+      "opaqueCoverage": 0.58099,
+      "cornerAlphas": [
+        0,
+        5,
+        0,
+        2
+      ],
+      "warnings": []
+    },
+    {
+      "id": "he",
+      "index": 1,
+      "row": 0,
+      "column": 1,
+      "filename": "he.png",
+      "sourceBox": [
+        444,
+        0,
+        887,
+        444
+      ],
+      "trimBox": null,
+      "outputWidth": 443,
+      "outputHeight": 444,
+      "opaqueCoverage": 0.530901,
+      "cornerAlphas": [
+        5,
+        1,
+        2,
+        1
+      ],
+      "warnings": []
+    },
+    {
+      "id": "li",
+      "index": 2,
+      "row": 0,
+      "column": 2,
+      "filename": "li.png",
+      "sourceBox": [
+        887,
+        0,
+        1330,
+        444
+      ],
+      "trimBox": null,
+      "outputWidth": 443,
+      "outputHeight": 444,
+      "opaqueCoverage": 0.549575,
+      "cornerAlphas": [
+        1,
+        0,
+        1,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "be",
+      "index": 3,
+      "row": 0,
+      "column": 3,
+      "filename": "be.png",
+      "sourceBox": [
+        1330,
+        0,
+        1774,
+        444
+      ],
+      "trimBox": null,
+      "outputWidth": 444,
+      "outputHeight": 444,
+      "opaqueCoverage": 0.609949,
+      "cornerAlphas": [
+        2,
+        0,
+        2,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "b",
+      "index": 4,
+      "row": 1,
+      "column": 0,
+      "filename": "b.png",
+      "sourceBox": [
+        0,
+        444,
+        444,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 444,
+      "outputHeight": 443,
+      "opaqueCoverage": 0.456511,
+      "cornerAlphas": [
+        0,
+        2,
+        0,
+        1
+      ],
+      "warnings": []
+    },
+    {
+      "id": "c",
+      "index": 5,
+      "row": 1,
+      "column": 1,
+      "filename": "c.png",
+      "sourceBox": [
+        444,
+        444,
+        887,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 443,
+      "outputHeight": 443,
+      "opaqueCoverage": 0.571697,
+      "cornerAlphas": [
+        1,
+        1,
+        1,
+        2
+      ],
+      "warnings": []
+    },
+    {
+      "id": "n",
+      "index": 6,
+      "row": 1,
+      "column": 2,
+      "filename": "n.png",
+      "sourceBox": [
+        887,
+        444,
+        1330,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 443,
+      "outputHeight": 443,
+      "opaqueCoverage": 0.48227,
+      "cornerAlphas": [
+        1,
+        0,
+        2,
+        0
+      ],
+      "warnings": []
+    },
+    {
+      "id": "unused",
+      "index": 7,
+      "row": 1,
+      "column": 3,
+      "filename": "unused.png",
+      "sourceBox": [
+        1330,
+        444,
+        1774,
+        887
+      ],
+      "trimBox": null,
+      "outputWidth": 444,
+      "outputHeight": 443,
+      "opaqueCoverage": 0.0,
+      "cornerAlphas": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

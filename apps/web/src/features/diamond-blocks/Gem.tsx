@@ -4,6 +4,7 @@ export const SKIN_NAMES: Record<Config["skin"], string> = { gems: "宝石迷阵"
 export const SYMBOLS = ["◆", "●", "▲", "✦", "■", "⬡", "♥"];
 const COLORS = ["--rose-400", "--cyan-300", "--green-400", "--warning-300", "--violet-400", "--pink-400", "--ink-primary"];
 const FILES = ["red", "blue", "green", "yellow", "purple", "orange", "white"];
+const ELEMENTS = ["H", "He", "Li", "Be", "B", "C", "N"];
 const BLOCKS = ["Z", "I", "S", "O", "T", "L", "J"];
 const SHAPES = [
   "M32 5 57 32 32 59 7 32Z",
@@ -17,8 +18,8 @@ const SHAPES = [
 export const Gem = memo(function Gem({ kind, skin }: { kind: number; skin: Config["skin"] }) {
   const [broken, setBroken] = useState("");
   const style = { "--gem-color": `var(${COLORS[kind]})` } as CSSProperties;
-  const src = skin === "gems" ? `/images/bejeweled/${FILES[kind]}.webp` : skin === "elements" ? `/images/sudoku/icons/elements/symbol-0${kind + 1}.webp` : "";
-  if (src) return <span className="db-gem db-gem--image" style={style} aria-hidden="true">{broken === src ? <b>{SYMBOLS[kind]}</b> : <img src={src} alt="" draggable={false} onError={() => setBroken(src)} />}</span>;
+  const src = skin === "gems" ? `/images/bejeweled/${FILES[kind]}.webp` : skin === "elements" ? `/images/diamond-blocks/elements-v1/${ELEMENTS[kind].toLowerCase()}.png` : "";
+  if (src) return <span className="db-gem db-gem--image" style={style} aria-hidden="true">{broken === src ? <b>{skin === "elements" ? ELEMENTS[kind] : SYMBOLS[kind]}</b> : <img src={src} alt="" draggable={false} onError={() => setBroken(src)} />}</span>;
   if (skin === "crystal") return <span aria-hidden="true" style={style} className={`db-gem db-crystal tetris-crystal crystal-${BLOCKS[kind]}`}><b>{SYMBOLS[kind]}</b></span>;
   if (skin === "voxel") return <span className="db-gem db-voxel" style={style} aria-hidden="true"><svg viewBox="0 0 64 64">
     <path className="db-voxel__top" d="M4 16 32 3 60 16 32 30Z" /><path className="db-voxel__left" d="M4 16 32 30V61L4 47Z" /><path className="db-voxel__right" d="M32 30 60 16V47L32 61Z" />
