@@ -10,10 +10,13 @@ export const DEFAULT_CONFIG: Config = {
   skin: "gems", music: true, effects: true, track: "mix", volume: .2, effectVolume: .4,
 };
 export type Piece = { x: number; y: number; gems: number[] };
+export const PRISM = -1;
+export const isPrism = (piece: Piece | null) => piece?.gems.length === 1 && piece.gems[0] === PRISM;
 export type Game = {
   config: Config; board: (number | null)[]; active: Piece | null; next: number[]; seed: number;
   phase: "falling" | "clearing" | "settling" | "over"; matches: number[]; wait: number;
   score: number; cleared: number; chain: number; bestChain: number; pieces: number;
+  rewardLevel: number; pendingPrisms: number; scene: number; clearColor: number | null;
 };
 export type Action = "left" | "right" | "down" | "rotate" | "reverse" | "drop";
 export const CLEAR_DURATION = 720;
@@ -38,21 +41,25 @@ function randomGem(g: Game): number {
 }
 function triple(g: Game) { return [randomGem(g), randomGem(g), randomGem(g)]; }
 export function fits(g: Game, p: Piece): boolean {
-  return p.x >= 0 && p.x < g.config.width && p.y >= 0 && p.y + 2 < g.config.height
+  return p.x >= 0 && p.x < g.config.width && p.y >= 0 && p.y + p.gems.length <= g.config.height
     && p.gems.every((_, i) => g.board[(p.y + i) * g.config.width + p.x] === null);
 }
 function spawn(g: Game): Game {
-  const active = { x: Math.floor(g.config.width / 2), y: 0, gems: g.next };
+  const reward = g.pendingPrisms > 0;
+  const active = { x: Math.floor(g.config.width / 2), y: 0, gems: reward ? [PRISM] : g.next };
   g.active = fits(g, active) ? active : null;
   g.phase = g.active ? "falling" : "over";
-  g.next = triple(g); g.wait = 0; g.chain = 0;
+  if (reward) { if (g.active) g.pendingPrisms--; }
+  else g.next = triple(g);
+  g.wait = 0; g.chain = 0; g.clearColor = null;
   return g;
 }
 export function createGame(config: Config = DEFAULT_CONFIG, seed = Math.floor(Math.random() * 4294967296)): Game {
   if (!validConfig(config)) throw new Error("玩法设置超出范围");
   const g: Game = { config: { ...config, kinds: [...config.kinds] }, board: Array(config.width * config.height).fill(null),
     active: null, next: [], seed: seed >>> 0, phase: "falling", matches: [], wait: 0,
-    score: 0, cleared: 0, chain: 0, bestChain: 0, pieces: 0 };
+    score: 0, cleared: 0, chain: 0, bestChain: 0, pieces: 0,
+    rewardLevel: 1, pendingPrisms: 0, scene: 0, clearColor: null };
   g.next = triple(g);
   return spawn(g);
 }
@@ -94,6 +101,7 @@ export function gravity(board: (number | null)[], width: number, height: number)
   return gravityLayout(board, width, height).board;
 }
 function resolve(g: Game): Game {
+  g.clearColor = null;
   g.matches = findMatches(g.board, g.config.width, g.config.height); g.wait = 0;
   if (g.matches.length) {
     g.phase = "clearing"; g.chain++; g.bestChain = Math.max(g.bestChain, g.chain);
@@ -108,8 +116,23 @@ export function ghost(g: Game): Piece | null {
   while (fits(g, { ...p, y: p.y + 1 })) p.y++;
   return p;
 }
+export function prismTarget(g: Game, landing: Piece | null = ghost(g)): number | null {
+  if (!isPrism(landing) || !landing || landing.y + 1 >= g.config.height) return null;
+  return g.board[(landing.y + 1) * g.config.width + landing.x];
+}
+const colorMatches = (g: Game, color: number) => g.board.flatMap((gem, index) => gem === color ? [index] : []);
 function lock(g: Game): Game {
   if (!g.active) return g;
+  if (isPrism(g.active)) {
+    const color = prismTarget(g, g.active);
+    g.active = null; g.pieces++; g.scene++; g.wait = 0; g.chain = 0;
+    if (color !== null) {
+      g.clearColor = color; g.matches = colorMatches(g, color);
+      g.chain = 1; g.bestChain = Math.max(g.bestChain, 1); g.phase = "clearing";
+      return g;
+    }
+    return resolve(g);
+  }
   g.board = [...g.board];
   g.active.gems.forEach((gem, i) => { g.board[(g.active!.y + i) * g.config.width + g.active!.x] = gem; });
   g.active = null; g.pieces++; g.chain = 0;
@@ -119,6 +142,7 @@ export function act(game: Game, action: Action): Game {
   if (game.phase !== "falling" || !game.active) return game;
   const g = { ...game, active: { ...game.active, gems: [...game.active.gems] } };
   if (action === "rotate" || action === "reverse") {
+    if (isPrism(g.active)) return game;
     const gems = g.active.gems;
     g.active.gems = action === "rotate" ? [gems[2], gems[0], gems[1]] : [gems[1], gems[2], gems[0]];
   } else if (action === "drop") {
@@ -144,6 +168,9 @@ export function tick(game: Game, milliseconds: number): Game {
     g.board = [...g.board];
     g.matches.forEach(i => { g.board[i] = null; });
     g.cleared += g.matches.length; g.score += g.matches.length * 10 * g.chain;
+    g.pendingPrisms += Math.max(0, level(g) - g.rewardLevel);
+    g.rewardLevel = Math.max(g.rewardLevel, level(g));
+    g.clearColor = null;
     g.matches = []; g.board = gravity(g.board, g.config.width, g.config.height);
     g.phase = "settling"; g.wait = 0;
   } else if (g.phase === "settling" && g.wait >= SETTLE_DURATION) return resolve(g);
@@ -166,36 +193,48 @@ export function reconfigure(game: Game, config: Config): Game {
     g.board = board;
     if (g.active) {
       g.active.x = Math.min(g.active.x, config.width - 1);
-      g.active.y = Math.max(0, Math.min(config.height - 3, g.active.y + delta));
-      if (!fits(g, g.active)) throw new Error("新尺寸放不下当前三连块，请扩大尺寸或重新开局");
+      g.active.y = Math.max(0, Math.min(config.height - g.active.gems.length, g.active.y + delta));
+      if (!fits(g, g.active)) throw new Error("新尺寸放不下当前方块，请扩大尺寸或重新开局");
     }
   }
   const replace = (v: number) => config.kinds.includes(v) ? v : randomGem(g);
   g.board = g.board.map(v => v === null ? null : replace(v));
   g.next = g.next.map(replace);
-  if (g.active) g.active.gems = g.active.gems.map(replace);
+  if (g.active && !isPrism(g.active)) g.active.gems = g.active.gems.map(replace);
   const changedKinds = game.config.kinds.some(v => !config.kinds.includes(v));
   if (changedKinds && g.phase !== "over") {
     // Recompute an uncommitted clear before counting it; replacement never duplicates a reward.
-    g.matches = []; g.chain = 0; resolve(g);
+    if (g.clearColor !== null) {
+      g.clearColor = replace(g.clearColor); g.matches = colorMatches(g, g.clearColor);
+      // A disabled target can disappear entirely after replacement.
+      if (!g.matches.length) { g.clearColor = null; resolve(g); }
+    } else { g.matches = []; g.chain = 0; resolve(g); }
   }
+  // A new threshold starts counting from the current level, without a retroactive reward.
+  if (config.target !== game.config.target) g.rewardLevel = level(g);
   if (config.speed !== game.config.speed) g.wait = 0;
   return g;
 }
-export function validGame(v: unknown): v is Game {
+export function validGame(v: unknown, legacy = false): v is Game {
   if (!v || typeof v !== "object") return false;
   const g = v as Game;
   if (!validConfig(g.config) || !Array.isArray(g.board) || g.board.length !== g.config.width * g.config.height) return false;
   const gem = (v: unknown): v is number => integer(v, 0, 6) && g.config.kinds.includes(v);
   const triple = (v: unknown): v is number[] => Array.isArray(v) && v.length === 3 && v.every(gem);
+  if (!legacy && (!integer(g.rewardLevel, level(g), Number.MAX_SAFE_INTEGER)
+    || !integer(g.pendingPrisms, 0, Number.MAX_SAFE_INTEGER) || !integer(g.scene, 0, g.pieces)
+    || (g.clearColor !== null && !gem(g.clearColor)))) return false;
   if (!g.board.every(v => v === null || gem(v)) || !triple(g.next)
     || !integer(g.seed, 0, 4294967295) || !["falling", "clearing", "settling", "over"].includes(g.phase)
     || !number(g.wait, 0, 100000) || ![g.score, g.cleared, g.chain, g.bestChain, g.pieces].every(v => integer(v, 0, Number.MAX_SAFE_INTEGER))
     || g.bestChain < g.chain || !Array.isArray(g.matches) || !g.matches.every(v => integer(v, 0, g.board.length - 1))
     || new Set(g.matches).size !== g.matches.length) return false;
   if (g.active !== null && (!g.active || !integer(g.active.x, 0, g.config.width - 1)
-    || !integer(g.active.y, 0, g.config.height - 3) || !triple(g.active.gems) || !fits(g, g.active))) return false;
+    || !Array.isArray(g.active.gems) || (!triple(g.active.gems) && (legacy || !isPrism(g.active)))
+    || !integer(g.active.y, 0, g.config.height - g.active.gems.length) || !fits(g, g.active))) return false;
   if ((g.phase === "falling" && !g.active) || (g.phase === "over" && g.active)) return false;
+  if (!legacy && g.clearColor !== null) return g.phase === "clearing" && g.active === null && g.chain === 1 && g.matches.length > 0
+    && JSON.stringify(g.matches) === JSON.stringify(colorMatches(g, g.clearColor));
   if (g.phase === "clearing") return g.chain >= 1 && g.matches.length >= 3
     && JSON.stringify(g.matches) === JSON.stringify(findMatches(g.board, g.config.width, g.config.height));
   return g.matches.length === 0;

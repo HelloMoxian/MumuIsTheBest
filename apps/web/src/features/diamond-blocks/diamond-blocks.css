@@ -1,11 +1,18 @@
 @import "../tetris/tetris.css";
 .diamond-blocks {
+  --db-accent: var(--violet-400); --db-secondary: var(--cyan-300);
   --crystal-highlight: color-mix(in srgb, var(--ink-primary) 85%, transparent);
   --crystal-shadow: color-mix(in srgb, var(--space-950) 72%, transparent);
   min-height: 100dvh; padding: 0 24px 18px; color: var(--ink-primary);
-  background: radial-gradient(ellipse at 48% 26%, color-mix(in srgb, var(--violet-600) 14%, transparent), transparent 58%), var(--space-950);
+  background: radial-gradient(ellipse at 40% 22%, color-mix(in srgb, var(--db-accent) 24%, transparent), transparent 65%), radial-gradient(ellipse at 88% 85%, color-mix(in srgb, var(--db-secondary) 12%, transparent), transparent 60%);
+  background-color: color-mix(in srgb, var(--db-accent) 8%, var(--space-950));
+  transition: background-color .8s ease;
   font-size: 18px;
 }
+.diamond-blocks[data-scene="1"] { --db-accent: var(--cyan-300); --db-secondary: var(--violet-400); }
+.diamond-blocks[data-scene="2"] { --db-accent: var(--green-400); --db-secondary: var(--cyan-300); }
+.diamond-blocks[data-scene="3"] { --db-accent: var(--rose-400); --db-secondary: var(--pink-400); }
+.diamond-blocks[data-scene="4"] { --db-accent: var(--warning-300); --db-secondary: var(--rose-400); }
 .diamond-blocks *, .diamond-blocks *::before, .diamond-blocks *::after { box-sizing: border-box; }
 .diamond-blocks button, .db-dialog select, .db-dialog input[type=number] {
   min-height: 48px; border: 1px solid var(--line-glow); border-radius: 14px; padding: 10px 16px;
@@ -19,7 +26,7 @@
 .diamond-blocks button[aria-pressed=true] { border-color: var(--cyan-300); background: color-mix(in srgb, var(--cyan-300) 10%, var(--space-850)); }
 .diamond-blocks .db-primary { background: linear-gradient(125deg, var(--violet-600), color-mix(in srgb, var(--violet-600) 45%, var(--pink-400))); border-color: var(--violet-400); font-weight: 800; }
 .db-main { max-width: 1340px; margin: 14px auto 0; display: grid; grid-template-columns: minmax(155px, 195px) minmax(0, 1fr) minmax(210px, 245px); gap: clamp(16px, 2.5vw, 38px); align-items: stretch; }
-.db-panel { border: 1px solid var(--line-glow); border-radius: 28px; padding: 24px 20px; background: linear-gradient(150deg, var(--glass-700), color-mix(in srgb, var(--space-850) 80%, transparent)); align-self: start; }
+.db-panel { border: 1px solid color-mix(in srgb, var(--db-accent) 25%, var(--line-glow)); border-radius: 28px; padding: 24px 20px; background: linear-gradient(150deg, var(--glass-700), color-mix(in srgb, var(--db-accent) 8%, var(--space-850))); align-self: start; }
 .db-eyebrow { color: var(--cyan-300); font-size: 18px; letter-spacing: .09em; font-weight: 700; }
 .db-muted, .db-key-guide, .db-save, .db-help { color: var(--ink-secondary); }
 .db-preview { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px; }
@@ -37,16 +44,23 @@
   position: relative; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); grid-template-rows: repeat(var(--rows), minmax(0, 1fr));
   aspect-ratio: var(--cols) / var(--rows); width: min(100%, calc((100dvh - 290px) * var(--ratio)));
   min-width: 180px; gap: 1px; padding: 7px; overflow: hidden; border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--cyan-300) 48%, var(--line-glow));
-  background: color-mix(in srgb, var(--cyan-300) 6%, var(--space-950));
+  border: 1px solid color-mix(in srgb, var(--db-accent) 60%, var(--line-glow));
+  background: color-mix(in srgb, var(--db-accent) 15%, var(--space-950));
   box-shadow: 0 0 0 5px color-mix(in srgb, var(--violet-400) 7%, transparent), 0 22px 60px color-mix(in srgb, var(--space-950) 80%, transparent), inset 0 0 25px color-mix(in srgb, var(--cyan-300) 5%, transparent);
 }
-.db-cell { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; background: var(--space-950); border-radius: 3px; }
+.db-cell { position: relative; min-width: 0; min-height: 0; display: grid; place-items: center; background: color-mix(in srgb, var(--db-accent) 6%, var(--space-950)); border-radius: 3px; transition: background-color .8s ease; }
 .db-piece { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
 .db-gem { display: grid; place-items: center; width: 92%; height: 92%; position: relative; min-width: 0; min-height: 0; color: var(--gem-color); }
 .db-gem img, .db-gem svg { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; }
 .db-gem--image img { filter: drop-shadow(0 2px 3px color-mix(in srgb, var(--space-950) 45%, transparent)); }
 .db-gem--image b { font-size: 1.2em; }
+.db-prism svg { overflow: visible; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cyan-300) 65%, transparent)); }
+.db-prism__body { fill: var(--violet-600); stroke: var(--cyan-300); stroke-width: 2; }
+.db-prism__facet { fill: var(--pink-400); fill-opacity: .6; stroke: var(--cyan-300); stroke-width: 1.2; }
+.db-prism__ring { fill: none; stroke: var(--ink-primary); stroke-width: 1.5; }
+.db-prism__star { fill: var(--ink-primary); stroke: var(--cyan-300); stroke-width: 1; }
+.db-cell.is-prism-target { box-shadow: inset 0 0 0 2px var(--warning-300); }
+.db-cell.is-prism-target::before { content: "✧"; position: absolute; top: 0; right: 1px; z-index: 2; color: var(--warning-300); font-size: 12px; line-height: 1; text-shadow: 0 1px 2px var(--space-950); }
 .db-cell.is-active { z-index: 1; box-shadow: inset 0 0 0 2px var(--ink-primary), 0 0 10px color-mix(in srgb, var(--cyan-300) 50%, transparent); background: color-mix(in srgb, var(--cyan-300) 9%, var(--space-950)); }
 .db-cell.is-active .db-gem { animation: db-breathe 1.8s ease-in-out infinite; }
 .db-cell.is-ghost { border: 1px dashed color-mix(in srgb, var(--cyan-300) 55%, transparent); background: color-mix(in srgb, var(--cyan-300) 6%, var(--space-950)); }
@@ -80,7 +94,12 @@
 .db-score strong { display: block; margin: 9px 0 16px; font: 900 clamp(32px, 3vw, 48px)/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
 .db-score-readout { position: relative; display: block; min-width: 0; }
 .db-score-readout.is-crediting strong { color: var(--warning-300); text-shadow: 0 0 14px color-mix(in srgb, var(--warning-300) 35%, transparent); }
-.db-score-receipt { position: absolute; top: 0; left: 0; z-index: 45; white-space: nowrap; pointer-events: none; color: var(--warning-300); font: 900 clamp(22px, 2.5vw, 32px)/1 var(--font-display); padding: 4px 8px; border: 1px solid color-mix(in srgb, var(--warning-300) 55%, transparent); border-radius: 12px; background: var(--space-850); box-shadow: 0 0 14px color-mix(in srgb, var(--warning-300) 18%, transparent); will-change: transform, opacity; }
+.db-score-flight-layer { position: fixed; inset: 0; z-index: 60; pointer-events: none; overflow: hidden; }
+.db-score-receipt { position: absolute; top: 0; left: 0; white-space: nowrap; pointer-events: none; opacity: 0; font: 900 clamp(26px, 3.8vw, 48px)/1.15 var(--font-display); letter-spacing: -.025em; will-change: transform, opacity; filter: drop-shadow(0 3px 1px var(--space-950)) drop-shadow(0 0 8px color-mix(in srgb, var(--warning-300) 40%, transparent)); }
+.db-score-receipt > span { background: linear-gradient(var(--ink-primary) 15%, var(--warning-300) 68%, var(--rose-400)); background-clip: text; -webkit-background-clip: text; color: transparent; -webkit-text-stroke: 1.2px var(--space-950); paint-order: stroke fill; }
+.db-score-receipt::before, .db-score-receipt::after { content: "✦"; position: absolute; color: var(--warning-300); font-size: .42em; line-height: 1; }
+.db-score-receipt::before { top: -.1em; left: -.65em; transform: rotate(-15deg); }
+.db-score-receipt::after { right: -.65em; bottom: .05em; color: var(--cyan-300); transform: scale(.7) rotate(15deg); }
 .db-level { display: flex; flex-direction: column; align-items: center; position: relative; padding: 14px 0; margin: 0 0 14px; background: radial-gradient(ellipse, color-mix(in srgb, var(--violet-400) 20%, transparent), transparent 72%); }
 .db-level::before { content: ""; position: absolute; width: 132px; height: 132px; top: 8px; border: 1px solid var(--line-glow); border-radius: 50%; transform: rotate(-30deg); border-top-color: var(--violet-400); border-bottom-color: var(--cyan-300); }
 .db-level span { font-size: 18px; color: var(--ink-secondary); }

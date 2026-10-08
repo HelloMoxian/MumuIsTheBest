@@ -3,11 +3,11 @@ import { GameTopBar } from "../../shared/GameTopBar";
 import { useGameFullscreen } from "../../shared/useGameFullscreen";
 import { useGameControllers } from "../../shared/controllers/useGameControllers";
 import { DIAMOND_CONTROLS } from "./controls";
-import { act, CLEAR_DURATION, createGame, DEFAULT_CONFIG, ghost, gravityLayout, level, reconfigure, SETTLE_DURATION, SKINS, speed, tick, TRACKS, validConfig, type Action, type Config, type Game } from "./logic";
+import { act, CLEAR_DURATION, createGame, DEFAULT_CONFIG, ghost, gravityLayout, isPrism, level, PRISM, prismTarget, reconfigure, SETTLE_DURATION, SKINS, speed, tick, TRACKS, validConfig, type Action, type Config, type Game } from "./logic";
 import { GameStore, STORAGE_KEY } from "./storage";
 import { DiamondAudio, TRACK_NAMES } from "./audio";
 import { Gem, SKIN_NAMES, SYMBOLS } from "./Gem";
-import { ScoreReadout, type ScoreAward } from "./ScoreReadout";
+import { scoreSources, ScoreReadout, type ScoreAward } from "./ScoreReadout";
 import "./diamond-blocks.css";
 
 const message = (error: unknown) => error instanceof Error ? error.message : "浏览器未能保存，请检查可用空间后重试";
@@ -73,9 +73,13 @@ export function DiamondBlocksGame() {
       const remaining = prior.board.map((gem, index) => removed.has(index) ? null : gem);
       setFallDistances(gravityLayout(remaining, prior.config.width, prior.config.height).distances);
     } else if (next.phase !== "settling") setFallDistances({});
-    if (next.score > prior.score) setScoreAward({ id: ++awardSequence.current, from: prior.score, to: next.score });
+    if (next.score > prior.score) setScoreAward({ id: ++awardSequence.current, from: prior.score, to: next.score, sources: scoreSources(prior.matches, prior.config.width, prior.config.height, prior.chain) });
     else if (next.score < prior.score) setScoreAward(null);
     live.current = next; setGame(next);
+    if (next.scene !== prior.scene) {
+      audio.current?.configure(next.config, runningRef.current, next.scene);
+      audio.current?.play("change");
+    }
     if (action && next !== prior) audio.current?.play(action === "rotate" || action === "reverse" ? "rotate" : action === "drop" ? "drop" : "move");
     if (next.pieces > prior.pieces) audio.current?.play("lock");
     if (next.phase === "clearing" && (prior.phase !== "clearing" || next.chain !== prior.chain)) audio.current?.play(next.chain > 1 ? "chain" : "clear", next.chain);
@@ -114,12 +118,12 @@ export function DiamondBlocksGame() {
   });
   useEffect(() => {
     const sound = new DiamondAudio(setAudioNotice); audio.current = sound;
-    sound.configure(live.current.config, runningRef.current);
+    sound.configure(live.current.config, runningRef.current, live.current.scene);
     const unlock = (event: Event) => { if (event.isTrusted) sound.unlock(); };
     window.addEventListener("pointerdown", unlock, true); window.addEventListener("keydown", unlock, true);
     return () => { window.removeEventListener("pointerdown", unlock, true); window.removeEventListener("keydown", unlock, true); sound.dispose(); audio.current = null; };
   }, []);
-  useEffect(() => { audio.current?.configure(game.config, running); }, [game.config, running]);
+  useEffect(() => { audio.current?.configure(game.config, running, game.scene); }, [game.config, running, game.scene]);
   useEffect(() => {
     let last = performance.now(), lastSave = last;
     const timer = window.setInterval(() => {
@@ -202,6 +206,7 @@ export function DiamondBlocksGame() {
       catch (error) { errorRef.current = message(error); setSavedError(message(error)); }
     } else {
       const next = createGame(confirm === "resize" ? parsedDraft() : live.current.config);
+      setScoreAward(null);
       publish(next);
       if (settings.current?.open) { resumeAfterSettings.current = true; settings.current.close(); }
       resumeAfterConfirm.current = true;
@@ -223,10 +228,13 @@ export function DiamondBlocksGame() {
     audio.current?.configure(live.current.config, runningRef.current); audio.current?.unlock();
   }
   const landing = ghost(game), progress = game.cleared % game.config.target;
+  const prism = isPrism(game.active), target = prism && game.phase === "falling" ? prismTarget(game, landing) : null;
+  const targetCount = target === null ? 0 : game.board.filter(kind => kind === target).length;
+  const preview = game.pendingPrisms > 0 ? [PRISM] : game.next;
   const remaining = game.config.target - progress;
-  const status = game.phase === "over" ? "这一盘装满了，再来一次吧" : paused ? "休息一下，灵感马上回来" : game.phase === "clearing" ? (game.chain > 1 ? `漂亮！${game.chain} 连锁 · ${game.matches.length} 颗` : `连成啦！消除 ${game.matches.length} 颗`) : game.phase === "settling" ? "星光归位中…" : speed(game) === 0 ? "慢慢想，按 ↓ 或「直落」放下" : "横、竖、斜线，三个相同就消除";
+  const status = game.phase === "over" ? "这一盘装满了，再来一次吧" : paused ? "休息一下，灵感马上回来" : game.phase === "clearing" ? (game.clearColor !== null ? `同色全消！点亮 ${game.matches.length} 颗` : game.chain > 1 ? `漂亮！${game.chain} 连锁 · ${game.matches.length} 颗` : `连成啦！消除 ${game.matches.length} 颗`) : game.phase === "settling" ? "星光归位中…" : prism ? (target === null ? "全消方块：移到元素上，空列会消耗奖励" : `全消方块：落下清除 ${targetCount} 颗同类元素`) : speed(game) === 0 ? "慢慢想，按 ↓ 或「直落」放下" : "横、竖、斜线，三个相同就消除";
   const occupied = game.board.filter(v => v !== null).length;
-  return <div ref={root} className={`diamond-blocks ${fullscreen.focused ? "db-fullscreen" : ""}`} style={{ "--db-clear-time": `${CLEAR_DURATION}ms`, "--db-settle-time": `${SETTLE_DURATION}ms` } as CSSProperties} data-motion-paused={!running || undefined} data-gamepad-native={running ? "playing" : undefined} data-skip-startup-greeting>
+  return <div ref={root} className={`diamond-blocks ${fullscreen.focused ? "db-fullscreen" : ""}`} style={{ "--db-clear-time": `${CLEAR_DURATION}ms`, "--db-settle-time": `${SETTLE_DURATION}ms` } as CSSProperties} data-scene={game.scene % 5} data-motion-paused={!running || undefined} data-gamepad-native={running ? "playing" : undefined} data-skip-startup-greeting>
     <GameTopBar title="钻石方块" wallets={false} controls={<>
       <button onClick={openSettings}>设置</button>
       <button data-gamepad-pause disabled={game.phase === "over"} onClick={() => { pause(!paused); if (paused) { audio.current?.unlock(); audio.current?.play("resume"); board.current?.focus(); } }}>{paused ? "继续" : "暂停"}</button>
@@ -235,8 +243,8 @@ export function DiamondBlocksGame() {
     </>} />
     <main className="db-main">
       <aside className="db-preview db-panel">
-        <span className="db-eyebrow">{fullscreen.focused ? "下一组" : "NEXT / 下一组"}</span>
-        <div className="db-next">{game.next.map((kind, i) => <div key={i}><Gem kind={kind} skin={game.config.skin} /></div>)}</div>
+        <span className="db-eyebrow">{game.pendingPrisms > 0 ? `全消奖励${game.pendingPrisms > 1 ? ` ×${game.pendingPrisms}` : ""}` : fullscreen.focused ? "下一组" : "NEXT / 下一组"}</span>
+        <div className="db-next" aria-label={game.pendingPrisms > 0 ? "下一枚是全消方块，落点决定消除的颜色" : "下一组三连元素"}>{preview.map((kind, i) => <div key={i}><Gem kind={kind} skin={game.config.skin} /></div>)}</div>
         <div className="db-preview-copy"><strong>三颗一组<br />无限灵感</strong><p>换个顺序<br />就有新发现</p></div>
         <div className="db-palette" aria-label={`已启用 ${game.config.kinds.length} 种元素`}>{game.config.kinds.map(kind => <Gem key={kind} kind={kind} skin={game.config.skin} />)}</div>
         <span className="db-muted">{game.config.kinds.length} 种 · {SKIN_NAMES[game.config.skin]}</span>
@@ -244,15 +252,15 @@ export function DiamondBlocksGame() {
       <section className="db-play">
         <div className="db-board-heading"><span><i />{game.config.width} × {game.config.height}</span><span>{speed(game) === 0 ? "自在模式" : `${speed(game).toFixed(2)} 格 / 秒`}</span></div>
         <div className="db-board-area">
-          <div ref={board} tabIndex={0} className="db-board" style={{ "--cols": game.config.width, "--rows": game.config.height, "--ratio": game.config.width / game.config.height } as CSSProperties} role="img" aria-label={`${game.config.width} 列 ${game.config.height} 行，已消除 ${game.cleared} 颗；左右移动，上键换序，空格直落`}>
+          <div ref={board} tabIndex={0} className="db-board" style={{ "--cols": game.config.width, "--rows": game.config.height, "--ratio": game.config.width / game.config.height } as CSSProperties} role="img" aria-label={`${game.config.width} 列 ${game.config.height} 行，已消除 ${game.cleared} 颗；${prism ? `全消方块，可清除 ${targetCount} 颗，左右选择落点` : "左右移动，上键换序"}，空格直落`}>
             {game.board.map((kind, i) => {
               const x = i % game.config.width, y = Math.floor(i / game.config.width);
-              const active = game.active && x === game.active.x && y >= game.active.y && y < game.active.y + 3;
-              const shadow = !active && landing && x === landing.x && y >= landing.y && y < landing.y + 3;
+              const active = game.active && x === game.active.x && y >= game.active.y && y < game.active.y + game.active.gems.length;
+              const shadow = !active && landing && x === landing.x && y >= landing.y && y < landing.y + landing.gems.length;
               const value = active ? game.active!.gems[y - game.active!.y] : kind;
               const drop = game.phase === "settling" && !active ? fallDistances[i] ?? 0 : 0;
-              return <div key={i} style={drop ? { "--drop-rows": drop } as CSSProperties : undefined} className={`db-cell ${active ? "is-active" : ""} ${shadow ? "is-ghost" : ""} ${game.matches.includes(i) ? "is-clearing" : ""} ${drop ? "is-dropping" : ""}`}>
-                {value !== null ? <span className="db-piece"><Gem kind={value} skin={game.config.skin} /></span> : shadow ? <span className="db-ghost-symbol">{SYMBOLS[landing!.gems[y - landing!.y]]}</span> : null}
+              return <div key={i} style={drop ? { "--drop-rows": drop } as CSSProperties : undefined} className={`db-cell ${active ? "is-active" : ""} ${shadow ? "is-ghost" : ""} ${target !== null && kind === target ? "is-prism-target" : ""} ${game.matches.includes(i) ? "is-clearing" : ""} ${drop ? "is-dropping" : ""}`}>
+                {value !== null ? <span className="db-piece"><Gem kind={value} skin={game.config.skin} /></span> : shadow ? <span className="db-ghost-symbol">{prism ? "✧" : SYMBOLS[landing!.gems[y - landing!.y]]}</span> : null}
               </div>;
             })}
             {(paused || game.phase === "over") && !settingsOpen && !confirm && <div className="db-overlay">
@@ -270,7 +278,7 @@ export function DiamondBlocksGame() {
         <p className="db-key-guide">← → 移动 · ↑ 换序 · ↓ 下移 · 空格直落 · P 暂停</p>
       </section>
       <aside className="db-stats db-panel">
-        <div className="db-score"><span className="db-eyebrow">{fullscreen.focused ? "得分" : "SCORE / 得分"}</span><ScoreReadout key={scoreAward?.id ?? "steady"} score={game.score} award={scoreAward} running={!paused && !settingsOpen && !confirm} /></div>
+        <div className="db-score"><span className="db-eyebrow">{fullscreen.focused ? "得分" : "SCORE / 得分"}</span><ScoreReadout score={game.score} award={scoreAward} running={!paused && !settingsOpen && !confirm} board={board} root={root} /></div>
         <div className="db-level"><span>LEVEL</span><strong>{String(level(game)).padStart(2, "0")}</strong><span>探索关卡</span></div>
         <div className="db-progress"><div><span>下一关</span><b>还差 {remaining} 颗</b></div><progress max={game.config.target} value={progress} /><span>{progress} / {game.config.target}</span></div>
         <dl><div><dt>累计消除</dt><dd>{game.cleared}<small> 颗</small></dd></div><div><dt>最高连锁</dt><dd>{game.bestChain}<small> 次</small></dd></div><div><dt>已落方块</dt><dd>{game.pieces}<small> 组</small></dd></div></dl>
@@ -290,11 +298,11 @@ export function DiamondBlocksGame() {
         <section><h3>节奏与空间</h3><div className="db-fields">{fields.map(f => <label key={f.key}><span>{f.name}</span><input type="number" min={f.min} max={f.max} step={f.step} value={numbers[f.key]} required onChange={event => setNumbers({ ...numbers, [f.key]: event.target.value })} /><small>{f.min}—{f.max}</small></label>)}</div><p className="db-help">初始速度 0：不自动下落。每级增速 0：保持速度。速度最高 20 格 / 秒。关卡按累计消除数重新计算。</p></section>
         <section><h3>换一种光彩</h3><div className="db-skins">{SKINS.map(skin => <button type="button" key={skin} aria-pressed={draft.skin === skin} onClick={() => setDraft({ ...draft, skin })}><div><Gem kind={skin === "elements" ? 2 : 0} skin={skin} /><Gem kind={skin === "elements" ? 4 : 1} skin={skin} /><Gem kind={skin === "elements" ? 6 : 3} skin={skin} /></div><span>{draft.skin === skin ? "✓ " : ""}{SKIN_NAMES[skin]}</span></button>)}</div></section>
         <section><h3>选择参与的元素 <small>{draft.kinds.length} / 7 种</small></h3><div className="db-kinds">{Array.from({ length: 7 }, (_, kind) => <button key={kind} type="button" aria-label={`元素 ${kind + 1}，${draft.kinds.includes(kind) ? "已启用" : "未启用"}`} aria-pressed={draft.kinds.includes(kind)} disabled={draft.kinds.length === 2 && draft.kinds.includes(kind)} onClick={() => setDraft({ ...draft, kinds: draft.kinds.includes(kind) ? draft.kinds.filter(v => v !== kind) : [...draft.kinds, kind].sort() })}><Gem kind={kind} skin={draft.skin} /><span>{draft.kinds.includes(kind) ? "✓" : "＋"} {kind + 1}</span></button>)}</div><p className="db-help">至少两种，种类越多越有挑战。取消的元素会随机变成仍启用的元素，已落方块和下一组一起更新。</p></section>
-        <section><h3>星际电台</h3><label className="db-track"><span>背景配乐</span><select value={draft.track} onChange={event => setDraft({ ...draft, track: event.target.value as Config["track"] })}>{TRACKS.map(track => <option value={track} key={track}>{TRACK_NAMES[track]}</option>)}</select></label>
+        <section><h3>星际电台</h3><label className="db-track"><span>起始配乐（全消方块落定后轮换）</span><select value={draft.track} onChange={event => setDraft({ ...draft, track: event.target.value as Config["track"] })}>{TRACKS.map(track => <option value={track} key={track}>{TRACK_NAMES[track]}</option>)}</select></label>
           <div className="db-fields">{([["music", "volume", "音乐"], ["effects", "effectVolume", "音效"]] as const).map(([enabled, volume, label]) => <div className="db-volume" key={enabled}><label><input type="checkbox" checked={draft[enabled]} onChange={event => setDraft({ ...draft, [enabled]: event.target.checked })} />{label} {Math.round(draft[volume] * 100)}%</label><input aria-label={label + "音量"} type="range" min="0" max="1" step=".05" value={draft[volume]} onChange={event => setDraft({ ...draft, [volume]: Number(event.target.value) })} /></div>)}</div>
-          <p className="db-help">四首原创芯片配乐，加三首本机音乐；真实操作后开始发声，暂停时一起休息。</p>
+          <p className="db-help">四首原创芯片配乐，加三首本机音乐；全消方块落定后切换下一首与背景色调。真实操作后开始发声，暂停时一起休息，关闭音乐后保持静音。</p>
         </section>
-        <details><summary>玩法与操作</summary><p>横、竖、斜线连续三个及以上相同元素消除。交叉只计一次，下坠后可再次连锁；每颗 10 分 × 连锁次数。顶部放不下新三连块时结束。</p><p>键盘：A / D 或左右键移动，W / ↑ / X 换序，Z 反向换序，S / ↓ 下移，空格直落，P 暂停。手柄：方向控制，A 换序，X 反向，Y 直落，B / 菜单暂停；暂停后可操作顶部设置。</p><p>配置和整盘进度只保存在此浏览器。刷新立即继续，离开窗口暂停；清理浏览器缓存会删除进度。尺寸变化保留左侧与底部，放不下时不会裁掉已有元素。</p></details>
+        <details><summary>玩法与操作</summary><p>横、竖、斜线连续三个及以上相同元素消除。交叉只计一次，下坠后可再次连锁；每颗 10 分 × 连锁次数。顶部放不下新方块时结束。</p><p>每过一关奖励一枚全消方块，连锁结束后优先出场。左右选落点：压在哪种元素上，就消除全盘所有同类，并继续连锁；空列落底会消耗奖励。它不能换序，落定后配乐与背景一起换新。一次跨多关的奖励逐枚发放，调整过关数量不会补发已过关奖励。</p><p>键盘：A / D 或左右键移动，W / ↑ / X 换序，Z 反向换序，S / ↓ 下移，空格直落，P 暂停。手柄：方向控制，A 换序，X 反向，Y 直落，B / 菜单暂停；暂停后可操作顶部设置。按住下移只作用于当前组，下一组需松开再按。</p><p>配置和整盘进度只保存在此浏览器。刷新立即继续，离开窗口暂停；清理浏览器缓存会删除进度。尺寸变化保留左侧与底部，放不下时不会裁掉已有元素。</p></details>
         {formError && <p className="db-error" role="alert">{formError}</p>}
         <footer><button type="button" onClick={() => { setDraft({ ...DEFAULT_CONFIG }); setNumbers(numbersFor(DEFAULT_CONFIG)); setFormError(""); }}>默认设置</button><button type="button" onClick={() => requestConfirm("resize")}>按新设置重新开局</button><button className="db-primary" type="submit">应用设置并继续</button></footer>
       </form>

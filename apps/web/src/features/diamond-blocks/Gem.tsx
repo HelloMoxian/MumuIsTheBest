@@ -1,5 +1,5 @@
 import { memo, useState, type CSSProperties } from "react";
-import type { Config } from "./logic";
+import { PRISM, type Config } from "./logic";
 export const SKIN_NAMES: Record<Config["skin"], string> = { gems: "宝石迷阵", elements: "原子星港", crystal: "水晶积木", voxel: "像素矿块", aurora: "极光星珀" };
 export const SYMBOLS = ["◆", "●", "▲", "✦", "■", "⬡", "♥"];
 const COLORS = ["--rose-400", "--cyan-300", "--green-400", "--warning-300", "--violet-400", "--pink-400", "--ink-primary"];
@@ -17,6 +17,12 @@ const SHAPES = [
 ];
 export const Gem = memo(function Gem({ kind, skin }: { kind: number; skin: Config["skin"] }) {
   const [broken, setBroken] = useState("");
+  if (kind === PRISM) return <span className="db-gem db-prism" aria-hidden="true"><svg viewBox="0 0 64 64">
+    <path className="db-prism__body" d="M32 3 59 18V46L32 61 5 46V18Z" />
+    <path className="db-prism__facet" d="M32 3V32L5 18M32 32 59 18M32 32 59 46M32 32V61L5 46Z" />
+    <path className="db-prism__ring" d="M32 10 53 22V42L32 54 11 42V22Z" />
+    <path className="db-prism__star" d="m32 17 4 11 11 4-11 4-4 11-4-11-11-4 11-4Z" />
+  </svg></span>;
   const style = { "--gem-color": `var(${COLORS[kind]})` } as CSSProperties;
   const src = skin === "gems" ? `/images/bejeweled/${FILES[kind]}.webp` : skin === "elements" ? `/images/diamond-blocks/elements-v1/${ELEMENTS[kind].toLowerCase()}.png` : "";
   if (src) return <span className="db-gem db-gem--image" style={style} aria-hidden="true">{broken === src ? <b>{skin === "elements" ? ELEMENTS[kind] : SYMBOLS[kind]}</b> : <img src={src} alt="" draggable={false} onError={() => setBroken(src)} />}</span>;

@@ -5,6 +5,7 @@ import { MUSIC_TRACKS } from "../../shared/audio/music-player";
 import type { Config } from "./logic";
 
 export const TRACK_NAMES = { mix: "星际电台 · 自动轮播", prism: "棱镜舞步 · 芯片律动", orbit: "环星旅行 · 太空琶音", garden: "星光花园 · 轻快钟琴", tide: "月海潮汐 · 梦幻和弦", puzzling: "晶光漫步", scifi: "星云漫游", solar: "阳光航线" } as const;
+const PLAYLIST = ["prism", "orbit", "garden", "tide", "puzzling", "scifi", "solar"] as const;
 export type Sound = "move" | "rotate" | "drop" | "lock" | "clear" | "chain" | "level" | "over" | "resume" | "change";
 const COMPOSITIONS = [
   { bpm: 112, root: 60, lead: [0, 4, 7, 12, 7, 4, 2, 7, 4, 9, 12, 16, 14, 12, 7, 4], chords: [0, 5, 9, 7], wave: "square" as OscillatorType },
@@ -33,6 +34,7 @@ export class DiamondAudio {
   private clip: HTMLAudioElement | null = null;
   private step = 0;
   private sequence = 0;
+  private scene = 0;
   private nextAt = 0;
   private generation = 0;
   private timer: ReturnType<typeof setInterval> | null = null;
@@ -49,9 +51,10 @@ export class DiamondAudio {
     else this.sync();
     if (this.clip && this.config) this.clip.volume = this.config.volume * (this.duck ? .18 : 1);
   }
-  configure(config: Config, running: boolean) {
-    const changed = this.config && (this.config.track !== config.track || this.config.music !== config.music || this.config.effects !== config.effects);
-    this.config = config; this.running = running;
+  configure(config: Config, running: boolean, scene = this.scene) {
+    const changed = this.config && (this.config.track !== config.track || this.config.music !== config.music || this.config.effects !== config.effects || this.scene !== scene);
+    if (this.config?.track !== config.track) this.sequence = 0;
+    this.config = config; this.running = running; this.scene = scene;
     if (changed) { this.stop(); this.track = ""; this.step = 0; }
     this.sync();
   }
@@ -83,7 +86,8 @@ export class DiamondAudio {
   private sync() {
     if (!this.allowed()) { this.stop(); return; }
     if (!this.config?.music) return;
-    const id = this.config.track === "mix" ? (["prism", "orbit", "garden", "tide", "puzzling", "scifi", "solar"] as const)[this.sequence % 7] : this.config.track;
+    const base = this.config.track === "mix" ? this.sequence : PLAYLIST.indexOf(this.config.track);
+    const id = PLAYLIST[(base + this.scene) % PLAYLIST.length];
     if (this.track !== id) {
       this.stop(); this.track = id; this.step = 0; this.nextAt = 0;
       const file = MUSIC_TRACKS.find(t => t.id === id);
