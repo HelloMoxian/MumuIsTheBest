@@ -8,6 +8,7 @@ import { newGame, reroute, tick } from './engine';
 import { BOSSES, EMPTY_INPUT, SCENES, type Game, type Input } from './model';
 import { SAVE_KEY, SeaKidStore } from './persistence';
 import { SeaKidRenderer } from './renderer';
+import { effectsFor } from './effects';
 import './sea-kid.css';
 
 const CONTROLS = registerGameControls({ id: 'sea-kid', label: '跳海小孩', maxPlayers: 1, actions: [
@@ -19,8 +20,8 @@ const CONTROLS = registerGameControls({ id: 'sea-kid', label: '跳海小孩', ma
   { id: 'pause', label: '暂停', description: '休息后继续', defaults: [{kind:'button',index:9}] },
 ] });
 const randomSeed = () => crypto.getRandomValues(new Uint32Array(1))[0];
-type Summary = { world: number; scene: number; score: number; distance: number; percent: number; deaths: number; phase: Game['phase']; stageScore: number; boss: number; bossHp: number; bossMax: number; weapon: string; tier: number; ring: boolean; scooter: boolean };
-function summarize(g: Game): Summary { return { world:g.level.world,scene:g.level.scene,score:g.score,distance:Math.floor((g.completedDistance+g.farthest)/32),percent:g.farthest/g.level.length*100,deaths:g.deaths,phase:g.phase,stageScore:g.score-g.stageScore,boss:g.boss.active?g.boss.kind:-1,bossHp:Math.max(0,g.boss.hp),bossMax:g.boss.maxHp,weapon:g.player.weapon,tier:g.player.tier,ring:g.player.ring,scooter:g.player.scooter }; }
+type Summary = { world: number; scene: number; score: number; distance: number; percent: number; deaths: number; phase: Game['phase']; settlementReady: boolean; stageScore: number; boss: number; bossHp: number; bossMax: number; weapon: string; tier: number; ring: boolean; scooter: boolean };
+function summarize(g: Game): Summary { return { world:g.level.world,scene:g.level.scene,score:g.score,distance:Math.floor((g.completedDistance+g.farthest)/32),percent:g.farthest/g.level.length*100,deaths:g.deaths,phase:g.phase,settlementReady:!effectsFor(g).defeats.some(d=>d.sprite.startsWith('boss-')&&d.age<1.1),stageScore:g.score-g.stageScore,boss:g.boss.active?g.boss.kind:-1,bossHp:Math.max(0,g.boss.hp),bossMax:g.boss.maxHp,weapon:g.player.weapon,tier:g.player.tier,ring:g.player.ring,scooter:g.player.scooter }; }
 export function SeaKidGame() {
   const root=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),dialog=useRef<HTMLDialogElement>(null);
   const fullscreen=useGameFullscreen(root);
@@ -117,7 +118,7 @@ export function SeaKidGame() {
       <div className="sea-kid__viewport">
         <canvas ref={canvas} tabIndex={0} width={1280} height={640} aria-label="跳海小孩游戏画面。左右移动，空格跳跃，J 攻击，Shift 加速，P 暂停。"/>
         {summary&&summary.boss>=0&&summary.phase==='playing'&&<div className="sea-kid__boss"><span>{BOSSES[summary.boss]} {summary.bossHp} / {summary.bossMax}</span><meter min={0} max={summary.bossMax} value={summary.bossHp}/></div>}
-        {(!ready||paused||summary?.phase==='settlement'||summary?.phase==='dead')&&<div className="sea-kid__overlay">
+        {(!ready||paused||(summary?.phase==='settlement'&&summary.settlementReady)||summary?.phase==='dead')&&<div className="sea-kid__overlay">
           {!ready?<strong>{error?'原存档已保留':'正在准备小岛…'}</strong>:paused?<><h1>{resumed?'继续小岛冒险':'准备好出发了吗？'}</h1><p>左右移动 · 空格跳跃 · J 攻击 · 按住 Shift 加速</p><button className="sea-kid__start" disabled={!!error} onClick={()=>{setResumed(true);pause(false);}}>开始冒险</button></>:summary?.phase==='settlement'?<><h2>小关完成！</h2><p>本小关 +{summary.stageScore} 分 · 正在前往下一站</p></>:<><h2>再试一次</h2><p>回到这一小关开头 · 路线不变</p></>}
         </div>}
       </div>

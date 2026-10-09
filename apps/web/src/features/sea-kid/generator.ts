@@ -16,7 +16,7 @@ export function generateLevel(world: number, scene: Scene, seed: number): Level 
   if (!Number.isSafeInteger(world) || world < 1 || ![0, 1, 2].includes(scene) || !Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) throw new Error('关卡参数无效');
   const random = randomSource(seed), range = (lo: number, hi: number) => Math.round((lo + random() * (hi - lo)) * 10) / 10;
   const difficulty = 1 - Math.exp(-Math.max(0, world - 3) / 8);
-  const level: Level = { generatorVersion: 1, seed, world, scene, length: PHYSICS.length, platforms: [], pickups: [], enemies: [], traps: [] };
+  const level: Level = { generatorVersion: 2, seed, world, scene, length: PHYSICS.length, platforms: [], pickups: [], enemies: [], traps: [] };
   const add = (x: number, y: number, w: number, kind: Platform['kind'] = scene === 1 ? 'cloud' : 'ground'): Platform => {
     const p: Platform = { id: level.platforms.length, x, y, w, kind, amplitude: kind === 'rise' || kind === 'sink' ? 20 : 0, phase: range(0, Math.PI * 2), period: range(3.4, 5) };
     level.platforms.push(p); return p;
@@ -30,8 +30,9 @@ export function generateLevel(world: number, scene: Scene, seed: number): Level 
     let kind: Platform['kind'] = scene === 1 ? 'cloud' : (scene === 2 && world > 3 && random() < .2 ? 'ice' : 'ground');
     if (world > 8 && step % 4 === 2) kind = (['fall', 'rise', 'sink'] as const)[Math.floor(random() * 3)];
     const amplitude = kind === 'rise' || kind === 'sink' ? 20 : 0;
-    const heightStep = amplitude || previous.amplitude ? 20 : 46;
-    const y = clamp(previous.y + range(-heightStep, heightStep), 350, 466);
+    // Base jump rises ~107px. Reserve ~23px even at both moving-platform extremes.
+    const heightStep = 84 - amplitude - previous.amplitude;
+    const y = clamp(previous.y + range(-heightStep, heightStep), 300, 490);
     const p: Platform = { id: 0, x: 0, y, w: 0, kind, amplitude, phase: 0, period: 4 };
     const limit = safeGap(previous, p);
     const hasGap = scene === 1 || (world > 3 && random() < .25 + difficulty * .6);

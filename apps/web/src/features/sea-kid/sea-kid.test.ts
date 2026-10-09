@@ -38,12 +38,12 @@ test('basic sprint jumps genuinely cross generated difficult gaps with fixed-ste
     assert.equal(g.phase,'settlement',`base hero failed generated route seed=${seed} at ${g.player.x}`);
   }
 });
-test('damage weakens two tiers, leaves weapon invincible, and pushers displace without direct death',()=>{
+test('damage weakens two tiers, preserves weapon, and contact hurts again after temporary protection',()=>{
   const g=newGame(1,'test');g.player.weapon='firewheel';g.player.tier=2;
   hurt(g,200);assert.equal(g.player.tier,1);assert.ok(g.player.vx<0);hurt(g,200);assert.equal(g.player.tier,1);
   g.player.invulnerable=0;hurt(g,200);assert.equal(g.player.tier,0);
-  g.player.invulnerable=0;g.player.vx=0;hurt(g,200);assert.equal(g.player.vx,0);assert.equal(g.phase,'playing');
-  hurt(g,200,true);assert.ok(g.player.vx<0);assert.equal(g.phase,'playing');
+  g.player.invulnerable=0;g.player.vx=0;hurt(g,200);assert.ok(g.player.vx<0);assert.equal(g.player.weapon,'firewheel');assert.equal(g.phase,'playing');
+  g.player.invulnerable=0;hurt(g,200,true);assert.ok(g.player.vx<0);assert.equal(g.phase,'playing');
 });
 test('ring rescues one sea fall only; death keeps route and score but clears equipment',()=>{
   const g=newGame(1,'test');g.level=generateLevel(4,1,1);resetStage(g,true);g.player.ring=true;g.player.weapon='firewheel';g.player.y=660;g.player.grounded=null;

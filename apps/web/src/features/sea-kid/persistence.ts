@@ -14,7 +14,7 @@ export function parseGame(value: unknown): Game {
   if (value.schemaVersion !== 1) throw new Error('存档版本不受支持，已保留原记录。');
   const g = value, l = g.level, p = g.player, b = g.boss;
   requireValue(text(g.id) && text(g.createdAt) && text(g.updatedAt) && Number.isFinite(Date.parse(g.createdAt)) && Number.isFinite(Date.parse(g.updatedAt)) && integer(g.revision));
-  requireValue(object(l) && l.generatorVersion === 1 && integer(l.seed, 0, 0xffffffff) && integer(l.world, 1) && oneOf(l.scene, [0, 1, 2]) && l.length === PHYSICS.length);
+  requireValue(object(l) && oneOf(l.generatorVersion, [1, 2]) && integer(l.seed, 0, 0xffffffff) && integer(l.world, 1) && oneOf(l.scene, [0, 1, 2]) && l.length === PHYSICS.length);
   requireValue(list(l.platforms, 500) && l.platforms.length > 1);
   const platforms = l.platforms;
   const platformRef = (v: unknown) => integer(v, 0, platforms.length - 1);

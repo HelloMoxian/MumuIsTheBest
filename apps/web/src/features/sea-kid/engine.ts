@@ -1,11 +1,13 @@
 import { generateLevel, platformY } from './generator';
-import { PHYSICS, blankPlayer, clamp, type Game, type Input, type Platform, type Shot } from './model';
+import { PHYSICS, BOSS_SPRITES, blankPlayer, clamp, type Game, type Input, type Platform, type Shot } from './model';
+import { advanceEffects, effectsFor, resetEffects, rockId, showDefeat, showScore } from './effects';
 
 export function newGame(seed: number, id: string, now = new Date().toISOString()): Game {
   const game: Game = { schemaVersion: 1, id, createdAt: now, updatedAt: now, revision: 0, level: generateLevel(1, 0, seed), player: blankPlayer(), time: 0, score: 0, completedDistance: 0, farthest: 0, deaths: 0, claimed: [], collected: [], shots: [], fallen: {}, boss: { kind: 0, hp: 12, maxHp: 12, x: 0, y: 0, hitAt: -1, shotAt: -1, active: false }, phase: 'playing', phaseTime: 0, stageScore: 0 };
   resetStage(game, false); return game;
 }
 export function resetStage(g: Game, clearEquipment: boolean) {
+  resetEffects(g);
   const old = g.player;
   g.player = blankPlayer(); g.player.y = g.level.platforms[0].y - PHYSICS.height;
   g.player.safeY = g.player.y;
@@ -28,19 +30,24 @@ export function nextStage(g: Game) {
   resetStage(g, false);
 }
 export function earn(g: Game, id: string, score: number) {
-  if (g.claimed.includes(id)) return;
+  if (g.claimed.includes(id)) return false;
   g.claimed.push(id); g.score += score;
+  return true;
 }
 export function hurt(g: Game, from: number, push = false) {
   const p = g.player;
   if (p.invulnerable > 0) return;
-  // Environmental pushers can move an invincible armed hero, but never kill directly.
-  if (p.tier === 0 && p.weapon !== 'none' && !p.scooter && !push) return;
+  // Equipment has a lower bound, not permanent immunity: contact still knocks back.
   if (p.scooter) p.scooter = false;
   else if (p.tier > 0) p.tier = (p.tier - 1) as 0 | 1;
   p.hurt = .26; p.invulnerable = 1.15; p.vx = (p.x < from ? -1 : 1) * 240; p.vy = -200; p.grounded = null;
+  void push;
 }
-function addShot(g: Game, shot: Omit<Shot, 'hit'>) { if (g.shots.length < 96) g.shots.push({ ...shot, hit: [] }); }
+function addShot(g: Game, shot: Omit<Shot, 'hit'>) {
+  // Persistent stones must never use the slots needed to attack and destroy them.
+  if (g.shots.length >= 96 || (!shot.friendly && g.shots.filter(s => !s.friendly).length >= 80)) return;
+  g.shots.push({ ...shot, hit: [] });
+}
 function enemyShot(g: Game, x: number, y: number, kind: Shot['kind'], speed: number, vy = 0) {
   addShot(g, { x, y, vx: (g.player.x < x ? -1 : 1) * speed, vy, kind, friendly: false, life: 5 });
 }
@@ -77,12 +84,13 @@ function arenaBoss(g: Game, dt: number) {
 /** Fixed 120Hz simulation. Coordinates are continuous; tiles never decide collisions. */
 export function tick(g: Game, input: Input, dt: number) {
   if (!Number.isFinite(dt) || dt <= 0 || dt > .05) return;
+  advanceEffects(g, dt);
   if (g.phase !== 'playing') {
     g.phaseTime -= dt;
     if (g.phaseTime <= 0) { if (g.phase === 'dead') resetStage(g, true); else nextStage(g); }
     return;
   }
-  const p = g.player, oldTime = g.time; g.time += dt;
+  const p = g.player, oldTime = g.time, oldX = p.x; g.time += dt;
   p.invulnerable = Math.max(0, p.invulnerable - dt); p.hurt = Math.max(0, p.hurt - dt); p.attack = Math.max(0, p.attack - dt); p.rescue = Math.max(0, p.rescue - dt);
   if (p.grounded !== null) {
     const ground = g.level.platforms[p.grounded];
@@ -138,6 +146,7 @@ export function tick(g: Game, input: Input, dt: number) {
     }
   }
   g.farthest = Math.max(g.farthest, p.x);
+  if (p.grounded !== null && !p.scooter) effectsFor(g).stride += Math.abs(p.x - oldX);
   if (p.y > 640) {
     if (p.ring && g.level.scene === 1) { p.ring = false; p.x = p.safeX; p.y = p.safeY - 25; p.vx = 0; p.vy = -180; p.invulnerable = 2; p.rescue = .8; g.shots = []; }
     else { g.deaths++; g.phase = 'dead'; g.phaseTime = .65; }
@@ -148,7 +157,10 @@ export function tick(g: Game, input: Input, dt: number) {
     const platform = g.level.platforms[pickup.platform];
     const y = pickup.y + platformY(platform, g.time, g.fallen) - platform.y;
     if (Math.abs(p.x + 14 - pickup.x) < 34 && Math.abs(p.y + 24 - y) < 42) {
-      g.collected.push(pickup.id); earn(g, pickup.id, ['apple', 'banana', 'grapes'].includes(pickup.kind) ? 50 : 100);
+      const fruit = ['apple', 'banana', 'grapes'].includes(pickup.kind), points = fruit ? 50 : 100;
+      g.collected.push(pickup.id);
+      if (earn(g, pickup.id, points)) showScore(g, pickup.x, y - 16, points);
+      if (!fruit) effectsFor(g).boost = 1;
       if (pickup.kind === 'hammer' || pickup.kind === 'firewheel') p.weapon = pickup.kind;
       if (pickup.kind === 'potion') { p.tier = Math.min(2, p.tier + 1) as 1 | 2; if (p.weapon === 'none') p.weapon = 'hammer'; }
       if (pickup.kind === 'scooter') p.scooter = true;
@@ -164,31 +176,68 @@ export function tick(g: Game, input: Input, dt: number) {
     }
     if (Math.abs(pos.x - (p.x + 14)) < 30 && Math.abs(pos.y - 23 - (p.y + 24)) < 38) hurt(g, pos.x);
   }
-  for (const trap of g.level.traps) {
+  for (const [index, trap] of g.level.traps.entries()) {
+    if (trap.kind === 'rock' && g.collected.includes(rockId(index))) continue;
     if (Math.abs(trap.x - p.x) > 800) continue;
     const ground = g.level.platforms[trap.platform], y = platformY(ground, g.time, g.fallen);
     const active = trapActive(g.time, trap.phase);
-    if (trap.kind === 'boulder' && active && g.time - trap.fired > 2) { trap.fired = g.time; addShot(g, { x: trap.x, y: 50, vx: 0, vy: 0, kind: 'boulder', friendly: false, life: 3 }); }
+    if (trap.kind === 'boulder' && active && g.time - trap.fired > 2 && !g.shots.some(s => s.kind === 'boulder' && Math.abs(s.x - trap.x) < 35)) { trap.fired = g.time; addShot(g, { x: trap.x, y: 50, vx: 0, vy: 0, kind: 'boulder', friendly: false, life: 3 }); }
     if ((active || trap.kind === 'rock') && Math.abs(p.x + 14 - trap.x) < (trap.kind === 'pusher' ? 72 : 35) && p.y + 48 > y - (trap.kind === 'flame' ? 84 : 30) && p.y < y) {
       if (trap.kind !== 'boulder') hurt(g, trap.x, trap.kind === 'pusher');
     }
   }
   arenaBoss(g, dt);
   for (const s of g.shots) {
+    if (s.life <= 0) continue;
+    const oldY = s.y;
     s.life -= dt; if (s.kind === 'hammer' || s.kind === 'boulder') s.vy += (s.kind === 'hammer' ? 640 : 650) * dt;
     s.x += s.vx * dt; s.y += s.vy * dt;
+    if (s.kind === 'boulder' && !s.friendly && s.vy >= 0) {
+      let floor = Infinity;
+      for (const platform of g.level.platforms) {
+        const top = platformY(platform, g.time, g.fallen);
+        if (top <= 620 && s.x + 24 > platform.x && s.x - 24 < platform.x + platform.w && oldY + 31 <= top + 5 && s.y + 31 >= top) floor = Math.min(floor, top);
+      }
+      if (floor < Infinity) { s.y = floor - 31; s.vy = 0; s.life = 6; }
+    }
     if (s.friendly) {
+      for (const [index, trap] of g.level.traps.entries()) {
+        const id = rockId(index);
+        if (s.life <= 0 || trap.kind !== 'rock' || g.collected.includes(id)) continue;
+        const y = platformY(g.level.platforms[trap.platform], g.time, g.fallen);
+        if (Math.abs(s.x - trap.x) < 38 && Math.abs(s.y - (y - 18)) < 34) {
+          g.collected.push(id); showDefeat(g, 'rock', trap.x, y, 50, 36, s.vx);
+          if (s.kind === 'hammer') s.life = 0;
+        }
+      }
+      for (const stone of g.shots) {
+        if (s.life <= 0 || stone.life <= 0 || stone.friendly || stone.kind !== 'boulder') continue;
+        if (Math.abs(s.x - stone.x) < 43 && Math.abs(s.y - stone.y) < 43) {
+          stone.life = 0; showDefeat(g, 'boulder', stone.x, stone.y + 31, 62, 62, s.vx);
+          if (s.kind === 'hammer') s.life = 0;
+        }
+      }
       for (const e of g.level.enemies) {
         if (s.life <= 0 || e.hp <= 0 || s.hit.includes(e.id)) continue;
         const pos = enemyPosition(g, e);
-        if (Math.abs(s.x - pos.x) < 31 && Math.abs(s.y - (pos.y - 25)) < 32) { e.hp = 0; s.hit.push(e.id); earn(g, e.id, 150); if (s.kind === 'hammer') s.life = 0; }
+        if (Math.abs(s.x - pos.x) < 31 && Math.abs(s.y - (pos.y - 25)) < 32) {
+          e.hp = 0; s.hit.push(e.id);
+          showDefeat(g, e.kind, pos.x, pos.y, e.kind === 'bat' ? 60 : 48, e.kind === 'snail' ? 32 : 44, s.vx);
+          if (earn(g, e.id, 150)) showScore(g, pos.x, pos.y - 50, 150);
+          if (s.kind === 'hammer') s.life = 0;
+        }
       }
       const b = g.boss;
-      if (b.active && b.hp > 0 && !s.hit.includes('boss') && Math.abs(s.x - b.x) < 58 && Math.abs(s.y - (b.y + 50)) < 60) {
+      if (s.life > 0 && b.active && b.hp > 0 && !s.hit.includes('boss') && Math.abs(s.x - b.x) < 58 && Math.abs(s.y - (b.y + 50)) < 60) {
         s.hit.push('boss'); s.life = 0;
-        if (g.time - b.hitAt > .16) { b.hp -= p.tier === 2 ? 2 : 1; b.hitAt = g.time; if (b.hp <= 0) { earn(g, 'boss', 1000 + g.level.world * 100); settle(g); } }
+        if (g.time - b.hitAt > .16) { b.hp -= p.tier === 2 ? 2 : 1; b.hitAt = g.time; if (b.hp <= 0) {
+          showDefeat(g, BOSS_SPRITES[b.kind], b.x, b.y + 100, 130, 120, s.vx);
+          const points = 1000 + g.level.world * 100;
+          if (earn(g, 'boss', points)) showScore(g, b.x, b.y, points);
+          settle(g); break;
+        } }
       }
-    } else if (Math.abs(s.x - (p.x + 14)) < (s.kind === 'boulder' ? 35 : 22) && Math.abs(s.y - (p.y + 24)) < (s.kind === 'boulder' ? 42 : 30)) { hurt(g, s.x); s.life = 0; }
+    } else if (s.life > 0 && Math.abs(s.x - (p.x + 14)) < (s.kind === 'boulder' ? 35 : 22) && Math.abs(s.y - (p.y + 24)) < (s.kind === 'boulder' ? 42 : 30)) { hurt(g, s.x); if (s.kind !== 'boulder') s.life = 0; }
   }
   g.shots = g.shots.filter(s => s.life > 0 && s.y < 700 && s.x > 0 && s.x < g.level.length);
   if (g.level.scene !== 2 && p.x >= g.level.length - 70) settle(g);
