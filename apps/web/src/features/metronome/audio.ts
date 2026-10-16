@@ -1,5 +1,5 @@
-import { bankName, getInstrument, pitchesForKey, type Instrument } from "./catalog";
-import { eventsBetween, projectTicks, TICKS, type ClickLevel, type MusicProject, type MusicTrack, type ScheduledEvent } from "./logic";
+import { bankName, getInstrument, pitchesForKey, pitchesForNote, type Instrument } from "./catalog";
+import { eventsBetween, projectTicks, TICKS, type ClickLevel, type MusicNote, type MusicProject, type MusicTrack, type ScheduledEvent } from "./logic";
 type ZoneData = { keyRangeLow: number; keyRangeHigh: number; originalPitch: number; coarseTune: number; fineTune: number; sampleRate: number; loopStart: number; loopEnd: number; file: string };
 type Zone = Omit<ZoneData, "file"> & { buffer: AudioBuffer };
 export type Voice = { release: (when?: number) => void; stop: (when?: number) => void };
@@ -51,6 +51,10 @@ export class MusicAudio {
     this.context = context ?? null;
     if (banks) this.banks = banks;
     if (context) this.connect();
+  }
+  get captureContext(): AudioContext {
+    if (!(this.context instanceof AudioContext)) throw new Error("请先准备声音。 ");
+    return this.context;
   }
   get now() { return this.context?.currentTime ?? 0; }
   private connect() {
@@ -166,8 +170,8 @@ export class MusicAudio {
     if (typeof AudioContext !== "undefined" && this.context instanceof AudioContext && this.voices.size > 192) { const oldest = this.voices.values().next().value; oldest?.stop(); this.voices.delete(oldest!); }
     return voice;
   }
-  playKey(track: MusicTrack, project: MusicProject, key: number, when = this.now, duration?: number, velocity = .8): Voice {
-    const instrument = getInstrument(track.instrument), pitches = pitchesForKey(track, project, key);
+  playKey(track: MusicTrack, project: MusicProject, key: number, when = this.now, duration?: number, velocity = .8, note?: MusicNote): Voice {
+    const instrument = getInstrument(track.instrument), pitches = note ? pitchesForNote(track, project, note) : pitchesForKey(track, project, key);
     const voices = pitches.map((pitch, index) =>
       this.sample(bankName(instrument), pitch, when + (instrument.family === "拨弦" ? index * .018 : 0),
         velocity * track.volume / Math.sqrt(pitches.length), {
@@ -193,7 +197,7 @@ export class MusicAudio {
   schedule(event: ScheduledEvent, when: number, secondsPerTick: number, project: MusicProject) {
     if (event.kind === "click") this.click(when, event.accent, project.click);
     else if (event.kind === "drum") this.sample("drums", event.pitch, when, event.velocity * .5);
-    else this.playKey(event.track, project, event.note.key, when, event.note.duration * secondsPerTick, event.note.velocity);
+    else this.playKey(event.track, project, event.note.key, when, event.note.duration * secondsPerTick, event.note.velocity, event.note);
   }
   stopAll() { [...this.voices].forEach(v => v.stop()); this.voices.clear(); this.pitchedVoices.clear(); }
   async exportWav(project: MusicProject, repeats: number): Promise<Blob> {

@@ -12,15 +12,15 @@ export function registerMetronomeApi(app: FastifyInstance, appDataDir: string) {
       const original = await readFile(destination, "utf8"), raw = JSON.parse(original);
       const state = parseMusicState(raw);
       if (!state) throw new Error("INVALID_MUSIC_FILE");
-      return { state, legacySource: raw.library.schemaVersion === 1 ? original : null };
+      return { state, legacySource: raw.library.schemaVersion < 3 ? original : null };
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
       throw error;
     }
   }
   async function preserveLegacy(original: string) {
-    // A content-specific recovery point also preserves a later restored v1 file.
-    const backup = destination + ".v1." + createHash("sha256").update(original).digest("hex") + ".bak";
+    // Content-specific recovery points preserve either legacy format, including restored files.
+    const backup = destination + ".v" + JSON.parse(original).library.schemaVersion + "." + createHash("sha256").update(original).digest("hex") + ".bak";
     const temporary = backup + "." + randomUUID() + ".tmp";
     try {
       const handle = await open(temporary, "wx", 0o600);

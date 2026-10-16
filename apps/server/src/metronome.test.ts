@@ -9,7 +9,7 @@ import { CLICK_LEVELS, parseMusicLibrary, parseMusicState, type MusicLibrary } f
 import { registerMetronomeApi } from "./metronome.js";
 const now = "2026-01-01T00:00:00.000Z";
 function fixture(): MusicLibrary {
-  return { schemaVersion: 2, activeId: "project-one", projects: [{
+  return { schemaVersion: 3, activeId: "project-one", projects: [{
     id: "project-one", title: "测试乐队", createdAt: now, updatedAt: now, preset: "pop", bpm: 90, bars: 2,
     backing: true, click: "low", volume: .7, snap: "auto", scale: "major", activeTrackId: "track-one",
     tracks: [{ id: "track-one", instrument: "piano", volume: .8, muted: false, solo: false, octave: 0, mode: "notes",
@@ -26,15 +26,15 @@ async function setup(run: (app: ReturnType<typeof Fastify>, dir: string) => Prom
   const app = Fastify({ logger: false }); registerMetronomeApi(app, dir);
   try { await run(app, dir); } finally { await app.close(); await rm(dir, { recursive: true, force: true }); }
 }
-test("v2 accepts an empty track/project and rejects unknown versions", () => {
+test("v3 accepts an empty track/project and rejects unknown versions", () => {
   assert.deepEqual(parseMusicLibrary(fixture()), fixture());
   const empty = fixture(); empty.projects[0].tracks = []; empty.projects[0].activeTrackId = null;
   assert.ok(parseMusicLibrary(empty));
-  for (const v of [null, [], {}, { ...fixture(), schemaVersion: 0 }, { ...fixture(), schemaVersion: 3 }, { ...fixture(), extra: "bad" }]) assert.equal(parseMusicLibrary(v), undefined);
+  for (const v of [null, [], {}, { ...fixture(), schemaVersion: 0 }, { ...fixture(), schemaVersion: 99 }, { ...fixture(), extra: "bad" }]) assert.equal(parseMusicLibrary(v), undefined);
   assert.equal(parseMusicLibrary({ ...fixture(), projects: [] }), undefined);
   assert.equal(parseMusicLibrary({ ...fixture(), activeId: "missing" }), undefined);
 });
-test("v1 switches migrate to off/low without mutating the input, while v2 validates all four levels", () => {
+test("v1 switches migrate to off/low without mutating the input, while v2/v3 validate all four levels", () => {
   for (const enabled of [false, true]) {
     const legacy = legacyFixture(enabled), before = structuredClone(legacy);
     const expected = fixture(); expected.projects[0].click = enabled ? "low" : "off";
@@ -45,6 +45,7 @@ test("v1 switches migrate to off/low without mutating the input, while v2 valida
   for (const click of CLICK_LEVELS) {
     const library = fixture(); library.projects[0].click = click;
     assert.deepEqual(parseMusicLibrary(library), library);
+    assert.deepEqual(parseMusicLibrary({ ...library, schemaVersion: 2 }), library);
   }
   for (const click of [true, false, 0, 1, "loud", "", null]) {
     const library = fixture(); Object.assign(library.projects[0], { click });
@@ -84,7 +85,7 @@ test("empty store, serial atomic writes, private permissions and reopening prese
   try { assert.deepEqual((await reopened.inject({ method: "GET", url: "/api/metronome" })).json().state.library, next); }
   finally { await reopened.close(); }
 }));
-test("v1 reads are non-mutating and first v2 save atomically preserves the exact original", () => setup(async (app, dir) => {
+test("v1 reads are non-mutating and first v3 save atomically preserves the exact original", () => setup(async (app, dir) => {
   const path = resolve(dir, "creative/metronome-library.json"), original = JSON.stringify(legacyState(), null, 2) + "\n";
   await mkdir(resolve(dir, "creative")); await writeFile(path, original);
   const loaded = await app.inject({ method: "GET", url: "/api/metronome" });
@@ -134,7 +135,7 @@ test("corrupt and future files are never replaced by defaults or valid new reque
   const path = resolve(dir, "creative/metronome-library.json");
   await mkdir(resolve(dir, "creative"));
   for (const original of ["not json", '{"schemaVersion":99}', JSON.stringify({ schemaVersion: 0 }),
-    JSON.stringify({ ...legacyState(), library: { ...fixture(), schemaVersion: 3 } })]) {
+    JSON.stringify({ ...legacyState(), library: { ...fixture(), schemaVersion: 99 } })]) {
     await writeFile(path, original);
     assert.equal((await app.inject({ method: "GET", url: "/api/metronome" })).statusCode, 500);
     assert.equal((await app.inject({ method: "PUT", url: "/api/metronome", payload: { expectedRevision: 0, library: fixture() } })).statusCode, 500);
@@ -144,7 +145,7 @@ test("corrupt and future files are never replaced by defaults or valid new reque
 test("invalid requests leave the existing file intact", () => setup(async (app, dir) => {
   await app.inject({ method: "PUT", url: "/api/metronome", payload: { expectedRevision: 0, library: fixture() } });
   const path = resolve(dir, "creative/metronome-library.json"), original = await readFile(path, "utf8");
-  for (const payload of [null, {}, { expectedRevision: -1, library: fixture() }, { expectedRevision: 1, library: { ...fixture(), schemaVersion: 3 } }]) {
+  for (const payload of [null, {}, { expectedRevision: -1, library: fixture() }, { expectedRevision: 1, library: { ...fixture(), schemaVersion: 99 } }]) {
     assert.equal((await app.inject({ method: "PUT", url: "/api/metronome", payload })).statusCode, 400);
     assert.equal(await readFile(path, "utf8"), original);
   }
@@ -157,3 +158,35 @@ test("write failure returns an actionable error and a retry can succeed", () => 
   await rm(resolve(dir, "creative"));
   assert.equal((await app.inject(request)).statusCode, 200);
 }));
+test("v2 migrates losslessly and first v3 write preserves exact bytes; chromatic notes persist", () => setup(async (app, dir) => {
+  const path = resolve(dir, "creative/metronome-library.json");
+  const legacy = { ...legacyState(), library: { ...fixture(), schemaVersion: 2 } };
+  const original = JSON.stringify(legacy, null, 2) + "\n";
+  await mkdir(resolve(dir, "creative")); await writeFile(path, original);
+  const loaded = (await app.inject({ method: "GET", url: "/api/metronome" })).json().state;
+  assert.equal(loaded.library.schemaVersion, 3); assert.deepEqual(loaded.library.projects, legacy.library.projects);
+  assert.equal(await readFile(path, "utf8"), original);
+  const next = fixture(); next.projects[0].tracks[0].notes[0].pitch = 61;
+  const request = { method: "PUT" as const, url: "/api/metronome", payload: { expectedRevision: 4, library: next } };
+  const backup = path + ".v2." + createHash("sha256").update(original).digest("hex") + ".bak";
+  await writeFile(backup, "broken backup");
+  assert.equal((await app.inject(request)).statusCode, 500); assert.equal(await readFile(path, "utf8"), original);
+  await rm(backup);
+  assert.equal((await app.inject(request)).statusCode, 200); assert.equal(await readFile(backup, "utf8"), original);
+  assert.equal((await stat(backup)).mode & 0o777, 0o600);
+  assert.deepEqual((await app.inject({ method: "GET", url: "/api/metronome" })).json().state.library, next);
+  assert.equal((await app.inject({ ...request, payload: { ...request.payload, expectedRevision: 5 } })).statusCode, 200);
+  assert.equal((await readdir(resolve(dir, "creative"))).length, 2);
+}));
+test("v1/v2 cannot smuggle absolute pitches; v3 rejects invalid pitches and extra fields", () => {
+  const value = fixture(); value.projects[0].tracks[0].notes[0].pitch = 61;
+  assert.ok(parseMusicLibrary(value));
+  for (const version of [1, 2]) {
+    const legacy = { ...value, schemaVersion: version, projects: value.projects.map(p => ({ ...p, click: version === 1 ? true : p.click })) };
+    assert.equal(parseMusicLibrary(legacy), undefined);
+  }
+  for (const pitch of [-1, 128, 60.5, NaN, "61", null, undefined]) {
+    const invalid = fixture(); Object.assign(invalid.projects[0].tracks[0].notes[0], { pitch });
+    assert.equal(parseMusicLibrary(invalid), undefined);
+  }
+});

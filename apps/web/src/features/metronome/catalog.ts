@@ -1,6 +1,6 @@
 import instrumentData from "../../../../../content/metronome/instruments.v1.json";
 import rhythmData from "../../../../../content/metronome/rhythms.v1.json";
-import type { InstrumentId, PresetId, MusicProject, MusicTrack } from "../../../../server/src/metronome-contract";
+import type { InstrumentId, PresetId, MusicNote, MusicProject, MusicTrack } from "../../../../server/src/metronome-contract";
 export type Instrument = {
   id: InstrumentId; name: string; family: string; program: number | null;
   base: number; sustain: boolean; drums?: number[];
@@ -41,4 +41,15 @@ export function keyLabel(track: MusicTrack, project: Pick<MusicProject, "scale">
   if (track.mode === "chords" && canChord(track)) return CHORD_LABELS[key];
   const semitone = (project.scale === "pentatonic" ? PENTATONIC : MAJOR)[key];
   return (semitone >= 12 ? "高 " : "") + SOLFEGE[semitone % 12];
+}
+
+/** Absolute pitches from humming are independent of keyboard scale, octave and chords. */
+export function pitchesForNote(track: MusicTrack, project: Pick<MusicProject, "scale">, note: MusicNote): number[] {
+  return note.pitch === undefined ? pitchesForKey(track, project, note.key) : getInstrument(track.instrument).drums ? [getInstrument(track.instrument).drums![note.key]] : [note.pitch];
+}
+export function pitchLabel(pitch: number): string {
+  return ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"][((pitch % 12) + 12) % 12] + (Math.floor(pitch / 12) - 1);
+}
+export function noteLabel(track: MusicTrack, project: Pick<MusicProject, "scale">, note: MusicNote): string {
+  return note.pitch === undefined ? keyLabel(track, project, note.key) : pitchLabel(note.pitch);
 }

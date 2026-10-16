@@ -167,3 +167,14 @@ test("short looped struck samples decay beyond the source boundary instead of ab
   assert.equal(sources[0].loop, false);
   assert.equal(sources[0].stops.at(-1), 1.21, "complete one-shot samples retain their original tail");
 });
+test("hummed pitches reach the actual sampler at the saved pitch, duration and velocity", () => {
+  const { audio, sources } = audioHarness(), p = createProject(), track = p.tracks[0];
+  track.instrument = "organ"; track.mode = "chords"; track.octave = 1; p.scale = "pentatonic";
+  const note = { id: "hummed", key: 0, pitch: 61, tick: 0, duration: 96, velocity: .4 };
+  audio.schedule({ kind: "note", tick: 0, track, note }, 1, 1 / 96, p);
+  assert.equal(sources.length, 1, "an absolute note cannot become a keyboard chord");
+  assert.ok(Math.abs(sources[0].playbackRate.value - 2 ** (1 / 12)) < 1e-8);
+  assert.equal(sources[0].started, 1);
+  assert.ok(sources[0].output.gain.events.some(e => e.method === "ramp" && Math.abs(e.value - .4 * track.volume * .58) < 1e-8));
+  assert.ok(sources[0].output.gain.events.some(e => e.time >= 2), "release follows the recorded duration");
+});

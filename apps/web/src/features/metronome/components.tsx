@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes } from "react";
-import { getInstrument, keyLabel } from "./catalog";
+import { getInstrument, noteLabel } from "./catalog";
 import { gridStep, projectTicks, pulseCount, stepTick, TICKS, type InstrumentId, type MusicNote, type MusicProject, type MusicTrack } from "./logic";
 
 const TOOL_PATHS = {
@@ -36,7 +36,7 @@ export function TrackStrip({ track, project, playhead, reduced, cursor, leadInBa
     <svg viewBox="0 0 1000 64" preserveAspectRatio="none">
       {leadTicks > 0 && <rect x="0" y="0" width={x(0)} height="64" className="metro-countin-region" />}
       {Array.from({ length: (bars + leadInBars) * pulses + 1 }, (_, i) => <line key={i} x1={x(i * TICKS - leadTicks)} x2={x(i * TICKS - leadTicks)} y1="0" y2="64" className={i % pulses === 0 ? "metro-bar-line" : "metro-beat-line"} />)}
-      {track.notes.map(note => <rect key={note.id} x={x(note.tick)} y={49 - note.key * 4.5} width={Math.max(4, note.duration / (length + leadTicks) * 1000 - 2)} height="5" rx="2" className="metro-note-mark" />)}
+      {track.notes.map(note => <rect key={note.id} x={x(note.tick)} y={note.pitch === undefined ? 49 - note.key * 4.5 : 53 - Math.max(0, Math.min(48, note.pitch - 36))} width={Math.max(4, note.duration / (length + leadTicks) * 1000 - 2)} height="5" rx="2" className="metro-note-mark" />)}
       {leadTicks > 0 && <line x1={x(0)} x2={x(0)} y1="0" y2="64" className="metro-record-start" />}
       {position !== null && <line x1={x(position)} x2={x(position)} y1="0" y2="64" className="metro-playhead" />}
       {cursor !== undefined && <line x1={x(cursor)} x2={x(cursor)} y1="0" y2="64" className="metro-edit-cursor" />}
@@ -47,7 +47,7 @@ export function TrackStrip({ track, project, playhead, reduced, cursor, leadInBa
 export function StepEditor({ project, track, cursor, selectedId, disabled, onPosition, onUpdate, onDelete, onDivision, onAudition, onClose }: {
   project: MusicProject; track: MusicTrack; cursor: number; selectedId: string | null; disabled: boolean;
   onPosition: (tick: number, noteId?: string) => void; onUpdate: (patch: Partial<Pick<MusicNote, "tick" | "duration">>) => void;
-  onDelete: () => void; onDivision: (division: number) => void; onAudition: (key: number) => void; onClose: () => void;
+  onDelete: () => void; onDivision: (division: number) => void; onAudition: (note: MusicNote) => void; onClose: () => void;
 }) {
   const step = gridStep(project), length = projectTicks(project), barTicks = pulseCount(project.preset) * TICKS;
   const bar = Math.floor(cursor / barTicks), columns = barTicks / step, division = TICKS / step;
@@ -73,12 +73,12 @@ export function StepEditor({ project, track, cursor, selectedId, disabled, onPos
         const tail = track.notes.some(n => n.tick < tick && n.tick + n.duration > tick);
         const label = String(Math.floor(column / division) + 1) + fractions[division][column % division];
         return <button key={tick} type="button" disabled={disabled} className={"metro-step-cell" + (column % division === 0 ? " is-beat" : "") + (tail ? " has-tail" : "")} aria-pressed={cursor === tick}
-          aria-label={"第 " + (bar + 1) + " 小节，第 " + label + " 拍" + (notes.length ? "，" + notes.map(n => keyLabel(track, project, n.key)).join("、") : "，空位置")}
-          onClick={() => onPosition(tick)}><small>{label}</small><span>{notes.length ? notes.map(n => keyLabel(track, project, n.key)).join(" · ") : tail ? "—" : "+"}</span></button>;
+          aria-label={"第 " + (bar + 1) + " 小节，第 " + label + " 拍" + (notes.length ? "，" + notes.map(n => noteLabel(track, project, n)).join("、") : "，空位置")}
+          onClick={() => onPosition(tick)}><small>{label}</small><span>{notes.length ? notes.map(n => noteLabel(track, project, n)).join(" · ") : tail ? "—" : "+"}</span></button>;
       })}
     </div></div>
     <div className="metro-step-toolbar metro-step-selection">
-      <div className="metro-step-notes">{cellNotes.length ? cellNotes.map(note => <button key={note.id} disabled={disabled} aria-pressed={active?.id === note.id} onClick={() => { onPosition(note.tick, note.id); onAudition(note.key); }}>{keyLabel(track, project, note.key)}</button>) : <span>空位置</span>}</div>
+      <div className="metro-step-notes">{cellNotes.length ? cellNotes.map(note => <button key={note.id} disabled={disabled} aria-pressed={active?.id === note.id} onClick={() => { onPosition(note.tick, note.id); onAudition(note); }}>{noteLabel(track, project, note)}</button>) : <span>空位置</span>}</div>
       {active && <span className="metro-note-length">{Number((active.duration / TICKS).toFixed(2))} 拍</span>}
       <ToolButton icon="left" label="音符前移一格" disabled={disabled || !active || active.tick <= 0} onClick={() => active && onUpdate({ tick: active.tick - step })} />
       <ToolButton icon="right" label="音符后移一格" disabled={disabled || !active || active.tick + step >= length} onClick={() => active && onUpdate({ tick: active.tick + step })} />

@@ -1,4 +1,4 @@
-/** Browser-safe v2 library contract; v1 click switches migrate without changing notes. */
+/** Browser-safe v3 library contract. Legacy key notes retain their original sound. */
 export const TICKS = 96;
 export const MAX_TRACKS = 32;
 export const MAX_NOTES = 1024;
@@ -12,7 +12,7 @@ export type PresetId = typeof PRESET_IDS[number];
 export type Snap = "auto" | "off" | "beat" | "half" | "third" | "quarter";
 export const CLICK_LEVELS = ["off", "low", "medium", "high"] as const;
 export type ClickLevel = typeof CLICK_LEVELS[number];
-export type MusicNote = { id: string; key: number; tick: number; duration: number; velocity: number };
+export type MusicNote = { id: string; key: number; tick: number; duration: number; velocity: number; pitch?: number };
 export type MusicTrack = {
   id: string; instrument: InstrumentId; volume: number; muted: boolean; solo: boolean;
   octave: -1 | 0 | 1; mode: "notes" | "chords"; notes: MusicNote[];
@@ -23,7 +23,7 @@ export type MusicProject = {
   backing: boolean; click: ClickLevel; volume: number; snap: Snap;
   scale: "major" | "pentatonic"; activeTrackId: string | null; tracks: MusicTrack[];
 };
-export type MusicLibrary = { schemaVersion: 2; activeId: string; projects: MusicProject[] };
+export type MusicLibrary = { schemaVersion: 3; activeId: string; projects: MusicProject[] };
 export type MusicState = {
   schemaVersion: 1; id: "metronome-library"; createdAt: string; updatedAt: string;
   revision: number; library: MusicLibrary;
@@ -39,7 +39,7 @@ const exactKeys = (v: Record<string, unknown>, names: string[]) => Object.keys(v
 const oneOf = <T>(v: unknown, values: readonly T[]): v is T => values.includes(v as T);
 
 export function parseMusicLibrary(value: unknown): MusicLibrary | undefined {
-  if (!record(value) || !exactKeys(value, ["schemaVersion", "activeId", "projects"]) || !oneOf(value.schemaVersion, [1, 2])
+  if (!record(value) || !exactKeys(value, ["schemaVersion", "activeId", "projects"]) || !oneOf(value.schemaVersion, [1, 2, 3])
     || !id(value.activeId) || !Array.isArray(value.projects) || !value.projects.length || value.projects.length > MAX_PROJECTS) return;
   const projectIds = new Set<string>();
   let total = 0;
@@ -62,7 +62,8 @@ export function parseMusicLibrary(value: unknown): MusicLibrary | undefined {
         || !oneOf(track.octave, [-1, 0, 1]) || !oneOf(track.mode, ["notes", "chords"]) || !Array.isArray(track.notes) || track.notes.length > MAX_NOTES) return;
       trackIds.add(track.id);
       for (const note of track.notes) {
-        if (!record(note) || !exactKeys(note, ["id", "key", "tick", "duration", "velocity"])
+        if (!record(note) || !exactKeys(note, ["id", "key", "tick", "duration", "velocity", ...(value.schemaVersion === 3 && Object.hasOwn(note, "pitch") ? ["pitch"] : [])])
+          || (Object.hasOwn(note, "pitch") && !integer(note.pitch, 0, 127))
           || !id(note.id) || noteIds.has(note.id) || !integer(note.key, 0, 9)
           || !integer(note.tick, 0, end - 1) || !integer(note.duration, 1, end - note.tick) || !number(note.velocity, .05, 1)) return;
         noteIds.add(note.id);
@@ -78,8 +79,8 @@ export function parseMusicLibrary(value: unknown): MusicLibrary | undefined {
   const library = JSON.parse(JSON.stringify(value));
   if (library.schemaVersion === 1) {
     for (const project of library.projects) project.click = project.click ? "low" : "off";
-    library.schemaVersion = 2;
   }
+  library.schemaVersion = 3;
   return library as MusicLibrary;
 }
 

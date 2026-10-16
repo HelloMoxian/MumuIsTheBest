@@ -8,12 +8,15 @@ import { MusicAudio, type Voice } from "./audio";
 import { INSTRUMENTS, RHYTHMS, KEYS, getInstrument, getRhythm, keyLabel, canChord, type Instrument } from "./catalog";
 import { InstrumentIcon, StepEditor, ToolButton, TrackStrip } from "./components";
 import {
-  MAX_TRACKS, MAX_PROJECTS, TICKS, addTrack, canAddNotes, changePreset, cloneProject, createLibrary, createProject, createTrack, deleteProject,
+  MAX_TRACKS, MAX_PROJECTS, MAX_NOTES, MAX_PROJECT_NOTES, MAX_LIBRARY_NOTES, TICKS, addTrack, canAddNotes, changePreset, cloneProject, createLibrary, createProject, createTrack, deleteProject,
   CLICK_LABELS, nextClickLevel, parseMusicLibrary, placeStepNote, projectTicks, RecordingTake, resizeLoop, stepTick, updateStepNote,
   type InstrumentId, type MusicLibrary, type MusicNote, type MusicProject, type MusicTrack,
 } from "./logic";
 import { loadMusic, MusicSaveQueue, type SaveStatus } from "./persistence";
 import { COUNT_IN_BARS, LoopTransport, STOPPED, type TransportFrame } from "./transport";
+import { HummingTake } from "./humming";
+import { HumMicrophone } from "./microphone";
+import { pitchLabel } from "./catalog";
 import "./metronome.css";
 
 type Modal = "instruments" | "rhythms" | "settings" | "works" | "export" | "confirm" | null;
@@ -47,13 +50,20 @@ export function MetronomePage() {
   const undoStack = useRef<MusicProject[]>([]), liveKeys = useRef(new Map<string, LiveKey>());
   const engine = useRef<MusicAudio | null>(null), transport = useRef<LoopTransport | null>(null), take = useRef<RecordingTake | null>(null);
   const saver = useRef<MusicSaveQueue | null>(null), generation = useRef(0), mounted = useRef(true);
+  const hummingTake = useRef<HummingTake | null>(null), microphone = useRef<HumMicrophone | null>(null);
+  const microphoneOwner = useRef(Symbol("metronome-humming")), microphoneLease = useRef<(() => void) | null>(null);
+  const humClock = useRef(0), originalToken = useRef(0), originalUrl = useRef(""), originalAudio = useRef<HTMLAudioElement>(null);
+  const [humming, setHumming] = useState(false), [humAlign, setHumAlign] = useState(false);
+  const [humFeedback, setHumFeedback] = useState({ pitch: "等待声音", level: 0, count: 0, clipping: false });
+  const [original, setOriginal] = useState("");
   const actions = useRef({ stop: () => {}, release: (_token: string) => {}, finishTake: (_tick: number) => {}, press: (_token: string, _key: number) => {}, start: (_record = false) => {} });
   const currentProject = () => libraryRef.current.projects.find(p => p.id === libraryRef.current.activeId)!;
   const project = library.projects.find(p => p.id === library.activeId)!;
   const selected = project.tracks.find(t => t.id === project.activeTrackId);
-  const displayProject = take.current ? take.current.merge(project, Math.max(0, frame.absoluteTick)) : project;
+  const displayProject = hummingTake.current ? hummingTake.current.merge(project, Math.max(0, frame.absoluteTick) * 60 / project.bpm / TICKS)
+    : take.current ? take.current.merge(project, Math.max(0, frame.absoluteTick)) : project;
   const rhythm = getRhythm(project.preset), running = frame.phase !== "stopped";
-  const recording = taking || frame.phase === "countin" || frame.phase === "recording";
+  const recording = humming || taking || frame.phase === "countin" || frame.phase === "recording";
   const editing = manualEdit?.projectId === project.id && manualEdit.trackId === selected?.id ? manualEdit : null;
   function setEditing(next: ManualEdit | null) { manualRef.current = next; setManualEdit(next); }
 
@@ -83,14 +93,27 @@ export function MetronomePage() {
     setPressed(new Set([...liveKeys.current.values()].map(h => h.key)));
   }
   function finishTake(tick: number) {
+    const hummed = hummingTake.current;
+    if (hummed) {
+      const time = Math.max(0, Math.min(tick, projectTicks(hummed.project))) * 60 / hummed.project.bpm / TICKS;
+      hummed.detector.finish(time);
+      hummingTake.current = null;
+      const count = hummed.notes(time).length;
+      if (count) changeProject(hummed.merge(currentProject(), time));
+      setNotice(count ? "已录入 " + count + " 个音符，可以试听、撤销或手动编辑。" + (count >= hummed.limit ? "这条音轨已满。" : "") : "还没有录到稳定的音符，可以靠近麦克风，轻轻哼长一点。 ");
+    }
+    const mic = microphone.current; microphone.current = null; mic?.stop();
+    const lease = microphoneLease.current; microphoneLease.current = null; lease?.();
+    setHumming(false);
     const recorded = take.current;
     if (!recorded) return;
     for (const token of [...recorded.held.keys()]) recorded.release(token, Math.min(tick, projectTicks(recorded.project)));
     take.current = null; setTaking(false);
     if (recorded.notes.length) changeProject(recorded.merge(currentProject(), tick));
   }
-  function stop() {
+  function stop(keepOriginal = false) {
     generation.current++;
+    if (keepOriginal !== true) originalAudio.current?.pause();
     for (const token of [...liveKeys.current.keys()]) release(token);
     finishTake(transport.current?.position() ?? 0);
     transport.current?.stop(); engine.current?.stopAll();
@@ -112,8 +135,51 @@ export function MetronomePage() {
       setBusy(""); transport.current!.start(record);
     } catch (error) { if (id === generation.current && mounted.current) { setBusy(""); setNotice(messageOf(error)); } }
   }
+  async function startHumming() {
+    if (!readyRef.current || dialog.current?.open) return;
+    stop(); const id = ++generation.current, token = ++originalToken.current;
+    const p = currentProject(), track = p.tracks.find(t => t.id === p.activeTrackId);
+    if (!track || getInstrument(track.instrument).drums) { setNotice("先选钢琴、长笛等有音高的乐器，再来哼唱。 "); return; }
+    if (audioFocus.isMicrophoneActive()) { setNotice("请先结束其他录音，再来哼唱。 "); return; }
+    const used = (p: MusicProject) => p.tracks.reduce((sum, t) => sum + t.notes.length, 0);
+    const limit = Math.min(MAX_NOTES - track.notes.length, MAX_PROJECT_NOTES - used(p), MAX_LIBRARY_NOTES - libraryRef.current.projects.reduce((sum, p) => sum + used(p), 0));
+    if (limit <= 0) { setNotice("音轨或作品集已满，请先导出并整理一些音符。 "); return; }
+    setEditing(null); setNotice(""); setHumming(true); setBusy("等待麦克风…");
+    setHumFeedback({ pitch: "等待声音", level: 0, count: 0, clipping: false });
+    if (originalUrl.current) URL.revokeObjectURL(originalUrl.current);
+    originalUrl.current = ""; setOriginal("");
+    stopLearningSpeech(); browserTts.stop();
+    microphoneLease.current = audioFocus.acquireMicrophone(microphoneOwner.current);
+    const mic = new HumMicrophone(frame => {
+      const captured = hummingTake.current;
+      if (!captured || microphone.current !== mic || id !== generation.current) return;
+      const relative = { ...frame, time: frame.time - humClock.current };
+      const duration = projectTicks(captured.project) * 60 / captured.project.bpm / TICKS;
+      if (relative.time >= duration) return;
+      captured.detector.feed(relative);
+      setHumFeedback({ pitch: captured.detector.currentPitch === null ? relative.time < 0 ? "准备时可以试哼" : "轻轻哼一段" : pitchLabel(captured.detector.currentPitch),
+        level: Math.min(1, frame.rms * 8), count: captured.notes(Math.max(0, relative.time)).length, clipping: captured.detector.isClipping });
+    }, message => { if (microphone.current === mic) { actions.current.stop(); setNotice(message); } }, blob => {
+      if (mounted.current && originalToken.current === token) {
+        if (originalUrl.current) URL.revokeObjectURL(originalUrl.current);
+        originalUrl.current = URL.createObjectURL(blob); setOriginal(originalUrl.current);
+      }
+    });
+    microphone.current = mic;
+    try {
+      await engine.current!.prepare(p);
+      if (id !== generation.current || !mounted.current || document.hidden) { mic.stop(); return; }
+      const started = await mic.start(engine.current!.captureContext);
+      if (!started || id !== generation.current || !mounted.current || document.hidden) { mic.stop(); return; }
+      hummingTake.current = new HummingTake({ ...p, snap: humAlign ? p.snap : "off" }, track.id, limit);
+      setBusy(""); transport.current!.start(true);
+      humClock.current = engine.current!.now - transport.current!.position() * 60 / p.bpm / TICKS;
+    } catch (error) {
+      if (id === generation.current && mounted.current) { stop(); setNotice(messageOf(error)); }
+    }
+  }
   async function press(token: string, key: number) {
-    if (!readyRef.current || dialog.current?.open || liveKeys.current.has(token)) return;
+    if (!readyRef.current || dialog.current?.open || liveKeys.current.has(token) || microphone.current) return;
     const p = currentProject(), track = p.tracks.find(t => t.id === p.activeTrackId);
     if (!track) return;
     const identity = generation.current;
@@ -162,7 +228,7 @@ export function MetronomePage() {
     transport.current = new LoopTransport({
       now: () => engine.current!.now,
       project: through => take.current ? take.current.merge(currentProject(), through) : currentProject(),
-      schedule: (event, when, seconds) => engine.current!.schedule(event, when, seconds, currentProject()),
+      schedule: (event, when, seconds) => { if (!hummingTake.current) engine.current!.schedule(event, when, seconds, currentProject()); },
       frame: next => { if (mounted.current) setFrame(next); },
       finishRecording: () => actions.current.finishTake(projectTicks(currentProject())),
       interrupted: () => { actions.current.stop(); setNotice("播放已暂停，刚才录下的音符已保留。"); },
@@ -194,11 +260,12 @@ export function MetronomePage() {
     document.addEventListener("keydown", keydown); document.addEventListener("keyup", keyup);
     document.addEventListener("visibilitychange", hidden); window.addEventListener("blur", blur);
     window.addEventListener("pagehide", actions.current.stop); window.addEventListener("beforeunload", unload);
-    const microphone = audioFocus.subscribe(() => { if (audioFocus.isMicrophoneActive()) actions.current.stop(); });
+    const releaseMicrophoneListener = audioFocus.subscribe(() => { if (audioFocus.isMicrophoneActive(microphoneOwner.current)) actions.current.stop(); });
     const onPageHide = actions.current.stop;
     return () => {
       actions.current.stop(); mounted.current = false; readyRef.current = false;
-      engine.current?.dispose(); transport.current = null; releaseCreative(); microphone();
+      engine.current?.dispose(); transport.current = null; releaseCreative(); releaseMicrophoneListener();
+      originalToken.current++; if (originalUrl.current) URL.revokeObjectURL(originalUrl.current);
       media.removeEventListener("change", reduce); document.removeEventListener("keydown", keydown); document.removeEventListener("keyup", keyup);
       document.removeEventListener("visibilitychange", hidden); window.removeEventListener("blur", blur);
       window.removeEventListener("pagehide", onPageHide); window.removeEventListener("beforeunload", unload);
@@ -236,14 +303,14 @@ export function MetronomePage() {
       [0, 2, 4].forEach((key, index) => engine.current!.playKey(track, p, key, now + index * .23, .32));
     } catch (error) { if (id === generation.current) { setBusy(""); setNotice(messageOf(error)); } }
   }
-  async function audition(key: number) {
+  async function audition(note: MusicNote) {
     const p = currentProject(), track = p.tracks.find(t => t.id === p.activeTrackId);
     if (!track) return;
     const id = generation.current;
     try {
       await engine.current!.prepareInstrument(getInstrument(track.instrument));
       if (id !== generation.current) return;
-      engine.current!.setVolume(p.volume); engine.current!.playKey(track, p, key, engine.current!.now, .25);
+      engine.current!.setVolume(p.volume); engine.current!.playKey(track, p, note.key, engine.current!.now, .25, note.velocity, note);
     } catch (error) { setNotice(messageOf(error)); }
   }
   function editMix(update: (p: MusicProject) => MusicProject) {
@@ -341,6 +408,9 @@ export function MetronomePage() {
       <button className={"metro-record" + (frame.phase === "countin" ? " is-counting" : recording ? " is-recording" : "")} disabled={!ready || !selected || Boolean(busy)} onClick={() => recording ? stop() : void start(true)}>
         <span aria-hidden="true">{frame.phase === "countin" ? "■" : "●"}</span>{frame.phase === "countin" ? "取消准备" : recording ? "收好这一段" : "录一段"}
       </button>
+      <button className={"metro-record" + (humming ? " is-recording" : "")} aria-pressed={humming}
+        disabled={!ready || !selected || Boolean(selected && getInstrument(selected.instrument).drums) || (Boolean(busy) && !humming) || (recording && !humming)}
+        onClick={() => humming ? stop() : void startHumming()}>{humming ? busy ? "取消麦克风" : "收好哼唱" : "哼唱录入"}</button>
       <span className="metro-control-divider" />
       <button className="metro-rhythm-button" disabled={blocked || recording} onClick={() => openModal("rhythms")}>{rhythm.name}<small>{rhythm.meter}</small><span aria-hidden="true">⌄</span></button>
       <label className="metro-tempo">速度
@@ -368,6 +438,15 @@ export function MetronomePage() {
           {Array.from({ length: rhythm.pulses }, (_, i) => <span key={i} className={running && frame.beat === i ? "is-current" : ""}>{i + 1}</span>)}
         </div>
       </div>
+      {(humming || original) && <div className="metro-hum-panel" aria-label="哼唱录入状态">
+        {humming ? <><strong>{humFeedback.pitch}</strong><meter min="0" max="1" value={humFeedback.level} aria-label="麦克风声音强弱" />
+          <span>{humFeedback.count} 个音符 · {humFeedback.clipping ? "稍微离麦克风远一点" : "只看节拍灯，录制时暂停外放"}</span></> : <>
+          <label>原声试听（含预备）<audio ref={originalAudio} controls src={original} preload="none" onPlay={() => {
+            stop(true); stopLearningSpeech(); browserTts.stop();
+          }} /></label><span>原声仅留在本页，作品保存音符</span>
+          <button onClick={() => { originalAudio.current?.pause(); URL.revokeObjectURL(originalUrl.current); originalUrl.current = ""; setOriginal(""); }}>清除原声</button>
+        </>}
+      </div>}
       <div className="metro-tracks" aria-label="乐器音轨">
         {displayProject.tracks.map((track, index) => {
           const instrument = getInstrument(track.instrument), isSelected = selected?.id === track.id;
@@ -421,7 +500,7 @@ export function MetronomePage() {
         </> : <span>选一种乐器开始</span>}
       </div>
       <div className={"metro-keys" + (selectedInstrument?.drums ? " metro-keys--drums" : "")}>
-        {KEYS.map((key, index) => <button key={key} type="button" className={pressed.has(index) ? "is-held" : ""} disabled={!ready || !selected}
+        {KEYS.map((key, index) => <button key={key} type="button" className={pressed.has(index) ? "is-held" : ""} disabled={!ready || !selected || humming}
           aria-label={selected ? "按键 " + key + "，" + keyLabel(selected, project, index) : "按键 " + key}
           onPointerDown={event => { if (event.button !== 0) return; event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId); void press("pointer-" + event.pointerId, index); }}
           onPointerUp={event => release("pointer-" + event.pointerId)} onPointerCancel={event => release("pointer-" + event.pointerId)} onLostPointerCapture={event => release("pointer-" + event.pointerId)}
@@ -459,6 +538,7 @@ export function MetronomePage() {
         }}>试听</button>
       </div>)}</div>}
       {modal === "settings" && <div className="metro-settings">
+        <label>哼唱节奏<select aria-label="哼唱节奏" value={humAlign ? "align" : "free"} onChange={e => setHumAlign(e.target.value === "align")}><option value="free">保持原唱节奏</option><option value="align">按作品设置对齐节拍</option></select></label>
         <label>音量<input type="range" min="0" max="1" step=".05" value={project.volume} onChange={e => { const volume = Number(e.target.value); changeProject(p => ({ ...p, volume })); engine.current?.setVolume(volume); }} /></label>
         <label>对齐节拍<select value={project.snap} onChange={e => changeProject(p => ({ ...p, snap: e.target.value as MusicProject["snap"] }))}><option value="auto">自动</option><option value="beat">整拍</option><option value="half">半拍</option><option value="third">每拍三等分</option><option value="quarter">每拍四等分</option><option value="off">自由敲</option></select></label>
         <label>可弹的音<select value={project.scale} onChange={e => changeProject(p => ({ ...p, scale: e.target.value as MusicProject["scale"] }))}><option value="major">七个音 · do re mi fa sol la si</option><option value="pentatonic">五个音 · do re mi sol la</option></select></label>

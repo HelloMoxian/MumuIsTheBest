@@ -6,7 +6,7 @@ let musicActive = false;
 export const audioFocus = {
   subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
   isMusicActive: () => musicActive,
-  isMicrophoneActive: () => microphones.size > 0,
+  isMicrophoneActive: (except?: symbol) => [...microphones].some(id => id !== except),
   isCreativeActive: () => creatives.size > 0,
   acquireCreative() {
     const id = Symbol(); creatives.add(id);
@@ -18,8 +18,8 @@ export const audioFocus = {
     musicActive = active;
     listeners.forEach(listener => listener());
   },
-  acquireMicrophone() {
-    const id = Symbol(); microphones.add(id);
+  acquireMicrophone(owner?: symbol) {
+    const id = owner ?? Symbol(); microphones.add(id);
     listeners.forEach(listener => listener());
     return () => { if (microphones.delete(id)) listeners.forEach(listener => listener()); };
   },

@@ -14,3 +14,9 @@ test("creative audio leases are independent from microphones, reference counted 
   mic(); unsubscribe();
   assert.equal(audioFocus.isMicrophoneActive(), false); assert.equal(changed, 6);
 });
+test("a microphone owner can ignore its own lease while still detecting another recorder", () => {
+  const owner = Symbol(), mine = audioFocus.acquireMicrophone(owner);
+  assert.equal(audioFocus.isMicrophoneActive(), true); assert.equal(audioFocus.isMicrophoneActive(owner), false);
+  const other = audioFocus.acquireMicrophone(); assert.equal(audioFocus.isMicrophoneActive(owner), true);
+  other(); assert.equal(audioFocus.isMicrophoneActive(owner), false); mine(); mine(); assert.equal(audioFocus.isMicrophoneActive(), false);
+});

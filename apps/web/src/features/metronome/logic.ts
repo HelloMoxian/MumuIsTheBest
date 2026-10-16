@@ -18,7 +18,7 @@ export function createProject(): MusicProject {
 }
 export function createLibrary(): MusicLibrary {
   const project = createProject();
-  return { schemaVersion: 2, activeId: project.id, projects: [project] };
+  return { schemaVersion: 3, activeId: project.id, projects: [project] };
 }
 export function gridStep(project: MusicProject): number {
   const divisions = { auto: getRhythm(project.preset).division, off: getRhythm(project.preset).division, beat: 1, half: 2, third: 3, quarter: 4 };
@@ -32,7 +32,7 @@ export function stepTick(project: MusicProject, tick: number): number {
 export function placeStepNote(project: MusicProject, track: MusicTrack, tick: number, key: number) {
   if (!Number.isInteger(key) || key < 0 || key > 9) throw new RangeError("请选择一个琴键。");
   const at = stepTick(project, tick), step = gridStep(project);
-  const existing = track.notes.find(n => n.key === key && Math.floor(n.tick / step) * step === at);
+  const existing = track.notes.find(n => n.pitch === undefined && n.key === key && Math.floor(n.tick / step) * step === at);
   if (existing) return { note: existing, notes: track.notes };
   const note: MusicNote = { id: newId(), key, tick: at, duration: Math.min(step, projectTicks(project) - at), velocity: .8 };
   return { note, notes: [...track.notes, note] };
